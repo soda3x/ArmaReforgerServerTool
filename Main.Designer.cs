@@ -40,6 +40,8 @@
             this.enabledMods = new System.Windows.Forms.ListBox();
             this.availableMods = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.dedicatedServerId = new System.Windows.Forms.TextBox();
+            this.label19 = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
             this.a2sQueryEnabled = new System.Windows.Forms.CheckBox();
             this.label36 = new System.Windows.Forms.Label();
@@ -58,7 +60,7 @@
             this.fastValidation = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
-            this.password = new System.Windows.Forms.TextBox();
+            this.serverPassword = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.disableThirdPerson = new System.Windows.Forms.CheckBox();
@@ -85,6 +87,16 @@
             this.loadSettingsBtn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.fpsLimitUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label20 = new System.Windows.Forms.Label();
+            this.limitFPS = new System.Windows.Forms.CheckBox();
+            this.startServerBtn = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.steamCmdLog = new System.Windows.Forms.TextBox();
+            this.steamCmdAlert = new System.Windows.Forms.Label();
+            this.downloadSteamCmdBtn = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -96,6 +108,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.serverMinGrassDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.serverMaxViewDistance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.playerCountLimit)).BeginInit();
+            this.tabPage2.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fpsLimitUpDown)).BeginInit();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -108,7 +124,7 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1240, 728);
+            this.tabControl1.Size = new System.Drawing.Size(1240, 753);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -124,7 +140,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1232, 700);
+            this.tabPage1.Size = new System.Drawing.Size(1232, 725);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Server Configuration";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -132,7 +148,7 @@
             // addModBtn
             // 
             this.addModBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.addModBtn.Location = new System.Drawing.Point(6, 671);
+            this.addModBtn.Location = new System.Drawing.Point(6, 696);
             this.addModBtn.Name = "addModBtn";
             this.addModBtn.Size = new System.Drawing.Size(73, 23);
             this.addModBtn.TabIndex = 49;
@@ -143,7 +159,7 @@
             // removeModBtn
             // 
             this.removeModBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.removeModBtn.Location = new System.Drawing.Point(85, 671);
+            this.removeModBtn.Location = new System.Drawing.Point(85, 696);
             this.removeModBtn.Name = "removeModBtn";
             this.removeModBtn.Size = new System.Drawing.Size(146, 23);
             this.removeModBtn.TabIndex = 48;
@@ -165,7 +181,7 @@
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(632, 659);
+            this.groupBox2.Size = new System.Drawing.Size(632, 684);
             this.groupBox2.TabIndex = 47;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Mods";
@@ -173,7 +189,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(335, 16);
+            this.label16.Location = new System.Drawing.Point(335, 19);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(82, 15);
             this.label16.TabIndex = 5;
@@ -182,7 +198,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 16);
+            this.label15.Location = new System.Drawing.Point(6, 19);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(88, 15);
             this.label15.TabIndex = 4;
@@ -212,18 +228,18 @@
             // 
             this.enabledMods.FormattingEnabled = true;
             this.enabledMods.ItemHeight = 15;
-            this.enabledMods.Location = new System.Drawing.Point(335, 34);
+            this.enabledMods.Location = new System.Drawing.Point(335, 44);
             this.enabledMods.Name = "enabledMods";
-            this.enabledMods.Size = new System.Drawing.Size(291, 619);
+            this.enabledMods.Size = new System.Drawing.Size(291, 634);
             this.enabledMods.TabIndex = 1;
             // 
             // availableMods
             // 
             this.availableMods.FormattingEnabled = true;
             this.availableMods.ItemHeight = 15;
-            this.availableMods.Location = new System.Drawing.Point(6, 34);
+            this.availableMods.Location = new System.Drawing.Point(6, 44);
             this.availableMods.Name = "availableMods";
-            this.availableMods.Size = new System.Drawing.Size(294, 619);
+            this.availableMods.Size = new System.Drawing.Size(294, 634);
             this.availableMods.TabIndex = 0;
             // 
             // groupBox1
@@ -231,6 +247,8 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.dedicatedServerId);
+            this.groupBox1.Controls.Add(this.label19);
             this.groupBox1.Controls.Add(this.label35);
             this.groupBox1.Controls.Add(this.a2sQueryEnabled);
             this.groupBox1.Controls.Add(this.label36);
@@ -249,7 +267,7 @@
             this.groupBox1.Controls.Add(this.fastValidation);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label17);
-            this.groupBox1.Controls.Add(this.password);
+            this.groupBox1.Controls.Add(this.serverPassword);
             this.groupBox1.Controls.Add(this.label18);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.disableThirdPerson);
@@ -274,10 +292,33 @@
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.groupBox1.Location = new System.Drawing.Point(644, 63);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(575, 602);
+            this.groupBox1.Size = new System.Drawing.Size(575, 627);
             this.groupBox1.TabIndex = 46;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Settings";
+            // 
+            // dedicatedServerId
+            // 
+            this.dedicatedServerId.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dedicatedServerId.Location = new System.Drawing.Point(210, 597);
+            this.dedicatedServerId.Name = "dedicatedServerId";
+            this.dedicatedServerId.Size = new System.Drawing.Size(258, 23);
+            this.dedicatedServerId.TabIndex = 59;
+            // 
+            // label19
+            // 
+            this.label19.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label19.Location = new System.Drawing.Point(6, 599);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(157, 21);
+            this.label19.TabIndex = 58;
+            this.label19.Text = "Dedicated Server ID";
             // 
             // label35
             // 
@@ -517,15 +558,15 @@
             this.label17.TabIndex = 38;
             this.label17.Text = "BattlEye";
             // 
-            // password
+            // serverPassword
             // 
-            this.password.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.serverPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.password.Location = new System.Drawing.Point(210, 51);
-            this.password.Name = "password";
-            this.password.Size = new System.Drawing.Size(258, 23);
-            this.password.TabIndex = 7;
+            this.serverPassword.Location = new System.Drawing.Point(210, 51);
+            this.serverPassword.Name = "serverPassword";
+            this.serverPassword.Size = new System.Drawing.Size(258, 23);
+            this.serverPassword.TabIndex = 7;
             // 
             // label18
             // 
@@ -842,7 +883,7 @@
             // saveSettingsBtn
             // 
             this.saveSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.saveSettingsBtn.Location = new System.Drawing.Point(1066, 671);
+            this.saveSettingsBtn.Location = new System.Drawing.Point(1066, 696);
             this.saveSettingsBtn.Name = "saveSettingsBtn";
             this.saveSettingsBtn.Size = new System.Drawing.Size(153, 23);
             this.saveSettingsBtn.TabIndex = 2;
@@ -853,7 +894,7 @@
             // loadSettingsBtn
             // 
             this.loadSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadSettingsBtn.Location = new System.Drawing.Point(907, 671);
+            this.loadSettingsBtn.Location = new System.Drawing.Point(907, 696);
             this.loadSettingsBtn.Name = "loadSettingsBtn";
             this.loadSettingsBtn.Size = new System.Drawing.Size(153, 23);
             this.loadSettingsBtn.TabIndex = 1;
@@ -874,23 +915,141 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.groupBox4);
+            this.tabPage2.Controls.Add(this.startServerBtn);
+            this.tabPage2.Controls.Add(this.groupBox3);
+            this.tabPage2.Controls.Add(this.steamCmdAlert);
+            this.tabPage2.Controls.Add(this.downloadSteamCmdBtn);
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1232, 700);
+            this.tabPage2.Size = new System.Drawing.Size(1232, 725);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Steam CMD";
+            this.tabPage2.Text = "Server Management";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.label21);
+            this.groupBox4.Controls.Add(this.fpsLimitUpDown);
+            this.groupBox4.Controls.Add(this.label20);
+            this.groupBox4.Controls.Add(this.limitFPS);
+            this.groupBox4.Location = new System.Drawing.Point(6, 57);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(174, 662);
+            this.groupBox4.TabIndex = 4;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Advanced";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Segoe UI Semibold", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label21.Location = new System.Drawing.Point(9, 72);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(145, 12);
+            this.label21.TabIndex = 3;
+            this.label21.Text = "Recommended at the moment";
+            // 
+            // fpsLimitUpDown
+            // 
+            this.fpsLimitUpDown.Location = new System.Drawing.Point(11, 46);
+            this.fpsLimitUpDown.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.fpsLimitUpDown.Name = "fpsLimitUpDown";
+            this.fpsLimitUpDown.Size = new System.Drawing.Size(140, 23);
+            this.fpsLimitUpDown.TabIndex = 2;
+            this.fpsLimitUpDown.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label20.Location = new System.Drawing.Point(32, 25);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(119, 15);
+            this.label20.TabIndex = 1;
+            this.label20.Text = "Limit Server Max FPS";
+            // 
+            // limitFPS
+            // 
+            this.limitFPS.AutoSize = true;
+            this.limitFPS.Location = new System.Drawing.Point(11, 26);
+            this.limitFPS.Name = "limitFPS";
+            this.limitFPS.Size = new System.Drawing.Size(15, 14);
+            this.limitFPS.TabIndex = 0;
+            this.limitFPS.UseVisualStyleBackColor = true;
+            this.limitFPS.CheckedChanged += new System.EventHandler(this.LimitFPSCheckedChanged);
+            // 
+            // startServerBtn
+            // 
+            this.startServerBtn.Location = new System.Drawing.Point(163, 28);
+            this.startServerBtn.Name = "startServerBtn";
+            this.startServerBtn.Size = new System.Drawing.Size(151, 23);
+            this.startServerBtn.TabIndex = 4;
+            this.startServerBtn.Text = "Start Server";
+            this.startServerBtn.UseVisualStyleBackColor = true;
+            this.startServerBtn.Click += new System.EventHandler(this.StartServerBtnPressed);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.steamCmdLog);
+            this.groupBox3.Location = new System.Drawing.Point(186, 57);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(1040, 662);
+            this.groupBox3.TabIndex = 3;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Log";
+            // 
+            // steamCmdLog
+            // 
+            this.steamCmdLog.Location = new System.Drawing.Point(6, 22);
+            this.steamCmdLog.Multiline = true;
+            this.steamCmdLog.Name = "steamCmdLog";
+            this.steamCmdLog.ReadOnly = true;
+            this.steamCmdLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.steamCmdLog.Size = new System.Drawing.Size(1028, 634);
+            this.steamCmdLog.TabIndex = 1;
+            // 
+            // steamCmdAlert
+            // 
+            this.steamCmdAlert.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.steamCmdAlert.AutoSize = true;
+            this.steamCmdAlert.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.steamCmdAlert.Location = new System.Drawing.Point(6, 6);
+            this.steamCmdAlert.Name = "steamCmdAlert";
+            this.steamCmdAlert.Size = new System.Drawing.Size(480, 17);
+            this.steamCmdAlert.TabIndex = 2;
+            this.steamCmdAlert.Text = "SteamCMD was not detected, please Download SteamCMD before continuing.";
+            this.steamCmdAlert.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // downloadSteamCmdBtn
+            // 
+            this.downloadSteamCmdBtn.Location = new System.Drawing.Point(6, 28);
+            this.downloadSteamCmdBtn.Name = "downloadSteamCmdBtn";
+            this.downloadSteamCmdBtn.Size = new System.Drawing.Size(151, 23);
+            this.downloadSteamCmdBtn.TabIndex = 0;
+            this.downloadSteamCmdBtn.Text = "Download SteamCMD";
+            this.downloadSteamCmdBtn.UseVisualStyleBackColor = true;
+            this.downloadSteamCmdBtn.Click += new System.EventHandler(this.DownloadSteamCmdBtnPressed);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 761);
+            this.ClientSize = new System.Drawing.Size(1264, 786);
             this.Controls.Add(this.tabControl1);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1280, 800);
-            this.MinimumSize = new System.Drawing.Size(1280, 800);
+            this.MaximumSize = new System.Drawing.Size(1280, 825);
+            this.MinimumSize = new System.Drawing.Size(1280, 825);
             this.Name = "Main";
             this.Text = "Reforger Server";
             this.tabControl1.ResumeLayout(false);
@@ -907,6 +1066,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.serverMinGrassDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.serverMaxViewDistance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.playerCountLimit)).EndInit();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.fpsLimitUpDown)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -934,7 +1100,7 @@
         private TextBox adminPassword;
         private Label label5;
         private Label label6;
-        private TextBox password;
+        private TextBox serverPassword;
         private Label label4;
         private ComboBox region;
         private NumericUpDown playerCountLimit;
@@ -970,5 +1136,17 @@
         private Button addToEnabledBtn;
         private Label label16;
         private Label label15;
+        private TextBox dedicatedServerId;
+        private Label label19;
+        private Label steamCmdAlert;
+        private TextBox steamCmdLog;
+        private Button downloadSteamCmdBtn;
+        private GroupBox groupBox3;
+        private Button startServerBtn;
+        private GroupBox groupBox4;
+        private NumericUpDown fpsLimitUpDown;
+        private Label label20;
+        private CheckBox limitFPS;
+        private Label label21;
     }
 }
