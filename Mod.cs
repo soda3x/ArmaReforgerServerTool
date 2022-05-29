@@ -10,13 +10,11 @@ namespace ReforgerServerApp
     {
         readonly string ModID;
         readonly string ModName;
-        readonly string ModVersion;
 
-        public Mod(string modId, string modName, string modVersion)
+        public Mod(string modId, string modName)
         {
             ModID = modId;
             ModName = modName;
-            ModVersion = modVersion;
         }
 
         public string GetModID()
@@ -29,14 +27,26 @@ namespace ReforgerServerApp
             return ModName;
         }
 
-        public string GetModVersion()
-        {
-            return ModVersion;
-        }
-
         public override string ToString()
         {
-            return ModName + " Version: " + ModVersion;
+            return ModName;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == this)
+            {
+                return true;
+            }
+            if (obj == null)
+            {
+                return false;
+            }
+            if (obj.GetType() == typeof(Mod))
+            {
+                return GetModName().Equals(((Mod)obj).GetModName()) && GetModID().Equals(((Mod)obj).GetModID());
+            }
+            return false;
         }
     }
 }

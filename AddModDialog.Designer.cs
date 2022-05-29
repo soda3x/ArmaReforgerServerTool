@@ -32,8 +32,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.modId = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.modVersion = new System.Windows.Forms.TextBox();
             this.addBtn = new System.Windows.Forms.Button();
             this.cancelBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -74,27 +72,9 @@
             this.modId.Size = new System.Drawing.Size(366, 23);
             this.modId.TabIndex = 2;
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(8, 68);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(64, 21);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Version";
-            // 
-            // modVersion
-            // 
-            this.modVersion.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.modVersion.Location = new System.Drawing.Point(106, 70);
-            this.modVersion.Name = "modVersion";
-            this.modVersion.Size = new System.Drawing.Size(366, 23);
-            this.modVersion.TabIndex = 4;
-            // 
             // addBtn
             // 
-            this.addBtn.Location = new System.Drawing.Point(397, 106);
+            this.addBtn.Location = new System.Drawing.Point(397, 70);
             this.addBtn.Name = "addBtn";
             this.addBtn.Size = new System.Drawing.Size(75, 23);
             this.addBtn.TabIndex = 6;
@@ -104,7 +84,7 @@
             // 
             // cancelBtn
             // 
-            this.cancelBtn.Location = new System.Drawing.Point(316, 106);
+            this.cancelBtn.Location = new System.Drawing.Point(316, 70);
             this.cancelBtn.Name = "cancelBtn";
             this.cancelBtn.Size = new System.Drawing.Size(75, 23);
             this.cancelBtn.TabIndex = 7;
@@ -116,18 +96,16 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 141);
+            this.ClientSize = new System.Drawing.Size(484, 101);
             this.ControlBox = false;
             this.Controls.Add(this.cancelBtn);
             this.Controls.Add(this.addBtn);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.modVersion);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.modId);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.modName);
             this.MaximumSize = new System.Drawing.Size(500, 180);
-            this.MinimumSize = new System.Drawing.Size(500, 180);
+            this.MinimumSize = new System.Drawing.Size(500, 140);
             this.Name = "AddModDialog";
             this.Text = "Add Mod";
             this.ResumeLayout(false);
@@ -141,8 +119,6 @@
         private Label label1;
         private Label label2;
         private TextBox modId;
-        private Label label3;
-        private TextBox modVersion;
         private Button addBtn;
         private Button cancelBtn;
     }

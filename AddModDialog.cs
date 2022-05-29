@@ -26,7 +26,7 @@ namespace ReforgerServerApp
 
         private void AddBtnPressed(object sender, EventArgs e)
         {
-            Mod mod = new(modId.Text, modName.Text, modVersion.Text);
+            Mod mod = new(modId.Text, modName.Text);
             m_mainReference.GetAvailableModsList().Items.Add(mod);
             m_mainReference.WriteModsDatabase();
             Close();

@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -11,7 +10,9 @@ namespace ReforgerServerApp
     {
         private readonly string MOD_DATABASE_FILE = "./mod_database.txt";
         private readonly string STEAM_CMD_FILE = "./steamcmd/steamcmd.exe";
+        private readonly string REFORGER_SERVER_EXE = "./arma_reforger/ArmaReforgerServer.exe";
         private bool serverStarted = false;
+        private List<string> scenarioIds;
         public Main()
         {
             InitializeComponent();
@@ -20,8 +21,13 @@ namespace ReforgerServerApp
             {
                 ReadModsDatabase();
             }
+            //if (File.Exists(REFORGER_SERVER_EXE))
+            //{
+            //    PopulateScenarioIdField();
+            //}
             UpdateSteamCmdInstallStatus();
             fpsLimitUpDown.Enabled = false;
+
         }
 
         private void UpdateSteamCmdInstallStatus()
@@ -79,10 +85,10 @@ namespace ReforgerServerApp
         {
             using SaveFileDialog sfd = new();
             sfd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
-            sfd.Filter = "JSON files (*.json)|*.json";
+            sfd.Filter = "Text files (*.txt)|*.txt";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllText(sfd.FileName, CreateConfiguration().AsJsonString());
+                File.WriteAllText(sfd.FileName, CreateConfiguration().AsCommaSeparatedString());
             }
         }
 
@@ -90,7 +96,7 @@ namespace ReforgerServerApp
         {
             using OpenFileDialog ofd = new OpenFileDialog();
             ofd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
-            ofd.Filter = "JSON files (*.json)|*.json";
+            ofd.Filter = "Text files (*.txt)|*.txt";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string filePath = ofd.FileName;
@@ -105,7 +111,7 @@ namespace ReforgerServerApp
 
             foreach (Mod mod in availableMods.Items)
             {
-                sw.WriteLine(mod.GetModID() + "," + mod.GetModName() + "," + mod.GetModVersion());
+                sw.WriteLine(mod.GetModID() + "," + mod.GetModName());
             }
             sw.Close();
         }
@@ -113,50 +119,108 @@ namespace ReforgerServerApp
         public void ReadModsDatabase()
         {
             using StreamReader sr = File.OpenText(MOD_DATABASE_FILE);
-
-            string line = sr.ReadLine();
-
-            if (line != null)
+            string[] lines = sr.ReadToEnd().Trim().Split(Environment.NewLine);
+            foreach (string line in lines)
             {
-                string[] split = line.Split(",");
-                GetAvailableModsList().Items.Add(new Mod(split[0], split[1], split[2]));
+                if (line != null)
+                {
+                    string[] split = line.Split(",");
+                    Mod m = new Mod(split[0], split[1]);
+                    if (!GetAvailableModsList().Items.Contains(m))
+                    {
+                        GetAvailableModsList().Items.Add(m);
+                    }
+                }
             }
         }
 
         private void PopulateServerConfiguration(string input)
         {
-            Dictionary<string, object> values = JsonConvert.DeserializeObject<Dictionary<string, object>>(input);
+            const int MINIMUM_CONFIG_FILE_LENGTH = 41;
+            string[] configLines = input.Trim().Split(Environment.NewLine);
+            List<string> configParams = new List<string>();
 
-            if (values != null)
+            foreach (string line in configLines)
+            {
+                string[] splitLine = line.Split(",");
+                foreach (string s in splitLine)
+                {
+                    configParams.Add(s);
+                }
+            }
+
+            if (configParams.Count >= MINIMUM_CONFIG_FILE_LENGTH)
             {
                 ServerConfigurationBuilder builder = new();
                 builder
-                    .WithDedicatedServerId((string)values["dedicatedServerId"])
-                    .WithRegion((string)values["region"])
-                    .WithGameHostBindAddress((string)values["gameHostBindAddress"])
-                    .WithGameHostBindPort((int)values["gameHostBindPort"])
-                    .WithGameHostRegisterBindAddress((string)values["gameHostRegisterBindAddress"])
-                    .WithGameHostRegisterBindPort((int)values["gameHostRegisterBindPort"])
-                    .WithAdminPassword((string)values["adminPassword"])
-                    .WithServerName((string)values["serverName"])
-                    .WithServerPassword((string)values["password"])
-                    .WithScenarioId((string)values["scenarioId"])
-                    .WithPlayerCountLimit((int)values["playerCountLimit"])
-                    .WithAutoJoinable((bool)values["autoJoinable"])
-                    .WithVisible((bool)values["visible"])
-                    .WithServerMaxViewDistance((int)values["serverMaxViewDistance"])
-                    .WithServerMinGrassDistance((int)values["serverMinGrassDistance"])
-                    .WithNetworkViewDistance((int)values["networkViewDistance"])
-                    .WithDisableThirdPerson((bool)values["disableThirdPerson"])
-                    .WithFastValidation((bool)values["fastValidation"])
-                    .WithBattlEye((bool)values["battlEye"])
-                    .WithA2SQueryEnabled((bool)values["a2sQueryEnabled"])
-                    .WithSteamQueryPort((int)values["steamQueryPort"]);
+                    .WithDedicatedServerId(configParams[1])
+                    .WithRegion(configParams[3])
+                    .WithGameHostBindAddress(configParams[5])
+                    .WithGameHostBindPort(Convert.ToInt32(configParams[7]))
+                    .WithGameHostRegisterBindAddress(configParams[9])
+                    .WithGameHostRegisterBindPort(Convert.ToInt32(configParams[11]))
+                    .WithAdminPassword(configParams[13])
+                    .WithServerName(configParams[15])
+                    .WithServerPassword(configParams[17])
+                    .WithScenarioId(configParams[19])
+                    .WithPlayerCountLimit(Convert.ToInt32(configParams[21]))
+                    .WithAutoJoinable(Convert.ToBoolean(configParams[23]))
+                    .WithVisible(Convert.ToBoolean(configParams[25]))
+                    .WithServerMaxViewDistance(Convert.ToInt32(configParams[27]))
+                    .WithServerMinGrassDistance(Convert.ToInt32(configParams[29]))
+                    .WithNetworkViewDistance(Convert.ToInt32(configParams[31]))
+                    .WithDisableThirdPerson(Convert.ToBoolean(configParams[33]))
+                    .WithFastValidation(Convert.ToBoolean(configParams[35]))
+                    .WithBattlEye(Convert.ToBoolean(configParams[37]))
+                    .WithA2SQueryEnabled(Convert.ToBoolean(configParams[39]))
+                    .WithSteamQueryPort(Convert.ToInt32(configParams[41]));
 
-                foreach (Mod m in enabledMods.Items)
+                for (int i = 0; i < configParams.Count; ++i)
                 {
-                    builder.AddModToConfiguration(m);
+                    if (configParams[i].Equals("modId"))
+                    {
+                        builder.AddModToConfiguration(new Mod(configParams[i + 1], configParams[i + 3]));
+                    }
                 }
+
+                ServerConfiguration sc = builder.Build();
+
+                dedicatedServerId.Text = sc.DedicatedServerId;
+                region.Text = sc.Region;
+                gameHostBindAddress.Text = sc.GameHostBindAddress;
+                gameHostBindPort.Value = sc.GameHostBindPort;
+                gameHostRegisterBindAddress.Text = sc.GameHostRegisterBindAddress;
+                gameHostRegisterBindPort.Value = sc.GameHostRegisterBindPort;
+                adminPassword.Text = sc.AdminPassword;
+                serverName.Text = sc.ServerName;
+                serverPassword.Text = sc.ServerPassword;
+                scenarioId.Text = sc.ScenarioId;
+                playerCountLimit.Value = sc.PlayerCountLimit;
+                autoJoinable.Checked = sc.AutoJoinable;
+                visible.Checked = sc.Visible;
+                serverMaxViewDistance.Value = sc.ServerMaxViewDistance;
+                serverMinGrassDistance.Value = sc.ServerMinGrassDistance;
+                networkViewDistance.Value = sc.NetworkViewDistance;
+                disableThirdPerson.Checked = sc.DisableThirdPerson;
+                fastValidation.Checked = sc.FastValidation;
+                battlEye.Checked = sc.BattlEye;
+                a2sQueryEnabled.Checked = sc.A2sQueryEnabled;
+                steamQueryPort.Value = sc.SteamQueryPort;
+
+                enabledMods.Items.Clear();
+
+                foreach (Mod m in sc.Mods)
+                {
+                    enabledMods.Items.Add(m);
+                    if (!availableMods.Items.Contains(m))
+                    {
+                        availableMods.Items.Add(m);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Server Config file is malformed and cannot be opened.");
             }
         }
 
@@ -229,14 +293,21 @@ namespace ReforgerServerApp
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerSupportsCancellation = true;
             worker.DoWork += SteamCmdUpdateWorkerDoWork;
+
             if (serverStarted)
             {
+                if (File.Exists("./server.json"))
+                {
+                    File.Delete("./server.json");
+                }
                 serverStarted = false;
                 startServerBtn.Text = "Start Server";
                 worker.CancelAsync();
             }
             else
             {
+                string jsonConfig = CreateConfiguration().AsJsonString();
+                File.WriteAllText(@"./server.json", jsonConfig);
                 serverStarted = true;
                 startServerBtn.Text = "Stop Server";
                 worker.RunWorkerAsync();
@@ -256,8 +327,8 @@ namespace ReforgerServerApp
             Process steamCmdUpdateProcess = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "/c steamcmd\\steamcmd.exe +force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit";
+            startInfo.FileName = "powershell.exe";
+            startInfo.Arguments = ".\\steamcmd\\steamcmd.exe +force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit";
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
             steamCmdUpdateProcess.EnableRaisingEvents = true;
@@ -267,11 +338,86 @@ namespace ReforgerServerApp
             steamCmdUpdateProcess.ErrorDataReceived += SteamCmdDataReceived;
             steamCmdUpdateProcess.SynchronizingObject = steamCmdLog;
             steamCmdUpdateProcess.Start();
-
             steamCmdUpdateProcess.BeginOutputReadLine();
             steamCmdUpdateProcess.BeginErrorReadLine();
-
             steamCmdUpdateProcess.WaitForExit();
+
+            if (steamCmdUpdateProcess.HasExited)
+            {
+                Process serverProcess = new Process();
+                ProcessStartInfo serverStartInfo = new ProcessStartInfo();
+                serverStartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                serverStartInfo.FileName = "powershell.exe";
+                string limitFPSArg = string.Empty;
+                if (limitFPS.Checked)
+                {
+                    limitFPSArg = "-maxFPS " + fpsLimitUpDown.Value.ToString();
+                }
+                string args = ".\\arma_reforger\\ArmaReforgerServer.exe -config \""
+                    + ".\\server.json\" -profile \"" 
+                    + Environment.CurrentDirectory 
+                    + "\\saves\" -logStats 5000" + limitFPSArg;
+                serverStartInfo.Arguments = args;
+                serverStartInfo.RedirectStandardOutput = true;
+                serverStartInfo.RedirectStandardError = true;
+                serverProcess.EnableRaisingEvents = true;
+                serverStartInfo.CreateNoWindow = true;
+                serverProcess.StartInfo = serverStartInfo;
+                serverProcess.OutputDataReceived += SteamCmdDataReceived;
+                serverProcess.ErrorDataReceived += SteamCmdDataReceived;
+                serverProcess.SynchronizingObject = steamCmdLog;
+                serverProcess.Start();
+                serverProcess.WaitForExit();
+            }
+        }
+
+        private void GetScenarioIdWorkerDoWork(object sender, DoWorkEventArgs e)
+        {
+            Process serverProcess = new Process();
+            ProcessStartInfo serverStartInfo = new ProcessStartInfo();
+            serverStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            serverStartInfo.FileName = "cmd.exe";
+            serverStartInfo.Arguments = "/c arma_reforger\\ArmaReforgerServer.exe -listScenarios";
+            serverStartInfo.RedirectStandardOutput = true;
+            serverStartInfo.RedirectStandardError = true;
+            serverProcess.EnableRaisingEvents = true;
+            serverStartInfo.CreateNoWindow = true;
+            serverProcess.StartInfo = serverStartInfo;
+            serverProcess.OutputDataReceived += ListScenariosDataReceived;
+            serverProcess.Start();
+            serverProcess.WaitForExit();
+        }
+
+        private void ListScenariosDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                string[] splitLines = e.Data.Trim().Split(Environment.NewLine);
+
+                foreach (string s in splitLines)
+                {
+                    if (s.Contains('{'))
+                    {
+                        scenarioIds.Add(s[s.IndexOf('{')..]);
+                    }
+                }
+            }
+        }
+
+        private void PopulateScenarioIdField()
+        {
+            if (scenarioIds == null)
+            {
+                scenarioIds = new List<string>();
+            }
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerSupportsCancellation = true;
+            worker.DoWork += GetScenarioIdWorkerDoWork;
+            worker.RunWorkerAsync();
+            foreach (string s in scenarioIds)
+            {
+                scenarioId.Items.Add(s);
+            }
         }
     }
 }

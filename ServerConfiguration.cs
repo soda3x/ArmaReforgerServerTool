@@ -8,28 +8,28 @@ namespace ReforgerServerApp
 {
     internal class ServerConfiguration
     {
-        private string DedicatedServerId { get; set; }
-        private string Region { get; set; }
-        private string GameHostBindAddress { get; set; }
-        private int GameHostBindPort { get; set; }
-        private string GameHostRegisterBindAddress { get; set; }
-        private int GameHostRegisterBindPort { get; set; }
-        private string AdminPassword { get; set; }
-        private string ServerName { get; set; }
-        private string ServerPassword { get; set; }
-        private string ScenarioId { get; set; }
-        private int PlayerCountLimit { get; set; }
-        private bool AutoJoinable { get; set; }
-        private bool Visible { get; set; }
-        private int ServerMaxViewDistance { get; set; }
-        private int ServerMinGrassDistance { get; set; }
-        private int NetworkViewDistance { get; set; }
-        private bool DisableThirdPerson { get; set; }
-        private bool FastValidation { get; set; }
-        private bool BattlEye { get; set; }
-        private bool A2sQueryEnabled { get; set; }
-        private int SteamQueryPort { get; set; }
-        private List<Mod> Mods { get; }
+        public string DedicatedServerId { get; set; }
+        public string Region { get; set; }
+        public string GameHostBindAddress { get; set; }
+        public int GameHostBindPort { get; set; }
+        public string GameHostRegisterBindAddress { get; set; }
+        public int GameHostRegisterBindPort { get; set; }
+        public string AdminPassword { get; set; }
+        public string ServerName { get; set; }
+        public string ServerPassword { get; set; }
+        public string ScenarioId { get; set; }
+        public int PlayerCountLimit { get; set; }
+        public bool AutoJoinable { get; set; }
+        public bool Visible { get; set; }
+        public int ServerMaxViewDistance { get; set; }
+        public int ServerMinGrassDistance { get; set; }
+        public int NetworkViewDistance { get; set; }
+        public bool DisableThirdPerson { get; set; }
+        public bool FastValidation { get; set; }
+        public bool BattlEye { get; set; }
+        public bool A2sQueryEnabled { get; set; }
+        public int SteamQueryPort { get; set; }
+        public List<Mod> Mods { get; }
 
         private ServerConfiguration()
         {
@@ -69,29 +69,67 @@ namespace ReforgerServerApp
             sb.AppendLine("\"disableThirdPerson\": " + DisableThirdPerson.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"fastValidation\": " + FastValidation.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"battlEye\": " + BattlEye.ToString().ToLowerInvariant());
-            sb.AppendLine("},");
-            sb.AppendLine("\"mods\": [");
-            for (int i = 0; i < Mods.Count; i++)
+            if (Mods.Count > 0)
             {
-                sb.AppendLine("{");
-                sb.AppendLine("\"modId\": \"" + Mods[i].GetModID() + "\",");
-                sb.AppendLine("\"name\": \"" + Mods[i].GetModName() + "\",");
-                sb.AppendLine("\"version\": \"" + Mods[i].GetModVersion() + "\"");
-                if (i == Mods.Count - 1)
+                sb.AppendLine("},");
+
+                sb.AppendLine("\"mods\": [");
+                for (int i = 0; i < Mods.Count; i++)
                 {
-                    sb.AppendLine("}");
+                    sb.AppendLine("{");
+                    sb.AppendLine("\"modId\": \"" + Mods[i].GetModID() + "\",");
+                    sb.AppendLine("\"name\": \"" + Mods[i].GetModName() + "\"");
+                    if (i == Mods.Count - 1)
+                    {
+                        sb.AppendLine("}");
+                    }
+                    else
+                    {
+                        sb.AppendLine("},");
+                    }
                 }
-                else
-                {
-                    sb.AppendLine("},");
-                }
+                sb.AppendLine("]");
             }
-            sb.AppendLine("]");
+            else
+            {
+                sb.AppendLine("}");
+            }
             sb.AppendLine("},");
             sb.AppendLine("\"a2sQueryEnabled\": " + A2sQueryEnabled.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"steamQueryPort\": " + SteamQueryPort);
             sb.AppendLine("}");
 
+            return sb.ToString().Trim();
+        }
+
+        public string AsCommaSeparatedString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("dedicatedServerId," + DedicatedServerId);
+            sb.AppendLine("region," + Region);
+            sb.AppendLine("gameHostBindAddress," + GameHostBindAddress);
+            sb.AppendLine("gameHostBindPort," + GameHostBindPort);
+            sb.AppendLine("gameHostRegisterBindAddress," + GameHostRegisterBindAddress);
+            sb.AppendLine("gameHostRegisterBindPort," + GameHostRegisterBindPort);
+            sb.AppendLine("adminPassword," + AdminPassword);
+            sb.AppendLine("name," + ServerName);
+            sb.AppendLine("password," + ServerPassword);
+            sb.AppendLine("scenarioId," + ScenarioId);
+            sb.AppendLine("playerCountLimit," + PlayerCountLimit);
+            sb.AppendLine("autoJoinable," + AutoJoinable.ToString().ToLowerInvariant());
+            sb.AppendLine("visible," + Visible.ToString().ToLowerInvariant());
+            sb.AppendLine("serverMaxViewDistance," + ServerMaxViewDistance);
+            sb.AppendLine("serverMinGrassDistance," + ServerMinGrassDistance);
+            sb.AppendLine("networkViewDistance," + NetworkViewDistance);
+            sb.AppendLine("disableThirdPerson," + DisableThirdPerson.ToString().ToLowerInvariant());
+            sb.AppendLine("fastValidation," + FastValidation.ToString().ToLowerInvariant());
+            sb.AppendLine("battlEye," + BattlEye.ToString().ToLowerInvariant());
+            sb.AppendLine("a2sQueryEnabled," + A2sQueryEnabled.ToString().ToLowerInvariant());
+            sb.AppendLine("steamQueryPort," + SteamQueryPort);
+            foreach (Mod m in Mods)
+            {
+                sb.AppendLine("modId," + m.GetModID() + ",modName," + m.GetModName());
+            }
             return sb.ToString();
         }
 

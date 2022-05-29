@@ -40,6 +40,7 @@
             this.enabledMods = new System.Windows.Forms.ListBox();
             this.availableMods = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.scenarioId = new System.Windows.Forms.ComboBox();
             this.dedicatedServerId = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
@@ -70,7 +71,6 @@
             this.serverMinGrassDistance = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
             this.serverMaxViewDistance = new System.Windows.Forms.NumericUpDown();
-            this.scenarioId = new System.Windows.Forms.TextBox();
             this.visible = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.autoJoinable = new System.Windows.Forms.CheckBox();
@@ -247,6 +247,7 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.scenarioId);
             this.groupBox1.Controls.Add(this.dedicatedServerId);
             this.groupBox1.Controls.Add(this.label19);
             this.groupBox1.Controls.Add(this.label35);
@@ -277,7 +278,6 @@
             this.groupBox1.Controls.Add(this.serverMinGrassDistance);
             this.groupBox1.Controls.Add(this.label10);
             this.groupBox1.Controls.Add(this.serverMaxViewDistance);
-            this.groupBox1.Controls.Add(this.scenarioId);
             this.groupBox1.Controls.Add(this.visible);
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.autoJoinable);
@@ -296,6 +296,30 @@
             this.groupBox1.TabIndex = 46;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Settings";
+            // 
+            // scenarioId
+            // 
+            this.scenarioId.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.scenarioId.DisplayMember = "0";
+            this.scenarioId.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.scenarioId.FormattingEnabled = true;
+            this.scenarioId.Items.AddRange(new object[] {
+            "{ECC61978EDCC2B5A}Missions/23_Campaign.conf",
+            "{59AD59368755F41A}Missions/21_GM_Eden.conf",
+            "{6EA2E454519E5869}Missions/CAH_Military_Base.conf",
+            "{7C491B1FCC0FF0E1}Missions/CAH_LeMoule.conf",
+            "{F1A1BEA67132113E}Missions/CAH_Castle.conf",
+            "{589945FB9FA7B97D}Missions/CAH_Concrete_Plant.conf",
+            "{2B4183DF23E88249}Missions/CAH_Morton.conf",
+            "{3F2E005F43DBD2F8}Missions/CAH_Briars_Coast.conf",
+            "{9405201CBD22A30C}Missions/CAH_Factory.conf",
+            "{1CD06B409C6FAE56}Missions/CAH_Forest.conf"});
+            this.scenarioId.Location = new System.Drawing.Point(210, 137);
+            this.scenarioId.Name = "scenarioId";
+            this.scenarioId.Size = new System.Drawing.Size(258, 23);
+            this.scenarioId.TabIndex = 60;
             // 
             // dedicatedServerId
             // 
@@ -707,16 +731,6 @@
             0,
             0});
             // 
-            // scenarioId
-            // 
-            this.scenarioId.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.scenarioId.Location = new System.Drawing.Point(210, 138);
-            this.scenarioId.Name = "scenarioId";
-            this.scenarioId.Size = new System.Drawing.Size(258, 23);
-            this.scenarioId.TabIndex = 13;
-            // 
             // visible
             // 
             this.visible.AutoSize = true;
@@ -1095,7 +1109,6 @@
         private Label label7;
         private Label label8;
         private Label label9;
-        private TextBox scenarioId;
         private Label label10;
         private TextBox adminPassword;
         private Label label5;
@@ -1148,5 +1161,6 @@
         private Label label20;
         private CheckBox limitFPS;
         private Label label21;
+        private ComboBox scenarioId;
     }
 }
