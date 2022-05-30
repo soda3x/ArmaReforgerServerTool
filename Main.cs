@@ -10,9 +10,9 @@ namespace ReforgerServerApp
     {
         private readonly string MOD_DATABASE_FILE = "./mod_database.txt";
         private readonly string STEAM_CMD_FILE = "./steamcmd/steamcmd.exe";
-        private readonly string REFORGER_SERVER_EXE = "./arma_reforger/ArmaReforgerServer.exe";
         private bool serverStarted = false;
-        private List<string> scenarioIds;
+        Process steamCmdUpdateProcess;
+        private Process serverProcess;
         public Main()
         {
             InitializeComponent();
@@ -21,13 +21,9 @@ namespace ReforgerServerApp
             {
                 ReadModsDatabase();
             }
-            //if (File.Exists(REFORGER_SERVER_EXE))
-            //{
-            //    PopulateScenarioIdField();
-            //}
             UpdateSteamCmdInstallStatus();
             fpsLimitUpDown.Enabled = false;
-
+            serverProcess = new Process();
         }
 
         private void UpdateSteamCmdInstallStatus()
@@ -303,6 +299,17 @@ namespace ReforgerServerApp
                 serverStarted = false;
                 startServerBtn.Text = "Start Server";
                 worker.CancelAsync();
+                try
+                {
+                    serverProcess.OutputDataReceived -= SteamCmdDataReceived;
+                    serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
+                    serverProcess.CancelOutputRead();
+                    serverProcess.Close();
+                }
+                catch (Exception ex)
+                {
+                    // continue without alerting the user of the error, this isn't a big deal
+                }
             }
             else
             {
@@ -324,11 +331,11 @@ namespace ReforgerServerApp
 
         private void SteamCmdUpdateWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            Process steamCmdUpdateProcess = new Process();
+            steamCmdUpdateProcess = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.FileName = "powershell.exe";
-            startInfo.Arguments = ".\\steamcmd\\steamcmd.exe +force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit";
+            startInfo.FileName = ".\\steamcmd\\steamcmd.exe";
+            startInfo.Arguments = "+force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit";
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
             steamCmdUpdateProcess.EnableRaisingEvents = true;
@@ -344,79 +351,30 @@ namespace ReforgerServerApp
 
             if (steamCmdUpdateProcess.HasExited)
             {
-                Process serverProcess = new Process();
+                serverProcess = new Process();
                 ProcessStartInfo serverStartInfo = new ProcessStartInfo();
-                serverStartInfo.WindowStyle = ProcessWindowStyle.Normal;
-                serverStartInfo.FileName = "powershell.exe";
+                serverStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                serverStartInfo.UseShellExecute = false;
+                serverStartInfo.WorkingDirectory = Environment.CurrentDirectory + "\\arma_reforger";
+                serverStartInfo.FileName = Environment.CurrentDirectory + "\\arma_reforger\\ArmaReforgerServer.exe";
                 string limitFPSArg = string.Empty;
                 if (limitFPS.Checked)
                 {
-                    limitFPSArg = "-maxFPS " + fpsLimitUpDown.Value.ToString();
+                    limitFPSArg = "-maxFPS " + Convert.ToString(fpsLimitUpDown.Value);
                 }
-                string args = ".\\arma_reforger\\ArmaReforgerServer.exe -config \""
-                    + ".\\server.json\" -profile \"" 
-                    + Environment.CurrentDirectory 
-                    + "\\saves\" -logStats 5000" + limitFPSArg;
+                string args = "-config \"" + Environment.CurrentDirectory + "\\server.json\" -profile \""
+                     + Environment.CurrentDirectory + "\\saves\" -logStats 5000 " + limitFPSArg;
                 serverStartInfo.Arguments = args;
                 serverStartInfo.RedirectStandardOutput = true;
                 serverStartInfo.RedirectStandardError = true;
                 serverProcess.EnableRaisingEvents = true;
                 serverStartInfo.CreateNoWindow = true;
                 serverProcess.StartInfo = serverStartInfo;
+                serverProcess.SynchronizingObject = steamCmdLog;
                 serverProcess.OutputDataReceived += SteamCmdDataReceived;
                 serverProcess.ErrorDataReceived += SteamCmdDataReceived;
-                serverProcess.SynchronizingObject = steamCmdLog;
                 serverProcess.Start();
-                serverProcess.WaitForExit();
-            }
-        }
-
-        private void GetScenarioIdWorkerDoWork(object sender, DoWorkEventArgs e)
-        {
-            Process serverProcess = new Process();
-            ProcessStartInfo serverStartInfo = new ProcessStartInfo();
-            serverStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            serverStartInfo.FileName = "cmd.exe";
-            serverStartInfo.Arguments = "/c arma_reforger\\ArmaReforgerServer.exe -listScenarios";
-            serverStartInfo.RedirectStandardOutput = true;
-            serverStartInfo.RedirectStandardError = true;
-            serverProcess.EnableRaisingEvents = true;
-            serverStartInfo.CreateNoWindow = true;
-            serverProcess.StartInfo = serverStartInfo;
-            serverProcess.OutputDataReceived += ListScenariosDataReceived;
-            serverProcess.Start();
-            serverProcess.WaitForExit();
-        }
-
-        private void ListScenariosDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.Data))
-            {
-                string[] splitLines = e.Data.Trim().Split(Environment.NewLine);
-
-                foreach (string s in splitLines)
-                {
-                    if (s.Contains('{'))
-                    {
-                        scenarioIds.Add(s[s.IndexOf('{')..]);
-                    }
-                }
-            }
-        }
-
-        private void PopulateScenarioIdField()
-        {
-            if (scenarioIds == null)
-            {
-                scenarioIds = new List<string>();
-            }
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.WorkerSupportsCancellation = true;
-            worker.DoWork += GetScenarioIdWorkerDoWork;
-            worker.RunWorkerAsync();
-            foreach (string s in scenarioIds)
-            {
-                scenarioId.Items.Add(s);
+                serverProcess.BeginOutputReadLine();
             }
         }
     }
