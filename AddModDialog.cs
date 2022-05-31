@@ -12,11 +12,11 @@ namespace ReforgerServerApp
 {
     public partial class AddModDialog : Form
     {
-        private readonly Main m_mainReference;
-        public AddModDialog(Main mainReference)
+        private readonly ReforgerServerApp m_reforgerApp;
+        public AddModDialog(ReforgerServerApp reforgerApp)
         {
             InitializeComponent();
-            m_mainReference = mainReference;
+            m_reforgerApp = reforgerApp;
         }
 
         private void CancelBtnPressed(object sender, EventArgs e)
@@ -27,8 +27,10 @@ namespace ReforgerServerApp
         private void AddBtnPressed(object sender, EventArgs e)
         {
             Mod mod = new(modId.Text, modName.Text);
-            m_mainReference.GetAvailableModsList().Items.Add(mod);
-            m_mainReference.WriteModsDatabase();
+            m_reforgerApp.GetAvailableModsList().Items.Add(mod);
+            ReforgerServerApp.AlphabetiseModListBox(m_reforgerApp.GetAvailableModsList());
+            ReforgerServerApp.AlphabetiseModListBox(m_reforgerApp.GetEnabledModsList());
+            m_reforgerApp.WriteModsDatabase();
             Close();
         }
     }

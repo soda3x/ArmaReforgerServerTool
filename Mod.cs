@@ -17,6 +17,12 @@ namespace ReforgerServerApp
             ModName = modName;
         }
 
+        public Mod(Mod m)
+        {
+            ModID = m.ModID;
+            ModName = m.ModName;
+        }
+
         public string GetModID()
         {
             return ModID;

@@ -2,18 +2,19 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
+using System.Text;
 using static ReforgerServerApp.ServerConfiguration;
 
 namespace ReforgerServerApp
 {
-    public partial class Main : Form
+    public partial class ReforgerServerApp : Form
     {
         private readonly string MOD_DATABASE_FILE = "./mod_database.txt";
         private readonly string STEAM_CMD_FILE = "./steamcmd/steamcmd.exe";
         private bool serverStarted = false;
         Process steamCmdUpdateProcess;
         private Process serverProcess;
-        public Main()
+        public ReforgerServerApp()
         {
             InitializeComponent();
             region.SelectedIndex = 0;
@@ -23,7 +24,9 @@ namespace ReforgerServerApp
             }
             UpdateSteamCmdInstallStatus();
             fpsLimitUpDown.Enabled = false;
-            serverProcess = new Process();
+            serverProcess = new();
+            AlphabetiseModListBox(GetAvailableModsList());
+            AlphabetiseModListBox(GetEnabledModsList());
         }
 
         private void UpdateSteamCmdInstallStatus()
@@ -63,8 +66,13 @@ namespace ReforgerServerApp
             {
                 Mod m = (Mod)GetAvailableModsList().SelectedItem;
                 GetAvailableModsList().Items.Remove(m);
-                GetEnabledModsList().Items.Add(m);
+                if (!GetEnabledModsList().Items.Contains(m))
+                {
+                    GetEnabledModsList().Items.Add(m);
+                }
             }
+            AlphabetiseModListBox(GetAvailableModsList());
+            AlphabetiseModListBox(GetEnabledModsList());
         }
 
         private void RemovedFromEnabledModsBtnPressed(object sender, EventArgs e)
@@ -73,8 +81,13 @@ namespace ReforgerServerApp
             {
                 Mod m = (Mod)GetEnabledModsList().SelectedItem;
                 GetEnabledModsList().Items.Remove(m);
-                GetAvailableModsList().Items.Add(m);
+                if (!GetAvailableModsList().Items.Contains(m))
+                {
+                    GetAvailableModsList().Items.Add(m);
+                }
             }
+            AlphabetiseModListBox(GetAvailableModsList());
+            AlphabetiseModListBox(GetEnabledModsList());
         }
 
         private void SaveSettingsToFileBtnPressed(object sender, EventArgs e)
@@ -90,7 +103,7 @@ namespace ReforgerServerApp
 
         private void LoadSettingsFromFileBtnPressed(object sender, EventArgs e)
         {
-            using OpenFileDialog ofd = new OpenFileDialog();
+            using OpenFileDialog ofd = new();
             ofd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
             ofd.Filter = "Text files (*.txt)|*.txt";
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -103,13 +116,16 @@ namespace ReforgerServerApp
 
         public void WriteModsDatabase()
         {
-            using StreamWriter sw = File.AppendText(MOD_DATABASE_FILE);
-
+            StringBuilder sb = new();
             foreach (Mod mod in availableMods.Items)
             {
-                sw.WriteLine(mod.GetModID() + "," + mod.GetModName());
+                sb.AppendLine(mod.GetModID() + "," + mod.GetModName());
             }
-            sw.Close();
+            foreach (Mod mod in enabledMods.Items)
+            {
+                sb.AppendLine(mod.GetModID() + "," + mod.GetModName());
+            }
+            File.WriteAllText(MOD_DATABASE_FILE, sb.ToString().Trim());
         }
 
         public void ReadModsDatabase()
@@ -121,20 +137,22 @@ namespace ReforgerServerApp
                 if (line != null)
                 {
                     string[] split = line.Split(",");
-                    Mod m = new Mod(split[0], split[1]);
+                    Mod m = new(split[0], split[1]);
                     if (!GetAvailableModsList().Items.Contains(m))
                     {
                         GetAvailableModsList().Items.Add(m);
                     }
                 }
             }
+            AlphabetiseModListBox(GetAvailableModsList());
+            AlphabetiseModListBox(GetEnabledModsList());
         }
 
         private void PopulateServerConfiguration(string input)
         {
             const int MINIMUM_CONFIG_FILE_LENGTH = 41;
             string[] configLines = input.Trim().Split(Environment.NewLine);
-            List<string> configParams = new List<string>();
+            List<string> configParams = new();
 
             foreach (string line in configLines)
             {
@@ -175,7 +193,7 @@ namespace ReforgerServerApp
                 {
                     if (configParams[i].Equals("modId"))
                     {
-                        builder.AddModToConfiguration(new Mod(configParams[i + 1], configParams[i + 3]));
+                        builder.AddModToConfiguration(new(configParams[i + 1], configParams[i + 3]));
                     }
                 }
 
@@ -213,6 +231,9 @@ namespace ReforgerServerApp
                         availableMods.Items.Add(m);
                     }
                 }
+                AlphabetiseModListBox(GetAvailableModsList());
+                AlphabetiseModListBox(GetEnabledModsList());
+                WriteModsDatabase();
             }
             else
             {
@@ -250,26 +271,21 @@ namespace ReforgerServerApp
             {
                 builder.AddModToConfiguration(m);
             }
-
             return builder.Build();
         }
 
         private void DownloadSteamCmdBtnPressed(object sender, EventArgs e)
         {
-            using (var client = new WebClient())
+            using WebClient client = new();
+            client.DownloadFileCompleted += (s, e) =>
             {
-                client.DownloadFileCompleted += (s, e) =>
+                if (File.Exists(@".\steamcmd.zip"))
                 {
-                    if (File.Exists(@".\steamcmd.zip"))
-                    {
-                        ZipFile.ExtractToDirectory(@".\steamcmd.zip", @".\steamcmd");
-                    }
-                    UpdateSteamCmdInstallStatus();
-                };
-                client.DownloadFileAsync(new Uri("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"), @".\steamcmd.zip");
-            }
-
-
+                    ZipFile.ExtractToDirectory(@".\steamcmd.zip", @".\steamcmd");
+                }
+                UpdateSteamCmdInstallStatus();
+            };
+            client.DownloadFileAsync(new Uri("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"), @".\steamcmd.zip");
         }
 
         private void LimitFPSCheckedChanged(object sender, EventArgs e)
@@ -286,7 +302,7 @@ namespace ReforgerServerApp
 
         private void StartServerBtnPressed(object sender, EventArgs e)
         {
-            BackgroundWorker worker = new BackgroundWorker();
+            BackgroundWorker worker = new();
             worker.WorkerSupportsCancellation = true;
             worker.DoWork += SteamCmdUpdateWorkerDoWork;
 
@@ -304,11 +320,11 @@ namespace ReforgerServerApp
                     serverProcess.OutputDataReceived -= SteamCmdDataReceived;
                     serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
                     serverProcess.CancelOutputRead();
-                    serverProcess.Close();
+                    serverProcess.Kill();
                 }
                 catch (Exception ex)
                 {
-                    // continue without alerting the user of the error, this isn't a big deal
+                    MessageBox.Show("Error: " + ex.Message);
                 }
             }
             else
@@ -331,8 +347,8 @@ namespace ReforgerServerApp
 
         private void SteamCmdUpdateWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            steamCmdUpdateProcess = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo();
+            steamCmdUpdateProcess = new();
+            ProcessStartInfo startInfo = new();
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.FileName = ".\\steamcmd\\steamcmd.exe";
             startInfo.Arguments = "+force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit";
@@ -351,8 +367,8 @@ namespace ReforgerServerApp
 
             if (steamCmdUpdateProcess.HasExited)
             {
-                serverProcess = new Process();
-                ProcessStartInfo serverStartInfo = new ProcessStartInfo();
+                serverProcess = new();
+                ProcessStartInfo serverStartInfo = new();
                 serverStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 serverStartInfo.UseShellExecute = false;
                 serverStartInfo.WorkingDirectory = Environment.CurrentDirectory + "\\arma_reforger";
@@ -375,6 +391,48 @@ namespace ReforgerServerApp
                 serverProcess.ErrorDataReceived += SteamCmdDataReceived;
                 serverProcess.Start();
                 serverProcess.BeginOutputReadLine();
+            }
+        }
+
+        private void EnableAllModsBtnPressed(object sender, EventArgs e)
+        {
+            List<Mod> availableMods = GetAvailableModsList().Items.OfType<Mod>().ToList();
+            foreach (Mod m in availableMods)
+            {
+                if (!GetEnabledModsList().Items.Contains(m))
+                {
+                    GetEnabledModsList().Items.Add(m);
+                    GetAvailableModsList().Items.Remove(m);
+                }
+            }
+            AlphabetiseModListBox(GetAvailableModsList());
+            AlphabetiseModListBox(GetEnabledModsList());
+        }
+
+        private void DisableAllModsBtnPressed(object sender, EventArgs e)
+        {
+            List<Mod> enabledMods = GetEnabledModsList().Items.OfType<Mod>().ToList();
+            foreach (Mod m in enabledMods)
+            {
+                if (!GetAvailableModsList().Items.Contains(m))
+                {
+                    GetAvailableModsList().Items.Add(m);
+                    GetEnabledModsList().Items.Remove(m);
+                }
+            }
+            AlphabetiseModListBox(GetAvailableModsList());
+            AlphabetiseModListBox(GetEnabledModsList());
+        }
+
+        public static void AlphabetiseModListBox(ListBox listBox)
+        {
+            List<Mod> list = listBox.Items.OfType<Mod>().ToList();
+            list.Sort((x, y) => string.Compare(x.GetModName(), y.GetModName()));
+            listBox.Items.Clear();
+
+            foreach (Mod m in list)
+            {
+                listBox.Items.Add(m);
             }
         }
     }

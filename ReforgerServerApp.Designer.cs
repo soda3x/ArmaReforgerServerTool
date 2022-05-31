@@ -1,6 +1,6 @@
 ﻿namespace ReforgerServerApp
 {
-    partial class Main
+    partial class ReforgerServerApp
     {
         /// <summary>
         ///  Required designer variable.
@@ -97,6 +97,8 @@
             this.steamCmdLog = new System.Windows.Forms.TextBox();
             this.steamCmdAlert = new System.Windows.Forms.Label();
             this.downloadSteamCmdBtn = new System.Windows.Forms.Button();
+            this.enableAllModsBtn = new System.Windows.Forms.Button();
+            this.disableAllModsBtn = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -172,6 +174,8 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.disableAllModsBtn);
+            this.groupBox2.Controls.Add(this.enableAllModsBtn);
             this.groupBox2.Controls.Add(this.label16);
             this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.removeFromEnabledBtn);
@@ -1055,6 +1059,26 @@
             this.downloadSteamCmdBtn.UseVisualStyleBackColor = true;
             this.downloadSteamCmdBtn.Click += new System.EventHandler(this.DownloadSteamCmdBtnPressed);
             // 
+            // enableAllModsBtn
+            // 
+            this.enableAllModsBtn.Location = new System.Drawing.Point(306, 207);
+            this.enableAllModsBtn.Name = "enableAllModsBtn";
+            this.enableAllModsBtn.Size = new System.Drawing.Size(23, 52);
+            this.enableAllModsBtn.TabIndex = 6;
+            this.enableAllModsBtn.Text = ">>";
+            this.enableAllModsBtn.UseVisualStyleBackColor = true;
+            this.enableAllModsBtn.Click += new System.EventHandler(this.EnableAllModsBtnPressed);
+            // 
+            // disableAllModsBtn
+            // 
+            this.disableAllModsBtn.Location = new System.Drawing.Point(306, 423);
+            this.disableAllModsBtn.Name = "disableAllModsBtn";
+            this.disableAllModsBtn.Size = new System.Drawing.Size(23, 52);
+            this.disableAllModsBtn.TabIndex = 7;
+            this.disableAllModsBtn.Text = "<<";
+            this.disableAllModsBtn.UseVisualStyleBackColor = true;
+            this.disableAllModsBtn.Click += new System.EventHandler(this.DisableAllModsBtnPressed);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1162,5 +1186,7 @@
         private CheckBox limitFPS;
         private Label label21;
         private ComboBox scenarioId;
+        private Button disableAllModsBtn;
+        private Button enableAllModsBtn;
     }
 }
