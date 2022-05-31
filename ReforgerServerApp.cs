@@ -320,6 +320,7 @@ namespace ReforgerServerApp
                     serverProcess.OutputDataReceived -= SteamCmdDataReceived;
                     serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
                     serverProcess.CancelOutputRead();
+                    serverProcess.CancelErrorRead();
                     serverProcess.Kill();
                 }
                 catch (Exception ex)
@@ -391,6 +392,7 @@ namespace ReforgerServerApp
                 serverProcess.ErrorDataReceived += SteamCmdDataReceived;
                 serverProcess.Start();
                 serverProcess.BeginOutputReadLine();
+                serverProcess.BeginErrorReadLine();
             }
         }
 
