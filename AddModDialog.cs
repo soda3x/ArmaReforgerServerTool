@@ -19,11 +19,23 @@ namespace ReforgerServerApp
             m_reforgerApp = reforgerApp;
         }
 
+        /// <summary>
+        /// Handler for the Close Button.
+        /// Closes the Add Mod Dialog.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CancelBtnPressed(object sender, EventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// Handler for the Add Mod Button.
+        /// Adds the mod to the Available Mods ListBox.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddBtnPressed(object sender, EventArgs e)
         {
             Mod mod = new(modId.Text, modName.Text);

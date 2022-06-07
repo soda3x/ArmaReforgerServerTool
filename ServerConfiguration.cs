@@ -24,6 +24,7 @@ namespace ReforgerServerApp
         public int ServerMaxViewDistance { get; set; }
         public int ServerMinGrassDistance { get; set; }
         public int NetworkViewDistance { get; set; }
+        public int GameNumber { get; set; }
         public bool DisableThirdPerson { get; set; }
         public bool FastValidation { get; set; }
         public bool BattlEye { get; set; }
@@ -44,6 +45,10 @@ namespace ReforgerServerApp
             Mods = new List<Mod>();
         }
 
+        /// <summary>
+        /// Display ServerConfiguration in the JSON format required by the Arma Server files.
+        /// </summary>
+        /// <returns>JSON string representation of the Server Configuration</returns>
         public string AsJsonString()
         {
             StringBuilder sb = new StringBuilder();
@@ -66,6 +71,7 @@ namespace ReforgerServerApp
             sb.AppendLine("\"serverMaxViewDistance\": " + +ServerMaxViewDistance + ",");
             sb.AppendLine("\"serverMinGrassDistance\": " + ServerMinGrassDistance + ",");
             sb.AppendLine("\"networkViewDistance\": " + NetworkViewDistance + ",");
+            sb.AppendLine("\"gameNumber\": " + GameNumber + ",");
             sb.AppendLine("\"disableThirdPerson\": " + DisableThirdPerson.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"fastValidation\": " + FastValidation.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"battlEye\": " + BattlEye.ToString().ToLowerInvariant());
@@ -102,9 +108,13 @@ namespace ReforgerServerApp
             return sb.ToString().Trim();
         }
 
+        /// <summary>
+        /// Display ServerConfiguration as a comma separated string for saving to file.
+        /// </summary>
+        /// <returns>Comma-separated string representation of the Server Configuration</returns>
         public string AsCommaSeparatedString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine("dedicatedServerId," + DedicatedServerId);
             sb.AppendLine("region," + Region);
             sb.AppendLine("gameHostBindAddress," + GameHostBindAddress);
@@ -121,6 +131,7 @@ namespace ReforgerServerApp
             sb.AppendLine("serverMaxViewDistance," + ServerMaxViewDistance);
             sb.AppendLine("serverMinGrassDistance," + ServerMinGrassDistance);
             sb.AppendLine("networkViewDistance," + NetworkViewDistance);
+            sb.AppendLine("gameNumber," + GameNumber);
             sb.AppendLine("disableThirdPerson," + DisableThirdPerson.ToString().ToLowerInvariant());
             sb.AppendLine("fastValidation," + FastValidation.ToString().ToLowerInvariant());
             sb.AppendLine("battlEye," + BattlEye.ToString().ToLowerInvariant());
@@ -253,6 +264,13 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.NetworkViewDistance = networkViewDistance;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithGameNumber(int gameNumber)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.GameNumber = gameNumber;
                 return this;
             }
 
