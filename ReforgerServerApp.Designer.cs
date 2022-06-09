@@ -91,9 +91,15 @@
             this.loadSettingsBtn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.clearLogBtn = new System.Windows.Forms.Button();
             this.deleteServerFilesBtn = new System.Windows.Forms.Button();
             this.aboutBtn = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.restartUnitsComboBox = new System.Windows.Forms.ComboBox();
+            this.restartIntervalUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.automaticallyRestart = new System.Windows.Forms.CheckBox();
             this.label21 = new System.Windows.Forms.Label();
             this.fpsLimitUpDown = new System.Windows.Forms.NumericUpDown();
             this.label20 = new System.Windows.Forms.Label();
@@ -117,6 +123,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.playerCountLimit)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.restartIntervalUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fpsLimitUpDown)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
@@ -993,6 +1000,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.clearLogBtn);
             this.tabPage2.Controls.Add(this.deleteServerFilesBtn);
             this.tabPage2.Controls.Add(this.aboutBtn);
             this.tabPage2.Controls.Add(this.groupBox4);
@@ -1007,6 +1015,16 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Server Management";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // clearLogBtn
+            // 
+            this.clearLogBtn.Location = new System.Drawing.Point(1160, 721);
+            this.clearLogBtn.Name = "clearLogBtn";
+            this.clearLogBtn.Size = new System.Drawing.Size(66, 23);
+            this.clearLogBtn.TabIndex = 6;
+            this.clearLogBtn.Text = "Clear Log";
+            this.clearLogBtn.UseVisualStyleBackColor = true;
+            this.clearLogBtn.Click += new System.EventHandler(this.ClearLogBtnPressed);
             // 
             // deleteServerFilesBtn
             // 
@@ -1030,6 +1048,11 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.restartUnitsComboBox);
+            this.groupBox4.Controls.Add(this.restartIntervalUpDown);
+            this.groupBox4.Controls.Add(this.label10);
+            this.groupBox4.Controls.Add(this.label6);
+            this.groupBox4.Controls.Add(this.automaticallyRestart);
             this.groupBox4.Controls.Add(this.label21);
             this.groupBox4.Controls.Add(this.fpsLimitUpDown);
             this.groupBox4.Controls.Add(this.label20);
@@ -1041,11 +1064,71 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Advanced";
             // 
+            // restartUnitsComboBox
+            // 
+            this.restartUnitsComboBox.FormattingEnabled = true;
+            this.restartUnitsComboBox.Items.AddRange(new object[] {
+            "Mins",
+            "Hours",
+            "Days"});
+            this.restartUnitsComboBox.Location = new System.Drawing.Point(105, 119);
+            this.restartUnitsComboBox.Name = "restartUnitsComboBox";
+            this.restartUnitsComboBox.Size = new System.Drawing.Size(63, 23);
+            this.restartUnitsComboBox.TabIndex = 8;
+            this.restartUnitsComboBox.Text = "Mins";
+            // 
+            // restartIntervalUpDown
+            // 
+            this.restartIntervalUpDown.Location = new System.Drawing.Point(50, 119);
+            this.restartIntervalUpDown.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.restartIntervalUpDown.Name = "restartIntervalUpDown";
+            this.restartIntervalUpDown.Size = new System.Drawing.Size(49, 23);
+            this.restartIntervalUpDown.TabIndex = 7;
+            this.restartIntervalUpDown.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label10.Location = new System.Drawing.Point(9, 122);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(35, 15);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "Every";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label6.Location = new System.Drawing.Point(32, 100);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(120, 15);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "Automatically Restart";
+            // 
+            // automaticallyRestart
+            // 
+            this.automaticallyRestart.AutoSize = true;
+            this.automaticallyRestart.Location = new System.Drawing.Point(11, 101);
+            this.automaticallyRestart.Name = "automaticallyRestart";
+            this.automaticallyRestart.Size = new System.Drawing.Size(15, 14);
+            this.automaticallyRestart.TabIndex = 4;
+            this.automaticallyRestart.UseVisualStyleBackColor = true;
+            this.automaticallyRestart.CheckedChanged += new System.EventHandler(this.AutoRestartCheckedChanged);
+            // 
             // label21
             // 
             this.label21.AutoSize = true;
             this.label21.Font = new System.Drawing.Font("Segoe UI Semibold", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label21.Location = new System.Drawing.Point(9, 72);
+            this.label21.Location = new System.Drawing.Point(11, 72);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(145, 12);
             this.label21.TabIndex = 3;
@@ -1060,7 +1143,7 @@
             0,
             0});
             this.fpsLimitUpDown.Name = "fpsLimitUpDown";
-            this.fpsLimitUpDown.Size = new System.Drawing.Size(140, 23);
+            this.fpsLimitUpDown.Size = new System.Drawing.Size(157, 23);
             this.fpsLimitUpDown.TabIndex = 2;
             this.fpsLimitUpDown.Value = new decimal(new int[] {
             60,
@@ -1172,6 +1255,7 @@
             this.tabPage2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.restartIntervalUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fpsLimitUpDown)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
@@ -1256,5 +1340,11 @@
         private Label label2;
         private NumericUpDown gameNumber;
         private Label serverRunningLabel;
+        private ComboBox restartUnitsComboBox;
+        private NumericUpDown restartIntervalUpDown;
+        private Label label10;
+        private Label label6;
+        private CheckBox automaticallyRestart;
+        private Button clearLogBtn;
     }
 }
