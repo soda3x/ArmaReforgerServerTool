@@ -1,7 +1,7 @@
 # Arma Reforger Dedicated Server Tool
 Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool!
 
-## Unique Features
+## Features
 - Load and Save server configuration files
 - Automatically schedule your server to restart (minutes / hours / days interval)
 - Powerful mod management with the ability to import mods from saved configurations
