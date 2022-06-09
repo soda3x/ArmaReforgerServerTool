@@ -15,8 +15,10 @@ namespace ReforgerServerApp
         private string steamCmdFile;
         private string installDirectory;
         private bool serverStarted;
+        private bool serverStartedWithTimer;
         private Process steamCmdUpdateProcess;
         private Process serverProcess;
+        private CancellationTokenSource timerCancellationTokenSource;
         public ReforgerServerApp()
         {
             InitializeComponent();
@@ -59,8 +61,12 @@ namespace ReforgerServerApp
 
             UpdateSteamCmdInstallStatus();
             fpsLimitUpDown.Enabled = false;
+            restartIntervalUpDown.Enabled = false;
+            restartUnitsComboBox.Enabled = false;
             serverStarted = false;
+            serverStartedWithTimer = false;
             serverProcess = new();
+            timerCancellationTokenSource = new();
             AlphabetiseModListBox(GetAvailableModsList());
             AlphabetiseModListBox(GetEnabledModsList());
         }
@@ -441,13 +447,132 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
+        /// Handler for the Auto Restart Checkbox, enables / disables the Interval and Units Numeric Up Down and ComboBoxes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AutoRestartCheckedChanged(object sender, EventArgs e)
+        {
+            if (automaticallyRestart.Checked)
+            {
+                restartIntervalUpDown.Enabled = true;
+                restartUnitsComboBox.Enabled = true;
+            }
+            else
+            {
+                restartIntervalUpDown.Enabled = false;
+                restartUnitsComboBox.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// This is the handler for the Start Server Button. This is also used for the automatic server restart functionality.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StartServerBtnPressed(object sender, EventArgs e)
+        {
+            const int INTERVAL_MINS = 0;
+            const int INTERVAL_HRS = 1;
+            const int INTERVAL_DAYS = 2;
+
+            // If we are starting the server for the first time and using the automatic restart functionality, configure the timer
+            if (automaticallyRestart.Checked && !serverStartedWithTimer)
+            {
+                // Create a timespan based on which units the user has selected
+                // Use default value of 1 hour restarts so VS stops yelling at us
+                TimeSpan interval = TimeSpan.FromHours(1);
+                switch (restartUnitsComboBox.SelectedIndex)
+                {
+                    case INTERVAL_MINS:
+                        interval = TimeSpan.FromMinutes((int)restartIntervalUpDown.Value);
+                        break;
+                    case INTERVAL_HRS:
+                        interval = TimeSpan.FromHours((int)restartIntervalUpDown.Value);
+                        break;
+                    case INTERVAL_DAYS:
+                        interval = TimeSpan.FromDays((int)restartIntervalUpDown.Value);
+                        break;
+                }
+
+                Task automaticRestartTask = PeriodicAsync(DoStartStopServerLogicTimer, interval, timerCancellationTokenSource.Token);
+                serverStartedWithTimer = true;
+            }
+            // The user is turning the server off manually
+            else if (automaticallyRestart.Checked && serverStartedWithTimer)
+            {
+                timerCancellationTokenSource.Cancel();
+                // Call this method to shut the server down finally
+                DoStartStopServerLogic();
+                serverStartedWithTimer = false;
+            }
+            // User just normally pressed the button
+            else if (!automaticallyRestart.Checked && !serverStartedWithTimer)
+            {
+                DoStartStopServerLogic();
+            }
+        }
+
+        /// <summary>
         /// This method controls the logic for Starting and Stopping the Server.
         /// When Starting the server, this will spawn the Worker Thread that runs the SteamCMD and server processes.
         /// When Stopping the server, this will kill the server process and remove the Output / Error redirects.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void StartServerBtnPressed(object sender, EventArgs e)
+        private void DoStartStopServerLogic()
+        {
+            BackgroundWorker worker = new();
+            worker.WorkerSupportsCancellation = true;
+            worker.DoWork += SteamCmdUpdateWorkerDoWork;
+
+            if (serverStarted)
+            {
+                if (File.Exists(installDirectory + "\\server.json"))
+                {
+                    File.Delete(installDirectory + "\\server.json");
+                }
+                worker.CancelAsync();
+                try
+                {
+                    serverProcess.OutputDataReceived -= SteamCmdDataReceived;
+                    serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
+                    serverProcess.CancelOutputRead();
+                    serverProcess.CancelErrorRead();
+                    steamCmdLog.AppendText(GetTimestamp() + ": " + "User stopped server." + Environment.NewLine);
+                    serverProcess.Kill();
+                    
+                    serverStarted = false;
+                    startServerBtn.Text = "Start Server";
+                    deleteServerFilesBtn.Enabled = true;
+                    EnableServerFields(true);
+                    serverRunningLabel.Text = string.Empty;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: " + ex.Message);
+                }
+            }
+            else
+            {
+                string jsonConfig = CreateConfiguration().AsJsonString();
+                File.WriteAllText(installDirectory + "\\server.json", jsonConfig);
+                serverStarted = true;
+                startServerBtn.Text = "Stop Server";
+                startServerBtn.Enabled = false;
+                deleteServerFilesBtn.Enabled = false;
+                EnableServerFields(false);
+                serverRunningLabel.Text = "Server is currently running. To modify the configuration, you will need to stop it first.";
+                steamCmdLog.AppendText(GetTimestamp() + ": " + "User started server." + Environment.NewLine);
+                worker.RunWorkerAsync();
+            }
+        }
+
+        /// <summary>
+        /// This is almost identical to the DoStartStopServerLogic method with the difference being it
+        /// automatically restarts the server after stopping it as it's not a toggle.
+        /// </summary>
+        private void DoStartStopServerLogicTimer()
         {
             BackgroundWorker worker = new();
             worker.WorkerSupportsCancellation = true;
@@ -471,24 +596,24 @@ namespace ReforgerServerApp
                     serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
                     serverProcess.CancelOutputRead();
                     serverProcess.CancelErrorRead();
+                    steamCmdLog.AppendText(GetTimestamp() + ": " + "Automatically stopped server." + Environment.NewLine);
                     serverProcess.Kill();
+                    
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error: " + ex.Message);
                 }
             }
-            else
-            {
-                string jsonConfig = CreateConfiguration().AsJsonString();
-                File.WriteAllText(installDirectory + "\\server.json", jsonConfig);
-                serverStarted = true;
-                startServerBtn.Text = "Stop Server";
-                deleteServerFilesBtn.Enabled = false;
-                EnableServerFields(false);
-                serverRunningLabel.Text = "Server is currently running. To modify the configuration, you will need to stop it first.";
-                worker.RunWorkerAsync();
-            }
+            string jsonConfig = CreateConfiguration().AsJsonString();
+            File.WriteAllText(installDirectory + "\\server.json", jsonConfig);
+            serverStarted = true;
+            startServerBtn.Text = "Stop Server";
+            startServerBtn.Enabled = false;
+            EnableServerFields(false);
+            serverRunningLabel.Text = "Server is currently running. To modify the configuration, you will need to stop it first.";
+            steamCmdLog.AppendText(GetTimestamp() + ": " + "Automatically started server." + Environment.NewLine);
+            worker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -500,7 +625,7 @@ namespace ReforgerServerApp
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                steamCmdLog.AppendText(e.Data + Environment.NewLine);
+                steamCmdLog.AppendText(GetTimestamp() + ": " + e.Data + Environment.NewLine);
             }
         }
 
@@ -532,6 +657,7 @@ namespace ReforgerServerApp
 
             if (steamCmdUpdateProcess.HasExited)
             {
+                startServerBtn.Invoke((MethodInvoker)(() => startServerBtn.Enabled = true));
                 serverProcess = new();
                 ProcessStartInfo serverStartInfo = new();
                 serverStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -687,6 +813,48 @@ namespace ReforgerServerApp
             saveSettingsBtn.Enabled = enabled;
             addModBtn.Enabled = enabled;
             removeModBtn.Enabled = enabled;
+            deleteServerFilesBtn.Enabled = enabled;
+            limitFPS.Enabled = enabled;
+            fpsLimitUpDown.Enabled = enabled;
+            automaticallyRestart.Enabled = enabled;
+            restartIntervalUpDown.Enabled = enabled;
+            restartUnitsComboBox.Enabled = enabled;
+        }
+
+        /// <summary>
+        /// Method for starting asynchronous periodic timer based functionality
+        /// </summary>
+        /// <param name="action">Method to run</param>
+        /// <param name="interval">Interval at which to run</param>
+        /// <param name="cancellationToken">Cancellation token to cancel with</param>
+        /// <returns></returns>
+        public static async Task PeriodicAsync(Action action, TimeSpan interval, CancellationToken cancellationToken = default)
+        {
+            using PeriodicTimer timer = new(interval);
+            while (true)
+            {
+                action();
+                await timer.WaitForNextTickAsync(cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// Return string representation of DateTime.Now
+        /// </summary>
+        /// <returns></returns>
+        public static string GetTimestamp()
+        {
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        /// <summary>
+        /// Handler for the "Clear Log" button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ClearLogBtnPressed(object sender, EventArgs e)
+        {
+            steamCmdLog.Text = string.Empty;
         }
     }
 }
