@@ -64,6 +64,7 @@ namespace ReforgerServerApp
             sb.AppendLine("\"name\": " + "\"" + ServerName + "\",");
             sb.AppendLine("\"password\":" + "\"" + ServerPassword + "\",");
             sb.AppendLine("\"scenarioId\": " + "\"" + ScenarioId + "\",");
+            sb.AppendLine("\"gameNumber\": " + GameNumber + ",");
             sb.AppendLine("\"playerCountLimit\": " + PlayerCountLimit + ",");
             sb.AppendLine("\"autoJoinable\": " + AutoJoinable.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"visible\": " + Visible.ToString().ToLowerInvariant() + ",");
@@ -71,7 +72,6 @@ namespace ReforgerServerApp
             sb.AppendLine("\"serverMaxViewDistance\": " + +ServerMaxViewDistance + ",");
             sb.AppendLine("\"serverMinGrassDistance\": " + ServerMinGrassDistance + ",");
             sb.AppendLine("\"networkViewDistance\": " + NetworkViewDistance + ",");
-            sb.AppendLine("\"gameNumber\": " + GameNumber + ",");
             sb.AppendLine("\"disableThirdPerson\": " + DisableThirdPerson.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"fastValidation\": " + FastValidation.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"battlEye\": " + BattlEye.ToString().ToLowerInvariant());

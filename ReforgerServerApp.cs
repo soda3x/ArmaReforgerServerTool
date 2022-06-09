@@ -370,6 +370,7 @@ namespace ReforgerServerApp
                 .WithServerName(serverName.Text)
                 .WithServerPassword(serverPassword.Text)
                 .WithScenarioId(scenarioId.Text)
+                .WithGameNumber((int)gameNumber.Value)
                 .WithPlayerCountLimit((int)playerCountLimit.Value)
                 .WithAutoJoinable(autoJoinable.Checked)
                 .WithVisible(visible.Checked)
@@ -476,7 +477,7 @@ namespace ReforgerServerApp
             else
             {
                 string jsonConfig = CreateConfiguration().AsJsonString();
-                File.WriteAllText(@"./server.json", jsonConfig);
+                File.WriteAllText(installDirectory + "\\server.json", jsonConfig);
                 serverStarted = true;
                 startServerBtn.Text = "Stop Server";
                 deleteServerFilesBtn.Enabled = false;
@@ -536,7 +537,7 @@ namespace ReforgerServerApp
                 {
                     limitFPSArg = "-maxFPS " + Convert.ToString(fpsLimitUpDown.Value);
                 }
-                string args = "-config \"" + installDirectory + "\\server.json\" -profile \""
+                string args = "-config \"" + installDirectory + ".\\server.json\" -profile \""
                      + installDirectory + "\\saves\" -logStats 5000 " + limitFPSArg;
                 serverStartInfo.Arguments = args;
                 serverStartInfo.RedirectStandardOutput = true;
