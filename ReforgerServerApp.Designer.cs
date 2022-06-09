@@ -30,6 +30,7 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.serverRunningLabel = new System.Windows.Forms.Label();
             this.addModBtn = new System.Windows.Forms.Button();
             this.removeModBtn = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -135,6 +136,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.serverRunningLabel);
             this.tabPage1.Controls.Add(this.addModBtn);
             this.tabPage1.Controls.Add(this.removeModBtn);
             this.tabPage1.Controls.Add(this.groupBox2);
@@ -149,6 +151,16 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Server Configuration";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // serverRunningLabel
+            // 
+            this.serverRunningLabel.AutoSize = true;
+            this.serverRunningLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.serverRunningLabel.Location = new System.Drawing.Point(312, 723);
+            this.serverRunningLabel.Name = "serverRunningLabel";
+            this.serverRunningLabel.Size = new System.Drawing.Size(128, 17);
+            this.serverRunningLabel.TabIndex = 50;
+            this.serverRunningLabel.Text = "serverRunningLabel";
             // 
             // addModBtn
             // 
@@ -1243,5 +1255,6 @@
         private Button deleteServerFilesBtn;
         private Label label2;
         private NumericUpDown gameNumber;
+        private Label serverRunningLabel;
     }
 }

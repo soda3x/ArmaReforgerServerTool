@@ -21,6 +21,8 @@ namespace ReforgerServerApp
         {
             InitializeComponent();
 
+            serverRunningLabel.Text = string.Empty;
+
             // Create tooltips
             ToolTip enableAllModsToolTip = new();
             enableAllModsToolTip.SetToolTip(enableAllModsBtn, "Enable All Mods");
@@ -453,14 +455,16 @@ namespace ReforgerServerApp
 
             if (serverStarted)
             {
-                if (File.Exists("./server.json"))
+                if (File.Exists(installDirectory + "\\server.json"))
                 {
-                    File.Delete("./server.json");
+                    File.Delete(installDirectory + "\\server.json");
                 }
                 serverStarted = false;
                 startServerBtn.Text = "Start Server";
                 deleteServerFilesBtn.Enabled = true;
                 worker.CancelAsync();
+                EnableServerFields(true);
+                serverRunningLabel.Text = string.Empty;
                 try
                 {
                     serverProcess.OutputDataReceived -= SteamCmdDataReceived;
@@ -481,6 +485,8 @@ namespace ReforgerServerApp
                 serverStarted = true;
                 startServerBtn.Text = "Stop Server";
                 deleteServerFilesBtn.Enabled = false;
+                EnableServerFields(false);
+                serverRunningLabel.Text = "Server is currently running. To modify the configuration, you will need to stop it first.";
                 worker.RunWorkerAsync();
             }
         }
@@ -643,6 +649,44 @@ namespace ReforgerServerApp
                 UpdateSteamCmdInstallStatus();
                 MessageBox.Show("Server files deleted.", "Warning", MessageBoxButtons.OK);
             }
+        }
+
+        /// <summary>
+        /// Enable / Disable Server Configuration Fields
+        /// </summary>
+        /// <param name="enabled"></param>
+        private void EnableServerFields(bool enabled)
+        {
+            dedicatedServerId.Enabled = enabled;
+            region.Enabled = enabled;
+            gameHostBindAddress.Enabled = enabled;
+            gameHostBindPort.Enabled = enabled;
+            gameHostRegisterBindAddress.Enabled = enabled;
+            gameHostRegisterBindPort.Enabled = enabled;
+            adminPassword.Enabled = enabled;
+            serverName.Enabled = enabled;
+            serverPassword.Enabled = enabled;
+            scenarioId.Enabled = enabled;
+            playerCountLimit.Enabled = enabled;
+            autoJoinable.Enabled = enabled;
+            visible.Enabled = enabled;
+            serverMaxViewDistance.Enabled = enabled;
+            serverMinGrassDistance.Enabled = enabled;
+            networkViewDistance.Enabled = enabled;
+            gameNumber.Enabled = enabled;
+            disableThirdPerson.Enabled = enabled;
+            fastValidation.Enabled = enabled;
+            battlEye.Enabled = enabled;
+            a2sQueryEnabled.Enabled = enabled;
+            steamQueryPort.Enabled = enabled;
+            enableAllModsBtn.Enabled = enabled;
+            addToEnabledBtn.Enabled = enabled;
+            disableAllModsBtn.Enabled = enabled;
+            removeFromEnabledBtn.Enabled = enabled;
+            loadSettingsBtn.Enabled = enabled;
+            saveSettingsBtn.Enabled = enabled;
+            addModBtn.Enabled = enabled;
+            removeModBtn.Enabled = enabled;
         }
     }
 }
