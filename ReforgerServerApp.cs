@@ -541,7 +541,7 @@ namespace ReforgerServerApp
                     serverProcess.CancelErrorRead();
                     steamCmdLog.AppendText(GetTimestamp() + ": " + "User stopped server." + Environment.NewLine);
                     serverProcess.Kill();
-                    
+
                     serverStarted = false;
                     startServerBtn.Text = "Start Server";
                     deleteServerFilesBtn.Enabled = true;
@@ -598,7 +598,7 @@ namespace ReforgerServerApp
                     serverProcess.CancelErrorRead();
                     steamCmdLog.AppendText(GetTimestamp() + ": " + "Automatically stopped server." + Environment.NewLine);
                     serverProcess.Kill();
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -625,7 +625,7 @@ namespace ReforgerServerApp
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                steamCmdLog.AppendText(GetTimestamp() + ": " + e.Data + Environment.NewLine);
+                steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText(GetTimestamp() + ": " + e.Data + Environment.NewLine)));
             }
         }
 
@@ -649,7 +649,6 @@ namespace ReforgerServerApp
             steamCmdUpdateProcess.StartInfo = startInfo;
             steamCmdUpdateProcess.OutputDataReceived += SteamCmdDataReceived;
             steamCmdUpdateProcess.ErrorDataReceived += SteamCmdDataReceived;
-            steamCmdUpdateProcess.SynchronizingObject = steamCmdLog;
             steamCmdUpdateProcess.Start();
             steamCmdUpdateProcess.BeginOutputReadLine();
             steamCmdUpdateProcess.BeginErrorReadLine();
@@ -677,7 +676,6 @@ namespace ReforgerServerApp
                 serverProcess.EnableRaisingEvents = true;
                 serverStartInfo.CreateNoWindow = true;
                 serverProcess.StartInfo = serverStartInfo;
-                serverProcess.SynchronizingObject = steamCmdLog;
                 serverProcess.OutputDataReceived += SteamCmdDataReceived;
                 serverProcess.ErrorDataReceived += SteamCmdDataReceived;
                 serverProcess.Start();
