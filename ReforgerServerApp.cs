@@ -63,6 +63,7 @@ namespace ReforgerServerApp
             fpsLimitUpDown.Enabled = false;
             restartIntervalUpDown.Enabled = false;
             restartUnitsComboBox.Enabled = false;
+            overridePortNumericUpDown.Enabled = false;
             serverStarted = false;
             serverStartedWithTimer = false;
             serverProcess = new();
@@ -668,8 +669,13 @@ namespace ReforgerServerApp
                 {
                     limitFPSArg = "-maxFPS " + Convert.ToString(fpsLimitUpDown.Value);
                 }
+                string overridePortArg = string.Empty;
+                if (forcePortCheckBox.Checked)
+                {
+                    overridePortArg = "-bindPort " + Convert.ToString(overridePortNumericUpDown.Value);
+                }
                 string args = "-config \"" + installDirectory + ".\\server.json\" -profile \""
-                     + installDirectory + "\\saves\" -logStats 5000 " + limitFPSArg;
+                     + installDirectory + "\\saves\" -logStats 5000 " + limitFPSArg + overridePortArg;
                 serverStartInfo.Arguments = args;
                 serverStartInfo.RedirectStandardOutput = true;
                 serverStartInfo.RedirectStandardError = true;
@@ -817,6 +823,8 @@ namespace ReforgerServerApp
             automaticallyRestart.Enabled = enabled;
             restartIntervalUpDown.Enabled = enabled;
             restartUnitsComboBox.Enabled = enabled;
+            forcePortCheckBox.Enabled = enabled;
+            overridePortNumericUpDown.Enabled = enabled;
         }
 
         /// <summary>
@@ -853,6 +861,23 @@ namespace ReforgerServerApp
         private void ClearLogBtnPressed(object sender, EventArgs e)
         {
             steamCmdLog.Text = string.Empty;
+        }
+
+        /// <summary>
+        /// Handler for the Override Port Checkbox, enables / disables the Override Port field
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OverridePortCheckChanged(object sender, EventArgs e)
+        {
+            if (forcePortCheckBox.Checked)
+            {
+                overridePortNumericUpDown.Enabled = true;
+            }
+            else
+            {
+                overridePortNumericUpDown.Enabled = false;
+            }
         }
     }
 }

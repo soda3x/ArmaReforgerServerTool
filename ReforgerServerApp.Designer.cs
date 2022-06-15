@@ -96,6 +96,10 @@
             this.deleteServerFilesBtn = new System.Windows.Forms.Button();
             this.aboutBtn = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label22 = new System.Windows.Forms.Label();
+            this.overridePortNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label23 = new System.Windows.Forms.Label();
+            this.forcePortCheckBox = new System.Windows.Forms.CheckBox();
             this.restartUnitsComboBox = new System.Windows.Forms.ComboBox();
             this.restartIntervalUpDown = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
@@ -124,6 +128,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.playerCountLimit)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.overridePortNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.restartIntervalUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fpsLimitUpDown)).BeginInit();
             this.groupBox3.SuspendLayout();
@@ -1049,6 +1054,10 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.label22);
+            this.groupBox4.Controls.Add(this.overridePortNumericUpDown);
+            this.groupBox4.Controls.Add(this.label23);
+            this.groupBox4.Controls.Add(this.forcePortCheckBox);
             this.groupBox4.Controls.Add(this.restartUnitsComboBox);
             this.groupBox4.Controls.Add(this.restartIntervalUpDown);
             this.groupBox4.Controls.Add(this.label10);
@@ -1064,6 +1073,58 @@
             this.groupBox4.TabIndex = 4;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Advanced";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Font = new System.Drawing.Font("Segoe UI Semibold", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label22.Location = new System.Drawing.Point(11, 205);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(133, 24);
+            this.label22.TabIndex = 12;
+            this.label22.Text = "Override the ports specified\r\nin Server Configuration";
+            // 
+            // overridePortNumericUpDown
+            // 
+            this.overridePortNumericUpDown.Location = new System.Drawing.Point(11, 179);
+            this.overridePortNumericUpDown.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.overridePortNumericUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.overridePortNumericUpDown.Name = "overridePortNumericUpDown";
+            this.overridePortNumericUpDown.Size = new System.Drawing.Size(157, 23);
+            this.overridePortNumericUpDown.TabIndex = 11;
+            this.overridePortNumericUpDown.Value = new decimal(new int[] {
+            2001,
+            0,
+            0,
+            0});
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label23.Location = new System.Drawing.Point(32, 158);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(77, 15);
+            this.label23.TabIndex = 10;
+            this.label23.Text = "Override Port";
+            // 
+            // forcePortCheckBox
+            // 
+            this.forcePortCheckBox.AutoSize = true;
+            this.forcePortCheckBox.Location = new System.Drawing.Point(11, 159);
+            this.forcePortCheckBox.Name = "forcePortCheckBox";
+            this.forcePortCheckBox.Size = new System.Drawing.Size(15, 14);
+            this.forcePortCheckBox.TabIndex = 9;
+            this.forcePortCheckBox.UseVisualStyleBackColor = true;
+            this.forcePortCheckBox.CheckedChanged += new System.EventHandler(this.OverridePortCheckChanged);
             // 
             // restartUnitsComboBox
             // 
@@ -1257,6 +1318,7 @@
             this.tabPage2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.overridePortNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.restartIntervalUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fpsLimitUpDown)).EndInit();
             this.groupBox3.ResumeLayout(false);
@@ -1348,5 +1410,9 @@
         private Label label6;
         private CheckBox automaticallyRestart;
         private Button clearLogBtn;
+        private Label label22;
+        private NumericUpDown overridePortNumericUpDown;
+        private Label label23;
+        private CheckBox forcePortCheckBox;
     }
 }
