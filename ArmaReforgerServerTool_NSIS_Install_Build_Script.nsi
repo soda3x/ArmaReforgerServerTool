@@ -10,6 +10,7 @@ Name "Arma Reforger Dedicated Server Tool"
 
 OutFile "install_reforger_server_tool.exe"
 
+!define MUI_ICON "arma_icon_white.ico"
 !define MUI_ABORTWARNING
 
 InstallDir $LOCALAPPDATA\ArmaReforgerServerTool
