@@ -667,7 +667,7 @@ namespace ReforgerServerApp
                 string limitFPSArg = string.Empty;
                 if (limitFPS.Checked)
                 {
-                    limitFPSArg = "-maxFPS " + Convert.ToString(fpsLimitUpDown.Value);
+                    limitFPSArg = "-maxFPS " + Convert.ToString(fpsLimitUpDown.Value) + " ";
                 }
                 string overridePortArg = string.Empty;
                 if (forcePortCheckBox.Checked)
