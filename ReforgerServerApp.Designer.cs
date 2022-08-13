@@ -100,6 +100,7 @@
             this.saveSettingsBtn = new System.Windows.Forms.Button();
             this.loadSettingsBtn = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.locateServerFilesBtn = new System.Windows.Forms.Button();
             this.clearLogBtn = new System.Windows.Forms.Button();
             this.deleteServerFilesBtn = new System.Windows.Forms.Button();
             this.aboutBtn = new System.Windows.Forms.Button();
@@ -1111,6 +1112,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.locateServerFilesBtn);
             this.tabPage2.Controls.Add(this.clearLogBtn);
             this.tabPage2.Controls.Add(this.deleteServerFilesBtn);
             this.tabPage2.Controls.Add(this.aboutBtn);
@@ -1126,6 +1128,16 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Server Management";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // locateServerFilesBtn
+            // 
+            this.locateServerFilesBtn.Location = new System.Drawing.Point(1096, 28);
+            this.locateServerFilesBtn.Name = "locateServerFilesBtn";
+            this.locateServerFilesBtn.Size = new System.Drawing.Size(111, 23);
+            this.locateServerFilesBtn.TabIndex = 7;
+            this.locateServerFilesBtn.Text = "Locate Server Files";
+            this.locateServerFilesBtn.UseVisualStyleBackColor = true;
+            this.locateServerFilesBtn.Click += new System.EventHandler(this.LocateServerFilesBtnPressed);
             // 
             // clearLogBtn
             // 
@@ -1530,5 +1542,6 @@
         private CheckBox platformPC;
         private GroupBox groupBox5;
         private Label label24;
+        private Button locateServerFilesBtn;
     }
 }
