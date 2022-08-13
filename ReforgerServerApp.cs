@@ -248,10 +248,14 @@ namespace ReforgerServerApp
                 if (line != null)
                 {
                     string[] split = line.Split(",");
-                    Mod m = new(split[0], split[1]);
-                    if (!GetAvailableModsList().Items.Contains(m))
+                    // Only attempt to add mods if the file isn't empty
+                    if (split.Length > 1)
                     {
-                        GetAvailableModsList().Items.Add(m);
+                        Mod m = new(split[0], split[1]);
+                        if (!GetAvailableModsList().Items.Contains(m))
+                        {
+                            GetAvailableModsList().Items.Add(m);
+                        }
                     }
                 }
             }
@@ -267,7 +271,7 @@ namespace ReforgerServerApp
         /// <param name="input"></param>
         private void PopulateServerConfiguration(string input)
         {
-            const int MINIMUM_CONFIG_FILE_LENGTH = 43;
+            const int MINIMUM_CONFIG_FILE_LENGTH = 47;
             string[] configLines = input.Trim().Split(Environment.NewLine);
             List<string> configParams = new();
 
@@ -297,15 +301,17 @@ namespace ReforgerServerApp
                     .WithPlayerCountLimit(Convert.ToInt32(configParams[21]))
                     .WithAutoJoinable(Convert.ToBoolean(configParams[23]))
                     .WithVisible(Convert.ToBoolean(configParams[25]))
-                    .WithServerMaxViewDistance(Convert.ToInt32(configParams[27]))
-                    .WithServerMinGrassDistance(Convert.ToInt32(configParams[29]))
-                    .WithNetworkViewDistance(Convert.ToInt32(configParams[31]))
-                    .WithGameNumber(Convert.ToInt32(configParams[33]))
-                    .WithDisableThirdPerson(Convert.ToBoolean(configParams[35]))
-                    .WithFastValidation(Convert.ToBoolean(configParams[37]))
-                    .WithBattlEye(Convert.ToBoolean(configParams[39]))
-                    .WithA2SQueryEnabled(Convert.ToBoolean(configParams[41]))
-                    .WithSteamQueryPort(Convert.ToInt32(configParams[43]));
+                    .WithPlatformPC(Convert.ToBoolean(configParams[27]))
+                    .WithPlatformXBL(Convert.ToBoolean(configParams[29]))
+                    .WithServerMaxViewDistance(Convert.ToInt32(configParams[31]))
+                    .WithServerMinGrassDistance(Convert.ToInt32(configParams[33]))
+                    .WithNetworkViewDistance(Convert.ToInt32(configParams[35]))
+                    .WithGameNumber(Convert.ToInt32(configParams[37]))
+                    .WithDisableThirdPerson(Convert.ToBoolean(configParams[39]))
+                    .WithFastValidation(Convert.ToBoolean(configParams[41]))
+                    .WithBattlEye(Convert.ToBoolean(configParams[43]))
+                    .WithA2SQueryEnabled(Convert.ToBoolean(configParams[45]))
+                    .WithSteamQueryPort(Convert.ToInt32(configParams[47]));
 
                 for (int i = 0; i < configParams.Count; ++i)
                 {
@@ -330,6 +336,8 @@ namespace ReforgerServerApp
                 playerCountLimit.Value = sc.PlayerCountLimit;
                 autoJoinable.Checked = sc.AutoJoinable;
                 visible.Checked = sc.Visible;
+                platformPC.Checked = sc.PlatformPC;
+                platformXbox.Checked = sc.PlatformXBL;
                 serverMaxViewDistance.Value = sc.ServerMaxViewDistance;
                 serverMinGrassDistance.Value = sc.ServerMinGrassDistance;
                 networkViewDistance.Value = sc.NetworkViewDistance;
@@ -383,6 +391,8 @@ namespace ReforgerServerApp
                 .WithPlayerCountLimit((int)playerCountLimit.Value)
                 .WithAutoJoinable(autoJoinable.Checked)
                 .WithVisible(visible.Checked)
+                .WithPlatformPC(platformPC.Checked)
+                .WithPlatformXBL(platformXbox.Checked)
                 .WithServerMaxViewDistance((int)serverMaxViewDistance.Value)
                 .WithServerMinGrassDistance((int)serverMinGrassDistance.Value)
                 .WithNetworkViewDistance((int)networkViewDistance.Value)
@@ -800,6 +810,8 @@ namespace ReforgerServerApp
             playerCountLimit.Enabled = enabled;
             autoJoinable.Enabled = enabled;
             visible.Enabled = enabled;
+            platformPC.Enabled = enabled;
+            platformXbox.Enabled = enabled;
             serverMaxViewDistance.Enabled = enabled;
             serverMinGrassDistance.Enabled = enabled;
             networkViewDistance.Enabled = enabled;

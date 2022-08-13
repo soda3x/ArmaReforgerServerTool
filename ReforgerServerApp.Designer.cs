@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReforgerServerApp));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.splitter1 = new System.Windows.Forms.Splitter();
             this.serverRunningLabel = new System.Windows.Forms.Label();
             this.addModBtn = new System.Windows.Forms.Button();
             this.removeModBtn = new System.Windows.Forms.Button();
@@ -44,12 +45,20 @@
             this.enabledMods = new System.Windows.Forms.ListBox();
             this.availableMods = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.platformPC = new System.Windows.Forms.CheckBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.platformXbox = new System.Windows.Forms.CheckBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.gameNumber = new System.Windows.Forms.NumericUpDown();
             this.scenarioId = new System.Windows.Forms.ComboBox();
             this.dedicatedServerId = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.a2sQueryEnabled = new System.Windows.Forms.CheckBox();
             this.label36 = new System.Windows.Forms.Label();
             this.steamQueryPort = new System.Windows.Forms.NumericUpDown();
@@ -90,7 +99,6 @@
             this.label12 = new System.Windows.Forms.Label();
             this.saveSettingsBtn = new System.Windows.Forms.Button();
             this.loadSettingsBtn = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.clearLogBtn = new System.Windows.Forms.Button();
             this.deleteServerFilesBtn = new System.Windows.Forms.Button();
@@ -118,6 +126,8 @@
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameNumber)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.steamQueryPort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameHostRegisterBindPort)).BeginInit();
@@ -144,11 +154,12 @@
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1240, 778);
+            this.tabControl1.Size = new System.Drawing.Size(1400, 778);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.splitter1);
             this.tabPage1.Controls.Add(this.serverRunningLabel);
             this.tabPage1.Controls.Add(this.addModBtn);
             this.tabPage1.Controls.Add(this.removeModBtn);
@@ -156,14 +167,21 @@
             this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Controls.Add(this.saveSettingsBtn);
             this.tabPage1.Controls.Add(this.loadSettingsBtn);
-            this.tabPage1.Controls.Add(this.label1);
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1232, 750);
+            this.tabPage1.Size = new System.Drawing.Size(1392, 750);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Server Configuration";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // splitter1
+            // 
+            this.splitter1.Location = new System.Drawing.Point(3, 3);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(3, 744);
+            this.splitter1.TabIndex = 52;
+            this.splitter1.TabStop = false;
             // 
             // serverRunningLabel
             // 
@@ -213,7 +231,7 @@
             this.groupBox2.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(632, 709);
+            this.groupBox2.Size = new System.Drawing.Size(636, 709);
             this.groupBox2.TabIndex = 47;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Mods";
@@ -299,12 +317,16 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label24);
+            this.groupBox1.Controls.Add(this.groupBox5);
+            this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.gameNumber);
             this.groupBox1.Controls.Add(this.scenarioId);
             this.groupBox1.Controls.Add(this.dedicatedServerId);
             this.groupBox1.Controls.Add(this.label19);
             this.groupBox1.Controls.Add(this.label35);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.a2sQueryEnabled);
             this.groupBox1.Controls.Add(this.label36);
             this.groupBox1.Controls.Add(this.steamQueryPort);
@@ -344,12 +366,94 @@
             this.groupBox1.Controls.Add(this.label13);
             this.groupBox1.Controls.Add(this.label12);
             this.groupBox1.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.groupBox1.Location = new System.Drawing.Point(644, 50);
+            this.groupBox1.Location = new System.Drawing.Point(648, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(575, 665);
+            this.groupBox1.Size = new System.Drawing.Size(731, 709);
             this.groupBox1.TabIndex = 46;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Settings";
+            // 
+            // label24
+            // 
+            this.label24.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label24.AutoSize = true;
+            this.label24.Font = new System.Drawing.Font("Anton", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label24.ForeColor = System.Drawing.Color.Goldenrod;
+            this.label24.Location = new System.Drawing.Point(474, 193);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(199, 32);
+            this.label24.TabIndex = 69;
+            this.label24.Text = "DEDICATED SERVER TOOL";
+            this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.label26);
+            this.groupBox5.Controls.Add(this.platformPC);
+            this.groupBox5.Controls.Add(this.label25);
+            this.groupBox5.Controls.Add(this.platformXbox);
+            this.groupBox5.Location = new System.Drawing.Point(419, 229);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(306, 55);
+            this.groupBox5.TabIndex = 68;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Client Platforms";
+            // 
+            // label26
+            // 
+            this.label26.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label26.AutoSize = true;
+            this.label26.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label26.Location = new System.Drawing.Point(87, 25);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(66, 17);
+            this.label26.TabIndex = 67;
+            this.label26.Text = "Xbox Live";
+            // 
+            // platformPC
+            // 
+            this.platformPC.AutoSize = true;
+            this.platformPC.Location = new System.Drawing.Point(13, 28);
+            this.platformPC.Name = "platformPC";
+            this.platformPC.Size = new System.Drawing.Size(15, 14);
+            this.platformPC.TabIndex = 64;
+            this.platformPC.UseVisualStyleBackColor = true;
+            // 
+            // label25
+            // 
+            this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label25.AutoSize = true;
+            this.label25.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label25.Location = new System.Drawing.Point(34, 25);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(24, 17);
+            this.label25.TabIndex = 66;
+            this.label25.Text = "PC";
+            // 
+            // platformXbox
+            // 
+            this.platformXbox.AutoSize = true;
+            this.platformXbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.platformXbox.Location = new System.Drawing.Point(66, 28);
+            this.platformXbox.Name = "platformXbox";
+            this.platformXbox.Size = new System.Drawing.Size(15, 14);
+            this.platformXbox.TabIndex = 65;
+            this.platformXbox.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(435, 28);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(278, 131);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 51;
+            this.pictureBox1.TabStop = false;
             // 
             // label2
             // 
@@ -377,7 +481,7 @@
             0,
             0});
             this.gameNumber.Name = "gameNumber";
-            this.gameNumber.Size = new System.Drawing.Size(134, 23);
+            this.gameNumber.Size = new System.Drawing.Size(88, 23);
             this.gameNumber.TabIndex = 61;
             this.gameNumber.Value = new decimal(new int[] {
             1,
@@ -406,7 +510,7 @@
             "{1CD06B409C6FAE56}Missions/CAH_Forest.conf"});
             this.scenarioId.Location = new System.Drawing.Point(210, 137);
             this.scenarioId.Name = "scenarioId";
-            this.scenarioId.Size = new System.Drawing.Size(258, 23);
+            this.scenarioId.Size = new System.Drawing.Size(177, 23);
             this.scenarioId.TabIndex = 60;
             // 
             // dedicatedServerId
@@ -414,9 +518,9 @@
             this.dedicatedServerId.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dedicatedServerId.Location = new System.Drawing.Point(210, 629);
+            this.dedicatedServerId.Location = new System.Drawing.Point(210, 630);
             this.dedicatedServerId.Name = "dedicatedServerId";
-            this.dedicatedServerId.Size = new System.Drawing.Size(258, 23);
+            this.dedicatedServerId.Size = new System.Drawing.Size(177, 23);
             this.dedicatedServerId.TabIndex = 59;
             // 
             // label19
@@ -426,7 +530,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label19.Location = new System.Drawing.Point(6, 631);
+            this.label19.Location = new System.Drawing.Point(6, 632);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(157, 21);
             this.label19.TabIndex = 58;
@@ -439,17 +543,29 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label35.AutoSize = true;
             this.label35.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label35.Location = new System.Drawing.Point(6, 571);
+            this.label35.Location = new System.Drawing.Point(6, 572);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(139, 21);
             this.label35.TabIndex = 54;
             this.label35.Text = "Steam Query Port";
             this.label35.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Anton", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(466, 154);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(216, 49);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "ARMA REFORGER";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // a2sQueryEnabled
             // 
             this.a2sQueryEnabled.AutoSize = true;
-            this.a2sQueryEnabled.Location = new System.Drawing.Point(210, 608);
+            this.a2sQueryEnabled.Location = new System.Drawing.Point(210, 609);
             this.a2sQueryEnabled.Name = "a2sQueryEnabled";
             this.a2sQueryEnabled.Size = new System.Drawing.Size(15, 14);
             this.a2sQueryEnabled.TabIndex = 57;
@@ -462,7 +578,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label36.AutoSize = true;
             this.label36.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label36.Location = new System.Drawing.Point(6, 602);
+            this.label36.Location = new System.Drawing.Point(6, 603);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(150, 21);
             this.label36.TabIndex = 55;
@@ -474,14 +590,14 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.steamQueryPort.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.steamQueryPort.Location = new System.Drawing.Point(210, 574);
+            this.steamQueryPort.Location = new System.Drawing.Point(210, 575);
             this.steamQueryPort.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
             this.steamQueryPort.Name = "steamQueryPort";
-            this.steamQueryPort.Size = new System.Drawing.Size(134, 23);
+            this.steamQueryPort.Size = new System.Drawing.Size(88, 23);
             this.steamQueryPort.TabIndex = 56;
             this.steamQueryPort.Value = new decimal(new int[] {
             17777,
@@ -495,14 +611,14 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gameHostRegisterBindPort.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.gameHostRegisterBindPort.Location = new System.Drawing.Point(210, 543);
+            this.gameHostRegisterBindPort.Location = new System.Drawing.Point(210, 544);
             this.gameHostRegisterBindPort.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
             this.gameHostRegisterBindPort.Name = "gameHostRegisterBindPort";
-            this.gameHostRegisterBindPort.Size = new System.Drawing.Size(134, 23);
+            this.gameHostRegisterBindPort.Size = new System.Drawing.Size(88, 23);
             this.gameHostRegisterBindPort.TabIndex = 53;
             this.gameHostRegisterBindPort.Value = new decimal(new int[] {
             2001,
@@ -517,7 +633,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label33.AutoSize = true;
             this.label33.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label33.Location = new System.Drawing.Point(6, 542);
+            this.label33.Location = new System.Drawing.Point(6, 543);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(142, 21);
             this.label33.TabIndex = 52;
@@ -530,7 +646,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label34.AutoSize = true;
             this.label34.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label34.Location = new System.Drawing.Point(6, 513);
+            this.label34.Location = new System.Drawing.Point(6, 514);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(172, 21);
             this.label34.TabIndex = 50;
@@ -541,9 +657,9 @@
             this.gameHostRegisterBindAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gameHostRegisterBindAddress.Location = new System.Drawing.Point(210, 514);
+            this.gameHostRegisterBindAddress.Location = new System.Drawing.Point(210, 515);
             this.gameHostRegisterBindAddress.Name = "gameHostRegisterBindAddress";
-            this.gameHostRegisterBindAddress.Size = new System.Drawing.Size(258, 23);
+            this.gameHostRegisterBindAddress.Size = new System.Drawing.Size(177, 23);
             this.gameHostRegisterBindAddress.TabIndex = 51;
             // 
             // gameHostBindPort
@@ -552,14 +668,14 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gameHostBindPort.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.gameHostBindPort.Location = new System.Drawing.Point(210, 485);
+            this.gameHostBindPort.Location = new System.Drawing.Point(210, 486);
             this.gameHostBindPort.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
             this.gameHostBindPort.Name = "gameHostBindPort";
-            this.gameHostBindPort.Size = new System.Drawing.Size(134, 23);
+            this.gameHostBindPort.Size = new System.Drawing.Size(88, 23);
             this.gameHostBindPort.TabIndex = 49;
             this.gameHostBindPort.Value = new decimal(new int[] {
             2001,
@@ -574,7 +690,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label32.AutoSize = true;
             this.label32.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label32.Location = new System.Drawing.Point(6, 484);
+            this.label32.Location = new System.Drawing.Point(6, 485);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(162, 21);
             this.label32.TabIndex = 48;
@@ -587,7 +703,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label31.AutoSize = true;
             this.label31.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label31.Location = new System.Drawing.Point(6, 455);
+            this.label31.Location = new System.Drawing.Point(6, 456);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(192, 21);
             this.label31.TabIndex = 46;
@@ -598,9 +714,9 @@
             this.gameHostBindAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gameHostBindAddress.Location = new System.Drawing.Point(210, 456);
+            this.gameHostBindAddress.Location = new System.Drawing.Point(210, 457);
             this.gameHostBindAddress.Name = "gameHostBindAddress";
-            this.gameHostBindAddress.Size = new System.Drawing.Size(258, 23);
+            this.gameHostBindAddress.Size = new System.Drawing.Size(177, 23);
             this.gameHostBindAddress.TabIndex = 47;
             // 
             // label3
@@ -632,7 +748,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.serverName.Location = new System.Drawing.Point(210, 22);
             this.serverName.Name = "serverName";
-            this.serverName.Size = new System.Drawing.Size(258, 23);
+            this.serverName.Size = new System.Drawing.Size(177, 23);
             this.serverName.TabIndex = 5;
             // 
             // fastValidation
@@ -677,7 +793,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.serverPassword.Location = new System.Drawing.Point(210, 51);
             this.serverPassword.Name = "serverPassword";
-            this.serverPassword.Size = new System.Drawing.Size(258, 23);
+            this.serverPassword.Size = new System.Drawing.Size(177, 23);
             this.serverPassword.TabIndex = 7;
             // 
             // label18
@@ -746,7 +862,7 @@
             0,
             0});
             this.networkViewDistance.Name = "networkViewDistance";
-            this.networkViewDistance.Size = new System.Drawing.Size(134, 23);
+            this.networkViewDistance.Size = new System.Drawing.Size(88, 23);
             this.networkViewDistance.TabIndex = 34;
             this.networkViewDistance.Value = new decimal(new int[] {
             500,
@@ -761,7 +877,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.adminPassword.Location = new System.Drawing.Point(210, 109);
             this.adminPassword.Name = "adminPassword";
-            this.adminPassword.Size = new System.Drawing.Size(258, 23);
+            this.adminPassword.Size = new System.Drawing.Size(177, 23);
             this.adminPassword.TabIndex = 11;
             // 
             // serverMinGrassDistance
@@ -777,7 +893,7 @@
             0,
             0});
             this.serverMinGrassDistance.Name = "serverMinGrassDistance";
-            this.serverMinGrassDistance.Size = new System.Drawing.Size(134, 23);
+            this.serverMinGrassDistance.Size = new System.Drawing.Size(88, 23);
             this.serverMinGrassDistance.TabIndex = 33;
             // 
             // scenarioIdLabel
@@ -811,7 +927,7 @@
             0,
             0});
             this.serverMaxViewDistance.Name = "serverMaxViewDistance";
-            this.serverMaxViewDistance.Size = new System.Drawing.Size(134, 23);
+            this.serverMaxViewDistance.Size = new System.Drawing.Size(88, 23);
             this.serverMaxViewDistance.TabIndex = 32;
             this.serverMaxViewDistance.Value = new decimal(new int[] {
             1600,
@@ -876,7 +992,7 @@
             0,
             0});
             this.playerCountLimit.Name = "playerCountLimit";
-            this.playerCountLimit.Size = new System.Drawing.Size(134, 23);
+            this.playerCountLimit.Size = new System.Drawing.Size(88, 23);
             this.playerCountLimit.TabIndex = 29;
             this.playerCountLimit.Value = new decimal(new int[] {
             127,
@@ -916,7 +1032,7 @@
             "JP"});
             this.region.Location = new System.Drawing.Point(210, 80);
             this.region.Name = "region";
-            this.region.Size = new System.Drawing.Size(135, 23);
+            this.region.Size = new System.Drawing.Size(88, 23);
             this.region.TabIndex = 28;
             // 
             // label14
@@ -974,7 +1090,7 @@
             // saveSettingsBtn
             // 
             this.saveSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.saveSettingsBtn.Location = new System.Drawing.Point(1066, 721);
+            this.saveSettingsBtn.Location = new System.Drawing.Point(1226, 721);
             this.saveSettingsBtn.Name = "saveSettingsBtn";
             this.saveSettingsBtn.Size = new System.Drawing.Size(153, 23);
             this.saveSettingsBtn.TabIndex = 2;
@@ -985,24 +1101,13 @@
             // loadSettingsBtn
             // 
             this.loadSettingsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.loadSettingsBtn.Location = new System.Drawing.Point(907, 721);
+            this.loadSettingsBtn.Location = new System.Drawing.Point(1067, 721);
             this.loadSettingsBtn.Name = "loadSettingsBtn";
             this.loadSettingsBtn.Size = new System.Drawing.Size(153, 23);
             this.loadSettingsBtn.TabIndex = 1;
             this.loadSettingsBtn.Text = "Load Settings from File";
             this.loadSettingsBtn.UseVisualStyleBackColor = true;
             this.loadSettingsBtn.Click += new System.EventHandler(this.LoadSettingsFromFileBtnPressed);
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(644, 3);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(582, 45);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Arma Reforger Dedicated Server Tool";
             // 
             // tabPage2
             // 
@@ -1017,14 +1122,14 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 24);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1232, 750);
+            this.tabPage2.Size = new System.Drawing.Size(1392, 750);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Server Management";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // clearLogBtn
             // 
-            this.clearLogBtn.Location = new System.Drawing.Point(1160, 721);
+            this.clearLogBtn.Location = new System.Drawing.Point(1320, 721);
             this.clearLogBtn.Name = "clearLogBtn";
             this.clearLogBtn.Size = new System.Drawing.Size(66, 23);
             this.clearLogBtn.TabIndex = 6;
@@ -1034,7 +1139,7 @@
             // 
             // deleteServerFilesBtn
             // 
-            this.deleteServerFilesBtn.Location = new System.Drawing.Point(1053, 28);
+            this.deleteServerFilesBtn.Location = new System.Drawing.Point(1213, 28);
             this.deleteServerFilesBtn.Name = "deleteServerFilesBtn";
             this.deleteServerFilesBtn.Size = new System.Drawing.Size(111, 23);
             this.deleteServerFilesBtn.TabIndex = 5;
@@ -1044,7 +1149,7 @@
             // 
             // aboutBtn
             // 
-            this.aboutBtn.Location = new System.Drawing.Point(1170, 28);
+            this.aboutBtn.Location = new System.Drawing.Point(1330, 28);
             this.aboutBtn.Name = "aboutBtn";
             this.aboutBtn.Size = new System.Drawing.Size(56, 23);
             this.aboutBtn.TabIndex = 4;
@@ -1248,7 +1353,7 @@
             this.groupBox3.Controls.Add(this.steamCmdLog);
             this.groupBox3.Location = new System.Drawing.Point(186, 57);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(1040, 662);
+            this.groupBox3.Size = new System.Drawing.Size(1200, 662);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Log";
@@ -1260,7 +1365,7 @@
             this.steamCmdLog.Name = "steamCmdLog";
             this.steamCmdLog.ReadOnly = true;
             this.steamCmdLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.steamCmdLog.Size = new System.Drawing.Size(1028, 634);
+            this.steamCmdLog.Size = new System.Drawing.Size(1188, 634);
             this.steamCmdLog.TabIndex = 1;
             // 
             // steamCmdAlert
@@ -1291,12 +1396,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 811);
+            this.ClientSize = new System.Drawing.Size(1424, 811);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(1280, 850);
-            this.MinimumSize = new System.Drawing.Size(1280, 850);
+            this.MaximumSize = new System.Drawing.Size(1440, 850);
+            this.MinimumSize = new System.Drawing.Size(1440, 850);
             this.Name = "ReforgerServerApp";
             this.Text = "Arma Reforger Dedicated Server Tool";
             this.tabControl1.ResumeLayout(false);
@@ -1306,6 +1411,9 @@
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameNumber)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.steamQueryPort)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gameHostRegisterBindPort)).EndInit();
@@ -1414,5 +1522,13 @@
         private NumericUpDown overridePortNumericUpDown;
         private Label label23;
         private CheckBox forcePortCheckBox;
+        private PictureBox pictureBox1;
+        private Splitter splitter1;
+        private Label label26;
+        private Label label25;
+        private CheckBox platformXbox;
+        private CheckBox platformPC;
+        private GroupBox groupBox5;
+        private Label label24;
     }
 }
