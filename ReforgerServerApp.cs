@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using static ReforgerServerApp.ServerConfiguration;
@@ -26,18 +27,7 @@ namespace ReforgerServerApp
             serverRunningLabel.Text = string.Empty;
 
             // Create tooltips
-            ToolTip enableAllModsToolTip = new();
-            enableAllModsToolTip.SetToolTip(enableAllModsBtn, "Enable All Mods");
-            ToolTip disableAllModsToolTip = new();
-            disableAllModsToolTip.SetToolTip(disableAllModsBtn, "Disable All Mods");
-            ToolTip enableModToolTip = new();
-            enableModToolTip.SetToolTip(addToEnabledBtn, "Enable Mod");
-            ToolTip disableModToolTip = new();
-            disableModToolTip.SetToolTip(removeFromEnabledBtn, "Disable Mod");
-            ToolTip scenarioIdLabelToolTip = new();
-            scenarioIdLabelToolTip.SetToolTip(scenarioIdLabel, "Enter the Scenario ID found in the Scenario's serverData.json file, or select one of the default ones");
-            ToolTip regionLabelToolTip = new();
-            regionLabelToolTip.SetToolTip(regionLabel, "Enter an ISO 3166-1 alpha-2 region code, or select one of the default ones");
+            createTooltips();
 
             // Initialise region combo box to select the first option
             region.SelectedIndex = 0;
@@ -64,12 +54,68 @@ namespace ReforgerServerApp
             restartIntervalUpDown.Enabled = false;
             restartUnitsComboBox.Enabled = false;
             overridePortNumericUpDown.Enabled = false;
+            ndsUpDown.Enabled = false;
+            nwkResolutionUpDown.Enabled = false;
+            staggeringBudgetUpDown.Enabled = false;
+            streamingBudgetUpDown.Enabled = false;
+            streamsDeltaUpDown.Enabled = false;
             serverStarted = false;
             serverStartedWithTimer = false;
             serverProcess = new();
             timerCancellationTokenSource = new();
             AlphabetiseModListBox(GetAvailableModsList());
             AlphabetiseModListBox(GetEnabledModsList());
+
+            CheckForUpdates();
+        }
+
+        /// <summary>
+        /// Initialise tool tips for certain UI elements.
+        /// </summary>
+        private void createTooltips()
+        {
+            ToolTip enableAllModsToolTip = new();
+            enableAllModsToolTip.SetToolTip(enableAllModsBtn, "Enable All Mods");
+            ToolTip disableAllModsToolTip = new();
+            disableAllModsToolTip.SetToolTip(disableAllModsBtn, "Disable All Mods");
+            ToolTip enableModToolTip = new();
+            enableModToolTip.SetToolTip(addToEnabledBtn, "Enable Mod");
+            ToolTip disableModToolTip = new();
+            disableModToolTip.SetToolTip(removeFromEnabledBtn, "Disable Mod");
+            ToolTip scenarioIdLabelToolTip = new();
+            scenarioIdLabelToolTip.SetToolTip(scenarioIdLabel, "Enter the Scenario ID found in the Scenario's serverData.json file, or select one of the default ones");
+            ToolTip regionLabelToolTip = new();
+            regionLabelToolTip.SetToolTip(regionLabel, "Enter an ISO 3166-1 alpha-2 region code, or select one of the default ones");
+
+            ToolTip ndsToolTip = new();
+            ndsToolTip.SetToolTip(ndsLabel, "Network Dynamic Simulation (nds) is a server feature that only streams in relevant replicated entities for each client." +
+                "\r\nThe provided value stands for diameter, or the number of cells which are being replicated - default is 2 in each direction." +
+                "\r\nTo turn the feature off use '0'." +
+                "\r\nA higher diameter will result in a bigger networked view range, lower server performance.");
+
+            ToolTip nwkResolutionToolTip = new();
+            nwkResolutionToolTip.SetToolTip(nwkResolutionLabel, "Defines what resolution Spatial Map cells should be set at in a 100m - 1000m range." +
+                "\r\nSmaller resolution will result in less \"pop-in\" but lower networked view range." +
+                "\r\nFor high view range use high resolution, but small diameter.");
+
+            ToolTip staggeringBudgetToolTip = new();
+            staggeringBudgetToolTip.SetToolTip(staggeringBudgetLabel, "Defines how many stationary spatial map cells are allowed to be processed in one tick in a 1 - 10201 range." +
+                "\r\nIf not set it uses the NDS diameter. A lower number will limit how many cells the server has to process per tick, but increase the time it takes for a client to have all relevant entities streamed in." +
+                "\r\nIf the server experiences significant performance drops on spawning/teleporting then the number is set too high." +
+                "\r\nIf the client experiences \"pop-in\" of replicated items then the number is set too low.");
+
+            ToolTip streamingBudgetToolTip = new();
+            streamingBudgetToolTip.SetToolTip(streamingBudgetLabel, "The global streaming budget that is equally distributed between all connections." +
+                "\r\nTo decrement the budget, it uses the replicated hierarchy size of each entity that needs to be streamed in.\r\n" +
+                "It cannot go under 100 to prevent the system stalling." +
+                "\r\nA lower number will limit how many entities the server has to process per tick, but increase the time it takes for a client to have that entity streamed in." +
+                "\r\nIf the server experiences significant performance drops on spawning/teleporting then the number is set too high." +
+                "\r\nIf the client experiences \"pop-in\" of replicated items then the number is set too low.");
+
+            ToolTip streamsDeltaToolTip = new();
+            streamsDeltaToolTip.SetToolTip(streamsDeltaLabel, "A tool to limit the amount of streams being opened for a client in range 1 - 1000 (default 100)." +
+                "\r\nIf the difference between 'the number of streams the server has open' and 'the number of streams the client has open' is larger than the NUMBER then the server will not open any more streams this tick." +
+                "\r\nTo be adjusted based on average client networking speed.");
         }
 
         /// <summary>
@@ -248,10 +294,14 @@ namespace ReforgerServerApp
                 if (line != null)
                 {
                     string[] split = line.Split(",");
-                    Mod m = new(split[0], split[1]);
-                    if (!GetAvailableModsList().Items.Contains(m))
+                    // Only attempt to add mods if the file isn't empty
+                    if (split.Length > 1)
                     {
-                        GetAvailableModsList().Items.Add(m);
+                        Mod m = new(split[0], split[1]);
+                        if (!GetAvailableModsList().Items.Contains(m))
+                        {
+                            GetAvailableModsList().Items.Add(m);
+                        }
                     }
                 }
             }
@@ -267,7 +317,7 @@ namespace ReforgerServerApp
         /// <param name="input"></param>
         private void PopulateServerConfiguration(string input)
         {
-            const int MINIMUM_CONFIG_FILE_LENGTH = 43;
+            const int MINIMUM_CONFIG_FILE_LENGTH = 47;
             string[] configLines = input.Trim().Split(Environment.NewLine);
             List<string> configParams = new();
 
@@ -297,15 +347,17 @@ namespace ReforgerServerApp
                     .WithPlayerCountLimit(Convert.ToInt32(configParams[21]))
                     .WithAutoJoinable(Convert.ToBoolean(configParams[23]))
                     .WithVisible(Convert.ToBoolean(configParams[25]))
-                    .WithServerMaxViewDistance(Convert.ToInt32(configParams[27]))
-                    .WithServerMinGrassDistance(Convert.ToInt32(configParams[29]))
-                    .WithNetworkViewDistance(Convert.ToInt32(configParams[31]))
-                    .WithGameNumber(Convert.ToInt32(configParams[33]))
-                    .WithDisableThirdPerson(Convert.ToBoolean(configParams[35]))
-                    .WithFastValidation(Convert.ToBoolean(configParams[37]))
-                    .WithBattlEye(Convert.ToBoolean(configParams[39]))
-                    .WithA2SQueryEnabled(Convert.ToBoolean(configParams[41]))
-                    .WithSteamQueryPort(Convert.ToInt32(configParams[43]));
+                    .WithPlatformPC(Convert.ToBoolean(configParams[27]))
+                    .WithPlatformXBL(Convert.ToBoolean(configParams[29]))
+                    .WithServerMaxViewDistance(Convert.ToInt32(configParams[31]))
+                    .WithServerMinGrassDistance(Convert.ToInt32(configParams[33]))
+                    .WithNetworkViewDistance(Convert.ToInt32(configParams[35]))
+                    .WithGameNumber(Convert.ToInt32(configParams[37]))
+                    .WithDisableThirdPerson(Convert.ToBoolean(configParams[39]))
+                    .WithFastValidation(Convert.ToBoolean(configParams[41]))
+                    .WithBattlEye(Convert.ToBoolean(configParams[43]))
+                    .WithA2SQueryEnabled(Convert.ToBoolean(configParams[45]))
+                    .WithSteamQueryPort(Convert.ToInt32(configParams[47]));
 
                 for (int i = 0; i < configParams.Count; ++i)
                 {
@@ -330,6 +382,8 @@ namespace ReforgerServerApp
                 playerCountLimit.Value = sc.PlayerCountLimit;
                 autoJoinable.Checked = sc.AutoJoinable;
                 visible.Checked = sc.Visible;
+                platformPC.Checked = sc.PlatformPC;
+                platformXbox.Checked = sc.PlatformXBL;
                 serverMaxViewDistance.Value = sc.ServerMaxViewDistance;
                 serverMinGrassDistance.Value = sc.ServerMinGrassDistance;
                 networkViewDistance.Value = sc.NetworkViewDistance;
@@ -383,6 +437,8 @@ namespace ReforgerServerApp
                 .WithPlayerCountLimit((int)playerCountLimit.Value)
                 .WithAutoJoinable(autoJoinable.Checked)
                 .WithVisible(visible.Checked)
+                .WithPlatformPC(platformPC.Checked)
+                .WithPlatformXBL(platformXbox.Checked)
                 .WithServerMaxViewDistance((int)serverMaxViewDistance.Value)
                 .WithServerMinGrassDistance((int)serverMinGrassDistance.Value)
                 .WithNetworkViewDistance((int)networkViewDistance.Value)
@@ -545,7 +601,6 @@ namespace ReforgerServerApp
 
                     serverStarted = false;
                     startServerBtn.Text = "Start Server";
-                    deleteServerFilesBtn.Enabled = true;
                     EnableServerFields(true);
                     serverRunningLabel.Text = string.Empty;
                 }
@@ -561,7 +616,6 @@ namespace ReforgerServerApp
                 serverStarted = true;
                 startServerBtn.Text = "Stop Server";
                 startServerBtn.Enabled = false;
-                deleteServerFilesBtn.Enabled = false;
                 EnableServerFields(false);
                 serverRunningLabel.Text = "Server is currently running. To modify the configuration, you will need to stop it first.";
                 steamCmdLog.AppendText(GetTimestamp() + ": " + "User started server." + Environment.NewLine);
@@ -587,7 +641,6 @@ namespace ReforgerServerApp
                 }
                 serverStarted = false;
                 startServerBtn.Text = "Start Server";
-                deleteServerFilesBtn.Enabled = true;
                 worker.CancelAsync();
                 EnableServerFields(true);
                 serverRunningLabel.Text = string.Empty;
@@ -627,6 +680,25 @@ namespace ReforgerServerApp
             if (!string.IsNullOrEmpty(e.Data))
             {
                 steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText(GetTimestamp() + ": " + e.Data + Environment.NewLine)));
+
+                // Kill the server if it fails to start correctly.
+                if (e.Data.Contains("Unable to Initialize"))
+                {
+                    steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText(GetTimestamp() + ": " + "System stopped server due to an error." + Environment.NewLine)));
+                    serverProcess.OutputDataReceived -= SteamCmdDataReceived;
+                    serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
+                    serverProcess.CancelOutputRead();
+                    serverProcess.CancelErrorRead();
+                    serverProcess.Kill();
+
+                    serverStarted = false;
+                    startServerBtn.Invoke((MethodInvoker)(() => startServerBtn.Text = "Start Server"));
+                    startServerBtn.Text = "Start Server";
+                    // Invoke this method using a UI element, doesn't matter what it is
+                    // so just use the startServerBtn
+                    startServerBtn.Invoke((MethodInvoker)(() => EnableServerFields(true)));
+                    serverRunningLabel.Invoke((MethodInvoker)(() => serverRunningLabel.Text = string.Empty));
+                }
             }
         }
 
@@ -664,23 +736,11 @@ namespace ReforgerServerApp
                 serverStartInfo.UseShellExecute = false;
                 serverStartInfo.WorkingDirectory = installDirectory + "\\arma_reforger";
                 serverStartInfo.FileName = installDirectory + "\\arma_reforger\\ArmaReforgerServer.exe";
-                string limitFPSArg = string.Empty;
-                if (limitFPS.Checked)
-                {
-                    limitFPSArg = "-maxFPS " + Convert.ToString(fpsLimitUpDown.Value) + " ";
-                }
-                string overridePortArg = string.Empty;
-                if (forcePortCheckBox.Checked)
-                {
-                    overridePortArg = "-bindPort " + Convert.ToString(overridePortNumericUpDown.Value);
-                }
-                string args = "-config \"" + installDirectory + ".\\server.json\" -profile \""
-                     + installDirectory + "\\saves\" -logStats 5000 " + limitFPSArg + overridePortArg;
-                serverStartInfo.Arguments = args;
+                serverStartInfo.Arguments = CreateLaunchArguments();
                 serverStartInfo.RedirectStandardOutput = true;
                 serverStartInfo.RedirectStandardError = true;
-                serverProcess.EnableRaisingEvents = true;
                 serverStartInfo.CreateNoWindow = true;
+                serverProcess.EnableRaisingEvents = true;
                 serverProcess.StartInfo = serverStartInfo;
                 serverProcess.OutputDataReceived += SteamCmdDataReceived;
                 serverProcess.ErrorDataReceived += SteamCmdDataReceived;
@@ -769,7 +829,8 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void DeleteServerFilesBtnPressed(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("You are about to delete SteamCMD and all Arma Reforger server files, are you sure you would like to do this?", "Warning", MessageBoxButtons.YesNo);
+            DialogResult result = MessageBox.Show("You are about to delete SteamCMD and all Arma Reforger server files," +
+                " are you sure you would like to do this?", "Warning", MessageBoxButtons.YesNo);
 
             if (result == DialogResult.Yes)
             {
@@ -778,6 +839,37 @@ namespace ReforgerServerApp
                 File.Delete(INSTALL_DIR_FILE);
                 UpdateSteamCmdInstallStatus();
                 MessageBox.Show("Server files deleted.", "Warning", MessageBoxButtons.OK);
+            }
+        }
+
+        /// <summary>
+        /// Handler for the "Locate Server Files" button.
+        /// Allows the user to navigate to a directory and set the Server Files installation directory without downloading the files.
+        /// Useful for moving installation directories around.
+        /// Informs the user if the server files were not located.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LocateServerFilesBtnPressed(object sender, EventArgs e)
+        {
+            string path = string.Empty;
+            using FolderBrowserDialog fbd = new();
+            DialogResult result = fbd.ShowDialog();
+            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+            {
+                if (File.Exists(fbd.SelectedPath + "\\steamcmd\\steamcmd.exe") &&
+                    File.Exists(fbd.SelectedPath + "\\arma_reforger\\ArmaReforgerServer.exe"))
+                {
+                    installDirectory = fbd.SelectedPath;
+                    steamCmdFile = fbd.SelectedPath + "\\steamcmd\\steamcmd.exe";
+                    File.WriteAllText(INSTALL_DIR_FILE, installDirectory);
+                    UpdateSteamCmdInstallStatus();
+                }
+                else
+                {
+                    MessageBox.Show("Arma Reforger Server Files could not be located." +
+                        "\r\nPlease confirm the chosen path or download the files to start.", "Warning", MessageBoxButtons.OK);
+                }
             }
         }
 
@@ -800,6 +892,8 @@ namespace ReforgerServerApp
             playerCountLimit.Enabled = enabled;
             autoJoinable.Enabled = enabled;
             visible.Enabled = enabled;
+            platformPC.Enabled = enabled;
+            platformXbox.Enabled = enabled;
             serverMaxViewDistance.Enabled = enabled;
             serverMinGrassDistance.Enabled = enabled;
             networkViewDistance.Enabled = enabled;
@@ -818,6 +912,7 @@ namespace ReforgerServerApp
             addModBtn.Enabled = enabled;
             removeModBtn.Enabled = enabled;
             deleteServerFilesBtn.Enabled = enabled;
+            locateServerFilesBtn.Enabled = enabled;
             limitFPS.Enabled = enabled;
             fpsLimitUpDown.Enabled = enabled;
             automaticallyRestart.Enabled = enabled;
@@ -825,6 +920,17 @@ namespace ReforgerServerApp
             restartUnitsComboBox.Enabled = enabled;
             forcePortCheckBox.Enabled = enabled;
             overridePortNumericUpDown.Enabled = enabled;
+            nds.Enabled = enabled;
+            ndsUpDown.Enabled = enabled;
+            nwkResolution.Enabled = enabled;
+            nwkResolutionUpDown.Enabled = enabled;
+            staggeringBudget.Enabled = enabled;
+            staggeringBudgetUpDown.Enabled = enabled;
+            streamingBudget.Enabled = enabled;
+            streamingBudgetUpDown.Enabled = enabled;
+            streamsDelta.Enabled = enabled;
+            streamsDeltaUpDown.Enabled = enabled;
+            logLevelComboBox.Enabled = enabled;
         }
 
         /// <summary>
@@ -877,6 +983,212 @@ namespace ReforgerServerApp
             else
             {
                 overridePortNumericUpDown.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Handler for the NDS Checkbox, enables / disables the NDS field
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NDSCheckChanged(object sender, EventArgs e)
+        {
+            if (nds.Checked)
+            {
+                ndsUpDown.Enabled = true;
+            }
+            else
+            {
+                ndsUpDown.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Handler for the NWK Resolution Checkbox, enables / disables the NWK Resolution field
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NWKCheckChanged(object sender, EventArgs e)
+        {
+            if (nwkResolution.Checked)
+            {
+                nwkResolutionUpDown.Enabled = true;
+            }
+            else
+            {
+                nwkResolutionUpDown.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Handler for the Staggering Budget Checkbox, enables / disables the Staggering Budget field
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StaggeringBudgetCheckChanged(object sender, EventArgs e)
+        {
+            if (staggeringBudget.Checked)
+            {
+                staggeringBudgetUpDown.Enabled = true;
+            }
+            else
+            {
+                staggeringBudgetUpDown.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Handler for the Streaming Budget Checkbox, enables / disables the Streaming Budget field
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StreamingBudgetCheckChanged(object sender, EventArgs e)
+        {
+            if (streamingBudget.Checked)
+            {
+                streamingBudgetUpDown.Enabled = true;
+            }
+            else
+            {
+                streamingBudgetUpDown.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Handler for the Streams Delta Checkbox, enables / disables the Streams Delta field
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StreamsDeltaCheckChanged(object sender, EventArgs e)
+        {
+            if (streamsDelta.Checked)
+            {
+                streamsDeltaUpDown.Enabled = true;
+            }
+            else
+            {
+                streamsDeltaUpDown.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Create a string with all requried launch arguments
+        /// </summary>
+        /// <returns>String containing launch arguments for the Reforger Server</returns>
+        private string CreateLaunchArguments()
+        {
+            List<string> argsList = new List<string>();
+
+            // Config will be placed in <server-files-dir>/server.json
+            string configArg = "-config " + "\"" + installDirectory + "\\server.json\"";
+            argsList.Add(configArg);
+
+            // Saves etc. will be placed in <server-files-dir>/saves/
+            string profileArg = "-profile " + "\"" + installDirectory + "\\saves\"";
+            argsList.Add(profileArg);
+
+            // Log performance stats every 5 seconds (represented in ms)
+            string logStatsArg = "-logStats 5000";
+            argsList.Add(logStatsArg);
+
+            string maxFPSArg = string.Empty;
+            if (limitFPS.Checked)
+            {
+                maxFPSArg = "-maxFPS " + Convert.ToString(fpsLimitUpDown.Value);
+                argsList.Add(maxFPSArg);
+            }
+
+            string overridePortArg = string.Empty;
+            if (forcePortCheckBox.Checked)
+            {
+                overridePortArg = "-bindPort " + Convert.ToString(overridePortNumericUpDown.Value);
+                argsList.Add(overridePortArg);
+            }
+
+            string ndsArg = string.Empty;
+            if (nds.Checked)
+            {
+                ndsArg = "-nds " + Convert.ToString(ndsUpDown.Value);
+                argsList.Add(ndsArg);
+            }
+
+            string nwkResolutionArg = string.Empty;
+            if (nwkResolution.Checked)
+            {
+                nwkResolutionArg = "-nwkResolution " + Convert.ToString(nwkResolutionUpDown.Value);
+                argsList.Add(nwkResolutionArg);
+            }
+
+            string staggeringBudgetArg = string.Empty;
+            if (staggeringBudget.Checked)
+            {
+                staggeringBudgetArg = "-staggeringBudget " + Convert.ToString(staggeringBudgetUpDown.Value);
+                argsList.Add(staggeringBudgetArg);
+            }
+
+            string streamingBudgetArg = string.Empty;
+            if (streamingBudget.Checked)
+            {
+                streamingBudgetArg = "-streamingBudget " + Convert.ToString(streamingBudgetUpDown.Value);
+                argsList.Add(streamingBudgetArg);
+            }
+
+            string streamsDeltaArg = string.Empty;
+            if (streamsDelta.Checked)
+            {
+                streamsDeltaArg = "-streamsDelta " + Convert.ToString(streamsDeltaUpDown.Value);
+                argsList.Add(streamsDeltaArg);
+            }
+
+            string logLevelArg = string.Empty;
+            // Use method invoker to set the Log Level to avoid cross-threaded operation
+            logLevelComboBox.Invoke((MethodInvoker)(() => logLevelArg = "-logLevel " + logLevelComboBox.Text));
+            argsList.Add(logLevelArg);
+
+            return string.Join(" ", argsList);
+        }
+
+        /// <summary>
+        /// Check our version against the version.txt file in the GitHub repository.
+        /// Show a dialog prompting the user to update if we are out of date.
+        /// If there is no internet connection, or this simply fails, 
+        /// warn the user that we couldn't successfully check for updates.
+        /// </summary>
+        private void CheckForUpdates()
+        {
+            string latestVersionString;
+            WebClient wc = new WebClient();
+
+            // Add headers to impersonate a web browser. Some web sites 
+            // will not respond correctly without these headers
+            wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12");
+            wc.Headers.Add("Accept", "*/*");
+            wc.Headers.Add("Accept-Language", "en-gb,en;q=0.5");
+            wc.Headers.Add("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
+            // Disable caching to avoid retrieval of an old version number
+            wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
+            try
+            {
+                latestVersionString = wc.DownloadString("https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool/main/version.txt");
+
+                var checkedVersion = new Version(latestVersionString);
+                var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+                var result = checkedVersion.CompareTo(currentVersion);
+                if (result > 0)
+                {
+                    DialogResult dr = MessageBox.Show("There is an update available for the Arma Reforger Dedicated Server Tool." +
+                        "\r\nWould you like to get the latest version now?\r\n\r\nOur version: " + checkedVersion +
+                        "\r\nLatest version: " + currentVersion, "Arma Reforger Dedicated Server Tool - Update available", MessageBoxButtons.YesNo);
+                    if (dr == DialogResult.Yes)
+                    {
+                        Process.Start("explorer", "https://github.com/soda3x/ArmaReforgerServerTool/releases");
+                    }
+                }
+            }
+            catch (WebException)
+            {
+                MessageBox.Show("Unable to check for updates," +
+                    " you may not be using the latest version of the Arma Reforger Dedicated Server Tool.", "Arma Reforger Dedicated Server Tool");
             }
         }
     }
