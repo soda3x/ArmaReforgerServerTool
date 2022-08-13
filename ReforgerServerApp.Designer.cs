@@ -100,11 +100,30 @@
             this.saveSettingsBtn = new System.Windows.Forms.Button();
             this.loadSettingsBtn = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label30 = new System.Windows.Forms.Label();
+            this.logLevelComboBox = new System.Windows.Forms.ComboBox();
             this.locateServerFilesBtn = new System.Windows.Forms.Button();
             this.clearLogBtn = new System.Windows.Forms.Button();
             this.deleteServerFilesBtn = new System.Windows.Forms.Button();
             this.aboutBtn = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.streamsDeltaUpDown = new System.Windows.Forms.NumericUpDown();
+            this.streamsDeltaLabel = new System.Windows.Forms.Label();
+            this.streamsDelta = new System.Windows.Forms.CheckBox();
+            this.streamingBudgetUpDown = new System.Windows.Forms.NumericUpDown();
+            this.streamingBudgetLabel = new System.Windows.Forms.Label();
+            this.streamingBudget = new System.Windows.Forms.CheckBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.staggeringBudgetUpDown = new System.Windows.Forms.NumericUpDown();
+            this.staggeringBudgetLabel = new System.Windows.Forms.Label();
+            this.staggeringBudget = new System.Windows.Forms.CheckBox();
+            this.nwkResolutionUpDown = new System.Windows.Forms.NumericUpDown();
+            this.nwkResolutionLabel = new System.Windows.Forms.Label();
+            this.nwkResolution = new System.Windows.Forms.CheckBox();
+            this.label28 = new System.Windows.Forms.Label();
+            this.ndsUpDown = new System.Windows.Forms.NumericUpDown();
+            this.ndsLabel = new System.Windows.Forms.Label();
+            this.nds = new System.Windows.Forms.CheckBox();
             this.label22 = new System.Windows.Forms.Label();
             this.overridePortNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label23 = new System.Windows.Forms.Label();
@@ -139,6 +158,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.playerCountLimit)).BeginInit();
             this.tabPage2.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.streamsDeltaUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.streamingBudgetUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.staggeringBudgetUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nwkResolutionUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ndsUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.overridePortNumericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.restartIntervalUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fpsLimitUpDown)).BeginInit();
@@ -1112,6 +1136,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.label30);
+            this.tabPage2.Controls.Add(this.logLevelComboBox);
             this.tabPage2.Controls.Add(this.locateServerFilesBtn);
             this.tabPage2.Controls.Add(this.clearLogBtn);
             this.tabPage2.Controls.Add(this.deleteServerFilesBtn);
@@ -1128,6 +1154,30 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Server Management";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label30.Location = new System.Drawing.Point(220, 725);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(57, 15);
+            this.label30.TabIndex = 30;
+            this.label30.Text = "Log Level";
+            // 
+            // logLevelComboBox
+            // 
+            this.logLevelComboBox.FormattingEnabled = true;
+            this.logLevelComboBox.Items.AddRange(new object[] {
+            "normal",
+            "warning",
+            "error",
+            "fatal"});
+            this.logLevelComboBox.Location = new System.Drawing.Point(283, 721);
+            this.logLevelComboBox.Name = "logLevelComboBox";
+            this.logLevelComboBox.Size = new System.Drawing.Size(96, 23);
+            this.logLevelComboBox.TabIndex = 30;
+            this.logLevelComboBox.Text = "normal";
             // 
             // locateServerFilesBtn
             // 
@@ -1171,6 +1221,23 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.streamsDeltaUpDown);
+            this.groupBox4.Controls.Add(this.streamsDeltaLabel);
+            this.groupBox4.Controls.Add(this.streamsDelta);
+            this.groupBox4.Controls.Add(this.streamingBudgetUpDown);
+            this.groupBox4.Controls.Add(this.streamingBudgetLabel);
+            this.groupBox4.Controls.Add(this.streamingBudget);
+            this.groupBox4.Controls.Add(this.label27);
+            this.groupBox4.Controls.Add(this.staggeringBudgetUpDown);
+            this.groupBox4.Controls.Add(this.staggeringBudgetLabel);
+            this.groupBox4.Controls.Add(this.staggeringBudget);
+            this.groupBox4.Controls.Add(this.nwkResolutionUpDown);
+            this.groupBox4.Controls.Add(this.nwkResolutionLabel);
+            this.groupBox4.Controls.Add(this.nwkResolution);
+            this.groupBox4.Controls.Add(this.label28);
+            this.groupBox4.Controls.Add(this.ndsUpDown);
+            this.groupBox4.Controls.Add(this.ndsLabel);
+            this.groupBox4.Controls.Add(this.nds);
             this.groupBox4.Controls.Add(this.label22);
             this.groupBox4.Controls.Add(this.overridePortNumericUpDown);
             this.groupBox4.Controls.Add(this.label23);
@@ -1186,10 +1253,235 @@
             this.groupBox4.Controls.Add(this.limitFPS);
             this.groupBox4.Location = new System.Drawing.Point(6, 57);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(174, 662);
+            this.groupBox4.Size = new System.Drawing.Size(202, 662);
             this.groupBox4.TabIndex = 4;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Advanced";
+            // 
+            // streamsDeltaUpDown
+            // 
+            this.streamsDeltaUpDown.Location = new System.Drawing.Point(11, 539);
+            this.streamsDeltaUpDown.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.streamsDeltaUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.streamsDeltaUpDown.Name = "streamsDeltaUpDown";
+            this.streamsDeltaUpDown.Size = new System.Drawing.Size(185, 23);
+            this.streamsDeltaUpDown.TabIndex = 29;
+            this.streamsDeltaUpDown.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            // 
+            // streamsDeltaLabel
+            // 
+            this.streamsDeltaLabel.AutoSize = true;
+            this.streamsDeltaLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.streamsDeltaLabel.Location = new System.Drawing.Point(32, 518);
+            this.streamsDeltaLabel.Name = "streamsDeltaLabel";
+            this.streamsDeltaLabel.Size = new System.Drawing.Size(81, 15);
+            this.streamsDeltaLabel.TabIndex = 28;
+            this.streamsDeltaLabel.Text = "Streams Delta";
+            // 
+            // streamsDelta
+            // 
+            this.streamsDelta.AutoSize = true;
+            this.streamsDelta.Location = new System.Drawing.Point(11, 519);
+            this.streamsDelta.Name = "streamsDelta";
+            this.streamsDelta.Size = new System.Drawing.Size(15, 14);
+            this.streamsDelta.TabIndex = 27;
+            this.streamsDelta.UseVisualStyleBackColor = true;
+            this.streamsDelta.CheckedChanged += new System.EventHandler(this.StreamsDeltaCheckChanged);
+            // 
+            // streamingBudgetUpDown
+            // 
+            this.streamingBudgetUpDown.Location = new System.Drawing.Point(11, 487);
+            this.streamingBudgetUpDown.Maximum = new decimal(new int[] {
+            10201,
+            0,
+            0,
+            0});
+            this.streamingBudgetUpDown.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.streamingBudgetUpDown.Name = "streamingBudgetUpDown";
+            this.streamingBudgetUpDown.Size = new System.Drawing.Size(185, 23);
+            this.streamingBudgetUpDown.TabIndex = 26;
+            this.streamingBudgetUpDown.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            // 
+            // streamingBudgetLabel
+            // 
+            this.streamingBudgetLabel.AutoSize = true;
+            this.streamingBudgetLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.streamingBudgetLabel.Location = new System.Drawing.Point(32, 466);
+            this.streamingBudgetLabel.Name = "streamingBudgetLabel";
+            this.streamingBudgetLabel.Size = new System.Drawing.Size(103, 15);
+            this.streamingBudgetLabel.TabIndex = 25;
+            this.streamingBudgetLabel.Text = "Streaming Budget";
+            // 
+            // streamingBudget
+            // 
+            this.streamingBudget.AutoSize = true;
+            this.streamingBudget.Location = new System.Drawing.Point(11, 467);
+            this.streamingBudget.Name = "streamingBudget";
+            this.streamingBudget.Size = new System.Drawing.Size(15, 14);
+            this.streamingBudget.TabIndex = 24;
+            this.streamingBudget.UseVisualStyleBackColor = true;
+            this.streamingBudget.CheckedChanged += new System.EventHandler(this.StreamingBudgetCheckChanged);
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("Segoe UI Semibold", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label27.Location = new System.Drawing.Point(11, 423);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(141, 48);
+            this.label27.TabIndex = 23;
+            this.label27.Text = "If not set, uses the \r\nNetwork Dynamic Simulation\r\ndiameter.\r\n\r\n";
+            // 
+            // staggeringBudgetUpDown
+            // 
+            this.staggeringBudgetUpDown.Location = new System.Drawing.Point(11, 397);
+            this.staggeringBudgetUpDown.Maximum = new decimal(new int[] {
+            10201,
+            0,
+            0,
+            0});
+            this.staggeringBudgetUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.staggeringBudgetUpDown.Name = "staggeringBudgetUpDown";
+            this.staggeringBudgetUpDown.Size = new System.Drawing.Size(185, 23);
+            this.staggeringBudgetUpDown.TabIndex = 22;
+            this.staggeringBudgetUpDown.Value = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            // 
+            // staggeringBudgetLabel
+            // 
+            this.staggeringBudgetLabel.AutoSize = true;
+            this.staggeringBudgetLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.staggeringBudgetLabel.Location = new System.Drawing.Point(32, 376);
+            this.staggeringBudgetLabel.Name = "staggeringBudgetLabel";
+            this.staggeringBudgetLabel.Size = new System.Drawing.Size(106, 15);
+            this.staggeringBudgetLabel.TabIndex = 21;
+            this.staggeringBudgetLabel.Text = "Staggering Budget";
+            // 
+            // staggeringBudget
+            // 
+            this.staggeringBudget.AutoSize = true;
+            this.staggeringBudget.Location = new System.Drawing.Point(11, 377);
+            this.staggeringBudget.Name = "staggeringBudget";
+            this.staggeringBudget.Size = new System.Drawing.Size(15, 14);
+            this.staggeringBudget.TabIndex = 20;
+            this.staggeringBudget.UseVisualStyleBackColor = true;
+            this.staggeringBudget.CheckedChanged += new System.EventHandler(this.StaggeringBudgetCheckChanged);
+            // 
+            // nwkResolutionUpDown
+            // 
+            this.nwkResolutionUpDown.Location = new System.Drawing.Point(11, 341);
+            this.nwkResolutionUpDown.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nwkResolutionUpDown.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.nwkResolutionUpDown.Name = "nwkResolutionUpDown";
+            this.nwkResolutionUpDown.Size = new System.Drawing.Size(185, 23);
+            this.nwkResolutionUpDown.TabIndex = 19;
+            this.nwkResolutionUpDown.Value = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            // 
+            // nwkResolutionLabel
+            // 
+            this.nwkResolutionLabel.AutoSize = true;
+            this.nwkResolutionLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.nwkResolutionLabel.Location = new System.Drawing.Point(32, 320);
+            this.nwkResolutionLabel.Name = "nwkResolutionLabel";
+            this.nwkResolutionLabel.Size = new System.Drawing.Size(129, 15);
+            this.nwkResolutionLabel.TabIndex = 18;
+            this.nwkResolutionLabel.Text = "Spatial Map Resolution";
+            // 
+            // nwkResolution
+            // 
+            this.nwkResolution.AutoSize = true;
+            this.nwkResolution.Location = new System.Drawing.Point(11, 321);
+            this.nwkResolution.Name = "nwkResolution";
+            this.nwkResolution.Size = new System.Drawing.Size(15, 14);
+            this.nwkResolution.TabIndex = 17;
+            this.nwkResolution.UseVisualStyleBackColor = true;
+            this.nwkResolution.CheckedChanged += new System.EventHandler(this.NWKCheckChanged);
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("Segoe UI Semibold", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label28.Location = new System.Drawing.Point(11, 287);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(127, 24);
+            this.label28.TabIndex = 16;
+            this.label28.Text = "This is set to \'2\' by default\r\nif unchecked.\r\n";
+            // 
+            // ndsUpDown
+            // 
+            this.ndsUpDown.Location = new System.Drawing.Point(11, 261);
+            this.ndsUpDown.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.ndsUpDown.Name = "ndsUpDown";
+            this.ndsUpDown.Size = new System.Drawing.Size(185, 23);
+            this.ndsUpDown.TabIndex = 15;
+            this.ndsUpDown.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            // 
+            // ndsLabel
+            // 
+            this.ndsLabel.AutoSize = true;
+            this.ndsLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ndsLabel.Location = new System.Drawing.Point(32, 240);
+            this.ndsLabel.Name = "ndsLabel";
+            this.ndsLabel.Size = new System.Drawing.Size(164, 15);
+            this.ndsLabel.TabIndex = 14;
+            this.ndsLabel.Text = "Network Dynamic Simulation";
+            // 
+            // nds
+            // 
+            this.nds.AutoSize = true;
+            this.nds.Location = new System.Drawing.Point(11, 241);
+            this.nds.Name = "nds";
+            this.nds.Size = new System.Drawing.Size(15, 14);
+            this.nds.TabIndex = 13;
+            this.nds.UseVisualStyleBackColor = true;
+            this.nds.CheckedChanged += new System.EventHandler(this.NDSCheckChanged);
             // 
             // label22
             // 
@@ -1215,7 +1507,7 @@
             0,
             0});
             this.overridePortNumericUpDown.Name = "overridePortNumericUpDown";
-            this.overridePortNumericUpDown.Size = new System.Drawing.Size(157, 23);
+            this.overridePortNumericUpDown.Size = new System.Drawing.Size(185, 23);
             this.overridePortNumericUpDown.TabIndex = 11;
             this.overridePortNumericUpDown.Value = new decimal(new int[] {
             2001,
@@ -1250,7 +1542,7 @@
             "Mins",
             "Hours",
             "Days"});
-            this.restartUnitsComboBox.Location = new System.Drawing.Point(105, 119);
+            this.restartUnitsComboBox.Location = new System.Drawing.Point(133, 118);
             this.restartUnitsComboBox.Name = "restartUnitsComboBox";
             this.restartUnitsComboBox.Size = new System.Drawing.Size(63, 23);
             this.restartUnitsComboBox.TabIndex = 8;
@@ -1265,7 +1557,7 @@
             0,
             0});
             this.restartIntervalUpDown.Name = "restartIntervalUpDown";
-            this.restartIntervalUpDown.Size = new System.Drawing.Size(49, 23);
+            this.restartIntervalUpDown.Size = new System.Drawing.Size(77, 23);
             this.restartIntervalUpDown.TabIndex = 7;
             this.restartIntervalUpDown.Value = new decimal(new int[] {
             60,
@@ -1287,7 +1579,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label6.Location = new System.Drawing.Point(32, 100);
+            this.label6.Location = new System.Drawing.Point(32, 98);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(120, 15);
             this.label6.TabIndex = 5;
@@ -1296,7 +1588,7 @@
             // automaticallyRestart
             // 
             this.automaticallyRestart.AutoSize = true;
-            this.automaticallyRestart.Location = new System.Drawing.Point(11, 101);
+            this.automaticallyRestart.Location = new System.Drawing.Point(11, 99);
             this.automaticallyRestart.Name = "automaticallyRestart";
             this.automaticallyRestart.Size = new System.Drawing.Size(15, 14);
             this.automaticallyRestart.TabIndex = 4;
@@ -1322,7 +1614,7 @@
             0,
             0});
             this.fpsLimitUpDown.Name = "fpsLimitUpDown";
-            this.fpsLimitUpDown.Size = new System.Drawing.Size(157, 23);
+            this.fpsLimitUpDown.Size = new System.Drawing.Size(185, 23);
             this.fpsLimitUpDown.TabIndex = 2;
             this.fpsLimitUpDown.Value = new decimal(new int[] {
             60,
@@ -1363,9 +1655,9 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.steamCmdLog);
-            this.groupBox3.Location = new System.Drawing.Point(186, 57);
+            this.groupBox3.Location = new System.Drawing.Point(214, 57);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(1200, 662);
+            this.groupBox3.Size = new System.Drawing.Size(1172, 662);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Log";
@@ -1377,7 +1669,7 @@
             this.steamCmdLog.Name = "steamCmdLog";
             this.steamCmdLog.ReadOnly = true;
             this.steamCmdLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.steamCmdLog.Size = new System.Drawing.Size(1188, 634);
+            this.steamCmdLog.Size = new System.Drawing.Size(1160, 634);
             this.steamCmdLog.TabIndex = 1;
             // 
             // steamCmdAlert
@@ -1438,6 +1730,11 @@
             this.tabPage2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.streamsDeltaUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.streamingBudgetUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.staggeringBudgetUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nwkResolutionUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ndsUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.overridePortNumericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.restartIntervalUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fpsLimitUpDown)).EndInit();
@@ -1543,5 +1840,24 @@
         private GroupBox groupBox5;
         private Label label24;
         private Button locateServerFilesBtn;
+        private NumericUpDown ndsUpDown;
+        private Label ndsLabel;
+        private CheckBox nds;
+        private Label label28;
+        private NumericUpDown nwkResolutionUpDown;
+        private Label nwkResolutionLabel;
+        private CheckBox nwkResolution;
+        private NumericUpDown staggeringBudgetUpDown;
+        private Label staggeringBudgetLabel;
+        private CheckBox staggeringBudget;
+        private Label label27;
+        private NumericUpDown streamingBudgetUpDown;
+        private Label streamingBudgetLabel;
+        private CheckBox streamingBudget;
+        private NumericUpDown streamsDeltaUpDown;
+        private Label streamsDeltaLabel;
+        private CheckBox streamsDelta;
+        private Label label30;
+        private ComboBox logLevelComboBox;
     }
 }
