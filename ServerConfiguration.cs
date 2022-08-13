@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace ReforgerServerApp
 {
@@ -30,6 +26,8 @@ namespace ReforgerServerApp
         public bool BattlEye { get; set; }
         public bool A2sQueryEnabled { get; set; }
         public int SteamQueryPort { get; set; }
+        public bool PlatformPC { get; set; }
+        public bool PlatformXBL { get; set; }
         public List<Mod> Mods { get; }
 
         private ServerConfiguration()
@@ -68,6 +66,33 @@ namespace ReforgerServerApp
             sb.AppendLine("\"playerCountLimit\": " + PlayerCountLimit + ",");
             sb.AppendLine("\"autoJoinable\": " + AutoJoinable.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"visible\": " + Visible.ToString().ToLowerInvariant() + ",");
+            sb.AppendLine("\"supportedGameClientTypes\": [");
+
+            if (PlatformPC)
+            {
+                // Append comma if we're also expecting to add XBL
+                if (PlatformXBL)
+                {
+                    sb.AppendLine("\"PLATFORM_PC\",");
+                }
+                else
+                {
+                    sb.AppendLine("\"PLATFORM_PC\"");
+                }
+            }
+
+            if (PlatformXBL)
+            {
+                sb.AppendLine("\"PLATFORM_XBL\"");
+            }
+
+            // If neither are in the configuration, we will default to PC
+            if (!PlatformPC && !PlatformXBL)
+            {
+                sb.AppendLine("\"PLATFORM_PC\"");
+            }
+
+            sb.AppendLine("],");
             sb.AppendLine("\"gameProperties\": {");
             sb.AppendLine("\"serverMaxViewDistance\": " + +ServerMaxViewDistance + ",");
             sb.AppendLine("\"serverMinGrassDistance\": " + ServerMinGrassDistance + ",");
@@ -75,6 +100,7 @@ namespace ReforgerServerApp
             sb.AppendLine("\"disableThirdPerson\": " + DisableThirdPerson.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"fastValidation\": " + FastValidation.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"battlEye\": " + BattlEye.ToString().ToLowerInvariant());
+
             if (Mods.Count > 0)
             {
                 sb.AppendLine("},");
@@ -100,6 +126,7 @@ namespace ReforgerServerApp
             {
                 sb.AppendLine("}");
             }
+
             sb.AppendLine("},");
             sb.AppendLine("\"a2sQueryEnabled\": " + A2sQueryEnabled.ToString().ToLowerInvariant() + ",");
             sb.AppendLine("\"steamQueryPort\": " + SteamQueryPort);
@@ -128,6 +155,8 @@ namespace ReforgerServerApp
             sb.AppendLine("playerCountLimit," + PlayerCountLimit);
             sb.AppendLine("autoJoinable," + AutoJoinable.ToString().ToLowerInvariant());
             sb.AppendLine("visible," + Visible.ToString().ToLowerInvariant());
+            sb.AppendLine("platformPC," + PlatformPC.ToString().ToLowerInvariant());
+            sb.AppendLine("platformXBL," + PlatformXBL.ToString().ToLowerInvariant());
             sb.AppendLine("serverMaxViewDistance," + ServerMaxViewDistance);
             sb.AppendLine("serverMinGrassDistance," + ServerMinGrassDistance);
             sb.AppendLine("networkViewDistance," + NetworkViewDistance);
@@ -243,6 +272,20 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.Visible = visible;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithPlatformPC(bool platformPC)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.PlatformPC = platformPC;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithPlatformXBL(bool platformXBL)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.PlatformXBL = platformXBL;
                 return this;
             }
 
