@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using static ReforgerServerApp.ServerConfiguration;
@@ -70,6 +71,8 @@ namespace ReforgerServerApp
             timerCancellationTokenSource = new();
             AlphabetiseModListBox(GetAvailableModsList());
             AlphabetiseModListBox(GetEnabledModsList());
+
+            CheckForUpdates();
         }
 
         /// <summary>
@@ -791,6 +794,14 @@ namespace ReforgerServerApp
             }
         }
 
+        /// <summary>
+        /// Handler for the "Locate Server Files" button.
+        /// Allows the user to navigate to a directory and set the Server Files installation directory without downloading the files.
+        /// Useful for moving installation directories around.
+        /// Informs the user if the server files were not located.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LocateServerFilesBtnPressed(object sender, EventArgs e)
         {
             string path = string.Empty;
@@ -804,7 +815,8 @@ namespace ReforgerServerApp
                     steamCmdFile = fbd.SelectedPath + "\\steamcmd\\steamcmd.exe";
                     File.WriteAllText(INSTALL_DIR_FILE, installDirectory);
                     UpdateSteamCmdInstallStatus();
-                } else
+                }
+                else
                 {
                     MessageBox.Show("Arma Reforger Server Files could not be located.\r\nPlease confirm the chosen path or download the files to start.", "Warning", MessageBoxButtons.OK);
                 }
@@ -910,6 +922,49 @@ namespace ReforgerServerApp
             else
             {
                 overridePortNumericUpDown.Enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Check our version against the version.txt file in the GitHub repository.
+        /// Show a dialog prompting the user to update if we are out of date.
+        /// If there is no internet connection, or this simply fails, 
+        /// warn the user that we couldn't successfully check for updates.
+        /// </summary>
+        private void CheckForUpdates()
+        {
+            string latestVersionString;
+            WebClient wc = new WebClient();
+
+            // Add headers to impersonate a web browser. Some web sites 
+            // will not respond correctly without these headers
+            wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12");
+            wc.Headers.Add("Accept", "*/*");
+            wc.Headers.Add("Accept-Language", "en-gb,en;q=0.5");
+            wc.Headers.Add("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
+            // Disable caching to avoid retrieval of an old version number
+            wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
+            try
+            {
+                latestVersionString = wc.DownloadString("https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool/main/version.txt");
+
+                var checkedVersion = new Version(latestVersionString);
+                var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+                var result = checkedVersion.CompareTo(currentVersion);
+                if (result > 0)
+                {
+                    DialogResult dr = MessageBox.Show("There is an update available for the Arma Reforger Dedicated Server Tool." +
+                        "\r\nWould you like to get the latest version now?\r\n\r\nOur version: " + checkedVersion +
+                        "\r\nLatest version: " + currentVersion, "Arma Reforger Dedicated Server Tool - Update available", MessageBoxButtons.YesNo);
+                    if (dr == DialogResult.Yes)
+                    {
+                        Process.Start("explorer", "https://github.com/soda3x/ArmaReforgerServerTool/releases");
+                    }
+                }
+            }
+            catch (WebException)
+            {
+                MessageBox.Show("Unable to check for updates, you may not be using the latest version of the Arma Reforger Dedicated Server Tool.", "Arma Reforger Dedicated Server Tool");
             }
         }
     }
