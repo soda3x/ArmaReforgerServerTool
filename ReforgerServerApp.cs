@@ -682,7 +682,7 @@ namespace ReforgerServerApp
                 steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText(GetTimestamp() + ": " + e.Data + Environment.NewLine)));
 
                 // Kill the server if it fails to start correctly.
-                if (e.Data.Contains("Game destroyed"))
+                if (e.Data.Contains("Unable to Initialize"))
                 {
                     steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText(GetTimestamp() + ": " + "System stopped server due to an error." + Environment.NewLine)));
                     serverProcess.OutputDataReceived -= SteamCmdDataReceived;
