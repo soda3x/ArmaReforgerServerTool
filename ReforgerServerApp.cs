@@ -791,6 +791,26 @@ namespace ReforgerServerApp
             }
         }
 
+        private void LocateServerFilesBtnPressed(object sender, EventArgs e)
+        {
+            string path = string.Empty;
+            using FolderBrowserDialog fbd = new();
+            DialogResult result = fbd.ShowDialog();
+            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+            {
+                if (File.Exists(fbd.SelectedPath + "\\steamcmd\\steamcmd.exe") && File.Exists(fbd.SelectedPath + "\\arma_reforger\\ArmaReforgerServer.exe"))
+                {
+                    installDirectory = fbd.SelectedPath;
+                    steamCmdFile = fbd.SelectedPath + "\\steamcmd\\steamcmd.exe";
+                    File.WriteAllText(INSTALL_DIR_FILE, installDirectory);
+                    UpdateSteamCmdInstallStatus();
+                } else
+                {
+                    MessageBox.Show("Arma Reforger Server Files could not be located.\r\nPlease confirm the chosen path or download the files to start.", "Warning", MessageBoxButtons.OK);
+                }
+            }
+        }
+
         /// <summary>
         /// Enable / Disable Server Configuration Fields
         /// </summary>
@@ -830,6 +850,7 @@ namespace ReforgerServerApp
             addModBtn.Enabled = enabled;
             removeModBtn.Enabled = enabled;
             deleteServerFilesBtn.Enabled = enabled;
+            locateServerFilesBtn.Enabled = enabled;
             limitFPS.Enabled = enabled;
             fpsLimitUpDown.Enabled = enabled;
             automaticallyRestart.Enabled = enabled;
