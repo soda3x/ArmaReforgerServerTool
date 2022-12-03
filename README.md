@@ -3,6 +3,8 @@
 
 ## As of the Ground Support update, listen servers can be created! Rejoice!
 
+If you are just wanting to create a server for your mates to play on, you no longer need this tool :)
+
 ## Features
 
 Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool!
