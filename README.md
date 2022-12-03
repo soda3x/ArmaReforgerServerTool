@@ -1,6 +1,7 @@
 ![Logo](https://github.com/soda3x/ArmaReforgerServerTool/blob/6f93fc925ca692c0304d38da15d69fa8ef613937/logo.png)
 
 
+## As of the Ground Support update, listen servers can be created! Rejoice!
 
 ## Features
 
