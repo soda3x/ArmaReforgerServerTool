@@ -44,7 +44,12 @@
             this.enabledMods = new System.Windows.Forms.ListBox();
             this.availableMods = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.subtitleLbl = new System.Windows.Forms.Label();
+            this.vonDisableDirectSpeechUI = new System.Windows.Forms.CheckBox();
+            this.label29 = new System.Windows.Forms.Label();
+            this.vonDisableUI = new System.Windows.Forms.CheckBox();
+            this.label24 = new System.Windows.Forms.Label();
+            this.lobbyPlayerSync = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label26 = new System.Windows.Forms.Label();
             this.platformPC = new System.Windows.Forms.CheckBox();
@@ -57,7 +62,6 @@
             this.dedicatedServerId = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.label35 = new System.Windows.Forms.Label();
-            this.titleLbl = new System.Windows.Forms.Label();
             this.a2sQueryEnabled = new System.Windows.Forms.CheckBox();
             this.label36 = new System.Windows.Forms.Label();
             this.steamQueryPort = new System.Windows.Forms.NumericUpDown();
@@ -336,7 +340,12 @@
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.subtitleLbl);
+            this.groupBox1.Controls.Add(this.vonDisableDirectSpeechUI);
+            this.groupBox1.Controls.Add(this.label29);
+            this.groupBox1.Controls.Add(this.vonDisableUI);
+            this.groupBox1.Controls.Add(this.label24);
+            this.groupBox1.Controls.Add(this.lobbyPlayerSync);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.groupBox5);
             this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Controls.Add(this.label2);
@@ -345,7 +354,6 @@
             this.groupBox1.Controls.Add(this.dedicatedServerId);
             this.groupBox1.Controls.Add(this.label19);
             this.groupBox1.Controls.Add(this.label35);
-            this.groupBox1.Controls.Add(this.titleLbl);
             this.groupBox1.Controls.Add(this.a2sQueryEnabled);
             this.groupBox1.Controls.Add(this.label36);
             this.groupBox1.Controls.Add(this.steamQueryPort);
@@ -392,18 +400,71 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Server Settings";
             // 
-            // subtitleLbl
+            // vonDisableDirectSpeechUI
             // 
-            this.subtitleLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.subtitleLbl.AutoSize = true;
-            this.subtitleLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.subtitleLbl.ForeColor = System.Drawing.Color.Goldenrod;
-            this.subtitleLbl.Location = new System.Drawing.Point(474, 201);
-            this.subtitleLbl.Name = "subtitleLbl";
-            this.subtitleLbl.Size = new System.Drawing.Size(287, 25);
-            this.subtitleLbl.TabIndex = 69;
-            this.subtitleLbl.Text = "DEDICATED SERVER TOOL";
-            this.subtitleLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.vonDisableDirectSpeechUI.AutoSize = true;
+            this.vonDisableDirectSpeechUI.Location = new System.Drawing.Point(700, 528);
+            this.vonDisableDirectSpeechUI.Name = "vonDisableDirectSpeechUI";
+            this.vonDisableDirectSpeechUI.Size = new System.Drawing.Size(15, 14);
+            this.vonDisableDirectSpeechUI.TabIndex = 75;
+            this.vonDisableDirectSpeechUI.UseVisualStyleBackColor = true;
+            // 
+            // label29
+            // 
+            this.label29.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label29.AutoSize = true;
+            this.label29.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label29.Location = new System.Drawing.Point(423, 522);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(227, 21);
+            this.label29.TabIndex = 74;
+            this.label29.Text = "VON Disable Direct Speech UI";
+            // 
+            // vonDisableUI
+            // 
+            this.vonDisableUI.AutoSize = true;
+            this.vonDisableUI.Location = new System.Drawing.Point(700, 500);
+            this.vonDisableUI.Name = "vonDisableUI";
+            this.vonDisableUI.Size = new System.Drawing.Size(15, 14);
+            this.vonDisableUI.TabIndex = 73;
+            this.vonDisableUI.UseVisualStyleBackColor = true;
+            // 
+            // label24
+            // 
+            this.label24.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label24.AutoSize = true;
+            this.label24.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label24.Location = new System.Drawing.Point(423, 494);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(121, 21);
+            this.label24.TabIndex = 72;
+            this.label24.Text = "VON Disable UI";
+            // 
+            // lobbyPlayerSync
+            // 
+            this.lobbyPlayerSync.AutoSize = true;
+            this.lobbyPlayerSync.Location = new System.Drawing.Point(700, 472);
+            this.lobbyPlayerSync.Name = "lobbyPlayerSync";
+            this.lobbyPlayerSync.Size = new System.Drawing.Size(15, 14);
+            this.lobbyPlayerSync.TabIndex = 71;
+            this.lobbyPlayerSync.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(423, 466);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(196, 21);
+            this.label1.TabIndex = 70;
+            this.label1.Text = "Lobby Player Synchronise";
             // 
             // groupBox5
             // 
@@ -411,9 +472,9 @@
             this.groupBox5.Controls.Add(this.platformPC);
             this.groupBox5.Controls.Add(this.label25);
             this.groupBox5.Controls.Add(this.platformXbox);
-            this.groupBox5.Location = new System.Drawing.Point(419, 246);
+            this.groupBox5.Location = new System.Drawing.Point(423, 571);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(306, 55);
+            this.groupBox5.Size = new System.Drawing.Size(292, 55);
             this.groupBox5.TabIndex = 68;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Client Platforms";
@@ -465,12 +526,12 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(435, 28);
+            this.pictureBox1.Location = new System.Drawing.Point(109, 32);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(278, 131);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.Size = new System.Drawing.Size(505, 199);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 51;
             this.pictureBox1.TabStop = false;
             // 
@@ -481,7 +542,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(6, 340);
+            this.label2.Location = new System.Drawing.Point(423, 350);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(116, 21);
             this.label2.TabIndex = 62;
@@ -493,7 +554,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gameNumber.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.gameNumber.Location = new System.Drawing.Point(210, 340);
+            this.gameNumber.Location = new System.Drawing.Point(627, 350);
             this.gameNumber.Maximum = new decimal(new int[] {
             255,
             0,
@@ -527,7 +588,7 @@
             "{3F2E005F43DBD2F8}Missions/CAH_Briars_Coast.conf",
             "{9405201CBD22A30C}Missions/CAH_Factory.conf",
             "{1CD06B409C6FAE56}Missions/CAH_Forest.conf"});
-            this.scenarioId.Location = new System.Drawing.Point(210, 137);
+            this.scenarioId.Location = new System.Drawing.Point(214, 379);
             this.scenarioId.Name = "scenarioId";
             this.scenarioId.Size = new System.Drawing.Size(177, 23);
             this.scenarioId.TabIndex = 60;
@@ -537,7 +598,7 @@
             this.dedicatedServerId.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dedicatedServerId.Location = new System.Drawing.Point(210, 630);
+            this.dedicatedServerId.Location = new System.Drawing.Point(214, 670);
             this.dedicatedServerId.Name = "dedicatedServerId";
             this.dedicatedServerId.Size = new System.Drawing.Size(177, 23);
             this.dedicatedServerId.TabIndex = 59;
@@ -549,7 +610,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label19.Location = new System.Drawing.Point(6, 632);
+            this.label19.Location = new System.Drawing.Point(10, 672);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(157, 21);
             this.label19.TabIndex = 58;
@@ -562,29 +623,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label35.AutoSize = true;
             this.label35.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label35.Location = new System.Drawing.Point(6, 572);
+            this.label35.Location = new System.Drawing.Point(10, 612);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(139, 21);
             this.label35.TabIndex = 54;
             this.label35.Text = "Steam Query Port";
             this.label35.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // titleLbl
-            // 
-            this.titleLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.titleLbl.AutoSize = true;
-            this.titleLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.titleLbl.Location = new System.Drawing.Point(466, 154);
-            this.titleLbl.Name = "titleLbl";
-            this.titleLbl.Size = new System.Drawing.Size(296, 37);
-            this.titleLbl.TabIndex = 0;
-            this.titleLbl.Text = "ARMA REFORGER";
-            this.titleLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // a2sQueryEnabled
             // 
             this.a2sQueryEnabled.AutoSize = true;
-            this.a2sQueryEnabled.Location = new System.Drawing.Point(210, 609);
+            this.a2sQueryEnabled.Location = new System.Drawing.Point(214, 649);
             this.a2sQueryEnabled.Name = "a2sQueryEnabled";
             this.a2sQueryEnabled.Size = new System.Drawing.Size(15, 14);
             this.a2sQueryEnabled.TabIndex = 57;
@@ -597,7 +646,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label36.AutoSize = true;
             this.label36.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label36.Location = new System.Drawing.Point(6, 603);
+            this.label36.Location = new System.Drawing.Point(10, 643);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(150, 21);
             this.label36.TabIndex = 55;
@@ -609,7 +658,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.steamQueryPort.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.steamQueryPort.Location = new System.Drawing.Point(210, 575);
+            this.steamQueryPort.Location = new System.Drawing.Point(214, 615);
             this.steamQueryPort.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -630,7 +679,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gameHostRegisterBindPort.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.gameHostRegisterBindPort.Location = new System.Drawing.Point(210, 544);
+            this.gameHostRegisterBindPort.Location = new System.Drawing.Point(214, 584);
             this.gameHostRegisterBindPort.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -652,7 +701,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label33.AutoSize = true;
             this.label33.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label33.Location = new System.Drawing.Point(6, 543);
+            this.label33.Location = new System.Drawing.Point(10, 583);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(142, 21);
             this.label33.TabIndex = 52;
@@ -665,7 +714,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label34.AutoSize = true;
             this.label34.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label34.Location = new System.Drawing.Point(6, 514);
+            this.label34.Location = new System.Drawing.Point(10, 554);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(172, 21);
             this.label34.TabIndex = 50;
@@ -676,7 +725,7 @@
             this.gameHostRegisterBindAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gameHostRegisterBindAddress.Location = new System.Drawing.Point(210, 515);
+            this.gameHostRegisterBindAddress.Location = new System.Drawing.Point(214, 555);
             this.gameHostRegisterBindAddress.Name = "gameHostRegisterBindAddress";
             this.gameHostRegisterBindAddress.Size = new System.Drawing.Size(177, 23);
             this.gameHostRegisterBindAddress.TabIndex = 51;
@@ -687,7 +736,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gameHostBindPort.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.gameHostBindPort.Location = new System.Drawing.Point(210, 486);
+            this.gameHostBindPort.Location = new System.Drawing.Point(214, 526);
             this.gameHostBindPort.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -709,7 +758,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label32.AutoSize = true;
             this.label32.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label32.Location = new System.Drawing.Point(6, 485);
+            this.label32.Location = new System.Drawing.Point(10, 525);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(162, 21);
             this.label32.TabIndex = 48;
@@ -722,7 +771,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label31.AutoSize = true;
             this.label31.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label31.Location = new System.Drawing.Point(6, 456);
+            this.label31.Location = new System.Drawing.Point(10, 496);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(192, 21);
             this.label31.TabIndex = 46;
@@ -733,7 +782,7 @@
             this.gameHostBindAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gameHostBindAddress.Location = new System.Drawing.Point(210, 457);
+            this.gameHostBindAddress.Location = new System.Drawing.Point(214, 497);
             this.gameHostBindAddress.Name = "gameHostBindAddress";
             this.gameHostBindAddress.Size = new System.Drawing.Size(177, 23);
             this.gameHostBindAddress.TabIndex = 47;
@@ -745,7 +794,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(6, 19);
+            this.label3.Location = new System.Drawing.Point(10, 261);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(105, 21);
             this.label3.TabIndex = 4;
@@ -754,7 +803,7 @@
             // battlEye
             // 
             this.battlEye.AutoSize = true;
-            this.battlEye.Location = new System.Drawing.Point(210, 433);
+            this.battlEye.Location = new System.Drawing.Point(700, 443);
             this.battlEye.Name = "battlEye";
             this.battlEye.Size = new System.Drawing.Size(15, 14);
             this.battlEye.TabIndex = 45;
@@ -765,7 +814,7 @@
             this.serverName.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.serverName.Location = new System.Drawing.Point(210, 22);
+            this.serverName.Location = new System.Drawing.Point(214, 264);
             this.serverName.Name = "serverName";
             this.serverName.Size = new System.Drawing.Size(177, 23);
             this.serverName.TabIndex = 5;
@@ -773,7 +822,7 @@
             // fastValidation
             // 
             this.fastValidation.AutoSize = true;
-            this.fastValidation.Location = new System.Drawing.Point(210, 404);
+            this.fastValidation.Location = new System.Drawing.Point(700, 414);
             this.fastValidation.Name = "fastValidation";
             this.fastValidation.Size = new System.Drawing.Size(15, 14);
             this.fastValidation.TabIndex = 44;
@@ -786,7 +835,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(6, 48);
+            this.label4.Location = new System.Drawing.Point(10, 290);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(131, 21);
             this.label4.TabIndex = 6;
@@ -799,7 +848,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label17.Location = new System.Drawing.Point(6, 427);
+            this.label17.Location = new System.Drawing.Point(423, 437);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(69, 21);
             this.label17.TabIndex = 38;
@@ -810,7 +859,7 @@
             this.serverPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.serverPassword.Location = new System.Drawing.Point(210, 51);
+            this.serverPassword.Location = new System.Drawing.Point(214, 293);
             this.serverPassword.Name = "serverPassword";
             this.serverPassword.Size = new System.Drawing.Size(177, 23);
             this.serverPassword.TabIndex = 7;
@@ -822,7 +871,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label18.Location = new System.Drawing.Point(6, 398);
+            this.label18.Location = new System.Drawing.Point(423, 408);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(114, 21);
             this.label18.TabIndex = 36;
@@ -835,7 +884,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.regionLabel.AutoSize = true;
             this.regionLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.regionLabel.Location = new System.Drawing.Point(6, 77);
+            this.regionLabel.Location = new System.Drawing.Point(10, 319);
             this.regionLabel.Name = "regionLabel";
             this.regionLabel.Size = new System.Drawing.Size(62, 21);
             this.regionLabel.TabIndex = 8;
@@ -844,7 +893,7 @@
             // disableThirdPerson
             // 
             this.disableThirdPerson.AutoSize = true;
-            this.disableThirdPerson.Location = new System.Drawing.Point(210, 376);
+            this.disableThirdPerson.Location = new System.Drawing.Point(700, 386);
             this.disableThirdPerson.Name = "disableThirdPerson";
             this.disableThirdPerson.Size = new System.Drawing.Size(15, 14);
             this.disableThirdPerson.TabIndex = 35;
@@ -857,7 +906,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label5.Location = new System.Drawing.Point(6, 106);
+            this.label5.Location = new System.Drawing.Point(10, 348);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(131, 21);
             this.label5.TabIndex = 10;
@@ -869,7 +918,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.networkViewDistance.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.networkViewDistance.Location = new System.Drawing.Point(210, 311);
+            this.networkViewDistance.Location = new System.Drawing.Point(627, 321);
             this.networkViewDistance.Maximum = new decimal(new int[] {
             5000,
             0,
@@ -894,7 +943,7 @@
             this.adminPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.adminPassword.Location = new System.Drawing.Point(210, 109);
+            this.adminPassword.Location = new System.Drawing.Point(214, 351);
             this.adminPassword.Name = "adminPassword";
             this.adminPassword.Size = new System.Drawing.Size(177, 23);
             this.adminPassword.TabIndex = 11;
@@ -905,7 +954,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.serverMinGrassDistance.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.serverMinGrassDistance.Location = new System.Drawing.Point(210, 282);
+            this.serverMinGrassDistance.Location = new System.Drawing.Point(627, 292);
             this.serverMinGrassDistance.Maximum = new decimal(new int[] {
             150,
             0,
@@ -922,7 +971,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.scenarioIdLabel.AutoSize = true;
             this.scenarioIdLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.scenarioIdLabel.Location = new System.Drawing.Point(6, 135);
+            this.scenarioIdLabel.Location = new System.Drawing.Point(10, 377);
             this.scenarioIdLabel.Name = "scenarioIdLabel";
             this.scenarioIdLabel.Size = new System.Drawing.Size(93, 21);
             this.scenarioIdLabel.TabIndex = 12;
@@ -934,7 +983,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.serverMaxViewDistance.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.serverMaxViewDistance.Location = new System.Drawing.Point(210, 253);
+            this.serverMaxViewDistance.Location = new System.Drawing.Point(627, 263);
             this.serverMaxViewDistance.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -957,7 +1006,7 @@
             // visible
             // 
             this.visible.AutoSize = true;
-            this.visible.Location = new System.Drawing.Point(210, 229);
+            this.visible.Location = new System.Drawing.Point(214, 471);
             this.visible.Name = "visible";
             this.visible.Size = new System.Drawing.Size(15, 14);
             this.visible.TabIndex = 31;
@@ -970,7 +1019,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label9.Location = new System.Drawing.Point(6, 164);
+            this.label9.Location = new System.Drawing.Point(10, 406);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(142, 21);
             this.label9.TabIndex = 14;
@@ -979,7 +1028,7 @@
             // autoJoinable
             // 
             this.autoJoinable.AutoSize = true;
-            this.autoJoinable.Location = new System.Drawing.Point(210, 201);
+            this.autoJoinable.Location = new System.Drawing.Point(214, 443);
             this.autoJoinable.Name = "autoJoinable";
             this.autoJoinable.Size = new System.Drawing.Size(15, 14);
             this.autoJoinable.TabIndex = 30;
@@ -992,7 +1041,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label8.Location = new System.Drawing.Point(6, 193);
+            this.label8.Location = new System.Drawing.Point(10, 435);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(110, 21);
             this.label8.TabIndex = 16;
@@ -1004,7 +1053,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.playerCountLimit.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.playerCountLimit.Location = new System.Drawing.Point(210, 167);
+            this.playerCountLimit.Location = new System.Drawing.Point(214, 409);
             this.playerCountLimit.Maximum = new decimal(new int[] {
             256,
             0,
@@ -1026,7 +1075,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label7.Location = new System.Drawing.Point(6, 222);
+            this.label7.Location = new System.Drawing.Point(10, 465);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(58, 21);
             this.label7.TabIndex = 18;
@@ -1049,7 +1098,7 @@
             "GB",
             "RU",
             "JP"});
-            this.region.Location = new System.Drawing.Point(210, 80);
+            this.region.Location = new System.Drawing.Point(214, 322);
             this.region.Name = "region";
             this.region.Size = new System.Drawing.Size(88, 23);
             this.region.TabIndex = 28;
@@ -1061,7 +1110,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label14.Location = new System.Drawing.Point(6, 251);
+            this.label14.Location = new System.Drawing.Point(423, 261);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(198, 21);
             this.label14.TabIndex = 20;
@@ -1074,7 +1123,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label11.Location = new System.Drawing.Point(6, 370);
+            this.label11.Location = new System.Drawing.Point(423, 380);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(158, 21);
             this.label11.TabIndex = 26;
@@ -1087,7 +1136,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label13.Location = new System.Drawing.Point(6, 280);
+            this.label13.Location = new System.Drawing.Point(423, 290);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(199, 21);
             this.label13.TabIndex = 22;
@@ -1100,7 +1149,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label12.Location = new System.Drawing.Point(6, 309);
+            this.label12.Location = new System.Drawing.Point(423, 319);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(178, 21);
             this.label12.TabIndex = 24;
@@ -1775,7 +1824,6 @@
         private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;
-        private Label titleLbl;
         private Button saveSettingsBtn;
         private Button loadSettingsBtn;
         private TextBox serverName;
@@ -1863,7 +1911,6 @@
         private CheckBox platformXbox;
         private CheckBox platformPC;
         private GroupBox groupBox5;
-        private Label subtitleLbl;
         private Button locateServerFilesBtn;
         private NumericUpDown ndsUpDown;
         private Label ndsLabel;
@@ -1887,5 +1934,11 @@
         private Panel panel1;
         private Label listScenariosLabel;
         private CheckBox listScenarios;
+        private CheckBox lobbyPlayerSync;
+        private Label label1;
+        private CheckBox vonDisableDirectSpeechUI;
+        private Label label29;
+        private CheckBox vonDisableUI;
+        private Label label24;
     }
 }
