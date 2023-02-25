@@ -1,10 +1,10 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing.Text;
 using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using static ReforgerServerApp.ServerConfiguration;
 
 namespace ReforgerServerApp
@@ -26,8 +26,14 @@ namespace ReforgerServerApp
 
             serverRunningLabel.Text = string.Empty;
 
+            // Set labels to correct font
+            PrivateFontCollection pfc = new();
+            pfc.AddFontFile(Path.Combine(Application.StartupPath, "Anton-Regular.ttf"));
+            titleLbl.Font = new Font(pfc.Families[0], 24, FontStyle.Regular);
+            subtitleLbl.Font = new Font(pfc.Families[0], 15.75f, FontStyle.Regular);
+
             // Create tooltips
-            createTooltips();
+            CreateTooltips();
 
             // Initialise region combo box to select the first option
             region.SelectedIndex = 0;
@@ -72,50 +78,32 @@ namespace ReforgerServerApp
         /// <summary>
         /// Initialise tool tips for certain UI elements.
         /// </summary>
-        private void createTooltips()
+        private void CreateTooltips()
         {
             ToolTip enableAllModsToolTip = new();
-            enableAllModsToolTip.SetToolTip(enableAllModsBtn, "Enable All Mods");
+            enableAllModsToolTip.SetToolTip(enableAllModsBtn, Constants.ENABLE_ALL_MODS_STR);
             ToolTip disableAllModsToolTip = new();
-            disableAllModsToolTip.SetToolTip(disableAllModsBtn, "Disable All Mods");
+            disableAllModsToolTip.SetToolTip(disableAllModsBtn, Constants.DISABLE_ALL_MODS_STR);
             ToolTip enableModToolTip = new();
-            enableModToolTip.SetToolTip(addToEnabledBtn, "Enable Mod");
+            enableModToolTip.SetToolTip(addToEnabledBtn, Constants.ENABLE_MOD_STR);
             ToolTip disableModToolTip = new();
-            disableModToolTip.SetToolTip(removeFromEnabledBtn, "Disable Mod");
+            disableModToolTip.SetToolTip(removeFromEnabledBtn, Constants.DISABLE_MOD_STR);
             ToolTip scenarioIdLabelToolTip = new();
-            scenarioIdLabelToolTip.SetToolTip(scenarioIdLabel, "Enter the Scenario ID found in the Scenario's serverData.json file, or select one of the default ones");
+            scenarioIdLabelToolTip.SetToolTip(scenarioIdLabel, Constants.SCENARIO_ID_TOOLTIP_STR);
             ToolTip regionLabelToolTip = new();
-            regionLabelToolTip.SetToolTip(regionLabel, "Enter an ISO 3166-1 alpha-2 region code, or select one of the default ones");
-
+            regionLabelToolTip.SetToolTip(regionLabel, Constants.REGION_TOOLTIP_STR);
             ToolTip ndsToolTip = new();
-            ndsToolTip.SetToolTip(ndsLabel, "Network Dynamic Simulation (nds) is a server feature that only streams in relevant replicated entities for each client." +
-                "\r\nThe provided value stands for diameter, or the number of cells which are being replicated - default is 2 in each direction." +
-                "\r\nTo turn the feature off use '0'." +
-                "\r\nA higher diameter will result in a bigger networked view range, lower server performance.");
-
+            ndsToolTip.SetToolTip(ndsLabel, Constants.NDS_TOOLTIP_STR);
             ToolTip nwkResolutionToolTip = new();
-            nwkResolutionToolTip.SetToolTip(nwkResolutionLabel, "Defines what resolution Spatial Map cells should be set at in a 100m - 1000m range." +
-                "\r\nSmaller resolution will result in less \"pop-in\" but lower networked view range." +
-                "\r\nFor high view range use high resolution, but small diameter.");
-
+            nwkResolutionToolTip.SetToolTip(nwkResolutionLabel, Constants.NWK_RESOL_TOOLTIP_STR);
             ToolTip staggeringBudgetToolTip = new();
-            staggeringBudgetToolTip.SetToolTip(staggeringBudgetLabel, "Defines how many stationary spatial map cells are allowed to be processed in one tick in a 1 - 10201 range." +
-                "\r\nIf not set it uses the NDS diameter. A lower number will limit how many cells the server has to process per tick, but increase the time it takes for a client to have all relevant entities streamed in." +
-                "\r\nIf the server experiences significant performance drops on spawning/teleporting then the number is set too high." +
-                "\r\nIf the client experiences \"pop-in\" of replicated items then the number is set too low.");
-
+            staggeringBudgetToolTip.SetToolTip(staggeringBudgetLabel, Constants.STAGGER_BDGT_TOOLTIP_STR);
             ToolTip streamingBudgetToolTip = new();
-            streamingBudgetToolTip.SetToolTip(streamingBudgetLabel, "The global streaming budget that is equally distributed between all connections." +
-                "\r\nTo decrement the budget, it uses the replicated hierarchy size of each entity that needs to be streamed in.\r\n" +
-                "It cannot go under 100 to prevent the system stalling." +
-                "\r\nA lower number will limit how many entities the server has to process per tick, but increase the time it takes for a client to have that entity streamed in." +
-                "\r\nIf the server experiences significant performance drops on spawning/teleporting then the number is set too high." +
-                "\r\nIf the client experiences \"pop-in\" of replicated items then the number is set too low.");
-
+            streamingBudgetToolTip.SetToolTip(streamingBudgetLabel, Constants.STREAMING_BDGT_TOOLTIP_STR);
             ToolTip streamsDeltaToolTip = new();
-            streamsDeltaToolTip.SetToolTip(streamsDeltaLabel, "A tool to limit the amount of streams being opened for a client in range 1 - 1000 (default 100)." +
-                "\r\nIf the difference between 'the number of streams the server has open' and 'the number of streams the client has open' is larger than the NUMBER then the server will not open any more streams this tick." +
-                "\r\nTo be adjusted based on average client networking speed.");
+            streamsDeltaToolTip.SetToolTip(streamsDeltaLabel, Constants.STREAMS_DELTA_TOOLTIP_STR);
+            ToolTip listScenariosToolTip = new();
+            listScenariosToolTip.SetToolTip(listScenariosLabel, Constants.LIST_SCENARIOS_TOOLTIP_STR);
         }
 
         /// <summary>
@@ -585,9 +573,9 @@ namespace ReforgerServerApp
 
             if (serverStarted)
             {
-                if (File.Exists(installDirectory + "\\server.json"))
+                if (File.Exists(installDirectory + Constants.SERVER_JSON_STR))
                 {
-                    File.Delete(installDirectory + "\\server.json");
+                    File.Delete(installDirectory + Constants.SERVER_JSON_STR);
                 }
                 worker.CancelAsync();
                 try
@@ -600,7 +588,7 @@ namespace ReforgerServerApp
                     serverProcess.Kill();
 
                     serverStarted = false;
-                    startServerBtn.Text = "Start Server";
+                    startServerBtn.Text = Constants.START_SERVER_STR;
                     EnableServerFields(true);
                     serverRunningLabel.Text = string.Empty;
                 }
@@ -612,12 +600,12 @@ namespace ReforgerServerApp
             else
             {
                 string jsonConfig = CreateConfiguration().AsJsonString();
-                File.WriteAllText(installDirectory + "\\server.json", jsonConfig);
+                File.WriteAllText(installDirectory + Constants.SERVER_JSON_STR, jsonConfig);
                 serverStarted = true;
-                startServerBtn.Text = "Stop Server";
+                startServerBtn.Text = Constants.STOP_SERVER_STR;
                 startServerBtn.Enabled = false;
                 EnableServerFields(false);
-                serverRunningLabel.Text = "Server is currently running. To modify the configuration, you will need to stop it first.";
+                serverRunningLabel.Text = Constants.SERVER_CURRENTLY_RUNNING_STR;
                 steamCmdLog.AppendText(GetTimestamp() + ": " + "User started server." + Environment.NewLine);
                 worker.RunWorkerAsync();
             }
@@ -635,12 +623,12 @@ namespace ReforgerServerApp
 
             if (serverStarted)
             {
-                if (File.Exists(installDirectory + "\\server.json"))
+                if (File.Exists(installDirectory + Constants.SERVER_JSON_STR))
                 {
-                    File.Delete(installDirectory + "\\server.json");
+                    File.Delete(installDirectory + Constants.SERVER_JSON_STR);
                 }
                 serverStarted = false;
-                startServerBtn.Text = "Start Server";
+                startServerBtn.Text = Constants.START_SERVER_STR;
                 worker.CancelAsync();
                 EnableServerFields(true);
                 serverRunningLabel.Text = string.Empty;
@@ -660,12 +648,12 @@ namespace ReforgerServerApp
                 }
             }
             string jsonConfig = CreateConfiguration().AsJsonString();
-            File.WriteAllText(installDirectory + "\\server.json", jsonConfig);
+            File.WriteAllText(installDirectory + Constants.SERVER_JSON_STR, jsonConfig);
             serverStarted = true;
-            startServerBtn.Text = "Stop Server";
+            startServerBtn.Text = Constants.STOP_SERVER_STR;
             startServerBtn.Enabled = false;
             EnableServerFields(false);
-            serverRunningLabel.Text = "Server is currently running. To modify the configuration, you will need to stop it first.";
+            serverRunningLabel.Text = Constants.SERVER_CURRENTLY_RUNNING_STR;
             steamCmdLog.AppendText(GetTimestamp() + ": " + "Automatically started server." + Environment.NewLine);
             worker.RunWorkerAsync();
         }
@@ -679,8 +667,10 @@ namespace ReforgerServerApp
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText(GetTimestamp() + ": " + e.Data + Environment.NewLine)));
-
+                lock (steamCmdLog)
+                {
+                    steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText(GetTimestamp() + ": " + e.Data + Environment.NewLine)));
+                }
                 // Kill the server if it fails to start correctly.
                 if (e.Data.Contains("Unable to Initialize"))
                 {
@@ -692,8 +682,8 @@ namespace ReforgerServerApp
                     serverProcess.Kill();
 
                     serverStarted = false;
-                    startServerBtn.Invoke((MethodInvoker)(() => startServerBtn.Text = "Start Server"));
-                    startServerBtn.Text = "Start Server";
+                    startServerBtn.Invoke((MethodInvoker)(() => startServerBtn.Text = Constants.START_SERVER_STR));
+                    startServerBtn.Text = Constants.START_SERVER_STR;
                     // Invoke this method using a UI element, doesn't matter what it is
                     // so just use the startServerBtn
                     startServerBtn.Invoke((MethodInvoker)(() => EnableServerFields(true)));
@@ -817,7 +807,7 @@ namespace ReforgerServerApp
         {
             StringBuilder sb = new();
             sb.AppendLine("Arma Reforger Dedicated Server Tool by soda3x");
-            sb.Append("Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+            sb.Append("Version " + Assembly.GetExecutingAssembly().GetName().Version);
             MessageBox.Show(sb.ToString(), "About");
         }
 
@@ -931,6 +921,7 @@ namespace ReforgerServerApp
             streamsDelta.Enabled = enabled;
             streamsDeltaUpDown.Enabled = enabled;
             logLevelComboBox.Enabled = enabled;
+            listScenarios.Enabled = enabled;
         }
 
         /// <summary>
@@ -1144,6 +1135,15 @@ namespace ReforgerServerApp
             // Use method invoker to set the Log Level to avoid cross-threaded operation
             logLevelComboBox.Invoke((MethodInvoker)(() => logLevelArg = "-logLevel " + logLevelComboBox.Text));
             argsList.Add(logLevelArg);
+
+            string listScenariosArg = string.Empty;
+            if (listScenarios.Checked)
+            {
+                listScenariosArg = "-listScenarios";
+                // Clear the Argument List as listScenarios should be used on its own (we don't actually want to run the server)
+                argsList.Clear();
+                argsList.Add(listScenariosArg);
+            }
 
             return string.Join(" ", argsList);
         }
