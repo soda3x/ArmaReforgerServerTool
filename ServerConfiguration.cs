@@ -28,6 +28,9 @@ namespace ReforgerServerApp
         public int SteamQueryPort { get; set; }
         public bool PlatformPC { get; set; }
         public bool PlatformXBL { get; set; }
+        public bool LobbyPlayerSynchronise { get; set; }
+        public bool VONDisableUI { get; set; }
+        public bool VONDisableDirectSpeechUI { get; set; }
         public List<Mod> Mods { get; }
 
         private ServerConfiguration()
@@ -49,23 +52,23 @@ namespace ReforgerServerApp
         /// <returns>JSON string representation of the Server Configuration</returns>
         public string AsJsonString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine("{");
-            sb.AppendLine("\"dedicatedServerId\": " + "\"" + DedicatedServerId + "\",");
-            sb.AppendLine("\"region\": " + "\"" + Region + "\",");
-            sb.AppendLine("\"gameHostBindAddress\": " + "\"" + GameHostBindAddress + "\",");
-            sb.AppendLine("\"gameHostBindPort\": " + GameHostBindPort + ",");
-            sb.AppendLine("\"gameHostRegisterBindAddress\": " + "\"" + GameHostRegisterBindAddress + "\",");
-            sb.AppendLine("\"gameHostRegisterBindPort\": " + GameHostRegisterBindPort + ",");
-            sb.AppendLine("\"adminPassword\": " + "\"" + AdminPassword + "\",");
+            sb.AppendLine($"\"dedicatedServerId\": \"{DedicatedServerId}\",");
+            sb.AppendLine($"\"region\": \"{Region}\",");
+            sb.AppendLine($"\"gameHostBindAddress\": \"{GameHostBindAddress}\",");
+            sb.AppendLine($"\"gameHostBindPort\": {GameHostBindPort},");
+            sb.AppendLine($"\"gameHostRegisterBindAddress\": \"{GameHostRegisterBindAddress}\",");
+            sb.AppendLine($"\"gameHostRegisterBindPort\": {GameHostRegisterBindPort},");
+            sb.AppendLine($"\"adminPassword\": \"{AdminPassword}\",");
             sb.AppendLine("\"game\": {");
-            sb.AppendLine("\"name\": " + "\"" + ServerName + "\",");
-            sb.AppendLine("\"password\":" + "\"" + ServerPassword + "\",");
-            sb.AppendLine("\"scenarioId\": " + "\"" + ScenarioId + "\",");
-            sb.AppendLine("\"gameNumber\": " + GameNumber + ",");
-            sb.AppendLine("\"playerCountLimit\": " + PlayerCountLimit + ",");
-            sb.AppendLine("\"autoJoinable\": " + AutoJoinable.ToString().ToLowerInvariant() + ",");
-            sb.AppendLine("\"visible\": " + Visible.ToString().ToLowerInvariant() + ",");
+            sb.AppendLine($"\"name\": \"{ServerName}\",");
+            sb.AppendLine($"\"password\": \"{ServerPassword}\",");
+            sb.AppendLine($"\"scenarioId\": \"{ScenarioId}\",");
+            sb.AppendLine($"\"gameNumber\": {GameNumber},");
+            sb.AppendLine($"\"playerCountLimit\": {PlayerCountLimit},");
+            sb.AppendLine($"\"autoJoinable\": {AutoJoinable.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"visible\": {Visible.ToString().ToLowerInvariant()},");
             sb.AppendLine("\"supportedGameClientTypes\": [");
 
             if (PlatformPC)
@@ -94,12 +97,18 @@ namespace ReforgerServerApp
 
             sb.AppendLine("],");
             sb.AppendLine("\"gameProperties\": {");
-            sb.AppendLine("\"serverMaxViewDistance\": " + +ServerMaxViewDistance + ",");
-            sb.AppendLine("\"serverMinGrassDistance\": " + ServerMinGrassDistance + ",");
-            sb.AppendLine("\"networkViewDistance\": " + NetworkViewDistance + ",");
-            sb.AppendLine("\"disableThirdPerson\": " + DisableThirdPerson.ToString().ToLowerInvariant() + ",");
-            sb.AppendLine("\"fastValidation\": " + FastValidation.ToString().ToLowerInvariant() + ",");
-            sb.AppendLine("\"battlEye\": " + BattlEye.ToString().ToLowerInvariant());
+            sb.AppendLine($"\"serverMaxViewDistance\": {ServerMaxViewDistance},");
+            sb.AppendLine($"\"serverMinGrassDistance\": {ServerMinGrassDistance},");
+            sb.AppendLine($"\"networkViewDistance\": {NetworkViewDistance},");
+            sb.AppendLine($"\"disableThirdPerson\": {DisableThirdPerson.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"fastValidation\": {FastValidation.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"battlEye\": {BattlEye.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"VONDisableUI\": {VONDisableUI.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()},");
+            
+            sb.AppendLine("\"operating\": {");
+            sb.AppendLine($"\"lobbyPlayerSynchronise\": {LobbyPlayerSynchronise.ToString().ToLowerInvariant()}");
+            sb.AppendLine("}");
 
             if (Mods.Count > 0)
             {
@@ -109,8 +118,8 @@ namespace ReforgerServerApp
                 for (int i = 0; i < Mods.Count; i++)
                 {
                     sb.AppendLine("{");
-                    sb.AppendLine("\"modId\": \"" + Mods[i].GetModID() + "\",");
-                    sb.AppendLine("\"name\": \"" + Mods[i].GetModName() + "\"");
+                    sb.AppendLine($"\"modId\": \"{Mods[i].GetModID()}\",");
+                    sb.AppendLine($"\"name\": \"{Mods[i].GetModName()}\"");
                     if (i == Mods.Count - 1)
                     {
                         sb.AppendLine("}");
@@ -128,8 +137,8 @@ namespace ReforgerServerApp
             }
 
             sb.AppendLine("},");
-            sb.AppendLine("\"a2sQueryEnabled\": " + A2sQueryEnabled.ToString().ToLowerInvariant() + ",");
-            sb.AppendLine("\"steamQueryPort\": " + SteamQueryPort);
+            sb.AppendLine($"\"a2sQueryEnabled\": {A2sQueryEnabled.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"steamQueryPort\": {SteamQueryPort}");
             sb.AppendLine("}");
 
             return sb.ToString().Trim();
@@ -142,33 +151,36 @@ namespace ReforgerServerApp
         public string AsCommaSeparatedString()
         {
             StringBuilder sb = new();
-            sb.AppendLine("dedicatedServerId," + DedicatedServerId);
-            sb.AppendLine("region," + Region);
-            sb.AppendLine("gameHostBindAddress," + GameHostBindAddress);
-            sb.AppendLine("gameHostBindPort," + GameHostBindPort);
-            sb.AppendLine("gameHostRegisterBindAddress," + GameHostRegisterBindAddress);
-            sb.AppendLine("gameHostRegisterBindPort," + GameHostRegisterBindPort);
-            sb.AppendLine("adminPassword," + AdminPassword);
-            sb.AppendLine("name," + ServerName);
-            sb.AppendLine("password," + ServerPassword);
-            sb.AppendLine("scenarioId," + ScenarioId);
-            sb.AppendLine("playerCountLimit," + PlayerCountLimit);
-            sb.AppendLine("autoJoinable," + AutoJoinable.ToString().ToLowerInvariant());
-            sb.AppendLine("visible," + Visible.ToString().ToLowerInvariant());
-            sb.AppendLine("platformPC," + PlatformPC.ToString().ToLowerInvariant());
-            sb.AppendLine("platformXBL," + PlatformXBL.ToString().ToLowerInvariant());
-            sb.AppendLine("serverMaxViewDistance," + ServerMaxViewDistance);
-            sb.AppendLine("serverMinGrassDistance," + ServerMinGrassDistance);
-            sb.AppendLine("networkViewDistance," + NetworkViewDistance);
-            sb.AppendLine("gameNumber," + GameNumber);
-            sb.AppendLine("disableThirdPerson," + DisableThirdPerson.ToString().ToLowerInvariant());
-            sb.AppendLine("fastValidation," + FastValidation.ToString().ToLowerInvariant());
-            sb.AppendLine("battlEye," + BattlEye.ToString().ToLowerInvariant());
-            sb.AppendLine("a2sQueryEnabled," + A2sQueryEnabled.ToString().ToLowerInvariant());
-            sb.AppendLine("steamQueryPort," + SteamQueryPort);
+            sb.AppendLine($"dedicatedServerId,{DedicatedServerId}");
+            sb.AppendLine($"region,{Region}");
+            sb.AppendLine($"gameHostBindAddress,{GameHostBindAddress}");
+            sb.AppendLine($"gameHostBindPort,{GameHostBindPort}");
+            sb.AppendLine($"gameHostRegisterBindAddress,{GameHostRegisterBindAddress}");
+            sb.AppendLine($"gameHostRegisterBindPort,{GameHostRegisterBindPort}");
+            sb.AppendLine($"adminPassword,{AdminPassword}");
+            sb.AppendLine($"name,{ServerName}");
+            sb.AppendLine($"password,{ServerPassword}");
+            sb.AppendLine($"scenarioId,{ScenarioId}");
+            sb.AppendLine($"playerCountLimit,{PlayerCountLimit}");
+            sb.AppendLine($"autoJoinable,{AutoJoinable.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"visible,{Visible.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"platformPC,{PlatformPC.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"platformXBL,{PlatformXBL.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"serverMaxViewDistance,{ServerMaxViewDistance}");
+            sb.AppendLine($"serverMinGrassDistance,{ServerMinGrassDistance}");
+            sb.AppendLine($"networkViewDistance,{NetworkViewDistance}");
+            sb.AppendLine($"gameNumber,{GameNumber}");
+            sb.AppendLine($"disableThirdPerson,{DisableThirdPerson.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"fastValidation,{FastValidation.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"battlEye,{BattlEye.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"a2sQueryEnabled,{A2sQueryEnabled.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"steamQueryPort,{SteamQueryPort}");
+            sb.AppendLine($"vonDisableUI,{VONDisableUI.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"vonDisableDirectSpeechUI,{VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"lobbyPlayerSynchronise,{LobbyPlayerSynchronise.ToString().ToLowerInvariant()}");
             foreach (Mod m in Mods)
             {
-                sb.AppendLine("modId," + m.GetModID() + ",modName," + m.GetModName());
+                sb.AppendLine($"modId,{m.GetModID()},modName,{m.GetModName()}");
             }
             return sb.ToString();
         }
@@ -349,6 +361,27 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.SteamQueryPort = steamQueryPort;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithVONDisableUI(bool vonDisableUI)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.VONDisableUI = vonDisableUI;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithVONDisableDirectSpeechUI(bool vonDisableDirectSpeechUI)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.VONDisableDirectSpeechUI = vonDisableDirectSpeechUI;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithLobbyPlayerSynchronise(bool lobbyPlayerSync)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.LobbyPlayerSynchronise = lobbyPlayerSync;
                 return this;
             }
 

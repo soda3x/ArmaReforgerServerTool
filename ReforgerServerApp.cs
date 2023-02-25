@@ -26,12 +26,6 @@ namespace ReforgerServerApp
 
             serverRunningLabel.Text = string.Empty;
 
-            // Set labels to correct font
-            PrivateFontCollection pfc = new();
-            pfc.AddFontFile(Path.Combine(Application.StartupPath, "Anton-Regular.ttf"));
-            titleLbl.Font = new Font(pfc.Families[0], 24, FontStyle.Regular);
-            subtitleLbl.Font = new Font(pfc.Families[0], 15.75f, FontStyle.Regular);
-
             // Create tooltips
             CreateTooltips();
 
@@ -47,7 +41,7 @@ namespace ReforgerServerApp
             {
                 using StreamReader sr = File.OpenText(INSTALL_DIR_FILE);
                 installDirectory = sr.ReadToEnd();
-                steamCmdFile = installDirectory + "\\steamcmd\\steamcmd.exe";
+                steamCmdFile = $"{installDirectory}\\steamcmd\\steamcmd.exe";
             }
             else
             {
@@ -115,7 +109,7 @@ namespace ReforgerServerApp
         {
             if (File.Exists(steamCmdFile))
             {
-                steamCmdAlert.Text = "Using Arma Reforger Server files found at: " + installDirectory;
+                steamCmdAlert.Text = $"Using Arma Reforger Server files found at: {installDirectory}";
                 downloadSteamCmdBtn.Enabled = false;
                 startServerBtn.Enabled = true;
                 deleteServerFilesBtn.Enabled = true;
@@ -259,11 +253,11 @@ namespace ReforgerServerApp
             StringBuilder sb = new();
             foreach (Mod mod in availableMods.Items)
             {
-                sb.AppendLine(mod.GetModID() + "," + mod.GetModName());
+                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()}");
             }
             foreach (Mod mod in enabledMods.Items)
             {
-                sb.AppendLine(mod.GetModID() + "," + mod.GetModName());
+                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()}");
             }
             File.WriteAllText(MOD_DATABASE_FILE, sb.ToString().Trim());
         }
@@ -305,7 +299,7 @@ namespace ReforgerServerApp
         /// <param name="input"></param>
         private void PopulateServerConfiguration(string input)
         {
-            const int MINIMUM_CONFIG_FILE_LENGTH = 47;
+            const int MINIMUM_CONFIG_FILE_LENGTH = 51;
             string[] configLines = input.Trim().Split(Environment.NewLine);
             List<string> configParams = new();
 
@@ -345,7 +339,10 @@ namespace ReforgerServerApp
                     .WithFastValidation(Convert.ToBoolean(configParams[41]))
                     .WithBattlEye(Convert.ToBoolean(configParams[43]))
                     .WithA2SQueryEnabled(Convert.ToBoolean(configParams[45]))
-                    .WithSteamQueryPort(Convert.ToInt32(configParams[47]));
+                    .WithSteamQueryPort(Convert.ToInt32(configParams[47]))
+                    .WithVONDisableUI(Convert.ToBoolean(configParams[49]))
+                    .WithVONDisableDirectSpeechUI(Convert.ToBoolean(configParams[51]))
+                    .WithLobbyPlayerSynchronise(Convert.ToBoolean(configParams[53]));
 
                 for (int i = 0; i < configParams.Count; ++i)
                 {
@@ -381,6 +378,9 @@ namespace ReforgerServerApp
                 battlEye.Checked = sc.BattlEye;
                 a2sQueryEnabled.Checked = sc.A2sQueryEnabled;
                 steamQueryPort.Value = sc.SteamQueryPort;
+                lobbyPlayerSync.Checked = sc.LobbyPlayerSynchronise;
+                vonDisableUI.Checked = sc.VONDisableUI;
+                vonDisableDirectSpeechUI.Checked = sc.VONDisableDirectSpeechUI;
 
                 enabledMods.Items.Clear();
 
@@ -434,7 +434,10 @@ namespace ReforgerServerApp
                 .WithFastValidation(fastValidation.Checked)
                 .WithBattlEye(battlEye.Checked)
                 .WithA2SQueryEnabled(a2sQueryEnabled.Checked)
-                .WithSteamQueryPort((int)steamQueryPort.Value);
+                .WithSteamQueryPort((int)steamQueryPort.Value)
+                .WithLobbyPlayerSynchronise(lobbyPlayerSync.Checked)
+                .WithVONDisableUI(vonDisableUI.Checked)
+                .WithVONDisableDirectSpeechUI(vonDisableDirectSpeechUI.Checked);
 
             foreach (Mod m in enabledMods.Items)
             {
@@ -458,20 +461,20 @@ namespace ReforgerServerApp
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
             {
                 installDirectory = fbd.SelectedPath;
-                steamCmdFile = fbd.SelectedPath + "\\steamcmd\\steamcmd.exe";
+                steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
                 File.WriteAllText(INSTALL_DIR_FILE, installDirectory);
             }
 
             using WebClient client = new();
             client.DownloadFileCompleted += (s, e) =>
             {
-                if (File.Exists(installDirectory + "\\steamcmd.zip"))
+                if (File.Exists($"{installDirectory}\\steamcmd.zip"))
                 {
-                    ZipFile.ExtractToDirectory(installDirectory + "\\steamcmd.zip", installDirectory + "\\steamcmd");
+                    ZipFile.ExtractToDirectory($"{installDirectory}\\steamcmd.zip", $"{installDirectory}\\steamcmd");
                 }
                 UpdateSteamCmdInstallStatus();
             };
-            client.DownloadFileAsync(new Uri("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"), installDirectory + "\\steamcmd.zip");
+            client.DownloadFileAsync(new Uri("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"), $"{installDirectory}\\steamcmd.zip");
         }
 
         /// <summary>
@@ -584,7 +587,7 @@ namespace ReforgerServerApp
                     serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
                     serverProcess.CancelOutputRead();
                     serverProcess.CancelErrorRead();
-                    steamCmdLog.AppendText(GetTimestamp() + ": " + "User stopped server." + Environment.NewLine);
+                    steamCmdLog.AppendText($"{GetTimestamp()}: User stopped server.{Environment.NewLine}");
                     serverProcess.Kill();
 
                     serverStarted = false;
@@ -594,7 +597,7 @@ namespace ReforgerServerApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message);
+                    MessageBox.Show($"Error: {ex.Message}");
                 }
             }
             else
@@ -606,7 +609,7 @@ namespace ReforgerServerApp
                 startServerBtn.Enabled = false;
                 EnableServerFields(false);
                 serverRunningLabel.Text = Constants.SERVER_CURRENTLY_RUNNING_STR;
-                steamCmdLog.AppendText(GetTimestamp() + ": " + "User started server." + Environment.NewLine);
+                steamCmdLog.AppendText($"{GetTimestamp()}: User started server.{Environment.NewLine}");
                 worker.RunWorkerAsync();
             }
         }
@@ -623,9 +626,9 @@ namespace ReforgerServerApp
 
             if (serverStarted)
             {
-                if (File.Exists(installDirectory + Constants.SERVER_JSON_STR))
+                if (File.Exists($"{installDirectory}{Constants.SERVER_JSON_STR}"))
                 {
-                    File.Delete(installDirectory + Constants.SERVER_JSON_STR);
+                    File.Delete($"{installDirectory}{Constants.SERVER_JSON_STR}");
                 }
                 serverStarted = false;
                 startServerBtn.Text = Constants.START_SERVER_STR;
@@ -638,23 +641,23 @@ namespace ReforgerServerApp
                     serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
                     serverProcess.CancelOutputRead();
                     serverProcess.CancelErrorRead();
-                    steamCmdLog.AppendText(GetTimestamp() + ": " + "Automatically stopped server." + Environment.NewLine);
+                    steamCmdLog.AppendText($"{GetTimestamp()}: Automatically stopped server.{Environment.NewLine}");
                     serverProcess.Kill();
 
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: " + ex.Message);
+                    MessageBox.Show($"Error: {ex.Message}");
                 }
             }
             string jsonConfig = CreateConfiguration().AsJsonString();
-            File.WriteAllText(installDirectory + Constants.SERVER_JSON_STR, jsonConfig);
+            File.WriteAllText($"{installDirectory}{Constants.SERVER_JSON_STR}", jsonConfig);
             serverStarted = true;
             startServerBtn.Text = Constants.STOP_SERVER_STR;
             startServerBtn.Enabled = false;
             EnableServerFields(false);
             serverRunningLabel.Text = Constants.SERVER_CURRENTLY_RUNNING_STR;
-            steamCmdLog.AppendText(GetTimestamp() + ": " + "Automatically started server." + Environment.NewLine);
+            steamCmdLog.AppendText($"{GetTimestamp()}: Automatically started server.{Environment.NewLine}");
             worker.RunWorkerAsync();
         }
 
@@ -669,12 +672,12 @@ namespace ReforgerServerApp
             {
                 lock (steamCmdLog)
                 {
-                    steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText(GetTimestamp() + ": " + e.Data + Environment.NewLine)));
+                    steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText($"{GetTimestamp()}: {e.Data}{Environment.NewLine}")));
                 }
                 // Kill the server if it fails to start correctly.
                 if (e.Data.Contains("Unable to Initialize"))
                 {
-                    steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText(GetTimestamp() + ": " + "System stopped server due to an error." + Environment.NewLine)));
+                    steamCmdLog.Invoke((MethodInvoker)(() => steamCmdLog.AppendText($"{GetTimestamp()}: System stopped server due to an error.{Environment.NewLine}")));
                     serverProcess.OutputDataReceived -= SteamCmdDataReceived;
                     serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
                     serverProcess.CancelOutputRead();
@@ -724,8 +727,8 @@ namespace ReforgerServerApp
                 ProcessStartInfo serverStartInfo = new();
                 serverStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 serverStartInfo.UseShellExecute = false;
-                serverStartInfo.WorkingDirectory = installDirectory + "\\arma_reforger";
-                serverStartInfo.FileName = installDirectory + "\\arma_reforger\\ArmaReforgerServer.exe";
+                serverStartInfo.WorkingDirectory = $"{installDirectory}\\arma_reforger";
+                serverStartInfo.FileName = $"{installDirectory}\\arma_reforger\\ArmaReforgerServer.exe";
                 serverStartInfo.Arguments = CreateLaunchArguments();
                 serverStartInfo.RedirectStandardOutput = true;
                 serverStartInfo.RedirectStandardError = true;
@@ -807,7 +810,7 @@ namespace ReforgerServerApp
         {
             StringBuilder sb = new();
             sb.AppendLine("Arma Reforger Dedicated Server Tool by soda3x");
-            sb.Append("Version " + Assembly.GetExecutingAssembly().GetName().Version);
+            sb.Append($"Version {Assembly.GetExecutingAssembly().GetName().Version}");
             MessageBox.Show(sb.ToString(), "About");
         }
 
@@ -847,11 +850,11 @@ namespace ReforgerServerApp
             DialogResult result = fbd.ShowDialog();
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
             {
-                if (File.Exists(fbd.SelectedPath + "\\steamcmd\\steamcmd.exe") &&
-                    File.Exists(fbd.SelectedPath + "\\arma_reforger\\ArmaReforgerServer.exe"))
+                if (File.Exists($"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe") &&
+                    File.Exists($"{fbd.SelectedPath}\\arma_reforger\\ArmaReforgerServer.exe"))
                 {
                     installDirectory = fbd.SelectedPath;
-                    steamCmdFile = fbd.SelectedPath + "\\steamcmd\\steamcmd.exe";
+                    steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
                     File.WriteAllText(INSTALL_DIR_FILE, installDirectory);
                     UpdateSteamCmdInstallStatus();
                 }
@@ -922,6 +925,9 @@ namespace ReforgerServerApp
             streamsDeltaUpDown.Enabled = enabled;
             logLevelComboBox.Enabled = enabled;
             listScenarios.Enabled = enabled;
+            vonDisableUI.Enabled = enabled;
+            vonDisableDirectSpeechUI.Enabled = enabled;
+            lobbyPlayerSync.Enabled = enabled;
         }
 
         /// <summary>
@@ -1071,11 +1077,11 @@ namespace ReforgerServerApp
             List<string> argsList = new List<string>();
 
             // Config will be placed in <server-files-dir>/server.json
-            string configArg = "-config " + "\"" + installDirectory + "\\server.json\"";
+            string configArg = $"-config \"{installDirectory}\\server.json\"";
             argsList.Add(configArg);
 
             // Saves etc. will be placed in <server-files-dir>/saves/
-            string profileArg = "-profile " + "\"" + installDirectory + "\\saves\"";
+            string profileArg = $"-profile \"{installDirectory}\\saves\"";
             argsList.Add(profileArg);
 
             // Log performance stats every 5 seconds (represented in ms)
@@ -1085,55 +1091,55 @@ namespace ReforgerServerApp
             string maxFPSArg = string.Empty;
             if (limitFPS.Checked)
             {
-                maxFPSArg = "-maxFPS " + Convert.ToString(fpsLimitUpDown.Value);
+                maxFPSArg = $"-maxFPS {Convert.ToString(fpsLimitUpDown.Value)}";
                 argsList.Add(maxFPSArg);
             }
 
             string overridePortArg = string.Empty;
             if (forcePortCheckBox.Checked)
             {
-                overridePortArg = "-bindPort " + Convert.ToString(overridePortNumericUpDown.Value);
+                overridePortArg = $"-bindPort {Convert.ToString(overridePortNumericUpDown.Value)}";
                 argsList.Add(overridePortArg);
             }
 
             string ndsArg = string.Empty;
             if (nds.Checked)
             {
-                ndsArg = "-nds " + Convert.ToString(ndsUpDown.Value);
+                ndsArg = $"-nds {Convert.ToString(ndsUpDown.Value)}";
                 argsList.Add(ndsArg);
             }
 
             string nwkResolutionArg = string.Empty;
             if (nwkResolution.Checked)
             {
-                nwkResolutionArg = "-nwkResolution " + Convert.ToString(nwkResolutionUpDown.Value);
+                nwkResolutionArg = $"-nwkResolution {Convert.ToString(nwkResolutionUpDown.Value)}";
                 argsList.Add(nwkResolutionArg);
             }
 
             string staggeringBudgetArg = string.Empty;
             if (staggeringBudget.Checked)
             {
-                staggeringBudgetArg = "-staggeringBudget " + Convert.ToString(staggeringBudgetUpDown.Value);
+                staggeringBudgetArg = $"-staggeringBudget {Convert.ToString(staggeringBudgetUpDown.Value)}";
                 argsList.Add(staggeringBudgetArg);
             }
 
             string streamingBudgetArg = string.Empty;
             if (streamingBudget.Checked)
             {
-                streamingBudgetArg = "-streamingBudget " + Convert.ToString(streamingBudgetUpDown.Value);
+                streamingBudgetArg = $"-streamingBudget {Convert.ToString(streamingBudgetUpDown.Value)}";
                 argsList.Add(streamingBudgetArg);
             }
 
             string streamsDeltaArg = string.Empty;
             if (streamsDelta.Checked)
             {
-                streamsDeltaArg = "-streamsDelta " + Convert.ToString(streamsDeltaUpDown.Value);
+                streamsDeltaArg = $"-streamsDelta {Convert.ToString(streamsDeltaUpDown.Value)}";
                 argsList.Add(streamsDeltaArg);
             }
 
             string logLevelArg = string.Empty;
             // Use method invoker to set the Log Level to avoid cross-threaded operation
-            logLevelComboBox.Invoke((MethodInvoker)(() => logLevelArg = "-logLevel " + logLevelComboBox.Text));
+            logLevelComboBox.Invoke((MethodInvoker)(() => logLevelArg = $"-logLevel {logLevelComboBox.Text}"));
             argsList.Add(logLevelArg);
 
             string listScenariosArg = string.Empty;

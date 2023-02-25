@@ -14,16 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Anton-Regular.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Anton-Regular.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="arma_icon_white.ico" />
   </ItemGroup>
 
