@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReforgerServerApp));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.splitter1 = new System.Windows.Forms.Splitter();
             this.serverRunningLabel = new System.Windows.Forms.Label();
             this.addModBtn = new System.Windows.Forms.Button();
             this.removeModBtn = new System.Windows.Forms.Button();
@@ -108,6 +107,8 @@
             this.aboutBtn = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.listScenariosLabel = new System.Windows.Forms.Label();
+            this.listScenarios = new System.Windows.Forms.CheckBox();
             this.limitFPS = new System.Windows.Forms.CheckBox();
             this.streamsDeltaUpDown = new System.Windows.Forms.NumericUpDown();
             this.nwkResolutionUpDown = new System.Windows.Forms.NumericUpDown();
@@ -143,8 +144,6 @@
             this.steamCmdLog = new System.Windows.Forms.TextBox();
             this.steamCmdAlert = new System.Windows.Forms.Label();
             this.downloadSteamCmdBtn = new System.Windows.Forms.Button();
-            this.listScenariosLabel = new System.Windows.Forms.Label();
-            this.listScenarios = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -188,7 +187,6 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.splitter1);
             this.tabPage1.Controls.Add(this.serverRunningLabel);
             this.tabPage1.Controls.Add(this.addModBtn);
             this.tabPage1.Controls.Add(this.removeModBtn);
@@ -203,14 +201,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Server Configuration";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // splitter1
-            // 
-            this.splitter1.Location = new System.Drawing.Point(3, 3);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 744);
-            this.splitter1.TabIndex = 52;
-            this.splitter1.TabStop = false;
             // 
             // serverRunningLabel
             // 
@@ -1274,6 +1264,25 @@
             this.panel1.Size = new System.Drawing.Size(216, 640);
             this.panel1.TabIndex = 30;
             // 
+            // listScenariosLabel
+            // 
+            this.listScenariosLabel.AutoSize = true;
+            this.listScenariosLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.listScenariosLabel.Location = new System.Drawing.Point(24, 560);
+            this.listScenariosLabel.Name = "listScenariosLabel";
+            this.listScenariosLabel.Size = new System.Drawing.Size(79, 15);
+            this.listScenariosLabel.TabIndex = 31;
+            this.listScenariosLabel.Text = "List Scenarios";
+            // 
+            // listScenarios
+            // 
+            this.listScenarios.AutoSize = true;
+            this.listScenarios.Location = new System.Drawing.Point(3, 561);
+            this.listScenarios.Name = "listScenarios";
+            this.listScenarios.Size = new System.Drawing.Size(15, 14);
+            this.listScenarios.TabIndex = 30;
+            this.listScenarios.UseVisualStyleBackColor = true;
+            // 
             // limitFPS
             // 
             this.limitFPS.AutoSize = true;
@@ -1712,25 +1721,6 @@
             this.downloadSteamCmdBtn.UseVisualStyleBackColor = true;
             this.downloadSteamCmdBtn.Click += new System.EventHandler(this.DownloadSteamCmdBtnPressed);
             // 
-            // listScenariosLabel
-            // 
-            this.listScenariosLabel.AutoSize = true;
-            this.listScenariosLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.listScenariosLabel.Location = new System.Drawing.Point(24, 560);
-            this.listScenariosLabel.Name = "listScenariosLabel";
-            this.listScenariosLabel.Size = new System.Drawing.Size(79, 15);
-            this.listScenariosLabel.TabIndex = 31;
-            this.listScenariosLabel.Text = "List Scenarios";
-            // 
-            // listScenarios
-            // 
-            this.listScenarios.AutoSize = true;
-            this.listScenarios.Location = new System.Drawing.Point(3, 561);
-            this.listScenarios.Name = "listScenarios";
-            this.listScenarios.Size = new System.Drawing.Size(15, 14);
-            this.listScenarios.TabIndex = 30;
-            this.listScenarios.UseVisualStyleBackColor = true;
-            // 
             // ReforgerServerApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -1868,7 +1858,6 @@
         private Label label23;
         private CheckBox forcePortCheckBox;
         private PictureBox pictureBox1;
-        private Splitter splitter1;
         private Label label26;
         private Label label25;
         private CheckBox platformXbox;
