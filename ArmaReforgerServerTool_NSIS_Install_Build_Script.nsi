@@ -10,7 +10,7 @@ Name "Arma Reforger Dedicated Server Tool"
 
 OutFile "install_reforger_server_tool.exe"
 
-!define MUI_ICON "arma_icon_white.ico"
+!define MUI_ICON "ArmaReforgerServerTool\arma_icon_white.ico"
 !define MUI_ABORTWARNING
 
 InstallDir $LOCALAPPDATA\ArmaReforgerServerTool
@@ -26,7 +26,8 @@ InstallDir $LOCALAPPDATA\ArmaReforgerServerTool
 # Install Section
 Section
 SetOutPath $INSTDIR
-File /r "bin\Debug\net6.0-windows\*"
+File /r "ArmaReforgerServerTool\bin\Debug\net6.0-windows\*"
+File /r "ReforgerToolConfigMigrator\bin\Debug\net6.0-windows\*"
 WriteUninstaller $INSTDIR\uninstall.exe
 CreateShortCut "$SMPROGRAMS\Arma Reforger Dedicated Server Tool.lnk" "$INSTDIR\ReforgerServerApp.exe"
 CreateShortCut "$SMPROGRAMS\Uninstall Arma Reforger Dedicated Server Tool.lnk" "$INSTDIR\uninstall.exe"
