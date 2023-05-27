@@ -96,8 +96,6 @@ namespace ReforgerServerApp
             streamingBudgetToolTip.SetToolTip(streamingBudgetLabel, Constants.STREAMING_BDGT_TOOLTIP_STR);
             ToolTip streamsDeltaToolTip = new();
             streamsDeltaToolTip.SetToolTip(streamsDeltaLabel, Constants.STREAMS_DELTA_TOOLTIP_STR);
-            ToolTip listScenariosToolTip = new();
-            listScenariosToolTip.SetToolTip(listScenariosLabel, Constants.LIST_SCENARIOS_TOOLTIP_STR);
         }
 
         /// <summary>
@@ -924,7 +922,6 @@ namespace ReforgerServerApp
             streamsDelta.Enabled = enabled;
             streamsDeltaUpDown.Enabled = enabled;
             logLevelComboBox.Enabled = enabled;
-            listScenarios.Enabled = enabled;
             vonDisableUI.Enabled = enabled;
             vonDisableDirectSpeechUI.Enabled = enabled;
             lobbyPlayerSync.Enabled = enabled;
@@ -1141,15 +1138,6 @@ namespace ReforgerServerApp
             // Use method invoker to set the Log Level to avoid cross-threaded operation
             logLevelComboBox.Invoke((MethodInvoker)(() => logLevelArg = $"-logLevel {logLevelComboBox.Text}"));
             argsList.Add(logLevelArg);
-
-            string listScenariosArg = string.Empty;
-            if (listScenarios.Checked)
-            {
-                listScenariosArg = "-listScenarios";
-                // Clear the Argument List as listScenarios should be used on its own (we don't actually want to run the server)
-                argsList.Clear();
-                argsList.Add(listScenariosArg);
-            }
 
             return string.Join(" ", argsList);
         }
