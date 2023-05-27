@@ -305,95 +305,104 @@ namespace ReforgerServerApp
                 configParams.Add(splitLine[0], splitLine[1]);
             }
 
-            ServerConfigurationBuilder builder = new();
-            builder
-                .WithBindAddress(configParams["bindAddress"])
-                .WithBindPort(Convert.ToInt32(configParams["bindPort"]))
-                .WithPublicAddress(configParams["publicAddress"])
-                .WithPublicPort(Convert.ToInt32(configParams["publicPort"]))
-                .WithAdminPassword(configParams["passwordAdmin"])
-                .WithServerName(configParams["name"])
-                .WithServerPassword(configParams["password"])
-                .WithScenarioId(configParams["scenarioId"])
-                .WithMaxPlayers(Convert.ToInt32(configParams["maxPlayers"]))
-                .WithAutoJoinable(Convert.ToBoolean(configParams["autoJoinable"]))
-                .WithVisible(Convert.ToBoolean(configParams["visible"]))
-                .WithCrossPlatform(Convert.ToBoolean(configParams["crossPlatform"]))
-                .WithServerMaxViewDistance(Convert.ToInt32(configParams["serverMaxViewDistance"]))
-                .WithServerMinGrassDistance(Convert.ToInt32(configParams["serverMinGrassDistance"]))
-                .WithNetworkViewDistance(Convert.ToInt32(configParams["networkViewDistance"]))
-                .WithGameNumber(Convert.ToInt32(configParams["gameNumber"]))
-                .WithDisableThirdPerson(Convert.ToBoolean(configParams["disableThirdPerson"]))
-                .WithFastValidation(Convert.ToBoolean(configParams["fastValidation"]))
-                .WithBattlEye(Convert.ToBoolean(configParams["battlEye"]))
-                .WithA2SQueryEnabled(Convert.ToBoolean(configParams["a2sQueryEnabled"]))
-                .WithSteamQueryPort(Convert.ToInt32(configParams["steamQueryPort"]))
-                .WithVONDisableUI(Convert.ToBoolean(configParams["vonDisableUI"]))
-                .WithVONDisableDirectSpeechUI(Convert.ToBoolean(configParams["vonDisableDirectSpeechUI"]))
-                .WithLobbyPlayerSynchronise(Convert.ToBoolean(configParams["lobbyPlayerSynchronise"]))
-                .WithPlayerSaveTime(Convert.ToInt32(configParams["playerSaveTime"]))
-                .WithAILimit(Convert.ToInt32(configParams["aiLimit"]));
-
             try
             {
-                string[] modEntries = File.ReadAllLines(configParams["modCollection"]);
-                for (int i = 0; i < modEntries.Length; ++i)
+                ServerConfigurationBuilder builder = new();
+                builder
+                    .WithBindAddress(configParams["bindAddress"])
+                    .WithBindPort(Convert.ToInt32(configParams["bindPort"]))
+                    .WithPublicAddress(configParams["publicAddress"])
+                    .WithPublicPort(Convert.ToInt32(configParams["publicPort"]))
+                    .WithAdminPassword(configParams["passwordAdmin"])
+                    .WithServerName(configParams["name"])
+                    .WithServerPassword(configParams["password"])
+                    .WithScenarioId(configParams["scenarioId"])
+                    .WithMaxPlayers(Convert.ToInt32(configParams["maxPlayers"]))
+                    .WithAutoJoinable(Convert.ToBoolean(configParams["autoJoinable"]))
+                    .WithVisible(Convert.ToBoolean(configParams["visible"]))
+                    .WithCrossPlatform(Convert.ToBoolean(configParams["crossPlatform"]))
+                    .WithServerMaxViewDistance(Convert.ToInt32(configParams["serverMaxViewDistance"]))
+                    .WithServerMinGrassDistance(Convert.ToInt32(configParams["serverMinGrassDistance"]))
+                    .WithNetworkViewDistance(Convert.ToInt32(configParams["networkViewDistance"]))
+                    .WithGameNumber(Convert.ToInt32(configParams["gameNumber"]))
+                    .WithDisableThirdPerson(Convert.ToBoolean(configParams["disableThirdPerson"]))
+                    .WithFastValidation(Convert.ToBoolean(configParams["fastValidation"]))
+                    .WithBattlEye(Convert.ToBoolean(configParams["battlEye"]))
+                    .WithA2SQueryEnabled(Convert.ToBoolean(configParams["a2sQueryEnabled"]))
+                    .WithSteamQueryPort(Convert.ToInt32(configParams["steamQueryPort"]))
+                    .WithVONDisableUI(Convert.ToBoolean(configParams["vonDisableUI"]))
+                    .WithVONDisableDirectSpeechUI(Convert.ToBoolean(configParams["vonDisableDirectSpeechUI"]))
+                    .WithLobbyPlayerSynchronise(Convert.ToBoolean(configParams["lobbyPlayerSynchronise"]))
+                    .WithPlayerSaveTime(Convert.ToInt32(configParams["playerSaveTime"]))
+                    .WithAILimit(Convert.ToInt32(configParams["aiLimit"]));
+
+                try
                 {
-                    if (modEntries[i].Equals("modId"))
+                    string[] modEntries = File.ReadAllLines(configParams["modCollection"]);
+                    for (int i = 0; i < modEntries.Length; ++i)
                     {
-                        builder.AddModToConfiguration(new(modEntries[i + 1], modEntries[i + 3]));
+                        if (modEntries[i].Equals("modId"))
+                        {
+                            builder.AddModToConfiguration(new(modEntries[i + 1], modEntries[i + 3]));
+                        }
                     }
                 }
+                catch (Exception)
+                {
+                    MessageBox.Show($"Unable to load file mod collection file '{configParams["modCollection"]}'.\r\n" +
+                        $"It may be malformed, has been moved or does not exist.\r\n" +
+                        $"Skipping loading mods...", Constants.ERROR_MESSAGEBOX_TITLE_STR);
+                }
+
+                ServerConfiguration sc = builder.Build();
+
+
+                bindAddress.Text = sc.BindAddress;
+                bindPort.Value = sc.BindPort;
+                publicAddress.Text = sc.PublicAddress;
+                publicPort.Value = sc.PublicPort;
+                passwordAdmin.Text = sc.PasswordAdmin;
+                serverName.Text = sc.ServerName;
+                serverPassword.Text = sc.Password;
+                scenarioId.Text = sc.ScenarioId;
+                maxPlayers.Value = sc.MaxPlayers;
+                autoJoinable.Checked = sc.AutoJoinable;
+                visible.Checked = sc.Visible;
+                xboxCrossplay.Checked = sc.CrossPlatform;
+                serverMaxViewDistance.Value = sc.ServerMaxViewDistance;
+                serverMinGrassDistance.Value = sc.ServerMinGrassDistance;
+                networkViewDistance.Value = sc.NetworkViewDistance;
+                gameNumber.Value = sc.GameNumber;
+                disableThirdPerson.Checked = sc.DisableThirdPerson;
+                fastValidation.Checked = sc.FastValidation;
+                battlEye.Checked = sc.BattlEye;
+                a2sQueryEnabled.Checked = sc.A2sQueryEnabled;
+                steamQueryPort.Value = sc.SteamQueryPort;
+                lobbyPlayerSync.Checked = sc.LobbyPlayerSynchronise;
+                vonDisableUI.Checked = sc.VONDisableUI;
+                vonDisableDirectSpeechUI.Checked = sc.VONDisableDirectSpeechUI;
+                playerSaveTime.Value = sc.PlayerSaveTime;
+                aiLimit.Value = sc.AiLimit;
+
+                enabledMods.Items.Clear();
+
+                foreach (Mod m in sc.Mods)
+                {
+                    enabledMods.Items.Add(m);
+                    if (!availableMods.Items.Contains(m))
+                    {
+                        availableMods.Items.Add(m);
+                    }
+                }
+                AlphabetiseModListBox(GetAvailableModsList());
+                AlphabetiseModListBox(GetEnabledModsList());
+                WriteModsDatabase();
             }
             catch (Exception)
             {
-                MessageBox.Show($"Unable to load file mod collection file '{configParams["modCollection"]}'.\r\n" +
-                    $"It may be malformed, has been moved or does not exist.\r\n" +
-                    $"Skipping loading mods...");
+                MessageBox.Show("An error occurred while attempting to load the configuration file.\r\nThe configuration has not been loaded.",
+                    Constants.ERROR_MESSAGEBOX_TITLE_STR);
             }
-
-            ServerConfiguration sc = builder.Build();
-
-            bindAddress.Text = sc.BindAddress;
-            bindPort.Value = sc.BindPort;
-            publicAddress.Text = sc.PublicAddress;
-            publicPort.Value = sc.PublicPort;
-            passwordAdmin.Text = sc.PasswordAdmin;
-            serverName.Text = sc.ServerName;
-            serverPassword.Text = sc.Password;
-            scenarioId.Text = sc.ScenarioId;
-            maxPlayers.Value = sc.MaxPlayers;
-            autoJoinable.Checked = sc.AutoJoinable;
-            visible.Checked = sc.Visible;
-            xboxCrossplay.Checked = sc.CrossPlatform;
-            serverMaxViewDistance.Value = sc.ServerMaxViewDistance;
-            serverMinGrassDistance.Value = sc.ServerMinGrassDistance;
-            networkViewDistance.Value = sc.NetworkViewDistance;
-            gameNumber.Value = sc.GameNumber;
-            disableThirdPerson.Checked = sc.DisableThirdPerson;
-            fastValidation.Checked = sc.FastValidation;
-            battlEye.Checked = sc.BattlEye;
-            a2sQueryEnabled.Checked = sc.A2sQueryEnabled;
-            steamQueryPort.Value = sc.SteamQueryPort;
-            lobbyPlayerSync.Checked = sc.LobbyPlayerSynchronise;
-            vonDisableUI.Checked = sc.VONDisableUI;
-            vonDisableDirectSpeechUI.Checked = sc.VONDisableDirectSpeechUI;
-            playerSaveTime.Value = sc.PlayerSaveTime;
-            aiLimit.Value = sc.AiLimit;
-
-            enabledMods.Items.Clear();
-
-            foreach (Mod m in sc.Mods)
-            {
-                enabledMods.Items.Add(m);
-                if (!availableMods.Items.Contains(m))
-                {
-                    availableMods.Items.Add(m);
-                }
-            }
-            AlphabetiseModListBox(GetAvailableModsList());
-            AlphabetiseModListBox(GetEnabledModsList());
-            WriteModsDatabase();
         }
 
         /// <summary>
@@ -590,7 +599,7 @@ namespace ReforgerServerApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error: {ex.Message}");
+                    MessageBox.Show($"Error: {ex.Message}", Constants.ERROR_MESSAGEBOX_TITLE_STR);
                 }
             }
             else
@@ -640,7 +649,7 @@ namespace ReforgerServerApp
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error: {ex.Message}");
+                    MessageBox.Show($"Error: {ex.Message}", Constants.ERROR_MESSAGEBOX_TITLE_STR);
                 }
             }
             string jsonConfig = CreateConfiguration().AsJsonString();
@@ -1163,8 +1172,8 @@ namespace ReforgerServerApp
                 if (result > 0)
                 {
                     DialogResult dr = MessageBox.Show("There is an update available for the Arma Reforger Dedicated Server Tool." +
-                        "\r\nWould you like to get the latest version now?\r\n\r\nOur version: " + checkedVersion +
-                        "\r\nLatest version: " + currentVersion, "Arma Reforger Dedicated Server Tool - Update available", MessageBoxButtons.YesNo);
+                        "\r\nWould you like to get the latest version now?\r\n\r\nOur version: " + currentVersion +
+                        "\r\nLatest version: " + checkedVersion, "Arma Reforger Dedicated Server Tool - Update available", MessageBoxButtons.YesNo);
                     if (dr == DialogResult.Yes)
                     {
                         Process.Start("explorer", "https://github.com/soda3x/ArmaReforgerServerTool/releases");

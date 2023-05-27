@@ -6,6 +6,7 @@
     /// </summary>
     internal class Constants
     {
+        public static string ERROR_MESSAGEBOX_TITLE_STR = "Arma Reforger Dedicated Server Tool - Error";
         public static string ENABLE_ALL_MODS_STR = "Enable All Mods";
         public static string DISABLE_ALL_MODS_STR = "Disable All Mods";
         public static string ENABLE_MOD_STR = "Enable Mod";
