@@ -16,7 +16,7 @@ namespace ReforgerServerApp
 
         private void ReportBtnPressed(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/soda3x/ArmaReforgerServerTool/issues");
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = @"https://github.com/soda3x/ArmaReforgerServerTool/issues/", UseShellExecute = true });
         }
 
         private void OKBtnPressed(object sender, EventArgs e)
