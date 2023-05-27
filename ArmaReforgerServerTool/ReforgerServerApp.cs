@@ -335,16 +335,13 @@ namespace ReforgerServerApp
                     .WithLobbyPlayerSynchronise(Convert.ToBoolean(configParams["lobbyPlayerSynchronise"]))
                     .WithPlayerSaveTime(Convert.ToInt32(configParams["playerSaveTime"]))
                     .WithAILimit(Convert.ToInt32(configParams["aiLimit"]));
-
                 try
                 {
                     string[] modEntries = File.ReadAllLines(configParams["modCollection"]);
-                    for (int i = 0; i < modEntries.Length; ++i)
+                    foreach (string mod in modEntries)
                     {
-                        if (modEntries[i].Equals("modId"))
-                        {
-                            builder.AddModToConfiguration(new(modEntries[i + 1], modEntries[i + 3]));
-                        }
+                        string[] modEntry = mod.Split(',');
+                        builder.AddModToConfiguration(new(modEntry[1], modEntry[3]));
                     }
                 }
                 catch (Exception)
@@ -389,9 +386,9 @@ namespace ReforgerServerApp
                 foreach (Mod m in sc.Mods)
                 {
                     enabledMods.Items.Add(m);
-                    if (!availableMods.Items.Contains(m))
+                    if (availableMods.Items.Contains(m))
                     {
-                        availableMods.Items.Add(m);
+                        availableMods.Items.Remove(m);
                     }
                 }
                 AlphabetiseModListBox(GetAvailableModsList());
