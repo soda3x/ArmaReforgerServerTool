@@ -806,10 +806,8 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AboutBtnPressed(object sender, EventArgs e)
         {
-            StringBuilder sb = new();
-            sb.AppendLine("Arma Reforger Dedicated Server Tool by soda3x");
-            sb.Append($"Version {Assembly.GetExecutingAssembly().GetName().Version}");
-            MessageBox.Show(sb.ToString(), "About");
+            AboutBox ab = new();
+            ab.Show();
         }
 
         /// <summary>
