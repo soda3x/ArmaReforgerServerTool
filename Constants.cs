@@ -33,6 +33,7 @@
                 "\r\nIf the difference between 'the number of streams the server has open' and 'the number of streams the client has open' is larger than the NUMBER then the server will not open any more streams this tick." +
                 "\r\nTo be adjusted based on average client networking speed.";
         public static string LIST_SCENARIOS_TOOLTIP_STR = "Prints to game logs the scenario .conf file paths.\r\nNote that all other launch arguments are ignored if this is selected.";
+        public static string AI_LIMIT_TOOLTIP_STR = "A negative number is not considered as valid value and is then ignored - limit is not applied.";
         public static string SERVER_CURRENTLY_RUNNING_STR = "Server is currently running. To modify the configuration, you will need to stop it first.";
         public static string START_SERVER_STR = "Start Server";
         public static string STOP_SERVER_STR = "Stop Server";

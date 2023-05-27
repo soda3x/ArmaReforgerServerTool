@@ -44,35 +44,34 @@
             enabledMods = new ListBox();
             availableMods = new ListBox();
             groupBox1 = new GroupBox();
+            label26 = new Label();
+            aiLimit = new NumericUpDown();
+            label19 = new Label();
+            playerSaveTime = new NumericUpDown();
+            xboxCrossplay = new CheckBox();
+            label25 = new Label();
             vonDisableDirectSpeechUI = new CheckBox();
             label29 = new Label();
             vonDisableUI = new CheckBox();
             label24 = new Label();
             lobbyPlayerSync = new CheckBox();
             label1 = new Label();
-            groupBox5 = new GroupBox();
-            label26 = new Label();
-            platformPC = new CheckBox();
-            label25 = new Label();
-            platformXbox = new CheckBox();
             pictureBox1 = new PictureBox();
             label2 = new Label();
             gameNumber = new NumericUpDown();
             scenarioId = new ComboBox();
-            dedicatedServerId = new TextBox();
-            label19 = new Label();
             label35 = new Label();
             a2sQueryEnabled = new CheckBox();
             label36 = new Label();
             steamQueryPort = new NumericUpDown();
-            gameHostRegisterBindPort = new NumericUpDown();
+            publicPort = new NumericUpDown();
             label33 = new Label();
             label34 = new Label();
-            gameHostRegisterBindAddress = new TextBox();
-            gameHostBindPort = new NumericUpDown();
+            publicAddress = new TextBox();
+            bindPort = new NumericUpDown();
             label32 = new Label();
             label31 = new Label();
-            gameHostBindAddress = new TextBox();
+            bindAddress = new TextBox();
             label3 = new Label();
             battlEye = new CheckBox();
             serverName = new TextBox();
@@ -81,11 +80,10 @@
             label17 = new Label();
             serverPassword = new TextBox();
             label18 = new Label();
-            regionLabel = new Label();
             disableThirdPerson = new CheckBox();
             label5 = new Label();
             networkViewDistance = new NumericUpDown();
-            adminPassword = new TextBox();
+            passwordAdmin = new TextBox();
             serverMinGrassDistance = new NumericUpDown();
             scenarioIdLabel = new Label();
             serverMaxViewDistance = new NumericUpDown();
@@ -93,9 +91,8 @@
             label9 = new Label();
             autoJoinable = new CheckBox();
             label8 = new Label();
-            playerCountLimit = new NumericUpDown();
+            maxPlayers = new NumericUpDown();
             label7 = new Label();
-            region = new ComboBox();
             label14 = new Label();
             label11 = new Label();
             label13 = new Label();
@@ -150,16 +147,17 @@
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
-            groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)aiLimit).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)playerSaveTime).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)gameNumber).BeginInit();
             ((System.ComponentModel.ISupportInitialize)steamQueryPort).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)gameHostRegisterBindPort).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)gameHostBindPort).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)publicPort).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)bindPort).BeginInit();
             ((System.ComponentModel.ISupportInitialize)networkViewDistance).BeginInit();
             ((System.ComponentModel.ISupportInitialize)serverMinGrassDistance).BeginInit();
             ((System.ComponentModel.ISupportInitialize)serverMaxViewDistance).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)playerCountLimit).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)maxPlayers).BeginInit();
             tabPage2.SuspendLayout();
             groupBox4.SuspendLayout();
             panel1.SuspendLayout();
@@ -332,31 +330,34 @@
             // groupBox1
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Controls.Add(label26);
+            groupBox1.Controls.Add(aiLimit);
+            groupBox1.Controls.Add(label19);
+            groupBox1.Controls.Add(playerSaveTime);
+            groupBox1.Controls.Add(xboxCrossplay);
+            groupBox1.Controls.Add(label25);
             groupBox1.Controls.Add(vonDisableDirectSpeechUI);
             groupBox1.Controls.Add(label29);
             groupBox1.Controls.Add(vonDisableUI);
             groupBox1.Controls.Add(label24);
             groupBox1.Controls.Add(lobbyPlayerSync);
             groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(groupBox5);
             groupBox1.Controls.Add(pictureBox1);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(gameNumber);
             groupBox1.Controls.Add(scenarioId);
-            groupBox1.Controls.Add(dedicatedServerId);
-            groupBox1.Controls.Add(label19);
             groupBox1.Controls.Add(label35);
             groupBox1.Controls.Add(a2sQueryEnabled);
             groupBox1.Controls.Add(label36);
             groupBox1.Controls.Add(steamQueryPort);
-            groupBox1.Controls.Add(gameHostRegisterBindPort);
+            groupBox1.Controls.Add(publicPort);
             groupBox1.Controls.Add(label33);
             groupBox1.Controls.Add(label34);
-            groupBox1.Controls.Add(gameHostRegisterBindAddress);
-            groupBox1.Controls.Add(gameHostBindPort);
+            groupBox1.Controls.Add(publicAddress);
+            groupBox1.Controls.Add(bindPort);
             groupBox1.Controls.Add(label32);
             groupBox1.Controls.Add(label31);
-            groupBox1.Controls.Add(gameHostBindAddress);
+            groupBox1.Controls.Add(bindAddress);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(battlEye);
             groupBox1.Controls.Add(serverName);
@@ -365,11 +366,10 @@
             groupBox1.Controls.Add(label17);
             groupBox1.Controls.Add(serverPassword);
             groupBox1.Controls.Add(label18);
-            groupBox1.Controls.Add(regionLabel);
             groupBox1.Controls.Add(disableThirdPerson);
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(networkViewDistance);
-            groupBox1.Controls.Add(adminPassword);
+            groupBox1.Controls.Add(passwordAdmin);
             groupBox1.Controls.Add(serverMinGrassDistance);
             groupBox1.Controls.Add(scenarioIdLabel);
             groupBox1.Controls.Add(serverMaxViewDistance);
@@ -377,9 +377,8 @@
             groupBox1.Controls.Add(label9);
             groupBox1.Controls.Add(autoJoinable);
             groupBox1.Controls.Add(label8);
-            groupBox1.Controls.Add(playerCountLimit);
+            groupBox1.Controls.Add(maxPlayers);
             groupBox1.Controls.Add(label7);
-            groupBox1.Controls.Add(region);
             groupBox1.Controls.Add(label14);
             groupBox1.Controls.Add(label11);
             groupBox1.Controls.Add(label13);
@@ -391,6 +390,73 @@
             groupBox1.TabIndex = 46;
             groupBox1.TabStop = false;
             groupBox1.Text = "Server Settings";
+            // 
+            // label26
+            // 
+            label26.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label26.AutoSize = true;
+            label26.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            label26.Location = new Point(424, 579);
+            label26.Name = "label26";
+            label26.Size = new Size(66, 21);
+            label26.TabIndex = 80;
+            label26.Text = "AI Limit";
+            label26.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // aiLimit
+            // 
+            aiLimit.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            aiLimit.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            aiLimit.Location = new Point(628, 579);
+            aiLimit.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            aiLimit.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
+            aiLimit.Name = "aiLimit";
+            aiLimit.Size = new Size(88, 23);
+            aiLimit.TabIndex = 81;
+            aiLimit.Value = new decimal(new int[] { 1, 0, 0, int.MinValue });
+            // 
+            // label19
+            // 
+            label19.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label19.AutoSize = true;
+            label19.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            label19.Location = new Point(10, 648);
+            label19.Name = "label19";
+            label19.Size = new Size(177, 21);
+            label19.TabIndex = 78;
+            label19.Text = "Player Save Time (secs)";
+            label19.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // playerSaveTime
+            // 
+            playerSaveTime.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            playerSaveTime.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            playerSaveTime.Location = new Point(214, 648);
+            playerSaveTime.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            playerSaveTime.Name = "playerSaveTime";
+            playerSaveTime.Size = new Size(88, 23);
+            playerSaveTime.TabIndex = 79;
+            playerSaveTime.Value = new decimal(new int[] { 120, 0, 0, 0 });
+            // 
+            // xboxCrossplay
+            // 
+            xboxCrossplay.AutoSize = true;
+            xboxCrossplay.Location = new Point(700, 555);
+            xboxCrossplay.Name = "xboxCrossplay";
+            xboxCrossplay.Size = new Size(15, 14);
+            xboxCrossplay.TabIndex = 77;
+            xboxCrossplay.UseVisualStyleBackColor = true;
+            // 
+            // label25
+            // 
+            label25.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            label25.AutoSize = true;
+            label25.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            label25.Location = new Point(423, 549);
+            label25.Name = "label25";
+            label25.Size = new Size(117, 21);
+            label25.TabIndex = 76;
+            label25.Text = "Cross Platform";
             // 
             // vonDisableDirectSpeechUI
             // 
@@ -452,60 +518,6 @@
             label1.TabIndex = 70;
             label1.Text = "Lobby Player Synchronise";
             // 
-            // groupBox5
-            // 
-            groupBox5.Controls.Add(label26);
-            groupBox5.Controls.Add(platformPC);
-            groupBox5.Controls.Add(label25);
-            groupBox5.Controls.Add(platformXbox);
-            groupBox5.Location = new Point(423, 571);
-            groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(292, 55);
-            groupBox5.TabIndex = 68;
-            groupBox5.TabStop = false;
-            groupBox5.Text = "Client Platforms";
-            // 
-            // label26
-            // 
-            label26.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label26.AutoSize = true;
-            label26.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            label26.Location = new Point(87, 25);
-            label26.Name = "label26";
-            label26.Size = new Size(66, 17);
-            label26.TabIndex = 67;
-            label26.Text = "Xbox Live";
-            // 
-            // platformPC
-            // 
-            platformPC.AutoSize = true;
-            platformPC.Location = new Point(13, 28);
-            platformPC.Name = "platformPC";
-            platformPC.Size = new Size(15, 14);
-            platformPC.TabIndex = 64;
-            platformPC.UseVisualStyleBackColor = true;
-            // 
-            // label25
-            // 
-            label25.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label25.AutoSize = true;
-            label25.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            label25.Location = new Point(34, 25);
-            label25.Name = "label25";
-            label25.Size = new Size(24, 17);
-            label25.TabIndex = 66;
-            label25.Text = "PC";
-            // 
-            // platformXbox
-            // 
-            platformXbox.AutoSize = true;
-            platformXbox.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-            platformXbox.Location = new Point(66, 28);
-            platformXbox.Name = "platformXbox";
-            platformXbox.Size = new Size(15, 14);
-            platformXbox.TabIndex = 65;
-            platformXbox.UseVisualStyleBackColor = true;
-            // 
             // pictureBox1
             // 
             pictureBox1.BackgroundImageLayout = ImageLayout.Center;
@@ -546,36 +558,17 @@
             scenarioId.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
             scenarioId.FormattingEnabled = true;
             scenarioId.Items.AddRange(new object[] { "{ECC61978EDCC2B5A}Missions/23_Campaign.conf", "{59AD59368755F41A}Missions/21_GM_Eden.conf", "{6EA2E454519E5869}Missions/CAH_Military_Base.conf", "{7C491B1FCC0FF0E1}Missions/CAH_LeMoule.conf", "{F1A1BEA67132113E}Missions/CAH_Castle.conf", "{589945FB9FA7B97D}Missions/CAH_Concrete_Plant.conf", "{2B4183DF23E88249}Missions/CAH_Morton.conf", "{3F2E005F43DBD2F8}Missions/CAH_Briars_Coast.conf", "{9405201CBD22A30C}Missions/CAH_Factory.conf", "{1CD06B409C6FAE56}Missions/CAH_Forest.conf" });
-            scenarioId.Location = new Point(214, 379);
+            scenarioId.Location = new Point(214, 352);
             scenarioId.Name = "scenarioId";
             scenarioId.Size = new Size(177, 23);
             scenarioId.TabIndex = 60;
-            // 
-            // dedicatedServerId
-            // 
-            dedicatedServerId.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dedicatedServerId.Location = new Point(214, 670);
-            dedicatedServerId.Name = "dedicatedServerId";
-            dedicatedServerId.Size = new Size(177, 23);
-            dedicatedServerId.TabIndex = 59;
-            // 
-            // label19
-            // 
-            label19.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label19.AutoSize = true;
-            label19.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label19.Location = new Point(10, 672);
-            label19.Name = "label19";
-            label19.Size = new Size(157, 21);
-            label19.TabIndex = 58;
-            label19.Text = "Dedicated Server ID";
             // 
             // label35
             // 
             label35.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label35.AutoSize = true;
             label35.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label35.Location = new Point(10, 612);
+            label35.Location = new Point(10, 585);
             label35.Name = "label35";
             label35.Size = new Size(139, 21);
             label35.TabIndex = 54;
@@ -585,7 +578,7 @@
             // a2sQueryEnabled
             // 
             a2sQueryEnabled.AutoSize = true;
-            a2sQueryEnabled.Location = new Point(214, 649);
+            a2sQueryEnabled.Location = new Point(214, 622);
             a2sQueryEnabled.Name = "a2sQueryEnabled";
             a2sQueryEnabled.Size = new Size(15, 14);
             a2sQueryEnabled.TabIndex = 57;
@@ -596,7 +589,7 @@
             label36.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label36.AutoSize = true;
             label36.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label36.Location = new Point(10, 643);
+            label36.Location = new Point(10, 616);
             label36.Name = "label36";
             label36.Size = new Size(150, 21);
             label36.TabIndex = 55;
@@ -606,94 +599,94 @@
             // 
             steamQueryPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             steamQueryPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            steamQueryPort.Location = new Point(214, 615);
+            steamQueryPort.Location = new Point(214, 588);
             steamQueryPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             steamQueryPort.Name = "steamQueryPort";
             steamQueryPort.Size = new Size(88, 23);
             steamQueryPort.TabIndex = 56;
             steamQueryPort.Value = new decimal(new int[] { 17777, 0, 0, 0 });
             // 
-            // gameHostRegisterBindPort
+            // publicPort
             // 
-            gameHostRegisterBindPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            gameHostRegisterBindPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            gameHostRegisterBindPort.Location = new Point(214, 584);
-            gameHostRegisterBindPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
-            gameHostRegisterBindPort.Name = "gameHostRegisterBindPort";
-            gameHostRegisterBindPort.Size = new Size(88, 23);
-            gameHostRegisterBindPort.TabIndex = 53;
-            gameHostRegisterBindPort.Value = new decimal(new int[] { 2001, 0, 0, 0 });
+            publicPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            publicPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            publicPort.Location = new Point(214, 557);
+            publicPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            publicPort.Name = "publicPort";
+            publicPort.Size = new Size(88, 23);
+            publicPort.TabIndex = 53;
+            publicPort.Value = new decimal(new int[] { 2001, 0, 0, 0 });
             // 
             // label33
             // 
             label33.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label33.AutoSize = true;
             label33.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label33.Location = new Point(10, 583);
+            label33.Location = new Point(10, 556);
             label33.Name = "label33";
-            label33.Size = new Size(142, 21);
+            label33.Size = new Size(88, 21);
             label33.TabIndex = 52;
-            label33.Text = "Register Bind Port";
+            label33.Text = "Public Port";
             // 
             // label34
             // 
             label34.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label34.AutoSize = true;
             label34.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label34.Location = new Point(10, 554);
+            label34.Location = new Point(10, 527);
             label34.Name = "label34";
-            label34.Size = new Size(172, 21);
+            label34.Size = new Size(118, 21);
             label34.TabIndex = 50;
-            label34.Text = "Register Bind Address";
+            label34.Text = "Public Address";
             // 
-            // gameHostRegisterBindAddress
+            // publicAddress
             // 
-            gameHostRegisterBindAddress.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            gameHostRegisterBindAddress.Location = new Point(214, 555);
-            gameHostRegisterBindAddress.Name = "gameHostRegisterBindAddress";
-            gameHostRegisterBindAddress.Size = new Size(177, 23);
-            gameHostRegisterBindAddress.TabIndex = 51;
+            publicAddress.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            publicAddress.Location = new Point(214, 528);
+            publicAddress.Name = "publicAddress";
+            publicAddress.Size = new Size(177, 23);
+            publicAddress.TabIndex = 51;
             // 
-            // gameHostBindPort
+            // bindPort
             // 
-            gameHostBindPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            gameHostBindPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            gameHostBindPort.Location = new Point(214, 526);
-            gameHostBindPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
-            gameHostBindPort.Name = "gameHostBindPort";
-            gameHostBindPort.Size = new Size(88, 23);
-            gameHostBindPort.TabIndex = 49;
-            gameHostBindPort.Value = new decimal(new int[] { 2001, 0, 0, 0 });
+            bindPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            bindPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            bindPort.Location = new Point(214, 499);
+            bindPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            bindPort.Name = "bindPort";
+            bindPort.Size = new Size(88, 23);
+            bindPort.TabIndex = 49;
+            bindPort.Value = new decimal(new int[] { 2001, 0, 0, 0 });
             // 
             // label32
             // 
             label32.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label32.AutoSize = true;
             label32.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label32.Location = new Point(10, 525);
+            label32.Location = new Point(10, 498);
             label32.Name = "label32";
-            label32.Size = new Size(162, 21);
+            label32.Size = new Size(77, 21);
             label32.TabIndex = 48;
-            label32.Text = "Game Host Bind Port";
+            label32.Text = "Bind Port";
             // 
             // label31
             // 
             label31.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label31.AutoSize = true;
             label31.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label31.Location = new Point(10, 496);
+            label31.Location = new Point(10, 469);
             label31.Name = "label31";
-            label31.Size = new Size(192, 21);
+            label31.Size = new Size(107, 21);
             label31.TabIndex = 46;
-            label31.Text = "Game Host Bind Address";
+            label31.Text = "Bind Address";
             // 
-            // gameHostBindAddress
+            // bindAddress
             // 
-            gameHostBindAddress.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            gameHostBindAddress.Location = new Point(214, 497);
-            gameHostBindAddress.Name = "gameHostBindAddress";
-            gameHostBindAddress.Size = new Size(177, 23);
-            gameHostBindAddress.TabIndex = 47;
+            bindAddress.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            bindAddress.Location = new Point(214, 470);
+            bindAddress.Name = "bindAddress";
+            bindAddress.Size = new Size(177, 23);
+            bindAddress.TabIndex = 47;
             // 
             // label3
             // 
@@ -773,17 +766,6 @@
             label18.TabIndex = 36;
             label18.Text = "Fast Validation";
             // 
-            // regionLabel
-            // 
-            regionLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            regionLabel.AutoSize = true;
-            regionLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            regionLabel.Location = new Point(10, 319);
-            regionLabel.Name = "regionLabel";
-            regionLabel.Size = new Size(62, 21);
-            regionLabel.TabIndex = 8;
-            regionLabel.Text = "Region";
-            // 
             // disableThirdPerson
             // 
             disableThirdPerson.AutoSize = true;
@@ -798,7 +780,7 @@
             label5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label5.Location = new Point(10, 348);
+            label5.Location = new Point(10, 321);
             label5.Name = "label5";
             label5.Size = new Size(131, 21);
             label5.TabIndex = 10;
@@ -816,13 +798,13 @@
             networkViewDistance.TabIndex = 34;
             networkViewDistance.Value = new decimal(new int[] { 500, 0, 0, 0 });
             // 
-            // adminPassword
+            // passwordAdmin
             // 
-            adminPassword.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            adminPassword.Location = new Point(214, 351);
-            adminPassword.Name = "adminPassword";
-            adminPassword.Size = new Size(177, 23);
-            adminPassword.TabIndex = 11;
+            passwordAdmin.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            passwordAdmin.Location = new Point(214, 324);
+            passwordAdmin.Name = "passwordAdmin";
+            passwordAdmin.Size = new Size(177, 23);
+            passwordAdmin.TabIndex = 11;
             // 
             // serverMinGrassDistance
             // 
@@ -839,7 +821,7 @@
             scenarioIdLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             scenarioIdLabel.AutoSize = true;
             scenarioIdLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            scenarioIdLabel.Location = new Point(10, 377);
+            scenarioIdLabel.Location = new Point(10, 350);
             scenarioIdLabel.Name = "scenarioIdLabel";
             scenarioIdLabel.Size = new Size(93, 21);
             scenarioIdLabel.TabIndex = 12;
@@ -860,7 +842,7 @@
             // visible
             // 
             visible.AutoSize = true;
-            visible.Location = new Point(214, 471);
+            visible.Location = new Point(214, 444);
             visible.Name = "visible";
             visible.Size = new Size(15, 14);
             visible.TabIndex = 31;
@@ -871,16 +853,16 @@
             label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label9.Location = new Point(10, 406);
+            label9.Location = new Point(10, 379);
             label9.Name = "label9";
-            label9.Size = new Size(142, 21);
+            label9.Size = new Size(96, 21);
             label9.TabIndex = 14;
-            label9.Text = "Player Count Limit";
+            label9.Text = "Max Players";
             // 
             // autoJoinable
             // 
             autoJoinable.AutoSize = true;
-            autoJoinable.Location = new Point(214, 443);
+            autoJoinable.Location = new Point(214, 416);
             autoJoinable.Name = "autoJoinable";
             autoJoinable.Size = new Size(15, 14);
             autoJoinable.TabIndex = 30;
@@ -891,44 +873,33 @@
             label8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label8.Location = new Point(10, 435);
+            label8.Location = new Point(10, 408);
             label8.Name = "label8";
             label8.Size = new Size(110, 21);
             label8.TabIndex = 16;
             label8.Text = "Auto Joinable";
             // 
-            // playerCountLimit
+            // maxPlayers
             // 
-            playerCountLimit.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            playerCountLimit.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            playerCountLimit.Location = new Point(214, 409);
-            playerCountLimit.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
-            playerCountLimit.Name = "playerCountLimit";
-            playerCountLimit.Size = new Size(88, 23);
-            playerCountLimit.TabIndex = 29;
-            playerCountLimit.Value = new decimal(new int[] { 127, 0, 0, 0 });
+            maxPlayers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            maxPlayers.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            maxPlayers.Location = new Point(214, 382);
+            maxPlayers.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
+            maxPlayers.Name = "maxPlayers";
+            maxPlayers.Size = new Size(88, 23);
+            maxPlayers.TabIndex = 29;
+            maxPlayers.Value = new decimal(new int[] { 127, 0, 0, 0 });
             // 
             // label7
             // 
             label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label7.Location = new Point(10, 465);
+            label7.Location = new Point(10, 438);
             label7.Name = "label7";
             label7.Size = new Size(58, 21);
             label7.TabIndex = 18;
             label7.Text = "Visible";
-            // 
-            // region
-            // 
-            region.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            region.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            region.FormattingEnabled = true;
-            region.Items.AddRange(new object[] { "AU", "US", "DE", "CN", "CZ", "FR", "GB", "RU", "JP" });
-            region.Location = new Point(214, 322);
-            region.Name = "region";
-            region.Size = new Size(88, 23);
-            region.TabIndex = 28;
             // 
             // label14
             // 
@@ -1450,7 +1421,7 @@
             steamCmdLog.Name = "steamCmdLog";
             steamCmdLog.ReadOnly = true;
             steamCmdLog.ScrollBars = ScrollBars.Vertical;
-            steamCmdLog.Size = new Size(1160, 634);
+            steamCmdLog.Size = new Size(1140, 634);
             steamCmdLog.TabIndex = 1;
             // 
             // steamCmdAlert
@@ -1494,17 +1465,17 @@
             groupBox2.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            groupBox5.ResumeLayout(false);
-            groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)aiLimit).EndInit();
+            ((System.ComponentModel.ISupportInitialize)playerSaveTime).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)gameNumber).EndInit();
             ((System.ComponentModel.ISupportInitialize)steamQueryPort).EndInit();
-            ((System.ComponentModel.ISupportInitialize)gameHostRegisterBindPort).EndInit();
-            ((System.ComponentModel.ISupportInitialize)gameHostBindPort).EndInit();
+            ((System.ComponentModel.ISupportInitialize)publicPort).EndInit();
+            ((System.ComponentModel.ISupportInitialize)bindPort).EndInit();
             ((System.ComponentModel.ISupportInitialize)networkViewDistance).EndInit();
             ((System.ComponentModel.ISupportInitialize)serverMinGrassDistance).EndInit();
             ((System.ComponentModel.ISupportInitialize)serverMaxViewDistance).EndInit();
-            ((System.ComponentModel.ISupportInitialize)playerCountLimit).EndInit();
+            ((System.ComponentModel.ISupportInitialize)maxPlayers).EndInit();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             groupBox4.ResumeLayout(false);
@@ -1540,13 +1511,13 @@
         private Label label8;
         private Label label9;
         private Label scenarioIdLabel;
-        private TextBox adminPassword;
+        private TextBox passwordAdmin;
         private Label label5;
         private Label regionLabel;
         private TextBox serverPassword;
         private Label label4;
         private ComboBox region;
-        private NumericUpDown playerCountLimit;
+        private NumericUpDown maxPlayers;
         private CheckBox autoJoinable;
         private CheckBox visible;
         private NumericUpDown serverMaxViewDistance;
@@ -1560,13 +1531,13 @@
         private GroupBox groupBox1;
         private GroupBox groupBox2;
         private Label label31;
-        private TextBox gameHostBindAddress;
-        private NumericUpDown gameHostBindPort;
+        private TextBox bindAddress;
+        private NumericUpDown bindPort;
         private Label label32;
-        private NumericUpDown gameHostRegisterBindPort;
+        private NumericUpDown publicPort;
         private Label label33;
         private Label label34;
-        private TextBox gameHostRegisterBindAddress;
+        private TextBox publicAddress;
         private Label label35;
         private CheckBox a2sQueryEnabled;
         private Label label36;
@@ -1579,8 +1550,6 @@
         private Button addToEnabledBtn;
         private Label label16;
         private Label label15;
-        private TextBox dedicatedServerId;
-        private Label label19;
         private Label steamCmdAlert;
         private TextBox steamCmdLog;
         private Button downloadSteamCmdBtn;
@@ -1610,11 +1579,6 @@
         private Label label23;
         private CheckBox forcePortCheckBox;
         private PictureBox pictureBox1;
-        private Label label26;
-        private Label label25;
-        private CheckBox platformXbox;
-        private CheckBox platformPC;
-        private GroupBox groupBox5;
         private Button locateServerFilesBtn;
         private NumericUpDown ndsUpDown;
         private Label ndsLabel;
@@ -1642,5 +1606,11 @@
         private Label label29;
         private CheckBox vonDisableUI;
         private Label label24;
+        private CheckBox xboxCrossplay;
+        private Label label25;
+        private Label label19;
+        private NumericUpDown playerSaveTime;
+        private Label label26;
+        private NumericUpDown aiLimit;
     }
 }
