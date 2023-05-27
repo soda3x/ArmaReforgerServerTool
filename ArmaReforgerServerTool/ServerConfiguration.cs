@@ -4,17 +4,15 @@ namespace ReforgerServerApp
 {
     internal class ServerConfiguration
     {
-        public string DedicatedServerId { get; set; }
-        public string Region { get; set; }
-        public string GameHostBindAddress { get; set; }
-        public int GameHostBindPort { get; set; }
-        public string GameHostRegisterBindAddress { get; set; }
-        public int GameHostRegisterBindPort { get; set; }
-        public string AdminPassword { get; set; }
+        public string BindAddress { get; set; }
+        public int BindPort { get; set; }
+        public string PublicAddress { get; set; }
+        public int PublicPort { get; set; }
+        public string PasswordAdmin { get; set; }
         public string ServerName { get; set; }
-        public string ServerPassword { get; set; }
+        public string Password { get; set; }
         public string ScenarioId { get; set; }
-        public int PlayerCountLimit { get; set; }
+        public int MaxPlayers { get; set; }
         public bool AutoJoinable { get; set; }
         public bool Visible { get; set; }
         public int ServerMaxViewDistance { get; set; }
@@ -26,22 +24,21 @@ namespace ReforgerServerApp
         public bool BattlEye { get; set; }
         public bool A2sQueryEnabled { get; set; }
         public int SteamQueryPort { get; set; }
-        public bool PlatformPC { get; set; }
-        public bool PlatformXBL { get; set; }
+        public bool CrossPlatform { get; set; }
         public bool LobbyPlayerSynchronise { get; set; }
         public bool VONDisableUI { get; set; }
         public bool VONDisableDirectSpeechUI { get; set; }
+        public int PlayerSaveTime { get; set; }
+        public int AiLimit { get; set; }
         public List<Mod> Mods { get; }
 
         private ServerConfiguration()
         {
-            DedicatedServerId = string.Empty;
-            Region = string.Empty;
-            GameHostBindAddress = string.Empty;
-            GameHostRegisterBindAddress = string.Empty;
-            AdminPassword = string.Empty;
+            BindAddress = string.Empty;
+            PublicAddress = string.Empty;
+            PasswordAdmin = string.Empty;
             ServerName = string.Empty;
-            ServerPassword = string.Empty;
+            Password = string.Empty;
             ScenarioId = string.Empty;
             Mods = new List<Mod>();
         }
@@ -54,43 +51,27 @@ namespace ReforgerServerApp
         {
             StringBuilder sb = new();
             sb.AppendLine("{");
-            sb.AppendLine($"\"dedicatedServerId\": \"{DedicatedServerId}\",");
-            sb.AppendLine($"\"region\": \"{Region}\",");
-            sb.AppendLine($"\"gameHostBindAddress\": \"{GameHostBindAddress}\",");
-            sb.AppendLine($"\"gameHostBindPort\": {GameHostBindPort},");
-            sb.AppendLine($"\"gameHostRegisterBindAddress\": \"{GameHostRegisterBindAddress}\",");
-            sb.AppendLine($"\"gameHostRegisterBindPort\": {GameHostRegisterBindPort},");
-            sb.AppendLine($"\"adminPassword\": \"{AdminPassword}\",");
+            sb.AppendLine($"\"bindAddress\": \"{BindAddress}\",");
+            sb.AppendLine($"\"bindPort\": {BindPort},");
+            sb.AppendLine($"\"publicAddress\": \"{PublicAddress}\",");
+            sb.AppendLine($"\"publicPort\": {PublicPort},");
+            sb.AppendLine($"\"passwordAdmin\": \"{PasswordAdmin}\",");
             sb.AppendLine("\"game\": {");
             sb.AppendLine($"\"name\": \"{ServerName}\",");
-            sb.AppendLine($"\"password\": \"{ServerPassword}\",");
+            sb.AppendLine($"\"password\": \"{Password}\",");
             sb.AppendLine($"\"scenarioId\": \"{ScenarioId}\",");
             sb.AppendLine($"\"gameNumber\": {GameNumber},");
-            sb.AppendLine($"\"playerCountLimit\": {PlayerCountLimit},");
+            sb.AppendLine($"\"maxPlayers\": {MaxPlayers},");
             sb.AppendLine($"\"autoJoinable\": {AutoJoinable.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"visible\": {Visible.ToString().ToLowerInvariant()},");
             sb.AppendLine("\"supportedGameClientTypes\": [");
 
-            if (PlatformPC)
+            if (CrossPlatform)
             {
-                // Append comma if we're also expecting to add XBL
-                if (PlatformXBL)
-                {
-                    sb.AppendLine("\"PLATFORM_PC\",");
-                }
-                else
-                {
-                    sb.AppendLine("\"PLATFORM_PC\"");
-                }
-            }
-
-            if (PlatformXBL)
-            {
+                sb.AppendLine("\"PLATFORM_PC\",");
                 sb.AppendLine("\"PLATFORM_XBL\"");
             }
-
-            // If neither are in the configuration, we will default to PC
-            if (!PlatformPC && !PlatformXBL)
+            else
             {
                 sb.AppendLine("\"PLATFORM_PC\"");
             }
@@ -105,9 +86,11 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"battlEye\": {BattlEye.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"VONDisableUI\": {VONDisableUI.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()},");
-            
+
             sb.AppendLine("\"operating\": {");
-            sb.AppendLine($"\"lobbyPlayerSynchronise\": {LobbyPlayerSynchronise.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"\"lobbyPlayerSynchronise\": {LobbyPlayerSynchronise.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"playerSaveTime\": {PlayerSaveTime.ToString()},");
+            sb.AppendLine($"\"aiLimit\": {AiLimit.ToString()}");
             sb.AppendLine("}");
 
             if (Mods.Count > 0)
@@ -145,39 +128,48 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
-        /// Display ServerConfiguration as a comma separated string for saving to file.
+        /// Display ServerConfiguration parameters in a Key=Value format for saving to file.
         /// </summary>
-        /// <returns>Comma-separated string representation of the Server Configuration</returns>
-        public string AsCommaSeparatedString()
+        /// <returns>Key=Value representation of the Server Configuration</returns>
+        public string AsKeyValue(string modFilePath)
         {
             StringBuilder sb = new();
-            sb.AppendLine($"dedicatedServerId,{DedicatedServerId}");
-            sb.AppendLine($"region,{Region}");
-            sb.AppendLine($"gameHostBindAddress,{GameHostBindAddress}");
-            sb.AppendLine($"gameHostBindPort,{GameHostBindPort}");
-            sb.AppendLine($"gameHostRegisterBindAddress,{GameHostRegisterBindAddress}");
-            sb.AppendLine($"gameHostRegisterBindPort,{GameHostRegisterBindPort}");
-            sb.AppendLine($"adminPassword,{AdminPassword}");
-            sb.AppendLine($"name,{ServerName}");
-            sb.AppendLine($"password,{ServerPassword}");
-            sb.AppendLine($"scenarioId,{ScenarioId}");
-            sb.AppendLine($"playerCountLimit,{PlayerCountLimit}");
-            sb.AppendLine($"autoJoinable,{AutoJoinable.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"visible,{Visible.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"platformPC,{PlatformPC.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"platformXBL,{PlatformXBL.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"serverMaxViewDistance,{ServerMaxViewDistance}");
-            sb.AppendLine($"serverMinGrassDistance,{ServerMinGrassDistance}");
-            sb.AppendLine($"networkViewDistance,{NetworkViewDistance}");
-            sb.AppendLine($"gameNumber,{GameNumber}");
-            sb.AppendLine($"disableThirdPerson,{DisableThirdPerson.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"fastValidation,{FastValidation.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"battlEye,{BattlEye.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"a2sQueryEnabled,{A2sQueryEnabled.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"steamQueryPort,{SteamQueryPort}");
-            sb.AppendLine($"vonDisableUI,{VONDisableUI.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"vonDisableDirectSpeechUI,{VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"lobbyPlayerSynchronise,{LobbyPlayerSynchronise.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"bindAddress={BindAddress}");
+            sb.AppendLine($"bindPort={BindPort}");
+            sb.AppendLine($"publicAddress={PublicAddress}");
+            sb.AppendLine($"publicPort={PublicPort}");
+            sb.AppendLine($"passwordAdmin={PasswordAdmin}");
+            sb.AppendLine($"name={ServerName}");
+            sb.AppendLine($"password={Password}");
+            sb.AppendLine($"scenarioId={ScenarioId}");
+            sb.AppendLine($"maxPlayers={MaxPlayers}");
+            sb.AppendLine($"autoJoinable={AutoJoinable.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"visible={Visible.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"crossPlatform={CrossPlatform.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"serverMaxViewDistance={ServerMaxViewDistance}");
+            sb.AppendLine($"serverMinGrassDistance={ServerMinGrassDistance}");
+            sb.AppendLine($"networkViewDistance={NetworkViewDistance}");
+            sb.AppendLine($"gameNumber={GameNumber}");
+            sb.AppendLine($"disableThirdPerson={DisableThirdPerson.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"fastValidation={FastValidation.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"battlEye={BattlEye.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"a2sQueryEnabled={A2sQueryEnabled.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"steamQueryPort={SteamQueryPort}");
+            sb.AppendLine($"vonDisableUI={VONDisableUI.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"vonDisableDirectSpeechUI={VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"lobbyPlayerSynchronise={LobbyPlayerSynchronise.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"playerSaveTime={PlayerSaveTime.ToString()}");
+            sb.AppendLine($"aiLimit={AiLimit.ToString()}");
+            sb.AppendLine($"modCollection={modFilePath}");
+            return sb.ToString();
+        }
+        /// <summary>
+        /// Display Mods as a comma separated string for saving to file.
+        /// </summary>
+        /// <returns>Comma-separated string representation of the Server Configuration's Mods</returns>
+        public string ModsAsCommaSeparatedString()
+        {
+            StringBuilder sb = new();
             foreach (Mod m in Mods)
             {
                 sb.AppendLine($"modId,{m.GetModID()},modName,{m.GetModName()}");
@@ -191,43 +183,27 @@ namespace ReforgerServerApp
 
             private void InitialiseServerConfigIfNull()
             {
-                if (m_serverConfiguration == null)
-                {
-                    m_serverConfiguration = new ServerConfiguration();
-                }
+                m_serverConfiguration ??= new ServerConfiguration();
             }
-            public ServerConfigurationBuilder WithDedicatedServerId(string dedicatedServerId)
+
+            public ServerConfigurationBuilder WithBindAddress(string bindAddress)
             {
                 InitialiseServerConfigIfNull();
-                m_serverConfiguration.DedicatedServerId = dedicatedServerId;
+                m_serverConfiguration.BindAddress = bindAddress;
                 return this;
             }
 
-            public ServerConfigurationBuilder WithRegion(string region)
+            public ServerConfigurationBuilder WithPublicAddress(string publicAddress)
             {
                 InitialiseServerConfigIfNull();
-                m_serverConfiguration.Region = region;
-                return this;
-            }
-
-            public ServerConfigurationBuilder WithGameHostBindAddress(string gameHostBindAddress)
-            {
-                InitialiseServerConfigIfNull();
-                m_serverConfiguration.GameHostBindAddress = gameHostBindAddress;
-                return this;
-            }
-
-            public ServerConfigurationBuilder WithGameHostRegisterBindAddress(string gameHostRegisterBindAddress)
-            {
-                InitialiseServerConfigIfNull();
-                m_serverConfiguration.GameHostRegisterBindAddress = gameHostRegisterBindAddress;
+                m_serverConfiguration.PublicAddress = publicAddress;
                 return this;
             }
 
             public ServerConfigurationBuilder WithAdminPassword(string adminPassword)
             {
                 InitialiseServerConfigIfNull();
-                m_serverConfiguration.AdminPassword = adminPassword;
+                m_serverConfiguration.PasswordAdmin = adminPassword;
                 return this;
             }
 
@@ -241,7 +217,7 @@ namespace ReforgerServerApp
             public ServerConfigurationBuilder WithServerPassword(string serverPassword)
             {
                 InitialiseServerConfigIfNull();
-                m_serverConfiguration.ServerPassword = serverPassword;
+                m_serverConfiguration.Password = serverPassword;
                 return this;
             }
 
@@ -252,24 +228,24 @@ namespace ReforgerServerApp
                 return this;
             }
 
-            public ServerConfigurationBuilder WithGameHostBindPort(int gameHostBindPort)
+            public ServerConfigurationBuilder WithBindPort(int bindPort)
             {
                 InitialiseServerConfigIfNull();
-                m_serverConfiguration.GameHostBindPort = gameHostBindPort;
+                m_serverConfiguration.BindPort = bindPort;
                 return this;
             }
 
-            public ServerConfigurationBuilder WithGameHostRegisterBindPort(int gameHostRegisterBindPort)
+            public ServerConfigurationBuilder WithPublicPort(int publicPort)
             {
                 InitialiseServerConfigIfNull();
-                m_serverConfiguration.GameHostRegisterBindPort = gameHostRegisterBindPort;
+                m_serverConfiguration.PublicPort = publicPort;
                 return this;
             }
 
-            public ServerConfigurationBuilder WithPlayerCountLimit(int playerCountLimit)
+            public ServerConfigurationBuilder WithMaxPlayers(int maxPlayers)
             {
                 InitialiseServerConfigIfNull();
-                m_serverConfiguration.PlayerCountLimit = playerCountLimit;
+                m_serverConfiguration.MaxPlayers = maxPlayers;
                 return this;
             }
 
@@ -287,17 +263,10 @@ namespace ReforgerServerApp
                 return this;
             }
 
-            public ServerConfigurationBuilder WithPlatformPC(bool platformPC)
+            public ServerConfigurationBuilder WithCrossPlatform(bool crossPlatform)
             {
                 InitialiseServerConfigIfNull();
-                m_serverConfiguration.PlatformPC = platformPC;
-                return this;
-            }
-
-            public ServerConfigurationBuilder WithPlatformXBL(bool platformXBL)
-            {
-                InitialiseServerConfigIfNull();
-                m_serverConfiguration.PlatformXBL = platformXBL;
+                m_serverConfiguration.CrossPlatform = crossPlatform;
                 return this;
             }
 
@@ -382,6 +351,20 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.LobbyPlayerSynchronise = lobbyPlayerSync;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithPlayerSaveTime(int playerSaveTime)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.PlayerSaveTime = playerSaveTime;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithAILimit(int aiLimit)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.AiLimit = aiLimit;
                 return this;
             }
 
