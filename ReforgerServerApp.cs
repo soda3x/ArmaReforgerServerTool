@@ -29,9 +29,6 @@ namespace ReforgerServerApp
             // Create tooltips
             CreateTooltips();
 
-            // Initialise region combo box to select the first option
-            region.SelectedIndex = 0;
-
             if (File.Exists(MOD_DATABASE_FILE))
             {
                 ReadModsDatabase();
@@ -84,8 +81,8 @@ namespace ReforgerServerApp
             disableModToolTip.SetToolTip(removeFromEnabledBtn, Constants.DISABLE_MOD_STR);
             ToolTip scenarioIdLabelToolTip = new();
             scenarioIdLabelToolTip.SetToolTip(scenarioIdLabel, Constants.SCENARIO_ID_TOOLTIP_STR);
-            ToolTip regionLabelToolTip = new();
-            regionLabelToolTip.SetToolTip(regionLabel, Constants.REGION_TOOLTIP_STR);
+            ToolTip aiLimitToolTip = new();
+            aiLimitToolTip.SetToolTip(aiLimit, Constants.AI_LIMIT_TOOLTIP_STR);
             ToolTip ndsToolTip = new();
             ndsToolTip.SetToolTip(ndsLabel, Constants.NDS_TOOLTIP_STR);
             ToolTip nwkResolutionToolTip = new();
@@ -208,7 +205,7 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
-        /// Save the server settings to a txt file in comma separated format.
+        /// Save the server settings to file.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -216,10 +213,12 @@ namespace ReforgerServerApp
         {
             using SaveFileDialog sfd = new();
             sfd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
-            sfd.Filter = "Text files (*.txt)|*.txt";
+            sfd.Filter = "Properties files (*.prop)|*.prop";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                File.WriteAllText(sfd.FileName, CreateConfiguration().AsCommaSeparatedString());
+                string modsFilename = $"{sfd.FileName}_mods.txt";
+                File.WriteAllText(sfd.FileName, CreateConfiguration().AsKeyValue(modsFilename));
+                File.WriteAllText(modsFilename, CreateConfiguration().ModsAsCommaSeparatedString());
             }
         }
 
@@ -232,7 +231,7 @@ namespace ReforgerServerApp
         {
             using OpenFileDialog ofd = new();
             ofd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
-            ofd.Filter = "Text files (*.txt)|*.txt";
+            ofd.Filter = "Properties files (*.prop)|*.prop";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string filePath = ofd.FileName;
@@ -297,107 +296,104 @@ namespace ReforgerServerApp
         /// <param name="input"></param>
         private void PopulateServerConfiguration(string input)
         {
-            const int MINIMUM_CONFIG_FILE_LENGTH = 51;
             string[] configLines = input.Trim().Split(Environment.NewLine);
-            List<string> configParams = new();
+            Dictionary<string, string> configParams = new();
 
             foreach (string line in configLines)
             {
-                string[] splitLine = line.Split(",");
-                foreach (string s in splitLine)
-                {
-                    configParams.Add(s);
-                }
+                string[] splitLine = line.Split("=");
+                configParams.Add(splitLine[0], splitLine[1]);
             }
 
-            if (configParams.Count >= MINIMUM_CONFIG_FILE_LENGTH)
-            {
-                ServerConfigurationBuilder builder = new();
-                builder
-                    .WithDedicatedServerId(configParams[1])
-                    .WithRegion(configParams[3])
-                    .WithGameHostBindAddress(configParams[5])
-                    .WithGameHostBindPort(Convert.ToInt32(configParams[7]))
-                    .WithGameHostRegisterBindAddress(configParams[9])
-                    .WithGameHostRegisterBindPort(Convert.ToInt32(configParams[11]))
-                    .WithAdminPassword(configParams[13])
-                    .WithServerName(configParams[15])
-                    .WithServerPassword(configParams[17])
-                    .WithScenarioId(configParams[19])
-                    .WithPlayerCountLimit(Convert.ToInt32(configParams[21]))
-                    .WithAutoJoinable(Convert.ToBoolean(configParams[23]))
-                    .WithVisible(Convert.ToBoolean(configParams[25]))
-                    .WithPlatformPC(Convert.ToBoolean(configParams[27]))
-                    .WithPlatformXBL(Convert.ToBoolean(configParams[29]))
-                    .WithServerMaxViewDistance(Convert.ToInt32(configParams[31]))
-                    .WithServerMinGrassDistance(Convert.ToInt32(configParams[33]))
-                    .WithNetworkViewDistance(Convert.ToInt32(configParams[35]))
-                    .WithGameNumber(Convert.ToInt32(configParams[37]))
-                    .WithDisableThirdPerson(Convert.ToBoolean(configParams[39]))
-                    .WithFastValidation(Convert.ToBoolean(configParams[41]))
-                    .WithBattlEye(Convert.ToBoolean(configParams[43]))
-                    .WithA2SQueryEnabled(Convert.ToBoolean(configParams[45]))
-                    .WithSteamQueryPort(Convert.ToInt32(configParams[47]))
-                    .WithVONDisableUI(Convert.ToBoolean(configParams[49]))
-                    .WithVONDisableDirectSpeechUI(Convert.ToBoolean(configParams[51]))
-                    .WithLobbyPlayerSynchronise(Convert.ToBoolean(configParams[53]));
+            ServerConfigurationBuilder builder = new();
+            builder
+                .WithBindAddress(configParams["bindAddress"])
+                .WithBindPort(Convert.ToInt32(configParams["bindPort"]))
+                .WithPublicAddress(configParams["publicAddress"])
+                .WithPublicPort(Convert.ToInt32(configParams["publicPort"]))
+                .WithAdminPassword(configParams["passwordAdmin"])
+                .WithServerName(configParams["name"])
+                .WithServerPassword(configParams["password"])
+                .WithScenarioId(configParams["scenarioId"])
+                .WithMaxPlayers(Convert.ToInt32(configParams["maxPlayers"]))
+                .WithAutoJoinable(Convert.ToBoolean(configParams["autoJoinable"]))
+                .WithVisible(Convert.ToBoolean(configParams["visible"]))
+                .WithCrossPlatform(Convert.ToBoolean(configParams["crossPlatform"]))
+                .WithServerMaxViewDistance(Convert.ToInt32(configParams["serverMaxViewDistance"]))
+                .WithServerMinGrassDistance(Convert.ToInt32(configParams["serverMinGrassDistance"]))
+                .WithNetworkViewDistance(Convert.ToInt32(configParams["networkViewDistance"]))
+                .WithGameNumber(Convert.ToInt32(configParams["gameNumber"]))
+                .WithDisableThirdPerson(Convert.ToBoolean(configParams["disableThirdPerson"]))
+                .WithFastValidation(Convert.ToBoolean(configParams["fastValidation"]))
+                .WithBattlEye(Convert.ToBoolean(configParams["battlEye"]))
+                .WithA2SQueryEnabled(Convert.ToBoolean(configParams["a2sQueryEnabled"]))
+                .WithSteamQueryPort(Convert.ToInt32(configParams["steamQueryPort"]))
+                .WithVONDisableUI(Convert.ToBoolean(configParams["vonDisableUI"]))
+                .WithVONDisableDirectSpeechUI(Convert.ToBoolean(configParams["vonDisableDirectSpeechUI"]))
+                .WithLobbyPlayerSynchronise(Convert.ToBoolean(configParams["lobbyPlayerSynchronise"]))
+                .WithPlayerSaveTime(Convert.ToInt32(configParams["playerSaveTime"]))
+                .WithAILimit(Convert.ToInt32(configParams["aiLimit"]));
 
-                for (int i = 0; i < configParams.Count; ++i)
+            try
+            {
+                string[] modEntries = File.ReadAllLines(configParams["modCollection"]);
+                for (int i = 0; i < modEntries.Length; ++i)
                 {
-                    if (configParams[i].Equals("modId"))
+                    if (modEntries[i].Equals("modId"))
                     {
-                        builder.AddModToConfiguration(new(configParams[i + 1], configParams[i + 3]));
+                        builder.AddModToConfiguration(new(modEntries[i + 1], modEntries[i + 3]));
                     }
                 }
-
-                ServerConfiguration sc = builder.Build();
-
-                dedicatedServerId.Text = sc.DedicatedServerId;
-                region.Text = sc.Region;
-                gameHostBindAddress.Text = sc.GameHostBindAddress;
-                gameHostBindPort.Value = sc.GameHostBindPort;
-                gameHostRegisterBindAddress.Text = sc.GameHostRegisterBindAddress;
-                gameHostRegisterBindPort.Value = sc.GameHostRegisterBindPort;
-                adminPassword.Text = sc.AdminPassword;
-                serverName.Text = sc.ServerName;
-                serverPassword.Text = sc.ServerPassword;
-                scenarioId.Text = sc.ScenarioId;
-                playerCountLimit.Value = sc.PlayerCountLimit;
-                autoJoinable.Checked = sc.AutoJoinable;
-                visible.Checked = sc.Visible;
-                platformPC.Checked = sc.PlatformPC;
-                platformXbox.Checked = sc.PlatformXBL;
-                serverMaxViewDistance.Value = sc.ServerMaxViewDistance;
-                serverMinGrassDistance.Value = sc.ServerMinGrassDistance;
-                networkViewDistance.Value = sc.NetworkViewDistance;
-                gameNumber.Value = sc.GameNumber;
-                disableThirdPerson.Checked = sc.DisableThirdPerson;
-                fastValidation.Checked = sc.FastValidation;
-                battlEye.Checked = sc.BattlEye;
-                a2sQueryEnabled.Checked = sc.A2sQueryEnabled;
-                steamQueryPort.Value = sc.SteamQueryPort;
-                lobbyPlayerSync.Checked = sc.LobbyPlayerSynchronise;
-                vonDisableUI.Checked = sc.VONDisableUI;
-                vonDisableDirectSpeechUI.Checked = sc.VONDisableDirectSpeechUI;
-
-                enabledMods.Items.Clear();
-
-                foreach (Mod m in sc.Mods)
-                {
-                    enabledMods.Items.Add(m);
-                    if (!availableMods.Items.Contains(m))
-                    {
-                        availableMods.Items.Add(m);
-                    }
-                }
-                AlphabetiseModListBox(GetAvailableModsList());
-                AlphabetiseModListBox(GetEnabledModsList());
-                WriteModsDatabase();
             }
-            else
+            catch (Exception)
             {
-                MessageBox.Show("Server Config file is malformed and cannot be opened.");
+                MessageBox.Show($"Unable to load file mod collection file '{configParams["modCollection"]}'.\r\n" +
+                    $"It may be malformed, has been moved or does not exist.\r\n" +
+                    $"Skipping loading mods...");
             }
+
+            ServerConfiguration sc = builder.Build();
+
+            bindAddress.Text = sc.BindAddress;
+            bindPort.Value = sc.BindPort;
+            publicAddress.Text = sc.PublicAddress;
+            publicPort.Value = sc.PublicPort;
+            passwordAdmin.Text = sc.PasswordAdmin;
+            serverName.Text = sc.ServerName;
+            serverPassword.Text = sc.Password;
+            scenarioId.Text = sc.ScenarioId;
+            maxPlayers.Value = sc.MaxPlayers;
+            autoJoinable.Checked = sc.AutoJoinable;
+            visible.Checked = sc.Visible;
+            xboxCrossplay.Checked = sc.CrossPlatform;
+            serverMaxViewDistance.Value = sc.ServerMaxViewDistance;
+            serverMinGrassDistance.Value = sc.ServerMinGrassDistance;
+            networkViewDistance.Value = sc.NetworkViewDistance;
+            gameNumber.Value = sc.GameNumber;
+            disableThirdPerson.Checked = sc.DisableThirdPerson;
+            fastValidation.Checked = sc.FastValidation;
+            battlEye.Checked = sc.BattlEye;
+            a2sQueryEnabled.Checked = sc.A2sQueryEnabled;
+            steamQueryPort.Value = sc.SteamQueryPort;
+            lobbyPlayerSync.Checked = sc.LobbyPlayerSynchronise;
+            vonDisableUI.Checked = sc.VONDisableUI;
+            vonDisableDirectSpeechUI.Checked = sc.VONDisableDirectSpeechUI;
+            playerSaveTime.Value = sc.PlayerSaveTime;
+            aiLimit.Value = sc.AiLimit;
+
+            enabledMods.Items.Clear();
+
+            foreach (Mod m in sc.Mods)
+            {
+                enabledMods.Items.Add(m);
+                if (!availableMods.Items.Contains(m))
+                {
+                    availableMods.Items.Add(m);
+                }
+            }
+            AlphabetiseModListBox(GetAvailableModsList());
+            AlphabetiseModListBox(GetEnabledModsList());
+            WriteModsDatabase();
         }
 
         /// <summary>
@@ -409,22 +405,19 @@ namespace ReforgerServerApp
         {
             ServerConfigurationBuilder builder = new();
             builder
-                .WithDedicatedServerId(dedicatedServerId.Text)
-                .WithRegion(region.GetItemText(region.SelectedItem))
-                .WithGameHostBindAddress(gameHostBindAddress.Text)
-                .WithGameHostBindPort((int)gameHostBindPort.Value)
-                .WithGameHostRegisterBindAddress(gameHostRegisterBindAddress.Text)
-                .WithGameHostRegisterBindPort((int)gameHostRegisterBindPort.Value)
-                .WithAdminPassword(adminPassword.Text)
+                .WithBindAddress(bindAddress.Text)
+                .WithBindPort((int)bindPort.Value)
+                .WithPublicAddress(publicAddress.Text)
+                .WithPublicPort((int)publicPort.Value)
+                .WithAdminPassword(passwordAdmin.Text)
                 .WithServerName(serverName.Text)
                 .WithServerPassword(serverPassword.Text)
                 .WithScenarioId(scenarioId.Text)
                 .WithGameNumber((int)gameNumber.Value)
-                .WithPlayerCountLimit((int)playerCountLimit.Value)
+                .WithMaxPlayers((int)maxPlayers.Value)
                 .WithAutoJoinable(autoJoinable.Checked)
                 .WithVisible(visible.Checked)
-                .WithPlatformPC(platformPC.Checked)
-                .WithPlatformXBL(platformXbox.Checked)
+                .WithCrossPlatform(xboxCrossplay.Checked)
                 .WithServerMaxViewDistance((int)serverMaxViewDistance.Value)
                 .WithServerMinGrassDistance((int)serverMinGrassDistance.Value)
                 .WithNetworkViewDistance((int)networkViewDistance.Value)
@@ -435,7 +428,9 @@ namespace ReforgerServerApp
                 .WithSteamQueryPort((int)steamQueryPort.Value)
                 .WithLobbyPlayerSynchronise(lobbyPlayerSync.Checked)
                 .WithVONDisableUI(vonDisableUI.Checked)
-                .WithVONDisableDirectSpeechUI(vonDisableDirectSpeechUI.Checked);
+                .WithVONDisableDirectSpeechUI(vonDisableDirectSpeechUI.Checked)
+                .WithPlayerSaveTime((int)playerSaveTime.Value)
+                .WithAILimit((int)aiLimit.Value);
 
             foreach (Mod m in enabledMods.Items)
             {
@@ -868,21 +863,18 @@ namespace ReforgerServerApp
         /// <param name="enabled"></param>
         private void EnableServerFields(bool enabled)
         {
-            dedicatedServerId.Enabled = enabled;
-            region.Enabled = enabled;
-            gameHostBindAddress.Enabled = enabled;
-            gameHostBindPort.Enabled = enabled;
-            gameHostRegisterBindAddress.Enabled = enabled;
-            gameHostRegisterBindPort.Enabled = enabled;
-            adminPassword.Enabled = enabled;
+            bindAddress.Enabled = enabled;
+            bindPort.Enabled = enabled;
+            publicAddress.Enabled = enabled;
+            publicPort.Enabled = enabled;
+            passwordAdmin.Enabled = enabled;
             serverName.Enabled = enabled;
             serverPassword.Enabled = enabled;
             scenarioId.Enabled = enabled;
-            playerCountLimit.Enabled = enabled;
+            maxPlayers.Enabled = enabled;
             autoJoinable.Enabled = enabled;
             visible.Enabled = enabled;
-            platformPC.Enabled = enabled;
-            platformXbox.Enabled = enabled;
+            xboxCrossplay.Enabled = enabled;
             serverMaxViewDistance.Enabled = enabled;
             serverMinGrassDistance.Enabled = enabled;
             networkViewDistance.Enabled = enabled;
@@ -923,6 +915,8 @@ namespace ReforgerServerApp
             vonDisableUI.Enabled = enabled;
             vonDisableDirectSpeechUI.Enabled = enabled;
             lobbyPlayerSync.Enabled = enabled;
+            playerSaveTime.Enabled = enabled;
+            aiLimit.Enabled = enabled;
         }
 
         /// <summary>
