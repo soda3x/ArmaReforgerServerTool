@@ -55,8 +55,8 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"bindPort\": {BindPort},");
             sb.AppendLine($"\"publicAddress\": \"{PublicAddress}\",");
             sb.AppendLine($"\"publicPort\": {PublicPort},");
-            sb.AppendLine($"\"passwordAdmin\": \"{PasswordAdmin}\",");
             sb.AppendLine("\"game\": {");
+            sb.AppendLine($"\"passwordAdmin\": \"{PasswordAdmin}\",");
             sb.AppendLine($"\"name\": \"{ServerName}\",");
             sb.AppendLine($"\"password\": \"{Password}\",");
             sb.AppendLine($"\"scenarioId\": \"{ScenarioId}\",");
