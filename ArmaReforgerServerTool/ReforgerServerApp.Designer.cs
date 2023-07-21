@@ -57,12 +57,8 @@
             lobbyPlayerSync = new CheckBox();
             label1 = new Label();
             pictureBox1 = new PictureBox();
-            label2 = new Label();
-            gameNumber = new NumericUpDown();
             scenarioId = new ComboBox();
             label35 = new Label();
-            a2sQueryEnabled = new CheckBox();
-            label36 = new Label();
             steamQueryPort = new NumericUpDown();
             publicPort = new NumericUpDown();
             label33 = new Label();
@@ -89,8 +85,6 @@
             serverMaxViewDistance = new NumericUpDown();
             visible = new CheckBox();
             label9 = new Label();
-            autoJoinable = new CheckBox();
-            label8 = new Label();
             maxPlayers = new NumericUpDown();
             label7 = new Label();
             label14 = new Label();
@@ -150,7 +144,6 @@
             ((System.ComponentModel.ISupportInitialize)aiLimit).BeginInit();
             ((System.ComponentModel.ISupportInitialize)playerSaveTime).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)gameNumber).BeginInit();
             ((System.ComponentModel.ISupportInitialize)steamQueryPort).BeginInit();
             ((System.ComponentModel.ISupportInitialize)publicPort).BeginInit();
             ((System.ComponentModel.ISupportInitialize)bindPort).BeginInit();
@@ -343,12 +336,8 @@
             groupBox1.Controls.Add(lobbyPlayerSync);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(pictureBox1);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(gameNumber);
             groupBox1.Controls.Add(scenarioId);
             groupBox1.Controls.Add(label35);
-            groupBox1.Controls.Add(a2sQueryEnabled);
-            groupBox1.Controls.Add(label36);
             groupBox1.Controls.Add(steamQueryPort);
             groupBox1.Controls.Add(publicPort);
             groupBox1.Controls.Add(label33);
@@ -375,8 +364,6 @@
             groupBox1.Controls.Add(serverMaxViewDistance);
             groupBox1.Controls.Add(visible);
             groupBox1.Controls.Add(label9);
-            groupBox1.Controls.Add(autoJoinable);
-            groupBox1.Controls.Add(label8);
             groupBox1.Controls.Add(maxPlayers);
             groupBox1.Controls.Add(label7);
             groupBox1.Controls.Add(label14);
@@ -396,7 +383,7 @@
             label26.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label26.AutoSize = true;
             label26.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label26.Location = new Point(424, 579);
+            label26.Location = new Point(424, 549);
             label26.Name = "label26";
             label26.Size = new Size(66, 21);
             label26.TabIndex = 80;
@@ -407,7 +394,7 @@
             // 
             aiLimit.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             aiLimit.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            aiLimit.Location = new Point(628, 579);
+            aiLimit.Location = new Point(628, 549);
             aiLimit.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             aiLimit.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
             aiLimit.Name = "aiLimit";
@@ -420,7 +407,7 @@
             label19.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label19.AutoSize = true;
             label19.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label19.Location = new Point(10, 648);
+            label19.Location = new Point(10, 589);
             label19.Name = "label19";
             label19.Size = new Size(177, 21);
             label19.TabIndex = 78;
@@ -431,7 +418,7 @@
             // 
             playerSaveTime.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             playerSaveTime.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            playerSaveTime.Location = new Point(214, 648);
+            playerSaveTime.Location = new Point(214, 592);
             playerSaveTime.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             playerSaveTime.Name = "playerSaveTime";
             playerSaveTime.Size = new Size(88, 23);
@@ -441,7 +428,7 @@
             // xboxCrossplay
             // 
             xboxCrossplay.AutoSize = true;
-            xboxCrossplay.Location = new Point(700, 555);
+            xboxCrossplay.Location = new Point(700, 525);
             xboxCrossplay.Name = "xboxCrossplay";
             xboxCrossplay.Size = new Size(15, 14);
             xboxCrossplay.TabIndex = 77;
@@ -452,7 +439,7 @@
             label25.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label25.AutoSize = true;
             label25.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label25.Location = new Point(423, 549);
+            label25.Location = new Point(423, 519);
             label25.Name = "label25";
             label25.Size = new Size(117, 21);
             label25.TabIndex = 76;
@@ -461,7 +448,7 @@
             // vonDisableDirectSpeechUI
             // 
             vonDisableDirectSpeechUI.AutoSize = true;
-            vonDisableDirectSpeechUI.Location = new Point(700, 528);
+            vonDisableDirectSpeechUI.Location = new Point(700, 498);
             vonDisableDirectSpeechUI.Name = "vonDisableDirectSpeechUI";
             vonDisableDirectSpeechUI.Size = new Size(15, 14);
             vonDisableDirectSpeechUI.TabIndex = 75;
@@ -472,7 +459,7 @@
             label29.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label29.AutoSize = true;
             label29.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label29.Location = new Point(423, 522);
+            label29.Location = new Point(423, 492);
             label29.Name = "label29";
             label29.Size = new Size(227, 21);
             label29.TabIndex = 74;
@@ -481,7 +468,7 @@
             // vonDisableUI
             // 
             vonDisableUI.AutoSize = true;
-            vonDisableUI.Location = new Point(700, 500);
+            vonDisableUI.Location = new Point(700, 470);
             vonDisableUI.Name = "vonDisableUI";
             vonDisableUI.Size = new Size(15, 14);
             vonDisableUI.TabIndex = 73;
@@ -492,7 +479,7 @@
             label24.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label24.AutoSize = true;
             label24.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label24.Location = new Point(423, 494);
+            label24.Location = new Point(423, 464);
             label24.Name = "label24";
             label24.Size = new Size(121, 21);
             label24.TabIndex = 72;
@@ -501,7 +488,7 @@
             // lobbyPlayerSync
             // 
             lobbyPlayerSync.AutoSize = true;
-            lobbyPlayerSync.Location = new Point(700, 472);
+            lobbyPlayerSync.Location = new Point(700, 442);
             lobbyPlayerSync.Name = "lobbyPlayerSync";
             lobbyPlayerSync.Size = new Size(15, 14);
             lobbyPlayerSync.TabIndex = 71;
@@ -512,7 +499,7 @@
             label1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label1.Location = new Point(423, 466);
+            label1.Location = new Point(423, 436);
             label1.Name = "label1";
             label1.Size = new Size(196, 21);
             label1.TabIndex = 70;
@@ -528,28 +515,6 @@
             pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
             pictureBox1.TabIndex = 51;
             pictureBox1.TabStop = false;
-            // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(423, 350);
-            label2.Name = "label2";
-            label2.Size = new Size(116, 21);
-            label2.TabIndex = 62;
-            label2.Text = "Game Number";
-            // 
-            // gameNumber
-            // 
-            gameNumber.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            gameNumber.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            gameNumber.Location = new Point(627, 350);
-            gameNumber.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
-            gameNumber.Name = "gameNumber";
-            gameNumber.Size = new Size(88, 23);
-            gameNumber.TabIndex = 61;
-            gameNumber.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // scenarioId
             // 
@@ -568,38 +533,18 @@
             label35.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label35.AutoSize = true;
             label35.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label35.Location = new Point(10, 585);
+            label35.Location = new Point(10, 558);
             label35.Name = "label35";
             label35.Size = new Size(139, 21);
             label35.TabIndex = 54;
             label35.Text = "Steam Query Port";
             label35.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // a2sQueryEnabled
-            // 
-            a2sQueryEnabled.AutoSize = true;
-            a2sQueryEnabled.Location = new Point(214, 622);
-            a2sQueryEnabled.Name = "a2sQueryEnabled";
-            a2sQueryEnabled.Size = new Size(15, 14);
-            a2sQueryEnabled.TabIndex = 57;
-            a2sQueryEnabled.UseVisualStyleBackColor = true;
-            // 
-            // label36
-            // 
-            label36.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label36.AutoSize = true;
-            label36.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label36.Location = new Point(10, 616);
-            label36.Name = "label36";
-            label36.Size = new Size(150, 21);
-            label36.TabIndex = 55;
-            label36.Text = "A2S Query Enabled";
-            // 
             // steamQueryPort
             // 
             steamQueryPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             steamQueryPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            steamQueryPort.Location = new Point(214, 588);
+            steamQueryPort.Location = new Point(214, 560);
             steamQueryPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             steamQueryPort.Name = "steamQueryPort";
             steamQueryPort.Size = new Size(88, 23);
@@ -610,7 +555,7 @@
             // 
             publicPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             publicPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            publicPort.Location = new Point(214, 557);
+            publicPort.Location = new Point(214, 529);
             publicPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             publicPort.Name = "publicPort";
             publicPort.Size = new Size(88, 23);
@@ -622,7 +567,7 @@
             label33.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label33.AutoSize = true;
             label33.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label33.Location = new Point(10, 556);
+            label33.Location = new Point(10, 528);
             label33.Name = "label33";
             label33.Size = new Size(88, 21);
             label33.TabIndex = 52;
@@ -633,7 +578,7 @@
             label34.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label34.AutoSize = true;
             label34.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label34.Location = new Point(10, 527);
+            label34.Location = new Point(10, 499);
             label34.Name = "label34";
             label34.Size = new Size(118, 21);
             label34.TabIndex = 50;
@@ -642,7 +587,7 @@
             // publicAddress
             // 
             publicAddress.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            publicAddress.Location = new Point(214, 528);
+            publicAddress.Location = new Point(214, 500);
             publicAddress.Name = "publicAddress";
             publicAddress.Size = new Size(177, 23);
             publicAddress.TabIndex = 51;
@@ -651,7 +596,7 @@
             // 
             bindPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             bindPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            bindPort.Location = new Point(214, 499);
+            bindPort.Location = new Point(214, 471);
             bindPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             bindPort.Name = "bindPort";
             bindPort.Size = new Size(88, 23);
@@ -663,7 +608,7 @@
             label32.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label32.AutoSize = true;
             label32.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label32.Location = new Point(10, 498);
+            label32.Location = new Point(10, 470);
             label32.Name = "label32";
             label32.Size = new Size(77, 21);
             label32.TabIndex = 48;
@@ -674,7 +619,7 @@
             label31.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label31.AutoSize = true;
             label31.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label31.Location = new Point(10, 469);
+            label31.Location = new Point(10, 441);
             label31.Name = "label31";
             label31.Size = new Size(107, 21);
             label31.TabIndex = 46;
@@ -683,7 +628,7 @@
             // bindAddress
             // 
             bindAddress.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            bindAddress.Location = new Point(214, 470);
+            bindAddress.Location = new Point(214, 442);
             bindAddress.Name = "bindAddress";
             bindAddress.Size = new Size(177, 23);
             bindAddress.TabIndex = 47;
@@ -702,7 +647,7 @@
             // battlEye
             // 
             battlEye.AutoSize = true;
-            battlEye.Location = new Point(700, 443);
+            battlEye.Location = new Point(700, 413);
             battlEye.Name = "battlEye";
             battlEye.Size = new Size(15, 14);
             battlEye.TabIndex = 45;
@@ -719,7 +664,7 @@
             // fastValidation
             // 
             fastValidation.AutoSize = true;
-            fastValidation.Location = new Point(700, 414);
+            fastValidation.Location = new Point(700, 384);
             fastValidation.Name = "fastValidation";
             fastValidation.Size = new Size(15, 14);
             fastValidation.TabIndex = 44;
@@ -741,7 +686,7 @@
             label17.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label17.AutoSize = true;
             label17.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label17.Location = new Point(423, 437);
+            label17.Location = new Point(423, 407);
             label17.Name = "label17";
             label17.Size = new Size(69, 21);
             label17.TabIndex = 38;
@@ -760,7 +705,7 @@
             label18.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label18.AutoSize = true;
             label18.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label18.Location = new Point(423, 408);
+            label18.Location = new Point(423, 378);
             label18.Name = "label18";
             label18.Size = new Size(114, 21);
             label18.TabIndex = 36;
@@ -769,7 +714,7 @@
             // disableThirdPerson
             // 
             disableThirdPerson.AutoSize = true;
-            disableThirdPerson.Location = new Point(700, 386);
+            disableThirdPerson.Location = new Point(700, 356);
             disableThirdPerson.Name = "disableThirdPerson";
             disableThirdPerson.Size = new Size(15, 14);
             disableThirdPerson.TabIndex = 35;
@@ -842,7 +787,7 @@
             // visible
             // 
             visible.AutoSize = true;
-            visible.Location = new Point(214, 444);
+            visible.Location = new Point(214, 416);
             visible.Name = "visible";
             visible.Size = new Size(15, 14);
             visible.TabIndex = 31;
@@ -858,26 +803,6 @@
             label9.Size = new Size(96, 21);
             label9.TabIndex = 14;
             label9.Text = "Max Players";
-            // 
-            // autoJoinable
-            // 
-            autoJoinable.AutoSize = true;
-            autoJoinable.Location = new Point(214, 416);
-            autoJoinable.Name = "autoJoinable";
-            autoJoinable.Size = new Size(15, 14);
-            autoJoinable.TabIndex = 30;
-            autoJoinable.UseVisualStyleBackColor = true;
-            // 
-            // label8
-            // 
-            label8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            label8.AutoSize = true;
-            label8.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label8.Location = new Point(10, 408);
-            label8.Name = "label8";
-            label8.Size = new Size(110, 21);
-            label8.TabIndex = 16;
-            label8.Text = "Auto Joinable";
             // 
             // maxPlayers
             // 
@@ -895,7 +820,7 @@
             label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label7.Location = new Point(10, 438);
+            label7.Location = new Point(10, 410);
             label7.Name = "label7";
             label7.Size = new Size(58, 21);
             label7.TabIndex = 18;
@@ -917,7 +842,7 @@
             label11.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label11.AutoSize = true;
             label11.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label11.Location = new Point(423, 380);
+            label11.Location = new Point(423, 350);
             label11.Name = "label11";
             label11.Size = new Size(158, 21);
             label11.TabIndex = 26;
@@ -1468,7 +1393,6 @@
             ((System.ComponentModel.ISupportInitialize)aiLimit).EndInit();
             ((System.ComponentModel.ISupportInitialize)playerSaveTime).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)gameNumber).EndInit();
             ((System.ComponentModel.ISupportInitialize)steamQueryPort).EndInit();
             ((System.ComponentModel.ISupportInitialize)publicPort).EndInit();
             ((System.ComponentModel.ISupportInitialize)bindPort).EndInit();
@@ -1508,7 +1432,6 @@
         private Label label13;
         private Label label14;
         private Label label7;
-        private Label label8;
         private Label label9;
         private Label scenarioIdLabel;
         private TextBox passwordAdmin;
@@ -1518,7 +1441,6 @@
         private Label label4;
         private ComboBox region;
         private NumericUpDown maxPlayers;
-        private CheckBox autoJoinable;
         private CheckBox visible;
         private NumericUpDown serverMaxViewDistance;
         private NumericUpDown serverMinGrassDistance;
@@ -1539,8 +1461,6 @@
         private Label label34;
         private TextBox publicAddress;
         private Label label35;
-        private CheckBox a2sQueryEnabled;
-        private Label label36;
         private NumericUpDown steamQueryPort;
         private Button addModBtn;
         private Button removeModBtn;
@@ -1565,8 +1485,6 @@
         private Button enableAllModsBtn;
         private Button aboutBtn;
         private Button deleteServerFilesBtn;
-        private Label label2;
-        private NumericUpDown gameNumber;
         private Label serverRunningLabel;
         private ComboBox restartUnitsComboBox;
         private NumericUpDown restartIntervalUpDown;

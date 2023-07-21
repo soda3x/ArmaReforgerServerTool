@@ -13,16 +13,13 @@ namespace ReforgerServerApp
         public string Password { get; set; }
         public string ScenarioId { get; set; }
         public int MaxPlayers { get; set; }
-        public bool AutoJoinable { get; set; }
         public bool Visible { get; set; }
         public int ServerMaxViewDistance { get; set; }
         public int ServerMinGrassDistance { get; set; }
         public int NetworkViewDistance { get; set; }
-        public int GameNumber { get; set; }
         public bool DisableThirdPerson { get; set; }
         public bool FastValidation { get; set; }
         public bool BattlEye { get; set; }
-        public bool A2sQueryEnabled { get; set; }
         public int SteamQueryPort { get; set; }
         public bool CrossPlatform { get; set; }
         public bool LobbyPlayerSynchronise { get; set; }
@@ -55,16 +52,18 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"bindPort\": {BindPort},");
             sb.AppendLine($"\"publicAddress\": \"{PublicAddress}\",");
             sb.AppendLine($"\"publicPort\": {PublicPort},");
+            sb.AppendLine("\"a2s\": {");
+            sb.AppendLine($"\"address\": \"{(PublicAddress.Equals(String.Empty) ? "0.0.0.0" : PublicAddress)}\",");
+            sb.AppendLine($"\"port\": {SteamQueryPort}");
+            sb.AppendLine("},");
             sb.AppendLine("\"game\": {");
             sb.AppendLine($"\"passwordAdmin\": \"{PasswordAdmin}\",");
             sb.AppendLine($"\"name\": \"{ServerName}\",");
             sb.AppendLine($"\"password\": \"{Password}\",");
             sb.AppendLine($"\"scenarioId\": \"{ScenarioId}\",");
-            sb.AppendLine($"\"gameNumber\": {GameNumber},");
             sb.AppendLine($"\"maxPlayers\": {MaxPlayers},");
-            sb.AppendLine($"\"autoJoinable\": {AutoJoinable.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"visible\": {Visible.ToString().ToLowerInvariant()},");
-            sb.AppendLine("\"supportedGameClientTypes\": [");
+            sb.AppendLine("\"supportedPlatforms\": [");
 
             if (CrossPlatform)
             {
@@ -85,13 +84,7 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"fastValidation\": {FastValidation.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"battlEye\": {BattlEye.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"VONDisableUI\": {VONDisableUI.ToString().ToLowerInvariant()},");
-            sb.AppendLine($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()},");
-
-            sb.AppendLine("\"operating\": {");
-            sb.AppendLine($"\"lobbyPlayerSynchronise\": {LobbyPlayerSynchronise.ToString().ToLowerInvariant()},");
-            sb.AppendLine($"\"playerSaveTime\": {PlayerSaveTime.ToString()},");
-            sb.AppendLine($"\"aiLimit\": {AiLimit.ToString()}");
-            sb.AppendLine("}");
+            sb.AppendLine($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
 
             if (Mods.Count > 0)
             {
@@ -118,10 +111,13 @@ namespace ReforgerServerApp
             {
                 sb.AppendLine("}");
             }
-
             sb.AppendLine("},");
-            sb.AppendLine($"\"a2sQueryEnabled\": {A2sQueryEnabled.ToString().ToLowerInvariant()},");
-            sb.AppendLine($"\"steamQueryPort\": {SteamQueryPort}");
+            sb.AppendLine("\"operating\": {");
+            sb.AppendLine($"\"lobbyPlayerSynchronise\": {LobbyPlayerSynchronise.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"playerSaveTime\": {PlayerSaveTime.ToString()},");
+            sb.AppendLine($"\"aiLimit\": {AiLimit.ToString()}");
+            sb.AppendLine("}");
+
             sb.AppendLine("}");
 
             return sb.ToString().Trim();
@@ -143,17 +139,14 @@ namespace ReforgerServerApp
             sb.AppendLine($"password={Password}");
             sb.AppendLine($"scenarioId={ScenarioId}");
             sb.AppendLine($"maxPlayers={MaxPlayers}");
-            sb.AppendLine($"autoJoinable={AutoJoinable.ToString().ToLowerInvariant()}");
             sb.AppendLine($"visible={Visible.ToString().ToLowerInvariant()}");
             sb.AppendLine($"crossPlatform={CrossPlatform.ToString().ToLowerInvariant()}");
             sb.AppendLine($"serverMaxViewDistance={ServerMaxViewDistance}");
             sb.AppendLine($"serverMinGrassDistance={ServerMinGrassDistance}");
             sb.AppendLine($"networkViewDistance={NetworkViewDistance}");
-            sb.AppendLine($"gameNumber={GameNumber}");
             sb.AppendLine($"disableThirdPerson={DisableThirdPerson.ToString().ToLowerInvariant()}");
             sb.AppendLine($"fastValidation={FastValidation.ToString().ToLowerInvariant()}");
             sb.AppendLine($"battlEye={BattlEye.ToString().ToLowerInvariant()}");
-            sb.AppendLine($"a2sQueryEnabled={A2sQueryEnabled.ToString().ToLowerInvariant()}");
             sb.AppendLine($"steamQueryPort={SteamQueryPort}");
             sb.AppendLine($"vonDisableUI={VONDisableUI.ToString().ToLowerInvariant()}");
             sb.AppendLine($"vonDisableDirectSpeechUI={VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
@@ -249,13 +242,6 @@ namespace ReforgerServerApp
                 return this;
             }
 
-            public ServerConfigurationBuilder WithAutoJoinable(bool autoJoinable)
-            {
-                InitialiseServerConfigIfNull();
-                m_serverConfiguration.AutoJoinable = autoJoinable;
-                return this;
-            }
-
             public ServerConfigurationBuilder WithVisible(bool visible)
             {
                 InitialiseServerConfigIfNull();
@@ -291,13 +277,6 @@ namespace ReforgerServerApp
                 return this;
             }
 
-            public ServerConfigurationBuilder WithGameNumber(int gameNumber)
-            {
-                InitialiseServerConfigIfNull();
-                m_serverConfiguration.GameNumber = gameNumber;
-                return this;
-            }
-
             public ServerConfigurationBuilder WithDisableThirdPerson(bool disableThirdPerson)
             {
                 InitialiseServerConfigIfNull();
@@ -316,13 +295,6 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.BattlEye = battlEye;
-                return this;
-            }
-
-            public ServerConfigurationBuilder WithA2SQueryEnabled(bool a2sQueryEnabled)
-            {
-                InitialiseServerConfigIfNull();
-                m_serverConfiguration.A2sQueryEnabled = a2sQueryEnabled;
                 return this;
             }
 
