@@ -318,17 +318,14 @@ namespace ReforgerServerApp
                     .WithServerPassword(configParams["password"])
                     .WithScenarioId(configParams["scenarioId"])
                     .WithMaxPlayers(Convert.ToInt32(configParams["maxPlayers"]))
-                    .WithAutoJoinable(Convert.ToBoolean(configParams["autoJoinable"]))
                     .WithVisible(Convert.ToBoolean(configParams["visible"]))
                     .WithCrossPlatform(Convert.ToBoolean(configParams["crossPlatform"]))
                     .WithServerMaxViewDistance(Convert.ToInt32(configParams["serverMaxViewDistance"]))
                     .WithServerMinGrassDistance(Convert.ToInt32(configParams["serverMinGrassDistance"]))
                     .WithNetworkViewDistance(Convert.ToInt32(configParams["networkViewDistance"]))
-                    .WithGameNumber(Convert.ToInt32(configParams["gameNumber"]))
                     .WithDisableThirdPerson(Convert.ToBoolean(configParams["disableThirdPerson"]))
                     .WithFastValidation(Convert.ToBoolean(configParams["fastValidation"]))
                     .WithBattlEye(Convert.ToBoolean(configParams["battlEye"]))
-                    .WithA2SQueryEnabled(Convert.ToBoolean(configParams["a2sQueryEnabled"]))
                     .WithSteamQueryPort(Convert.ToInt32(configParams["steamQueryPort"]))
                     .WithVONDisableUI(Convert.ToBoolean(configParams["vonDisableUI"]))
                     .WithVONDisableDirectSpeechUI(Convert.ToBoolean(configParams["vonDisableDirectSpeechUI"]))
@@ -363,17 +360,14 @@ namespace ReforgerServerApp
                 serverPassword.Text = sc.Password;
                 scenarioId.Text = sc.ScenarioId;
                 maxPlayers.Value = sc.MaxPlayers;
-                autoJoinable.Checked = sc.AutoJoinable;
                 visible.Checked = sc.Visible;
                 xboxCrossplay.Checked = sc.CrossPlatform;
                 serverMaxViewDistance.Value = sc.ServerMaxViewDistance;
                 serverMinGrassDistance.Value = sc.ServerMinGrassDistance;
                 networkViewDistance.Value = sc.NetworkViewDistance;
-                gameNumber.Value = sc.GameNumber;
                 disableThirdPerson.Checked = sc.DisableThirdPerson;
                 fastValidation.Checked = sc.FastValidation;
                 battlEye.Checked = sc.BattlEye;
-                a2sQueryEnabled.Checked = sc.A2sQueryEnabled;
                 steamQueryPort.Value = sc.SteamQueryPort;
                 lobbyPlayerSync.Checked = sc.LobbyPlayerSynchronise;
                 vonDisableUI.Checked = sc.VONDisableUI;
@@ -419,9 +413,7 @@ namespace ReforgerServerApp
                 .WithServerName(serverName.Text)
                 .WithServerPassword(serverPassword.Text)
                 .WithScenarioId(scenarioId.Text)
-                .WithGameNumber((int)gameNumber.Value)
                 .WithMaxPlayers((int)maxPlayers.Value)
-                .WithAutoJoinable(autoJoinable.Checked)
                 .WithVisible(visible.Checked)
                 .WithCrossPlatform(xboxCrossplay.Checked)
                 .WithServerMaxViewDistance((int)serverMaxViewDistance.Value)
@@ -430,7 +422,6 @@ namespace ReforgerServerApp
                 .WithDisableThirdPerson(disableThirdPerson.Checked)
                 .WithFastValidation(fastValidation.Checked)
                 .WithBattlEye(battlEye.Checked)
-                .WithA2SQueryEnabled(a2sQueryEnabled.Checked)
                 .WithSteamQueryPort((int)steamQueryPort.Value)
                 .WithLobbyPlayerSynchronise(lobbyPlayerSync.Checked)
                 .WithVONDisableUI(vonDisableUI.Checked)
@@ -878,17 +869,14 @@ namespace ReforgerServerApp
             serverPassword.Enabled = enabled;
             scenarioId.Enabled = enabled;
             maxPlayers.Enabled = enabled;
-            autoJoinable.Enabled = enabled;
             visible.Enabled = enabled;
             xboxCrossplay.Enabled = enabled;
             serverMaxViewDistance.Enabled = enabled;
             serverMinGrassDistance.Enabled = enabled;
             networkViewDistance.Enabled = enabled;
-            gameNumber.Enabled = enabled;
             disableThirdPerson.Enabled = enabled;
             fastValidation.Enabled = enabled;
             battlEye.Enabled = enabled;
-            a2sQueryEnabled.Enabled = enabled;
             steamQueryPort.Enabled = enabled;
             enableAllModsBtn.Enabled = enabled;
             addToEnabledBtn.Enabled = enabled;
