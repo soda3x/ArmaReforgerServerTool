@@ -65,9 +65,6 @@ namespace ReforgerToolConfigMigrator
                     case "playerCountLimit":
                         sb.AppendLine($"maxPlayers={lineContents[1]}");
                         break;
-                    case "autoJoinable":
-                        sb.AppendLine($"autoJoinable={lineContents[1]}");
-                        break;
                     case "visible":
                         sb.AppendLine($"visible={lineContents[1]}");
                         break;
@@ -84,9 +81,6 @@ namespace ReforgerToolConfigMigrator
                     case "networkViewDistance":
                         sb.AppendLine($"networkViewDistance={lineContents[1]}");
                         break;
-                    case "gameNumber":
-                        sb.AppendLine($"gameNumber={lineContents[1]}");
-                        break;
                     case "disableThirdPerson":
                         sb.AppendLine($"disableThirdPerson={lineContents[1]}");
                         break;
@@ -95,9 +89,6 @@ namespace ReforgerToolConfigMigrator
                         break;
                     case "battlEye":
                         sb.AppendLine($"battlEye={lineContents[1]}");
-                        break;
-                    case "a2sQueryEnabled":
-                        sb.AppendLine($"a2sQueryEnabled={lineContents[1]}");
                         break;
                     case "steamQueryPort":
                         sb.AppendLine($"steamQueryPort={lineContents[1]}");
