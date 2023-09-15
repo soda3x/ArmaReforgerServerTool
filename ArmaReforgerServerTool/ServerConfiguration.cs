@@ -2,7 +2,7 @@
 
 namespace ReforgerServerApp
 {
-    internal class ServerConfiguration
+    public class ServerConfiguration
     {
         public string BindAddress { get; set; }
         public int BindPort { get; set; }
@@ -29,7 +29,7 @@ namespace ReforgerServerApp
         public int AiLimit { get; set; }
         public List<Mod> Mods { get; }
 
-        private ServerConfiguration()
+        public ServerConfiguration()
         {
             BindAddress = string.Empty;
             PublicAddress = string.Empty;

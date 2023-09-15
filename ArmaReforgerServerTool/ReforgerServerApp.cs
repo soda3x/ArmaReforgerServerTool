@@ -20,11 +20,15 @@ namespace ReforgerServerApp
         private Process steamCmdUpdateProcess;
         private Process serverProcess;
         private CancellationTokenSource timerCancellationTokenSource;
+        private ScenarioSelector scenarioSelector;
+        private ServerConfiguration serverConfig;
         public ReforgerServerApp()
         {
             InitializeComponent();
 
             serverRunningLabel.Text = string.Empty;
+
+            serverConfig = new ServerConfiguration();
 
             // Create tooltips
             CreateTooltips();
@@ -45,6 +49,8 @@ namespace ReforgerServerApp
                 installDirectory = string.Empty;
                 steamCmdFile = string.Empty;
             }
+
+            loadedScenarioLabel.Text = string.Empty;
 
             UpdateSteamCmdInstallStatus();
             fpsLimitUpDown.Enabled = false;
@@ -348,36 +354,36 @@ namespace ReforgerServerApp
                         $"Skipping loading mods...", Constants.ERROR_MESSAGEBOX_TITLE_STR);
                 }
 
-                ServerConfiguration sc = builder.Build();
+                serverConfig = builder.Build();
 
 
-                bindAddress.Text = sc.BindAddress;
-                bindPort.Value = sc.BindPort;
-                publicAddress.Text = sc.PublicAddress;
-                publicPort.Value = sc.PublicPort;
-                passwordAdmin.Text = sc.PasswordAdmin;
-                serverName.Text = sc.ServerName;
-                serverPassword.Text = sc.Password;
-                scenarioId.Text = sc.ScenarioId;
-                maxPlayers.Value = sc.MaxPlayers;
-                visible.Checked = sc.Visible;
-                xboxCrossplay.Checked = sc.CrossPlatform;
-                serverMaxViewDistance.Value = sc.ServerMaxViewDistance;
-                serverMinGrassDistance.Value = sc.ServerMinGrassDistance;
-                networkViewDistance.Value = sc.NetworkViewDistance;
-                disableThirdPerson.Checked = sc.DisableThirdPerson;
-                fastValidation.Checked = sc.FastValidation;
-                battlEye.Checked = sc.BattlEye;
-                steamQueryPort.Value = sc.SteamQueryPort;
-                lobbyPlayerSync.Checked = sc.LobbyPlayerSynchronise;
-                vonDisableUI.Checked = sc.VONDisableUI;
-                vonDisableDirectSpeechUI.Checked = sc.VONDisableDirectSpeechUI;
-                playerSaveTime.Value = sc.PlayerSaveTime;
-                aiLimit.Value = sc.AiLimit;
+                bindAddress.Text = serverConfig.BindAddress;
+                bindPort.Value = serverConfig.BindPort;
+                publicAddress.Text = serverConfig.PublicAddress;
+                publicPort.Value = serverConfig.PublicPort;
+                passwordAdmin.Text = serverConfig.PasswordAdmin;
+                serverName.Text = serverConfig.ServerName;
+                serverPassword.Text = serverConfig.Password;
+                loadedScenarioLabel.Text = serverConfig.ScenarioId;
+                maxPlayers.Value = serverConfig.MaxPlayers;
+                visible.Checked = serverConfig.Visible;
+                xboxCrossplay.Checked = serverConfig.CrossPlatform;
+                serverMaxViewDistance.Value = serverConfig.ServerMaxViewDistance;
+                serverMinGrassDistance.Value = serverConfig.ServerMinGrassDistance;
+                networkViewDistance.Value = serverConfig.NetworkViewDistance;
+                disableThirdPerson.Checked = serverConfig.DisableThirdPerson;
+                fastValidation.Checked = serverConfig.FastValidation;
+                battlEye.Checked = serverConfig.BattlEye;
+                steamQueryPort.Value = serverConfig.SteamQueryPort;
+                lobbyPlayerSync.Checked = serverConfig.LobbyPlayerSynchronise;
+                vonDisableUI.Checked = serverConfig.VONDisableUI;
+                vonDisableDirectSpeechUI.Checked = serverConfig.VONDisableDirectSpeechUI;
+                playerSaveTime.Value = serverConfig.PlayerSaveTime;
+                aiLimit.Value = serverConfig.AiLimit;
 
                 enabledMods.Items.Clear();
 
-                foreach (Mod m in sc.Mods)
+                foreach (Mod m in serverConfig.Mods)
                 {
                     enabledMods.Items.Add(m);
                     if (availableMods.Items.Contains(m))
@@ -412,7 +418,7 @@ namespace ReforgerServerApp
                 .WithAdminPassword(passwordAdmin.Text)
                 .WithServerName(serverName.Text)
                 .WithServerPassword(serverPassword.Text)
-                .WithScenarioId(scenarioId.Text)
+                .WithScenarioId(loadedScenarioLabel.Text)
                 .WithMaxPlayers((int)maxPlayers.Value)
                 .WithVisible(visible.Checked)
                 .WithCrossPlatform(xboxCrossplay.Checked)
@@ -799,7 +805,7 @@ namespace ReforgerServerApp
         private void AboutBtnPressed(object sender, EventArgs e)
         {
             AboutBox ab = new();
-            ab.Show();
+            ab.ShowDialog();
         }
 
         /// <summary>
@@ -867,7 +873,7 @@ namespace ReforgerServerApp
             passwordAdmin.Enabled = enabled;
             serverName.Enabled = enabled;
             serverPassword.Enabled = enabled;
-            scenarioId.Enabled = enabled;
+            scenarioSelectBtn.Enabled = enabled;
             maxPlayers.Enabled = enabled;
             visible.Enabled = enabled;
             xboxCrossplay.Enabled = enabled;
@@ -1125,7 +1131,8 @@ namespace ReforgerServerApp
             logLevelComboBox.Invoke((MethodInvoker)(() => logLevelArg = $"-logLevel {logLevelComboBox.Text}"));
             argsList.Add(logLevelArg);
 
-            return string.Join(" ", argsList);
+            return string.Join(" ", "-listScenarios");
+            //return string.Join(" ", argsList);
         }
 
         /// <summary>
@@ -1169,6 +1176,42 @@ namespace ReforgerServerApp
             {
                 MessageBox.Show("Unable to check for updates," +
                     " you may not be using the latest version of the Arma Reforger Dedicated Server Tool.", "Arma Reforger Dedicated Server Tool");
+            }
+        }
+
+        /// <summary>
+        /// Handler for when the Scenario Select button is pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ScenarioSelectBtnClicked(object sender, EventArgs e)
+        {
+            SpawnScenarioSelect();
+        }
+
+        /// <summary>
+        /// Little hacky method for refreshing the Scenario ID value, 
+        /// this is called from within the Scenario Selector form
+        /// At some stage I should probably make this whole thing MVC
+        /// </summary>
+        public void RefreshLoadedScenario()
+        {
+            loadedScenarioLabel.Text = serverConfig.ScenarioId;
+        }
+
+        /// <summary>
+        /// Logic for starting the Scenario Select form
+        /// </summary>
+        private void SpawnScenarioSelect()
+        {
+            if (scenarioSelector != null && scenarioSelector.Visible)
+            {
+                scenarioSelector.Focus();
+            }
+            else
+            {
+                scenarioSelector = new(this, serverConfig, installDirectory, File.Exists(steamCmdFile));
+                scenarioSelector.ShowDialog();
             }
         }
     }
