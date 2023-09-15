@@ -20,8 +20,8 @@ namespace ReforgerServerApp
         private Process steamCmdUpdateProcess;
         private Process serverProcess;
         private CancellationTokenSource timerCancellationTokenSource;
-        private ScenarioSelector scenarioSelector;
         private ServerConfiguration serverConfig;
+
         public ReforgerServerApp()
         {
             InitializeComponent();
@@ -337,7 +337,8 @@ namespace ReforgerServerApp
                     .WithVONDisableDirectSpeechUI(Convert.ToBoolean(configParams["vonDisableDirectSpeechUI"]))
                     .WithLobbyPlayerSynchronise(Convert.ToBoolean(configParams["lobbyPlayerSynchronise"]))
                     .WithPlayerSaveTime(Convert.ToInt32(configParams["playerSaveTime"]))
-                    .WithAILimit(Convert.ToInt32(configParams["aiLimit"]));
+                    .WithAILimit(Convert.ToInt32(configParams["aiLimit"]))
+                    .WithMissionHeader(configParams["missionHeader"]);
                 try
                 {
                     string[] modEntries = File.ReadAllLines(configParams["modCollection"]);
@@ -355,7 +356,6 @@ namespace ReforgerServerApp
                 }
 
                 serverConfig = builder.Build();
-
 
                 bindAddress.Text = serverConfig.BindAddress;
                 bindPort.Value = serverConfig.BindPort;
@@ -433,7 +433,8 @@ namespace ReforgerServerApp
                 .WithVONDisableUI(vonDisableUI.Checked)
                 .WithVONDisableDirectSpeechUI(vonDisableDirectSpeechUI.Checked)
                 .WithPlayerSaveTime((int)playerSaveTime.Value)
-                .WithAILimit((int)aiLimit.Value);
+                .WithAILimit((int)aiLimit.Value)
+                .WithMissionHeader(serverConfig.MissionHeader);
 
             foreach (Mod m in enabledMods.Items)
             {
@@ -917,6 +918,8 @@ namespace ReforgerServerApp
             lobbyPlayerSync.Enabled = enabled;
             playerSaveTime.Enabled = enabled;
             aiLimit.Enabled = enabled;
+            scenarioSelectBtn.Enabled = enabled;
+            editMissionHeaderBtn.Enabled = enabled;
         }
 
         /// <summary>
@@ -1131,8 +1134,7 @@ namespace ReforgerServerApp
             logLevelComboBox.Invoke((MethodInvoker)(() => logLevelArg = $"-logLevel {logLevelComboBox.Text}"));
             argsList.Add(logLevelArg);
 
-            return string.Join(" ", "-listScenarios");
-            //return string.Join(" ", argsList);
+            return string.Join(" ", argsList);
         }
 
         /// <summary>
@@ -1204,15 +1206,14 @@ namespace ReforgerServerApp
         /// </summary>
         private void SpawnScenarioSelect()
         {
-            if (scenarioSelector != null && scenarioSelector.Visible)
-            {
-                scenarioSelector.Focus();
-            }
-            else
-            {
-                scenarioSelector = new(this, serverConfig, installDirectory, File.Exists(steamCmdFile));
-                scenarioSelector.ShowDialog();
-            }
+            ScenarioSelector scenarioSelector = new(this, serverConfig, installDirectory, File.Exists(steamCmdFile));
+            scenarioSelector.ShowDialog();
+        }
+
+        private void EditMissionHeaderBtnClicked(object sender, EventArgs e)
+        {
+            TextInputForm tif = new(serverConfig, "Edit Mission Header");
+            tif.ShowDialog();
         }
     }
 }

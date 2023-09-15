@@ -44,6 +44,8 @@
             enabledMods = new ListBox();
             availableMods = new ListBox();
             groupBox1 = new GroupBox();
+            editMissionHeaderBtn = new Button();
+            missionHeaderLabel = new Label();
             loadedScenarioLabel = new Label();
             scenarioSelectBtn = new Button();
             label26 = new Label();
@@ -324,6 +326,8 @@
             // groupBox1
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Controls.Add(editMissionHeaderBtn);
+            groupBox1.Controls.Add(missionHeaderLabel);
             groupBox1.Controls.Add(loadedScenarioLabel);
             groupBox1.Controls.Add(scenarioSelectBtn);
             groupBox1.Controls.Add(label26);
@@ -379,6 +383,28 @@
             groupBox1.TabIndex = 46;
             groupBox1.TabStop = false;
             groupBox1.Text = "Server Settings";
+            // 
+            // editMissionHeaderBtn
+            // 
+            editMissionHeaderBtn.Location = new Point(578, 579);
+            editMissionHeaderBtn.Name = "editMissionHeaderBtn";
+            editMissionHeaderBtn.Size = new Size(138, 23);
+            editMissionHeaderBtn.TabIndex = 85;
+            editMissionHeaderBtn.Text = "Edit Mission Header";
+            editMissionHeaderBtn.UseVisualStyleBackColor = true;
+            editMissionHeaderBtn.Click += EditMissionHeaderBtnClicked;
+            // 
+            // missionHeaderLabel
+            // 
+            missionHeaderLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            missionHeaderLabel.AutoSize = true;
+            missionHeaderLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            missionHeaderLabel.Location = new Point(424, 579);
+            missionHeaderLabel.Name = "missionHeaderLabel";
+            missionHeaderLabel.Size = new Size(124, 21);
+            missionHeaderLabel.TabIndex = 84;
+            missionHeaderLabel.Text = "Mission Header";
+            missionHeaderLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // loadedScenarioLabel
             // 
@@ -1545,5 +1571,7 @@
         private NumericUpDown aiLimit;
         private Button scenarioSelectBtn;
         private Label loadedScenarioLabel;
+        private Button editMissionHeaderBtn;
+        private Label missionHeaderLabel;
     }
 }
