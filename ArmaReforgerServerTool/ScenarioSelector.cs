@@ -23,6 +23,9 @@ namespace ReforgerServerApp
         private ServerConfiguration serverConfig;
         private ReforgerServerApp parentForm;
 
+        private const int THREE_SECONDS_IN_MS = 3000;
+        System.Timers.Timer timer;
+
         public ScenarioSelector(ReforgerServerApp parent, ServerConfiguration sc, string path, bool serverInstalled)
         {
             InitializeComponent();
@@ -45,6 +48,8 @@ namespace ReforgerServerApp
             serverProcess.EnableRaisingEvents = true;
             serverProcess.StartInfo = serverStartInfo;
 
+            timer = new(THREE_SECONDS_IN_MS);
+
             if (!serverInstalled)
             {
                 reloadScenariosBtn.Enabled = false;
@@ -64,14 +69,11 @@ namespace ReforgerServerApp
         /// </summary>
         private void GetScenarios()
         {
-            StopServerProcess();
             StartServerProcess();
 
             // Close the Server after 3 seconds as by this time we should already have our results
-            const int THREE_SECONDS_IN_MS = 3000;
-            System.Timers.Timer t = new(THREE_SECONDS_IN_MS);
-            t.Elapsed += new ElapsedEventHandler(TimerCompleted);
-            t.Enabled = true;
+            timer.Elapsed += new ElapsedEventHandler(TimerCompleted);
+            timer.Enabled = true;
         }
 
         /// <summary>
@@ -113,16 +115,9 @@ namespace ReforgerServerApp
             {
                 Console.WriteLine("Failed to kill process, probably because its not running.");
             }
-            try
-            {
-                reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = true));
-                selectScenarioBtn.Invoke((MethodInvoker)(() => selectScenarioBtn.Enabled = true));
-                currentlySelectedLbl.Invoke((MethodInvoker)(() => PrintSelectedScenario()));
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Unsure why but this needs to be caught...");
-            }
+            reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = true));
+            selectScenarioBtn.Invoke((MethodInvoker)(() => selectScenarioBtn.Enabled = true));
+            currentlySelectedLbl.Invoke((MethodInvoker)(() => PrintSelectedScenario()));
         }
 
         /// <summary>
@@ -216,6 +211,17 @@ namespace ReforgerServerApp
             else
             {
                 currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR;
+            }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+            timer.Stop();
+            timer.Enabled = false;
+            if (!serverProcess.HasExited)
+            {
+                StopServerProcess();
             }
         }
     }
