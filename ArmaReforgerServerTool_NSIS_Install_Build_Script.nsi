@@ -26,8 +26,7 @@ InstallDir $LOCALAPPDATA\ArmaReforgerServerTool
 # Install Section
 Section
 SetOutPath $INSTDIR
-File /r "ArmaReforgerServerTool\bin\Debug\net6.0-windows\*"
-File /r "ReforgerToolConfigMigrator\bin\Debug\net6.0-windows\*"
+File /r "ArmaReforgerServerTool\bin\Debug\net6.0-windows\*.*"
 WriteUninstaller $INSTDIR\uninstall.exe
 CreateShortCut "$SMPROGRAMS\Arma Reforger Dedicated Server Tool.lnk" "$INSTDIR\ReforgerServerApp.exe"
 CreateShortCut "$SMPROGRAMS\Uninstall Arma Reforger Dedicated Server Tool.lnk" "$INSTDIR\uninstall.exe"
