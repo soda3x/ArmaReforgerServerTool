@@ -397,7 +397,7 @@ namespace ReforgerServerApp
             }
             catch (Exception)
             {
-                MessageBox.Show("An error occurred while attempting to load the configuration file.\r\nThe configuration has not been loaded.",
+                MessageBox.Show("An error occurred while attempting to load the configuration file.\r\nIt may have been created for an earlier version.\r\nThe configuration has not been loaded.",
                     Constants.ERROR_MESSAGEBOX_TITLE_STR);
             }
         }
@@ -898,8 +898,6 @@ namespace ReforgerServerApp
             limitFPS.Enabled = enabled;
             fpsLimitUpDown.Enabled = enabled;
             automaticallyRestart.Enabled = enabled;
-            restartIntervalUpDown.Enabled = enabled;
-            restartUnitsComboBox.Enabled = enabled;
             forcePortCheckBox.Enabled = enabled;
             overridePortNumericUpDown.Enabled = enabled;
             nds.Enabled = enabled;
@@ -920,6 +918,18 @@ namespace ReforgerServerApp
             aiLimit.Enabled = enabled;
             scenarioSelectBtn.Enabled = enabled;
             editMissionHeaderBtn.Enabled = enabled;
+
+            // Handle these differently as we don't want them enabled if 'Automatically Restart' isn't enabled
+            if (automaticallyRestart.Enabled && automaticallyRestart.Checked)
+            {
+                restartIntervalUpDown.Enabled = true;
+                restartUnitsComboBox.Enabled = true;
+            }
+            else
+            {
+                restartIntervalUpDown.Enabled = false;
+                restartUnitsComboBox.Enabled = false;
+            }
         }
 
         /// <summary>

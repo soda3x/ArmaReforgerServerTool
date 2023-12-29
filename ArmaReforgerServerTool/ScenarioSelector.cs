@@ -138,7 +138,7 @@ namespace ReforgerServerApp
                         // Remove the extraneous SCRIPT stuff from the start of the scenario and only display the scenario name itself
                         string scenarioRaw = match.Value;
                         string[] scenarioSplit = scenarioRaw.Split(" :");
-                        scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scenarioSplit[1])));
+                        scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scenarioSplit[1].Trim())));
                     }
                 }
             }
