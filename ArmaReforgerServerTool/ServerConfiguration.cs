@@ -2,7 +2,7 @@
 
 namespace ReforgerServerApp
 {
-    internal class ServerConfiguration
+    public class ServerConfiguration
     {
         public string BindAddress { get; set; }
         public int BindPort { get; set; }
@@ -27,9 +27,10 @@ namespace ReforgerServerApp
         public bool VONDisableDirectSpeechUI { get; set; }
         public int PlayerSaveTime { get; set; }
         public int AiLimit { get; set; }
+        public string MissionHeader { get; set; }
         public List<Mod> Mods { get; }
 
-        private ServerConfiguration()
+        public ServerConfiguration()
         {
             BindAddress = string.Empty;
             PublicAddress = string.Empty;
@@ -37,6 +38,7 @@ namespace ReforgerServerApp
             ServerName = string.Empty;
             Password = string.Empty;
             ScenarioId = string.Empty;
+            MissionHeader = string.Empty;
             Mods = new List<Mod>();
         }
 
@@ -84,7 +86,18 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"fastValidation\": {FastValidation.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"battlEye\": {BattlEye.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"VONDisableUI\": {VONDisableUI.ToString().ToLowerInvariant()},");
-            sb.AppendLine($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
+            sb.Append($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
+
+            if (MissionHeader != string.Empty)
+            {
+                sb.AppendLine(",");
+                sb.AppendLine("\"missionHeader\": {");
+                sb.AppendLine(ConvertMissionHeaderLineEndingsToJson());
+                sb.AppendLine("}");
+            } else
+            {
+                sb.AppendLine();
+            }
 
             if (Mods.Count > 0)
             {
@@ -153,6 +166,7 @@ namespace ReforgerServerApp
             sb.AppendLine($"lobbyPlayerSynchronise={LobbyPlayerSynchronise.ToString().ToLowerInvariant()}");
             sb.AppendLine($"playerSaveTime={PlayerSaveTime.ToString()}");
             sb.AppendLine($"aiLimit={AiLimit.ToString()}");
+            sb.AppendLine($"missionHeader={ConvertMissionHeaderLineEndingsToKV()}");
             sb.AppendLine($"modCollection={modFilePath}");
             return sb.ToString();
         }
@@ -168,6 +182,18 @@ namespace ReforgerServerApp
                 sb.AppendLine($"modId,{m.GetModID()},modName,{m.GetModName()}");
             }
             return sb.ToString();
+        }
+
+        public string ConvertMissionHeaderLineEndingsToJson()
+        {
+            string[] splitItems = MissionHeader.Split(",");
+            return String.Join(",\r\n", splitItems);
+        }
+
+        public string ConvertMissionHeaderLineEndingsToKV()
+        {
+            string[] splitItems = MissionHeader.Split("\r\n");
+            return String.Join("", splitItems);
         }
 
         public class ServerConfigurationBuilder
@@ -337,6 +363,13 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.AiLimit = aiLimit;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithMissionHeader(string missionHeader)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.MissionHeader = missionHeader;
                 return this;
             }
 

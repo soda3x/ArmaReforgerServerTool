@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ReforgerServerApp
 {
-    internal class Mod
+    public class Mod
     {
         readonly string ModID;
         readonly string ModName;

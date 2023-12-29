@@ -39,6 +39,8 @@
         public static string START_SERVER_STR = "Start Server";
         public static string STOP_SERVER_STR = "Stop Server";
         public static string SERVER_JSON_STR = "\\server.json";
-    
+        public static string CURRENTLY_SELECTED_STR = "Currently selected scenario is:";
+        public static string SERVER_FILES_NOT_FOUND_SCENARIO_SELECT_STR = "Arma Reforger server files not found, you will need to install them from the Server Management tab first.";
+        public static string SELECT_SCENARIO_STR = "Select a scenario from the list";
     }
 }
