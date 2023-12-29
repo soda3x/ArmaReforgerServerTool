@@ -44,6 +44,10 @@
             enabledMods = new ListBox();
             availableMods = new ListBox();
             groupBox1 = new GroupBox();
+            editMissionHeaderBtn = new Button();
+            missionHeaderLabel = new Label();
+            loadedScenarioLabel = new Label();
+            scenarioSelectBtn = new Button();
             label26 = new Label();
             aiLimit = new NumericUpDown();
             label19 = new Label();
@@ -57,7 +61,6 @@
             lobbyPlayerSync = new CheckBox();
             label1 = new Label();
             pictureBox1 = new PictureBox();
-            scenarioId = new ComboBox();
             label35 = new Label();
             steamQueryPort = new NumericUpDown();
             publicPort = new NumericUpDown();
@@ -323,6 +326,10 @@
             // groupBox1
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Controls.Add(editMissionHeaderBtn);
+            groupBox1.Controls.Add(missionHeaderLabel);
+            groupBox1.Controls.Add(loadedScenarioLabel);
+            groupBox1.Controls.Add(scenarioSelectBtn);
             groupBox1.Controls.Add(label26);
             groupBox1.Controls.Add(aiLimit);
             groupBox1.Controls.Add(label19);
@@ -336,7 +343,6 @@
             groupBox1.Controls.Add(lobbyPlayerSync);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(pictureBox1);
-            groupBox1.Controls.Add(scenarioId);
             groupBox1.Controls.Add(label35);
             groupBox1.Controls.Add(steamQueryPort);
             groupBox1.Controls.Add(publicPort);
@@ -378,6 +384,50 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Server Settings";
             // 
+            // editMissionHeaderBtn
+            // 
+            editMissionHeaderBtn.Location = new Point(578, 579);
+            editMissionHeaderBtn.Name = "editMissionHeaderBtn";
+            editMissionHeaderBtn.Size = new Size(138, 23);
+            editMissionHeaderBtn.TabIndex = 85;
+            editMissionHeaderBtn.Text = "Edit Mission Header";
+            editMissionHeaderBtn.UseVisualStyleBackColor = true;
+            editMissionHeaderBtn.Click += EditMissionHeaderBtnClicked;
+            // 
+            // missionHeaderLabel
+            // 
+            missionHeaderLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            missionHeaderLabel.AutoSize = true;
+            missionHeaderLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            missionHeaderLabel.Location = new Point(424, 579);
+            missionHeaderLabel.Name = "missionHeaderLabel";
+            missionHeaderLabel.Size = new Size(124, 21);
+            missionHeaderLabel.TabIndex = 84;
+            missionHeaderLabel.Text = "Mission Header";
+            missionHeaderLabel.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // loadedScenarioLabel
+            // 
+            loadedScenarioLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            loadedScenarioLabel.AutoEllipsis = true;
+            loadedScenarioLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
+            loadedScenarioLabel.Location = new Point(10, 379);
+            loadedScenarioLabel.Name = "loadedScenarioLabel";
+            loadedScenarioLabel.Size = new Size(381, 21);
+            loadedScenarioLabel.TabIndex = 83;
+            loadedScenarioLabel.Text = "Scenario ID";
+            loadedScenarioLabel.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // scenarioSelectBtn
+            // 
+            scenarioSelectBtn.Location = new Point(214, 353);
+            scenarioSelectBtn.Name = "scenarioSelectBtn";
+            scenarioSelectBtn.Size = new Size(177, 23);
+            scenarioSelectBtn.TabIndex = 82;
+            scenarioSelectBtn.Text = "Select a Scenario";
+            scenarioSelectBtn.UseVisualStyleBackColor = true;
+            scenarioSelectBtn.Click += ScenarioSelectBtnClicked;
+            // 
             // label26
             // 
             label26.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -407,7 +457,7 @@
             label19.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label19.AutoSize = true;
             label19.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label19.Location = new Point(10, 589);
+            label19.Location = new Point(10, 611);
             label19.Name = "label19";
             label19.Size = new Size(177, 21);
             label19.TabIndex = 78;
@@ -418,7 +468,7 @@
             // 
             playerSaveTime.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             playerSaveTime.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            playerSaveTime.Location = new Point(214, 592);
+            playerSaveTime.Location = new Point(214, 614);
             playerSaveTime.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             playerSaveTime.Name = "playerSaveTime";
             playerSaveTime.Size = new Size(88, 23);
@@ -516,24 +566,12 @@
             pictureBox1.TabIndex = 51;
             pictureBox1.TabStop = false;
             // 
-            // scenarioId
-            // 
-            scenarioId.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            scenarioId.DisplayMember = "0";
-            scenarioId.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            scenarioId.FormattingEnabled = true;
-            scenarioId.Items.AddRange(new object[] { "{ECC61978EDCC2B5A}Missions/23_Campaign.conf", "{59AD59368755F41A}Missions/21_GM_Eden.conf", "{6EA2E454519E5869}Missions/CAH_Military_Base.conf", "{7C491B1FCC0FF0E1}Missions/CAH_LeMoule.conf", "{F1A1BEA67132113E}Missions/CAH_Castle.conf", "{589945FB9FA7B97D}Missions/CAH_Concrete_Plant.conf", "{2B4183DF23E88249}Missions/CAH_Morton.conf", "{3F2E005F43DBD2F8}Missions/CAH_Briars_Coast.conf", "{9405201CBD22A30C}Missions/CAH_Factory.conf", "{1CD06B409C6FAE56}Missions/CAH_Forest.conf" });
-            scenarioId.Location = new Point(214, 352);
-            scenarioId.Name = "scenarioId";
-            scenarioId.Size = new Size(177, 23);
-            scenarioId.TabIndex = 60;
-            // 
             // label35
             // 
             label35.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label35.AutoSize = true;
             label35.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label35.Location = new Point(10, 558);
+            label35.Location = new Point(10, 580);
             label35.Name = "label35";
             label35.Size = new Size(139, 21);
             label35.TabIndex = 54;
@@ -544,7 +582,7 @@
             // 
             steamQueryPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             steamQueryPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            steamQueryPort.Location = new Point(214, 560);
+            steamQueryPort.Location = new Point(214, 582);
             steamQueryPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             steamQueryPort.Name = "steamQueryPort";
             steamQueryPort.Size = new Size(88, 23);
@@ -555,7 +593,7 @@
             // 
             publicPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             publicPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            publicPort.Location = new Point(214, 529);
+            publicPort.Location = new Point(214, 551);
             publicPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             publicPort.Name = "publicPort";
             publicPort.Size = new Size(88, 23);
@@ -567,7 +605,7 @@
             label33.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label33.AutoSize = true;
             label33.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label33.Location = new Point(10, 528);
+            label33.Location = new Point(10, 550);
             label33.Name = "label33";
             label33.Size = new Size(88, 21);
             label33.TabIndex = 52;
@@ -578,7 +616,7 @@
             label34.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label34.AutoSize = true;
             label34.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label34.Location = new Point(10, 499);
+            label34.Location = new Point(10, 521);
             label34.Name = "label34";
             label34.Size = new Size(118, 21);
             label34.TabIndex = 50;
@@ -587,7 +625,7 @@
             // publicAddress
             // 
             publicAddress.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            publicAddress.Location = new Point(214, 500);
+            publicAddress.Location = new Point(214, 522);
             publicAddress.Name = "publicAddress";
             publicAddress.Size = new Size(177, 23);
             publicAddress.TabIndex = 51;
@@ -596,7 +634,7 @@
             // 
             bindPort.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             bindPort.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            bindPort.Location = new Point(214, 471);
+            bindPort.Location = new Point(214, 493);
             bindPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             bindPort.Name = "bindPort";
             bindPort.Size = new Size(88, 23);
@@ -608,7 +646,7 @@
             label32.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label32.AutoSize = true;
             label32.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label32.Location = new Point(10, 470);
+            label32.Location = new Point(10, 492);
             label32.Name = "label32";
             label32.Size = new Size(77, 21);
             label32.TabIndex = 48;
@@ -619,7 +657,7 @@
             label31.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label31.AutoSize = true;
             label31.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label31.Location = new Point(10, 441);
+            label31.Location = new Point(10, 463);
             label31.Name = "label31";
             label31.Size = new Size(107, 21);
             label31.TabIndex = 46;
@@ -628,7 +666,7 @@
             // bindAddress
             // 
             bindAddress.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            bindAddress.Location = new Point(214, 442);
+            bindAddress.Location = new Point(214, 464);
             bindAddress.Name = "bindAddress";
             bindAddress.Size = new Size(177, 23);
             bindAddress.TabIndex = 47;
@@ -757,9 +795,11 @@
             serverMinGrassDistance.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
             serverMinGrassDistance.Location = new Point(627, 292);
             serverMinGrassDistance.Maximum = new decimal(new int[] { 150, 0, 0, 0 });
+            serverMinGrassDistance.Minimum = new decimal(new int[] { 50, 0, 0, 0 });
             serverMinGrassDistance.Name = "serverMinGrassDistance";
             serverMinGrassDistance.Size = new Size(88, 23);
             serverMinGrassDistance.TabIndex = 33;
+            serverMinGrassDistance.Value = new decimal(new int[] { 50, 0, 0, 0 });
             // 
             // scenarioIdLabel
             // 
@@ -787,7 +827,7 @@
             // visible
             // 
             visible.AutoSize = true;
-            visible.Location = new Point(214, 416);
+            visible.Location = new Point(214, 438);
             visible.Name = "visible";
             visible.Size = new Size(15, 14);
             visible.TabIndex = 31;
@@ -798,7 +838,7 @@
             label9.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label9.Location = new Point(10, 379);
+            label9.Location = new Point(10, 401);
             label9.Name = "label9";
             label9.Size = new Size(96, 21);
             label9.TabIndex = 14;
@@ -808,7 +848,7 @@
             // 
             maxPlayers.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             maxPlayers.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            maxPlayers.Location = new Point(214, 382);
+            maxPlayers.Location = new Point(214, 404);
             maxPlayers.Maximum = new decimal(new int[] { 256, 0, 0, 0 });
             maxPlayers.Name = "maxPlayers";
             maxPlayers.Size = new Size(88, 23);
@@ -820,7 +860,7 @@
             label7.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label7.Location = new Point(10, 410);
+            label7.Location = new Point(10, 432);
             label7.Name = "label7";
             label7.Size = new Size(58, 21);
             label7.TabIndex = 18;
@@ -1480,7 +1520,6 @@
         private Label label20;
         private CheckBox limitFPS;
         private Label label21;
-        private ComboBox scenarioId;
         private Button disableAllModsBtn;
         private Button enableAllModsBtn;
         private Button aboutBtn;
@@ -1530,5 +1569,9 @@
         private NumericUpDown playerSaveTime;
         private Label label26;
         private NumericUpDown aiLimit;
+        private Button scenarioSelectBtn;
+        private Label loadedScenarioLabel;
+        private Button editMissionHeaderBtn;
+        private Label missionHeaderLabel;
     }
 }
