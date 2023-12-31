@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ArmaReforgerServerToolWinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ArmaReforgerServerToolWinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
