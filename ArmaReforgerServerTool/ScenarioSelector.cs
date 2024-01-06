@@ -172,12 +172,20 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void SelectScenarioButtonClicked(object sender, EventArgs e)
         {
-            if (scenarioList.SelectedItem != null)
+            if (manualScenarioIdTextBox.Text != String.Empty)
             {
-                serverConfig.ScenarioId = scenarioList.SelectedItem.ToString();
-                parentForm.RefreshLoadedScenario();
-                this.Close();
+                serverConfig.ScenarioId = manualScenarioIdTextBox.Text;
             }
+            else
+            {
+                if (scenarioList.SelectedItem != null)
+                {
+                    serverConfig.ScenarioId = scenarioList.SelectedItem.ToString();
+
+                }
+            }
+            parentForm.RefreshLoadedScenario();
+            this.Close();
         }
 
         /// <summary>
@@ -214,15 +222,39 @@ namespace ReforgerServerApp
             }
         }
 
+        /// <summary>
+        /// Handler for when the Scenario Selector form closes
+        /// Basically just cleans up the resources like resetting the timer and stopping any processes that were spawned
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
             timer.Stop();
             timer.Enabled = false;
-            if (!serverProcess.HasExited)
+            try
             {
-                StopServerProcess();
+                if (!serverProcess.HasExited)
+                {
+                    StopServerProcess();
+                }
             }
+            catch (InvalidOperationException)
+            {
+                // Catch Invalid Operation Exception here, it's harmless, its just throwing to let us know that there is no process associated with the object yet,
+                // which makes sense as the Reforger Server Files haven't been installed yet if this is being thrown
+                Debug.WriteLine("Program attempted to close the Scenario ID process before the Reforger Server Files were installed. This can be safely ignored...");
+            }
+        }
+
+        /// <summary>
+        /// Handler for when text changes in the Manual Scenario ID field
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ManualScenarioIDTextChanged(object sender, EventArgs e)
+        {
+            _ = manualScenarioIdTextBox.Text != string.Empty || scenarioList.Items.Count > 0 ? selectScenarioBtn.Enabled = true : selectScenarioBtn.Enabled = false;
         }
     }
 }
