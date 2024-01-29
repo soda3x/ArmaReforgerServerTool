@@ -66,6 +66,7 @@ namespace ReforgerServerApp
             serverStartedWithTimer = false;
             serverProcess = new();
             timerCancellationTokenSource = new();
+            sessionSave.Enabled = false;
             AlphabetiseModListBox(GetAvailableModsList());
             AlphabetiseModListBox(GetEnabledModsList());
 
@@ -99,6 +100,8 @@ namespace ReforgerServerApp
             streamingBudgetToolTip.SetToolTip(streamingBudgetLabel, Constants.STREAMING_BDGT_TOOLTIP_STR);
             ToolTip streamsDeltaToolTip = new();
             streamsDeltaToolTip.SetToolTip(streamsDeltaLabel, Constants.STREAMS_DELTA_TOOLTIP_STR);
+            ToolTip loadSessionSaveToolTip = new();
+            loadSessionSaveToolTip.SetToolTip(loadSessionSaveLabel, Constants.LOAD_SESSION_SAVE_TOOLTIP_STR);
         }
 
         /// <summary>
@@ -918,6 +921,8 @@ namespace ReforgerServerApp
             aiLimit.Enabled = enabled;
             scenarioSelectBtn.Enabled = enabled;
             editMissionHeaderBtn.Enabled = enabled;
+            sessionSave.Enabled = enabled;
+            loadSessionSave.Enabled = enabled;
 
             // Handle these differently as we don't want them enabled if 'Automatically Restart' isn't enabled
             if (automaticallyRestart.Enabled && automaticallyRestart.Checked)
@@ -1139,6 +1144,13 @@ namespace ReforgerServerApp
                 argsList.Add(streamsDeltaArg);
             }
 
+            string loadSessionSaveArg = string.Empty;
+            if (loadSessionSave.Checked)
+            {
+                loadSessionSaveArg = $"-loadSessionSave {(sessionSave.Text.Length > 0 ? sessionSave.Text.Trim() : string.Empty)}";
+                argsList.Add(loadSessionSaveArg);
+            }
+
             string logLevelArg = string.Empty;
             // Use method invoker to set the Log Level to avoid cross-threaded operation
             logLevelComboBox.Invoke((MethodInvoker)(() => logLevelArg = $"-logLevel {logLevelComboBox.Text}"));
@@ -1224,6 +1236,17 @@ namespace ReforgerServerApp
         {
             TextInputForm tif = new(serverConfig, "Edit Mission Header");
             tif.ShowDialog();
+        }
+
+        /// <summary>
+        /// Handler for the Load Session Save Checkbox, enables / disables the Load Session Save field
+        /// and enables / disables the Load Session Save functionality
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LoadSessionSaveCheckChanged(object sender, EventArgs e)
+        {
+            sessionSave.Enabled = loadSessionSave.Checked;
         }
     }
 }
