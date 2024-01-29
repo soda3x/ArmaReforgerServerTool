@@ -106,7 +106,7 @@
             groupBox4 = new GroupBox();
             panel1 = new Panel();
             sessionSave = new TextBox();
-            label2 = new Label();
+            loadSessionSaveLabel = new Label();
             loadSessionSave = new CheckBox();
             limitFPS = new CheckBox();
             streamsDeltaUpDown = new NumericUpDown();
@@ -1030,7 +1030,7 @@
             // 
             panel1.AutoScroll = true;
             panel1.Controls.Add(sessionSave);
-            panel1.Controls.Add(label2);
+            panel1.Controls.Add(loadSessionSaveLabel);
             panel1.Controls.Add(loadSessionSave);
             panel1.Controls.Add(limitFPS);
             panel1.Controls.Add(streamsDeltaUpDown);
@@ -1075,15 +1075,15 @@
             sessionSave.Size = new Size(199, 23);
             sessionSave.TabIndex = 33;
             // 
-            // label2
+            // loadSessionSaveLabel
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(24, 554);
-            label2.Name = "label2";
-            label2.Size = new Size(104, 15);
-            label2.TabIndex = 31;
-            label2.Text = "Load Session Save";
+            loadSessionSaveLabel.AutoSize = true;
+            loadSessionSaveLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            loadSessionSaveLabel.Location = new Point(24, 554);
+            loadSessionSaveLabel.Name = "loadSessionSaveLabel";
+            loadSessionSaveLabel.Size = new Size(104, 15);
+            loadSessionSaveLabel.TabIndex = 31;
+            loadSessionSaveLabel.Text = "Load Session Save";
             // 
             // loadSessionSave
             // 
@@ -1607,7 +1607,7 @@
         private Button editMissionHeaderBtn;
         private Label missionHeaderLabel;
         private TextBox sessionSave;
-        private Label label2;
+        private Label loadSessionSaveLabel;
         private CheckBox loadSessionSave;
     }
 }
