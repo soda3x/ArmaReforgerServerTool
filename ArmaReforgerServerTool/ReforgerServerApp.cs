@@ -100,6 +100,8 @@ namespace ReforgerServerApp
             streamingBudgetToolTip.SetToolTip(streamingBudgetLabel, Constants.STREAMING_BDGT_TOOLTIP_STR);
             ToolTip streamsDeltaToolTip = new();
             streamsDeltaToolTip.SetToolTip(streamsDeltaLabel, Constants.STREAMS_DELTA_TOOLTIP_STR);
+            ToolTip loadSessionSaveToolTip = new();
+            loadSessionSaveToolTip.SetToolTip(loadSessionSaveLabel, Constants.LOAD_SESSION_SAVE_TOOLTIP_STR);
         }
 
         /// <summary>
@@ -919,6 +921,8 @@ namespace ReforgerServerApp
             aiLimit.Enabled = enabled;
             scenarioSelectBtn.Enabled = enabled;
             editMissionHeaderBtn.Enabled = enabled;
+            sessionSave.Enabled = enabled;
+            loadSessionSave.Enabled = enabled;
 
             // Handle these differently as we don't want them enabled if 'Automatically Restart' isn't enabled
             if (automaticallyRestart.Enabled && automaticallyRestart.Checked)
@@ -1138,6 +1142,13 @@ namespace ReforgerServerApp
             {
                 streamsDeltaArg = $"-streamsDelta {Convert.ToString(streamsDeltaUpDown.Value)}";
                 argsList.Add(streamsDeltaArg);
+            }
+
+            string loadSessionSaveArg = string.Empty;
+            if (loadSessionSave.Checked)
+            {
+                loadSessionSaveArg = $"-loadSessionSave {(sessionSave.Text.Length > 0 ? sessionSave.Text.Trim() : string.Empty)}";
+                argsList.Add(loadSessionSaveArg);
             }
 
             string logLevelArg = string.Empty;
