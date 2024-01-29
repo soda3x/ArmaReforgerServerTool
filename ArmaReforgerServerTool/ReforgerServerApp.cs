@@ -66,6 +66,7 @@ namespace ReforgerServerApp
             serverStartedWithTimer = false;
             serverProcess = new();
             timerCancellationTokenSource = new();
+            sessionSave.Enabled = false;
             AlphabetiseModListBox(GetAvailableModsList());
             AlphabetiseModListBox(GetEnabledModsList());
 
@@ -1224,6 +1225,17 @@ namespace ReforgerServerApp
         {
             TextInputForm tif = new(serverConfig, "Edit Mission Header");
             tif.ShowDialog();
+        }
+
+        /// <summary>
+        /// Handler for the Load Session Save Checkbox, enables / disables the Load Session Save field
+        /// and enables / disables the Load Session Save functionality
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LoadSessionSaveCheckChanged(object sender, EventArgs e)
+        {
+            sessionSave.Enabled = loadSessionSave.Checked;
         }
     }
 }

@@ -67,8 +67,8 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Home" Content="Home" Tag="ArmaReforgerServerToolWinUI.Views.HomePage" />
                 <NavigationViewItem Icon="Bookmarks" Content="Mods" Tag="ArmaReforgerServerToolWinUI.Views.ModPage" />
-                <NavigationViewItem Icon="Setting" Content="Server Configuration" Tag="ArmaReforgerServerToolWinUI.Views.ServerSettingsPage" />
-                <NavigationViewItem Icon="Play" Content="Server Management" Tag="ArmaReforgerServerToolWinUI.Views.ServerManagementPage" />
+                <NavigationViewItem Icon="Setting" Content="Configure" Tag="ArmaReforgerServerToolWinUI.Views.ServerSettingsPage" />
+                <NavigationViewItem Icon="Play" Content="Manage" Tag="ArmaReforgerServerToolWinUI.Views.ServerManagementPage" />
             </NavigationView.MenuItems>
             <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" Padding="55,10,10,10"/>
         </NavigationView>
