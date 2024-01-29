@@ -105,6 +105,9 @@
             aboutBtn = new Button();
             groupBox4 = new GroupBox();
             panel1 = new Panel();
+            sessionSave = new TextBox();
+            label2 = new Label();
+            loadSessionSave = new CheckBox();
             limitFPS = new CheckBox();
             streamsDeltaUpDown = new NumericUpDown();
             nwkResolutionUpDown = new NumericUpDown();
@@ -1026,6 +1029,9 @@
             // panel1
             // 
             panel1.AutoScroll = true;
+            panel1.Controls.Add(sessionSave);
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(loadSessionSave);
             panel1.Controls.Add(limitFPS);
             panel1.Controls.Add(streamsDeltaUpDown);
             panel1.Controls.Add(nwkResolutionUpDown);
@@ -1062,6 +1068,33 @@
             panel1.Size = new Size(216, 640);
             panel1.TabIndex = 30;
             // 
+            // sessionSave
+            // 
+            sessionSave.Location = new Point(3, 575);
+            sessionSave.Name = "sessionSave";
+            sessionSave.Size = new Size(199, 23);
+            sessionSave.TabIndex = 33;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            label2.Location = new Point(24, 554);
+            label2.Name = "label2";
+            label2.Size = new Size(104, 15);
+            label2.TabIndex = 31;
+            label2.Text = "Load Session Save";
+            // 
+            // loadSessionSave
+            // 
+            loadSessionSave.AutoSize = true;
+            loadSessionSave.Location = new Point(3, 555);
+            loadSessionSave.Name = "loadSessionSave";
+            loadSessionSave.Size = new Size(15, 14);
+            loadSessionSave.TabIndex = 30;
+            loadSessionSave.UseVisualStyleBackColor = true;
+            loadSessionSave.CheckedChanged += LoadSessionSaveCheckChanged;
+            // 
             // limitFPS
             // 
             limitFPS.AutoSize = true;
@@ -1078,7 +1111,7 @@
             streamsDeltaUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             streamsDeltaUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             streamsDeltaUpDown.Name = "streamsDeltaUpDown";
-            streamsDeltaUpDown.Size = new Size(185, 23);
+            streamsDeltaUpDown.Size = new Size(199, 23);
             streamsDeltaUpDown.TabIndex = 29;
             streamsDeltaUpDown.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
@@ -1088,7 +1121,7 @@
             nwkResolutionUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             nwkResolutionUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             nwkResolutionUpDown.Name = "nwkResolutionUpDown";
-            nwkResolutionUpDown.Size = new Size(185, 23);
+            nwkResolutionUpDown.Size = new Size(199, 23);
             nwkResolutionUpDown.TabIndex = 19;
             nwkResolutionUpDown.Value = new decimal(new int[] { 500, 0, 0, 0 });
             // 
@@ -1116,9 +1149,9 @@
             // 
             restartUnitsComboBox.FormattingEnabled = true;
             restartUnitsComboBox.Items.AddRange(new object[] { "Mins", "Hours", "Days" });
-            restartUnitsComboBox.Location = new Point(125, 96);
+            restartUnitsComboBox.Location = new Point(142, 96);
             restartUnitsComboBox.Name = "restartUnitsComboBox";
-            restartUnitsComboBox.Size = new Size(63, 23);
+            restartUnitsComboBox.Size = new Size(60, 23);
             restartUnitsComboBox.TabIndex = 8;
             restartUnitsComboBox.Text = "Mins";
             // 
@@ -1177,7 +1210,7 @@
             restartIntervalUpDown.Location = new Point(42, 97);
             restartIntervalUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             restartIntervalUpDown.Name = "restartIntervalUpDown";
-            restartIntervalUpDown.Size = new Size(77, 23);
+            restartIntervalUpDown.Size = new Size(94, 23);
             restartIntervalUpDown.TabIndex = 7;
             restartIntervalUpDown.Value = new decimal(new int[] { 60, 0, 0, 0 });
             // 
@@ -1206,7 +1239,7 @@
             ndsUpDown.Location = new Point(3, 239);
             ndsUpDown.Maximum = new decimal(new int[] { 2, 0, 0, 0 });
             ndsUpDown.Name = "ndsUpDown";
-            ndsUpDown.Size = new Size(185, 23);
+            ndsUpDown.Size = new Size(199, 23);
             ndsUpDown.TabIndex = 15;
             ndsUpDown.Value = new decimal(new int[] { 2, 0, 0, 0 });
             // 
@@ -1226,7 +1259,7 @@
             staggeringBudgetUpDown.Maximum = new decimal(new int[] { 10201, 0, 0, 0 });
             staggeringBudgetUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             staggeringBudgetUpDown.Name = "staggeringBudgetUpDown";
-            staggeringBudgetUpDown.Size = new Size(185, 23);
+            staggeringBudgetUpDown.Size = new Size(199, 23);
             staggeringBudgetUpDown.TabIndex = 22;
             staggeringBudgetUpDown.Value = new decimal(new int[] { 5000, 0, 0, 0 });
             // 
@@ -1245,7 +1278,7 @@
             fpsLimitUpDown.Location = new Point(3, 24);
             fpsLimitUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             fpsLimitUpDown.Name = "fpsLimitUpDown";
-            fpsLimitUpDown.Size = new Size(185, 23);
+            fpsLimitUpDown.Size = new Size(199, 23);
             fpsLimitUpDown.TabIndex = 2;
             fpsLimitUpDown.Value = new decimal(new int[] { 60, 0, 0, 0 });
             // 
@@ -1255,7 +1288,7 @@
             streamingBudgetUpDown.Maximum = new decimal(new int[] { 10201, 0, 0, 0 });
             streamingBudgetUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             streamingBudgetUpDown.Name = "streamingBudgetUpDown";
-            streamingBudgetUpDown.Size = new Size(185, 23);
+            streamingBudgetUpDown.Size = new Size(199, 23);
             streamingBudgetUpDown.TabIndex = 26;
             streamingBudgetUpDown.Value = new decimal(new int[] { 500, 0, 0, 0 });
             // 
@@ -1275,7 +1308,7 @@
             overridePortNumericUpDown.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             overridePortNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             overridePortNumericUpDown.Name = "overridePortNumericUpDown";
-            overridePortNumericUpDown.Size = new Size(185, 23);
+            overridePortNumericUpDown.Size = new Size(199, 23);
             overridePortNumericUpDown.TabIndex = 11;
             overridePortNumericUpDown.Value = new decimal(new int[] { 2001, 0, 0, 0 });
             // 
@@ -1573,5 +1606,8 @@
         private Label loadedScenarioLabel;
         private Button editMissionHeaderBtn;
         private Label missionHeaderLabel;
+        private TextBox sessionSave;
+        private Label label2;
+        private CheckBox loadSessionSave;
     }
 }
