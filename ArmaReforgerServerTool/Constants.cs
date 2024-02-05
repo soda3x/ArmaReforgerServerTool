@@ -35,6 +35,8 @@
                 "\r\nTo be adjusted based on average client networking speed.";
         public static string LIST_SCENARIOS_TOOLTIP_STR = "Prints to game logs the scenario .conf file paths.\r\nNote that all other launch arguments are ignored if this is selected.";
         public static string AI_LIMIT_TOOLTIP_STR = "A negative number is not considered as valid value and is then ignored - limit is not applied.";
+        public static string LOAD_SESSION_SAVE_TOOLTIP_STR = "If this option is enabled and the text field is empty, the latest savegame will be loaded." +
+            "\r\nEnter the path to a savegame file to load a specific save.";
         public static string SERVER_CURRENTLY_RUNNING_STR = "Server is currently running. To modify the configuration, you will need to stop it first.";
         public static string START_SERVER_STR = "Start Server";
         public static string STOP_SERVER_STR = "Stop Server";
