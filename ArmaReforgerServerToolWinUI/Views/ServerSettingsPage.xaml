@@ -11,31 +11,254 @@
 
     <ScrollViewer>
         <StackPanel
-        Spacing="12"
-        Padding="0,0,25,0">
-            <StackPanel
-            CornerRadius="8"
-            Padding="12"
-            BorderThickness="1"
-            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
             Spacing="12">
-                <TextBlock
-                Text="General"
-                FontSize="24"
-                Grid.Column="0"/>
-                <Grid
+            <StackPanel
+                Padding="12,12,12,12">
+                
+                <!--Start General-->
+                <StackPanel
+                Grid.Column="0"
+                Grid.Row="0"
                 CornerRadius="8"
                 Padding="12"
                 BorderThickness="1"
                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                ColumnDefinitions="Auto,*"
-                RowDefinitions="Auto,*">
-                    <TextBox Header="Server Name" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <TextBox Header="Server Password" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                    <TextBox Header="Admin Password" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                </Grid>
+                Spacing="12">
+                    <TextBlock
+                    Text="General"
+                    FontSize="24"
+                    Grid.Column="0"/>
+                    <Grid
+                    CornerRadius="8"
+                    Padding="12"
+                    BorderThickness="1"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    >
+                        <Grid.RowDefinitions>
+                            <!--There has to be a better way to do this, or not do this... but currently the only way i can make it work is to create a RowDefinition for each individual row-->
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Header="Server Name" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Header="Server Password" VerticalAlignment="Center" Margin="5"/>
+                        <NumberBox Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="1" Header="Max Players" VerticalAlignment="Top" Margin="5"/>
+                        <CheckBox Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Margin="5">Server Visible</CheckBox>
+                        <CheckBox Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" Margin="5">Cross Platform</CheckBox>
+                    </Grid>
+                </StackPanel>
+                <!--End General-->
+                
+                <!--Start Admin-->
+                <StackPanel
+                Grid.Column="0"
+                Grid.Row="1"
+                CornerRadius="8"
+                Padding="12"
+                BorderThickness="1"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                Spacing="12">
+                    <TextBlock
+                    Text="Administration"
+                    FontSize="24"
+                    Grid.Column="0"/>
+                    <Grid
+                    CornerRadius="8"
+                    Padding="12"
+                    BorderThickness="1"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    >
+                        <Grid.RowDefinitions>
+                            <!--There has to be a better way to do this, or not do this... but currently the only way i can make it work is to create a RowDefinition for each individual row-->
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="Admin Password" VerticalAlignment="Top" Margin="5"/>
+
+                        <TextBox Grid.Row="2" Grid.Column="6" Grid.ColumnSpan="2" Header="Rcon Address" Margin="5"/>
+                        <NumberBox Grid.Row="2" Grid.Column="8" Header="Rcon Port" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Row="2" Grid.Column="9" Grid.ColumnSpan="2" Header="Rcon Password" Margin="5"/>
+                        <CheckBox Grid.Row="1" Grid.Column="6" VerticalAlignment="Bottom" Margin="5">Enable Rcon</CheckBox>
+                        
+                        
+                        
+                        
+                        <RadioButtons Grid.Row="3" Grid.Column="6" Grid.ColumnSpan="6" VerticalAlignment="Bottom" Margin="5" Header="Rcon Client Permissions" MaxColumns="2">
+                            <RadioButton>Admin</RadioButton>
+                            <RadioButton>Monitor</RadioButton>
+                        </RadioButtons>
+
+                        <StackPanel
+                         Grid.Row="0"
+                         Grid.Column="0"
+                         Grid.ColumnSpan="6"
+                         Margin="5"
+                         Spacing="12">
+                            <ListView
+                            MinHeight="400" 
+                            MinWidth="350" 
+                            Header="Admins List" 
+                            CornerRadius="8"
+                            Padding="12"
+                            BorderThickness="1"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            </ListView>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Width="50">+</Button>
+                                <Button Width="50">-</Button>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!--Allowlist Component-->
+                        <StackPanel
+                        Grid.Row="0" 
+                        Grid.Column="6"
+                        Grid.ColumnSpan="3"
+                        Margin="5"
+                        Spacing="12">
+                            <ListView
+                            MinHeight="400" 
+                            MinWidth="350" 
+                            Header="Allowlist" 
+                            CornerRadius="8"
+                            Padding="12"
+                            BorderThickness="1"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            </ListView>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Width="50">+</Button>
+                                <Button Width="50">-</Button>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!--Blocklist Component-->
+                        <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="9"
+                        Grid.ColumnSpan="3"
+                        Margin="5"
+                        Spacing="12">
+                            <ListView
+                            MinHeight="400" 
+                            MinWidth="350" 
+                            Header="Blocklist" 
+                            CornerRadius="8"
+                            Padding="12"
+                            BorderThickness="1"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            </ListView>
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <Button Width="50">+</Button>
+                                <Button Width="50">-</Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+                <!--End Admin-->
+                
+                <!--Start Network-->
+                <StackPanel
+                Grid.Column="1"
+                Grid.Row="0"
+                CornerRadius="8"
+                Padding="12"
+                BorderThickness="1"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                Spacing="12">
+                    <TextBlock
+                    Text="Network"
+                    FontSize="24"
+                    Grid.Column="0"/>
+                    <Grid
+                    CornerRadius="8"
+                    Padding="12"
+                    BorderThickness="1"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    >
+                        <Grid.RowDefinitions>
+                            <!--There has to be a better way to do this, or not do this... but currently the only way i can make it work is to create a RowDefinition for each individual row-->
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Row="0" Text="0.0.0.0" Grid.Column="0" Grid.ColumnSpan="2" Header="Bind Address" VerticalAlignment="Center" Margin="5"/>
+                        <NumberBox Grid.Row="0" Grid.Column="2" Header="Bind Port" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Grid.Row="0" Text="0.0.0.0" Grid.Column="3" Grid.ColumnSpan="2" Header="Public Address" VerticalAlignment="Center" Margin="5"/>
+                        <NumberBox Grid.Row="0" Grid.Column="5" Header="Public Port" VerticalAlignment="Center" Margin="5"/>
+                        <NumberBox Grid.Row="0" Grid.Column="6" Header="Steam Query Port" VerticalAlignment="Center" Margin="5"/>
+
+                        
+
+                    </Grid>
+                </StackPanel>
+                
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

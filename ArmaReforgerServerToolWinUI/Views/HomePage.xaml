@@ -11,11 +11,11 @@
 
     <Grid>
         <StackPanel
-                CornerRadius="8"
-                Padding="12"
-                BorderThickness="1"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+        CornerRadius="8"
+        Padding="12"
+        BorderThickness="1"
+        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
         <InfoBar
         IsOpen="True"
         Severity="Success"
