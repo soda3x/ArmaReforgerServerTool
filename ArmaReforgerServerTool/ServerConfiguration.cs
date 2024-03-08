@@ -27,6 +27,11 @@ namespace ReforgerServerApp
         public bool VONDisableDirectSpeechUI { get; set; }
         public int PlayerSaveTime { get; set; }
         public int AiLimit { get; set; }
+        public bool VONCanTransmitCrossFaction { get; set; }
+        public int SlotReservationTimeout { get; set; }
+        public bool DisableNavmeshStreaming { get; set; }
+        public bool DisableServerShutdown { get; set; }
+        public bool DisableCrashReporter { get; set; }
         public string MissionHeader { get; set; }
         public List<Mod> Mods { get; }
 
@@ -86,7 +91,8 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"fastValidation\": {FastValidation.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"battlEye\": {BattlEye.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"VONDisableUI\": {VONDisableUI.ToString().ToLowerInvariant()},");
-            sb.Append($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()},");
+            sb.Append($"\"VONCanTransmitCrossFaction\": {VONCanTransmitCrossFaction.ToString().ToLowerInvariant()}");
 
             if (MissionHeader != string.Empty)
             {
@@ -128,7 +134,11 @@ namespace ReforgerServerApp
             sb.AppendLine("\"operating\": {");
             sb.AppendLine($"\"lobbyPlayerSynchronise\": {LobbyPlayerSynchronise.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"playerSaveTime\": {PlayerSaveTime.ToString()},");
-            sb.AppendLine($"\"aiLimit\": {AiLimit.ToString()}");
+            sb.AppendLine($"\"aiLimit\": {AiLimit.ToString()},");
+            sb.AppendLine($"\"slotReservationTimeout\": {SlotReservationTimeout.ToString()},");
+            sb.AppendLine($"\"disableNavmeshStreaming\": {DisableNavmeshStreaming.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"disableServerShutdown\": {DisableServerShutdown.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"disableCrashReporter\": {DisableCrashReporter.ToString().ToLowerInvariant()}");
             sb.AppendLine("}");
 
             sb.AppendLine("}");
@@ -163,13 +173,18 @@ namespace ReforgerServerApp
             sb.AppendLine($"steamQueryPort={SteamQueryPort}");
             sb.AppendLine($"vonDisableUI={VONDisableUI.ToString().ToLowerInvariant()}");
             sb.AppendLine($"vonDisableDirectSpeechUI={VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"vonCanTransmitCrossFaction={VONCanTransmitCrossFaction.ToString().ToLowerInvariant()}");
             sb.AppendLine($"lobbyPlayerSynchronise={LobbyPlayerSynchronise.ToString().ToLowerInvariant()}");
             sb.AppendLine($"playerSaveTime={PlayerSaveTime.ToString()}");
             sb.AppendLine($"aiLimit={AiLimit.ToString()}");
+            sb.AppendLine($"slotReservationTimeout={SlotReservationTimeout.ToString()}");
+            sb.AppendLine($"disableNavmeshStreaming={DisableNavmeshStreaming.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"disableServerShutdown={DisableServerShutdown.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"disableCrashReporter={DisableCrashReporter.ToString().ToLowerInvariant()}");
             sb.AppendLine($"missionHeader={ConvertMissionHeaderLineEndingsToKV()}");
             sb.AppendLine($"modCollection={modFilePath}");
             return sb.ToString();
-        }
+    }
         /// <summary>
         /// Display Mods as a comma separated string for saving to file.
         /// </summary>
@@ -345,6 +360,13 @@ namespace ReforgerServerApp
                 return this;
             }
 
+            public ServerConfigurationBuilder WithVONCanTransmitCrossFaction(bool vonCanTransmitCrossFaction)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.VONCanTransmitCrossFaction = vonCanTransmitCrossFaction;
+                return this;
+            }
+
             public ServerConfigurationBuilder WithLobbyPlayerSynchronise(bool lobbyPlayerSync)
             {
                 InitialiseServerConfigIfNull();
@@ -363,6 +385,34 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.AiLimit = aiLimit;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithSlotReservationTimeout(int slotReservationTimeout)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.SlotReservationTimeout = slotReservationTimeout;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithDisableNavmeshStreaming(bool disableNavmeshStreaming)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.DisableNavmeshStreaming = disableNavmeshStreaming;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithDisableServerShutdown(bool disableServerShutdown)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.DisableServerShutdown = disableServerShutdown;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithDisableCrashReporter(bool disableCrashReporter)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.DisableCrashReporter = disableCrashReporter;
                 return this;
             }
 
