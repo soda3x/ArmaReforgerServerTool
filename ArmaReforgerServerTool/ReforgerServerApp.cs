@@ -925,6 +925,7 @@ namespace ReforgerServerApp
             editMissionHeaderBtn.Enabled = enabled;
             sessionSave.Enabled = enabled;
             loadSessionSave.Enabled = enabled;
+            editAdminListBtn.Enabled = enabled;
 
             // Handle these differently as we don't want them enabled if 'Automatically Restart' isn't enabled
             if (automaticallyRestart.Enabled && automaticallyRestart.Checked)
