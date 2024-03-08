@@ -53,7 +53,7 @@ namespace ReforgerServerApp
                 steamCmdFile = string.Empty;
             }
 
-            loadedScenarioLabel.Text = string.Empty;
+            loadedScenarioLabel.Text = "No scenario ID chosen.";
 
             UpdateSteamCmdInstallStatus();
             fpsLimitUpDown.Enabled = false;
@@ -347,7 +347,9 @@ namespace ReforgerServerApp
                     .WithDisableNavmeshStreaming(Convert.ToBoolean(configParams["disableNavmeshStreaming"]))
                     .WithDisableServerShutdown(Convert.ToBoolean(configParams["disableServerShutdown"]))
                     .WithDisableCrashReporter(Convert.ToBoolean(configParams["disableCrashReporter"]))
-                    .WithMissionHeader(configParams["missionHeader"]);
+                    .WithMissionHeader(configParams["missionHeader"])
+                    .WithAdmins(configParams["admins"]);
+                    
                 try
                 {
                     string[] modEntries = File.ReadAllLines(configParams["modCollection"]);
@@ -366,29 +368,34 @@ namespace ReforgerServerApp
 
                 serverConfig = builder.Build();
 
-                //bindAddress.Text = serverConfig.BindAddress;
-                //bindPort.Value = serverConfig.BindPort;
-                //publicAddress.Text = serverConfig.PublicAddress;
-                //publicPort.Value = serverConfig.PublicPort;
-                //passwordAdmin.Text = serverConfig.PasswordAdmin;
-                //serverName.Text = serverConfig.ServerName;
-                //serverPassword.Text = serverConfig.Password;
-                //loadedScenarioLabel.Text = serverConfig.ScenarioId;
-                //maxPlayers.Value = serverConfig.MaxPlayers;
-                //visible.Checked = serverConfig.Visible;
-                //xboxCrossplay.Checked = serverConfig.CrossPlatform;
-                //serverMaxViewDistance.Value = serverConfig.ServerMaxViewDistance;
-                //serverMinGrassDistance.Value = serverConfig.ServerMinGrassDistance;
-                //networkViewDistance.Value = serverConfig.NetworkViewDistance;
-                //disableThirdPerson.Checked = serverConfig.DisableThirdPerson;
-                //fastValidation.Checked = serverConfig.FastValidation;
-                //battlEye.Checked = serverConfig.BattlEye;
-                //steamQueryPort.Value = serverConfig.SteamQueryPort;
-                //lobbyPlayerSync.Checked = serverConfig.LobbyPlayerSynchronise;
-                //vonDisableUI.Checked = serverConfig.VONDisableUI;
-                //vonDisableDirectSpeechUI.Checked = serverConfig.VONDisableDirectSpeechUI;
-                //playerSaveTime.Value = serverConfig.PlayerSaveTime;
-                //aiLimit.Value = serverConfig.AiLimit;
+                serverParamDict["bindAddress"].ParameterValue = serverConfig.BindAddress;
+                serverParamDict["bindPort"].ParameterValue = serverConfig.BindPort;
+                serverParamDict["publicAddress"].ParameterValue = serverConfig.PublicAddress;
+                serverParamDict["publicPort"].ParameterValue = serverConfig.PublicPort;
+                serverParamDict["passwordAdmin"].ParameterValue = serverConfig.PasswordAdmin;
+                serverParamDict["name"].ParameterValue = serverConfig.ServerName;
+                serverParamDict["password"].ParameterValue = serverConfig.Password;
+                loadedScenarioLabel.Text = serverConfig.ScenarioId;
+                serverParamDict["maxPlayers"].ParameterValue = serverConfig.MaxPlayers;
+                serverParamDict["visible"].ParameterValue = serverConfig.Visible;
+                serverParamDict["crossPlatform"].ParameterValue = serverConfig.CrossPlatform;
+                serverParamDict["serverMaxViewDistance"].ParameterValue = serverConfig.ServerMaxViewDistance;
+                serverParamDict["serverMinGrassDistance"].ParameterValue = serverConfig.ServerMinGrassDistance;
+                serverParamDict["networkViewDistance"].ParameterValue = serverConfig.NetworkViewDistance;
+                serverParamDict["disableThirdPerson"].ParameterValue = serverConfig.DisableThirdPerson;
+                serverParamDict["fastValidation"].ParameterValue = serverConfig.FastValidation;
+                serverParamDict["battlEye"].ParameterValue = serverConfig.BattlEye;
+                serverParamDict["steamQueryPort"].ParameterValue = serverConfig.SteamQueryPort;
+                serverParamDict["lobbyPlayerSynchronise"].ParameterValue = serverConfig.LobbyPlayerSynchronise;
+                serverParamDict["VONDisableUI"].ParameterValue = serverConfig.VONDisableUI;
+                serverParamDict["VONDisableDirectSpeechUI"].ParameterValue = serverConfig.VONDisableDirectSpeechUI;
+                serverParamDict["playerSaveTime"].ParameterValue = serverConfig.PlayerSaveTime;
+                serverParamDict["aiLimit"].ParameterValue = serverConfig.AiLimit;
+                serverParamDict["disableCrashReporter"].ParameterValue = serverConfig.DisableCrashReporter;
+                serverParamDict["disableNavmeshStreaming"].ParameterValue = serverConfig.DisableNavmeshStreaming;
+                serverParamDict["disableServerShutdown"].ParameterValue = serverConfig.DisableServerShutdown;
+                serverParamDict["slotReservationTimeout"].ParameterValue = serverConfig.SlotReservationTimeout;
+                serverParamDict["VONCanTransmitCrossFaction"].ParameterValue = serverConfig.VONCanTransmitCrossFaction;
 
                 enabledMods.Items.Clear();
 
@@ -404,8 +411,9 @@ namespace ReforgerServerApp
                 AlphabetiseModListBox(GetEnabledModsList());
                 WriteModsDatabase();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                MessageBox.Show(e.Message);
                 MessageBox.Show("An error occurred while attempting to load the configuration file.\r\nIt may have been created for an earlier version.\r\nThe configuration has not been loaded.",
                     Constants.ERROR_MESSAGEBOX_TITLE_STR);
             }
@@ -420,35 +428,36 @@ namespace ReforgerServerApp
         {
             ServerConfigurationBuilder builder = new();
             builder
-                .WithBindAddress((string) serverParamDict["bindAddress"].ParameterValue)
-                .WithBindPort((int)serverParamDict["bindPort"].ParameterValue)
+                .WithBindAddress((string)serverParamDict["bindAddress"].ParameterValue)
+                .WithBindPort(Convert.ToInt32(serverParamDict["bindPort"].ParameterValue))
                 .WithPublicAddress((string)serverParamDict["publicAddress"].ParameterValue)
-                .WithPublicPort((int)serverParamDict["publicPort"].ParameterValue)
-                .WithAdminPassword((string)serverParamDict["adminPassword"].ParameterValue)
-                .WithServerName((string)serverParamDict["serverName"].ParameterValue)
-                .WithServerPassword((string)serverParamDict["serverPassword"].ParameterValue)
+                .WithPublicPort(Convert.ToInt32(serverParamDict["publicPort"].ParameterValue))
+                .WithAdminPassword((string)serverParamDict["passwordAdmin"].ParameterValue)
+                .WithServerName((string)serverParamDict["name"].ParameterValue)
+                .WithServerPassword((string)serverParamDict["password"].ParameterValue)
                 .WithScenarioId(loadedScenarioLabel.Text)
-                .WithMaxPlayers((int)serverParamDict["maxPlayers"].ParameterValue)
+                .WithMaxPlayers(Convert.ToInt32(serverParamDict["maxPlayers"].ParameterValue))
                 .WithVisible((bool)serverParamDict["visible"].ParameterValue)
-                .WithCrossPlatform((bool)serverParamDict["crossplay"].ParameterValue)
-                .WithServerMaxViewDistance((int)serverParamDict["serverMaxViewDistance"].ParameterValue)
-                .WithServerMinGrassDistance((int)serverParamDict["serverMinGrassDistance"].ParameterValue)
-                .WithNetworkViewDistance((int)serverParamDict["networkViewDistance"].ParameterValue)
+                .WithCrossPlatform((bool)serverParamDict["crossPlatform"].ParameterValue)
+                .WithServerMaxViewDistance(Convert.ToInt32(serverParamDict["serverMaxViewDistance"].ParameterValue))
+                .WithServerMinGrassDistance(Convert.ToInt32(serverParamDict["serverMinGrassDistance"].ParameterValue))
+                .WithNetworkViewDistance(Convert.ToInt32(serverParamDict["networkViewDistance"].ParameterValue))
                 .WithDisableThirdPerson((bool)serverParamDict["disableThirdPerson"].ParameterValue)
                 .WithFastValidation((bool)serverParamDict["fastValidation"].ParameterValue)
                 .WithBattlEye((bool)serverParamDict["battlEye"].ParameterValue)
-                .WithSteamQueryPort((int)serverParamDict["steamQueryPort"].ParameterValue)
-                .WithLobbyPlayerSynchronise((bool)serverParamDict["lobbyPlayerSynchronisation"].ParameterValue)
+                .WithSteamQueryPort(Convert.ToInt32(serverParamDict["steamQueryPort"].ParameterValue))
+                .WithLobbyPlayerSynchronise((bool)serverParamDict["lobbyPlayerSynchronise"].ParameterValue)
                 .WithVONDisableUI((bool)serverParamDict["VONDisableUI"].ParameterValue)
                 .WithVONDisableDirectSpeechUI((bool)serverParamDict["VONDisableDirectSpeechUI"].ParameterValue)
-                .WithPlayerSaveTime((int)serverParamDict["playerSaveTime"].ParameterValue)
-                .WithAILimit((int)serverParamDict["aiLimit"].ParameterValue)
+                .WithPlayerSaveTime(Convert.ToInt32(serverParamDict["playerSaveTime"].ParameterValue))
+                .WithAILimit(Convert.ToInt32(serverParamDict["aiLimit"].ParameterValue))
                 .WithVONCanTransmitCrossFaction((bool)serverParamDict["VONCanTransmitCrossFaction"].ParameterValue)
-                .WithSlotReservationTimeout((int)serverParamDict["slotReservationTimeout"].ParameterValue)
+                .WithSlotReservationTimeout(Convert.ToInt32(serverParamDict["slotReservationTimeout"].ParameterValue))
                 .WithDisableNavmeshStreaming((bool)serverParamDict["disableNavmeshStreaming"].ParameterValue)
                 .WithDisableServerShutdown((bool)serverParamDict["disableServerShutdown"].ParameterValue)
                 .WithDisableCrashReporter((bool)serverParamDict["disableCrashReporter"].ParameterValue)
-                .WithMissionHeader(serverConfig.MissionHeader);
+                .WithMissionHeader(serverConfig.MissionHeader)
+                .WithAdmins(serverConfig.Admins);
 
             foreach (Mod m in enabledMods.Items)
             {
@@ -1231,6 +1240,12 @@ namespace ReforgerServerApp
             tif.ShowDialog();
         }
 
+        private void EditAdminsListBtnClicked(object sender, EventArgs e)
+        {
+            ListForm lf = new(serverConfig, "Edit Admins");
+            lf.ShowDialog();
+        }
+
         /// <summary>
         /// Handler for the Load Session Save Checkbox, enables / disables the Load Session Save field
         /// and enables / disables the Load Session Save functionality
@@ -1250,7 +1265,7 @@ namespace ReforgerServerApp
             Dictionary<string, ServerParameter> serverParameterDictionary = new();
             ServerParameterString serverName = new()
             {
-                ParameterName = "serverName",
+                ParameterName = "name",
                 ParameterFriendlyName = "Server Name"
             };
             serverParameters.Controls.Add(serverName);
@@ -1319,7 +1334,7 @@ namespace ReforgerServerApp
             serverParameters.Controls.Add(publicPort);
             ServerParameterNumeric steamQueryPort = new()
             {
-                ParameterName = "port",
+                ParameterName = "steamQueryPort",
                 ParameterFriendlyName = "Steam Query Port",
                 ParameterIncrement = 1,
                 ParameterMin = 1,

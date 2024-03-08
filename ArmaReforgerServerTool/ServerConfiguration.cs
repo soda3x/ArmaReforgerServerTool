@@ -33,6 +33,7 @@ namespace ReforgerServerApp
         public bool DisableServerShutdown { get; set; }
         public bool DisableCrashReporter { get; set; }
         public string MissionHeader { get; set; }
+        public string Admins { get; set; }
         public List<Mod> Mods { get; }
 
         public ServerConfiguration()
@@ -44,6 +45,7 @@ namespace ReforgerServerApp
             Password = string.Empty;
             ScenarioId = string.Empty;
             MissionHeader = string.Empty;
+            Admins = string.Empty;
             Mods = new List<Mod>();
         }
 
@@ -67,6 +69,23 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"passwordAdmin\": \"{PasswordAdmin}\",");
             sb.AppendLine($"\"name\": \"{ServerName}\",");
             sb.AppendLine($"\"password\": \"{Password}\",");
+
+            if (Admins != string.Empty)
+            {
+                sb.Append($"\"admins\": [ ");
+                string[] splitAdmins = Admins.Split(",");
+                for (int i = 0; i < splitAdmins.Length; i++)
+                {
+                    sb.Append($"\"splitAdmins[i]\"");
+                    if (i != splitAdmins.Length - 1)
+                    {
+                        sb.Append(", ");
+                    }
+                    sb.Append(" ]");
+                }
+                sb.AppendLine(",");
+            }
+
             sb.AppendLine($"\"scenarioId\": \"{ScenarioId}\",");
             sb.AppendLine($"\"maxPlayers\": {MaxPlayers},");
             sb.AppendLine($"\"visible\": {Visible.ToString().ToLowerInvariant()},");
@@ -100,7 +119,8 @@ namespace ReforgerServerApp
                 sb.AppendLine("\"missionHeader\": {");
                 sb.AppendLine(ConvertMissionHeaderLineEndingsToJson());
                 sb.AppendLine("}");
-            } else
+            }
+            else
             {
                 sb.AppendLine();
             }
@@ -160,6 +180,7 @@ namespace ReforgerServerApp
             sb.AppendLine($"passwordAdmin={PasswordAdmin}");
             sb.AppendLine($"name={ServerName}");
             sb.AppendLine($"password={Password}");
+            sb.AppendLine($"admins={ConvertAdminsListToKV()}");
             sb.AppendLine($"scenarioId={ScenarioId}");
             sb.AppendLine($"maxPlayers={MaxPlayers}");
             sb.AppendLine($"visible={Visible.ToString().ToLowerInvariant()}");
@@ -184,7 +205,7 @@ namespace ReforgerServerApp
             sb.AppendLine($"missionHeader={ConvertMissionHeaderLineEndingsToKV()}");
             sb.AppendLine($"modCollection={modFilePath}");
             return sb.ToString();
-    }
+        }
         /// <summary>
         /// Display Mods as a comma separated string for saving to file.
         /// </summary>
@@ -209,6 +230,11 @@ namespace ReforgerServerApp
         {
             string[] splitItems = MissionHeader.Split("\r\n");
             return String.Join("", splitItems);
+        }
+
+        public string ConvertAdminsListToKV()
+        {
+            return String.Join(",", Admins);
         }
 
         public class ServerConfigurationBuilder
@@ -413,6 +439,13 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.DisableCrashReporter = disableCrashReporter;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithAdmins(string admins)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.Admins = admins;
                 return this;
             }
 

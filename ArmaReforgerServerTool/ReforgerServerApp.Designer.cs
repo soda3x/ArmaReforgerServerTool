@@ -313,6 +313,7 @@
             editAdminListBtn.TabIndex = 89;
             editAdminListBtn.Text = "Edit Admin List";
             editAdminListBtn.UseVisualStyleBackColor = true;
+            editAdminListBtn.Click += EditAdminsListBtnClicked;
             // 
             // editMissionHeaderBtn
             // 
@@ -327,12 +328,12 @@
             // 
             // loadedScenarioLabel
             // 
-            loadedScenarioLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            loadedScenarioLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             loadedScenarioLabel.AutoEllipsis = true;
             loadedScenarioLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
             loadedScenarioLabel.Location = new Point(305, 676);
             loadedScenarioLabel.Name = "loadedScenarioLabel";
-            loadedScenarioLabel.Size = new Size(433, 21);
+            loadedScenarioLabel.Size = new Size(543, 21);
             loadedScenarioLabel.TabIndex = 83;
             loadedScenarioLabel.Text = "Scenario ID";
             loadedScenarioLabel.TextAlign = ContentAlignment.MiddleLeft;
