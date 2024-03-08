@@ -27,7 +27,13 @@ namespace ReforgerServerApp
         public bool VONDisableDirectSpeechUI { get; set; }
         public int PlayerSaveTime { get; set; }
         public int AiLimit { get; set; }
+        public bool VONCanTransmitCrossFaction { get; set; }
+        public int SlotReservationTimeout { get; set; }
+        public bool DisableNavmeshStreaming { get; set; }
+        public bool DisableServerShutdown { get; set; }
+        public bool DisableCrashReporter { get; set; }
         public string MissionHeader { get; set; }
+        public string Admins { get; set; }
         public List<Mod> Mods { get; }
 
         public ServerConfiguration()
@@ -39,6 +45,7 @@ namespace ReforgerServerApp
             Password = string.Empty;
             ScenarioId = string.Empty;
             MissionHeader = string.Empty;
+            Admins = string.Empty;
             Mods = new List<Mod>();
         }
 
@@ -62,6 +69,22 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"passwordAdmin\": \"{PasswordAdmin}\",");
             sb.AppendLine($"\"name\": \"{ServerName}\",");
             sb.AppendLine($"\"password\": \"{Password}\",");
+
+            if (Admins != string.Empty)
+            {
+                sb.Append($"\"admins\": [ ");
+                string[] splitAdmins = Admins.Split(",");
+                for (int i = 0; i < splitAdmins.Length; i++)
+                {
+                    sb.Append($"\"{splitAdmins[i]}\"");
+                    if (i != splitAdmins.Length - 1)
+                    {
+                        sb.Append(", ");
+                    }
+                }
+                sb.AppendLine(" ],");
+            }
+
             sb.AppendLine($"\"scenarioId\": \"{ScenarioId}\",");
             sb.AppendLine($"\"maxPlayers\": {MaxPlayers},");
             sb.AppendLine($"\"visible\": {Visible.ToString().ToLowerInvariant()},");
@@ -86,7 +109,8 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"fastValidation\": {FastValidation.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"battlEye\": {BattlEye.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"VONDisableUI\": {VONDisableUI.ToString().ToLowerInvariant()},");
-            sb.Append($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"\"VONDisableDirectSpeechUI\": {VONDisableDirectSpeechUI.ToString().ToLowerInvariant()},");
+            sb.Append($"\"VONCanTransmitCrossFaction\": {VONCanTransmitCrossFaction.ToString().ToLowerInvariant()}");
 
             if (MissionHeader != string.Empty)
             {
@@ -94,7 +118,8 @@ namespace ReforgerServerApp
                 sb.AppendLine("\"missionHeader\": {");
                 sb.AppendLine(ConvertMissionHeaderLineEndingsToJson());
                 sb.AppendLine("}");
-            } else
+            }
+            else
             {
                 sb.AppendLine();
             }
@@ -128,7 +153,11 @@ namespace ReforgerServerApp
             sb.AppendLine("\"operating\": {");
             sb.AppendLine($"\"lobbyPlayerSynchronise\": {LobbyPlayerSynchronise.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"playerSaveTime\": {PlayerSaveTime.ToString()},");
-            sb.AppendLine($"\"aiLimit\": {AiLimit.ToString()}");
+            sb.AppendLine($"\"aiLimit\": {AiLimit.ToString()},");
+            sb.AppendLine($"\"slotReservationTimeout\": {SlotReservationTimeout.ToString()},");
+            sb.AppendLine($"\"disableNavmeshStreaming\": {DisableNavmeshStreaming.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"disableServerShutdown\": {DisableServerShutdown.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"disableCrashReporter\": {DisableCrashReporter.ToString().ToLowerInvariant()}");
             sb.AppendLine("}");
 
             sb.AppendLine("}");
@@ -150,6 +179,7 @@ namespace ReforgerServerApp
             sb.AppendLine($"passwordAdmin={PasswordAdmin}");
             sb.AppendLine($"name={ServerName}");
             sb.AppendLine($"password={Password}");
+            sb.AppendLine($"admins={ConvertAdminsListToKV()}");
             sb.AppendLine($"scenarioId={ScenarioId}");
             sb.AppendLine($"maxPlayers={MaxPlayers}");
             sb.AppendLine($"visible={Visible.ToString().ToLowerInvariant()}");
@@ -163,9 +193,14 @@ namespace ReforgerServerApp
             sb.AppendLine($"steamQueryPort={SteamQueryPort}");
             sb.AppendLine($"vonDisableUI={VONDisableUI.ToString().ToLowerInvariant()}");
             sb.AppendLine($"vonDisableDirectSpeechUI={VONDisableDirectSpeechUI.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"vonCanTransmitCrossFaction={VONCanTransmitCrossFaction.ToString().ToLowerInvariant()}");
             sb.AppendLine($"lobbyPlayerSynchronise={LobbyPlayerSynchronise.ToString().ToLowerInvariant()}");
             sb.AppendLine($"playerSaveTime={PlayerSaveTime.ToString()}");
             sb.AppendLine($"aiLimit={AiLimit.ToString()}");
+            sb.AppendLine($"slotReservationTimeout={SlotReservationTimeout.ToString()}");
+            sb.AppendLine($"disableNavmeshStreaming={DisableNavmeshStreaming.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"disableServerShutdown={DisableServerShutdown.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"disableCrashReporter={DisableCrashReporter.ToString().ToLowerInvariant()}");
             sb.AppendLine($"missionHeader={ConvertMissionHeaderLineEndingsToKV()}");
             sb.AppendLine($"modCollection={modFilePath}");
             return sb.ToString();
@@ -194,6 +229,11 @@ namespace ReforgerServerApp
         {
             string[] splitItems = MissionHeader.Split("\r\n");
             return String.Join("", splitItems);
+        }
+
+        public string ConvertAdminsListToKV()
+        {
+            return String.Join(",", Admins);
         }
 
         public class ServerConfigurationBuilder
@@ -345,6 +385,13 @@ namespace ReforgerServerApp
                 return this;
             }
 
+            public ServerConfigurationBuilder WithVONCanTransmitCrossFaction(bool vonCanTransmitCrossFaction)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.VONCanTransmitCrossFaction = vonCanTransmitCrossFaction;
+                return this;
+            }
+
             public ServerConfigurationBuilder WithLobbyPlayerSynchronise(bool lobbyPlayerSync)
             {
                 InitialiseServerConfigIfNull();
@@ -363,6 +410,41 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.AiLimit = aiLimit;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithSlotReservationTimeout(int slotReservationTimeout)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.SlotReservationTimeout = slotReservationTimeout;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithDisableNavmeshStreaming(bool disableNavmeshStreaming)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.DisableNavmeshStreaming = disableNavmeshStreaming;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithDisableServerShutdown(bool disableServerShutdown)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.DisableServerShutdown = disableServerShutdown;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithDisableCrashReporter(bool disableCrashReporter)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.DisableCrashReporter = disableCrashReporter;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithAdmins(string admins)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.Admins = admins;
                 return this;
             }
 

@@ -99,7 +99,6 @@
             Controls.Add(reloadScenariosBtn);
             Controls.Add(selectScenarioBtn);
             Controls.Add(scenarioList);
-            MaximizeBox = false;
             MinimumSize = new Size(640, 480);
             Name = "ScenarioSelector";
             ShowIcon = false;
