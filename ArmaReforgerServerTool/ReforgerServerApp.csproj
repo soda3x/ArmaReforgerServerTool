@@ -23,6 +23,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="ServerParameter.cs" />
+    <Compile Update="ServerParameterBool.cs" />
+    <Compile Update="ServerParameterString.cs" />
     <Compile Update="TextInputForm.cs">
       <SubType>Form</SubType>
     </Compile>
