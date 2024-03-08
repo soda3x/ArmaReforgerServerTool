@@ -18,23 +18,36 @@ namespace ReforgerServerApp
             InitializeComponent();
             this.Text = $"Arma Reforger Dedicated Server Tool - {windowTitle}";
             serverConfig = sc;
-            if (serverConfig.Admins.Contains(","))
+            string[] splitAdmins = serverConfig.Admins.Split(',');
+            if (splitAdmins.Length > 0)
             {
-                foreach (string admin in serverConfig.Admins.Split(","))
+                foreach (string admin in splitAdmins)
                 {
-                    adminListView.Items.Add(new ListViewItem(admin));
+                    if (admin.Trim() != string.Empty)
+                    {
+                        adminListView.Items.Add(new ListViewItem(admin));
+                    }
                 }
             }
         }
 
         private void CloseBtnClicked(object sender, EventArgs e)
         {
-            if (adminListView.Items.Count > 0)
+            if (adminListView.Items.Count == 0)
             {
-                foreach (ListViewItem lvi in adminListView.Items)
+                serverConfig.Admins = string.Empty;
+            }
+            string newAdmins = string.Empty;
+            foreach (ListViewItem lvi in adminListView.Items)
+            {
+                if (lvi.Text.Trim() != string.Empty)
                 {
-                    String.Join(",", serverConfig.Admins, lvi);
+                    newAdmins = String.Join(',', newAdmins, lvi.Text.Trim());
                 }
+            }
+            if (newAdmins != string.Empty)
+            {
+                serverConfig.Admins = newAdmins[1..];
             }
             Close();
         }
