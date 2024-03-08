@@ -76,14 +76,13 @@ namespace ReforgerServerApp
                 string[] splitAdmins = Admins.Split(",");
                 for (int i = 0; i < splitAdmins.Length; i++)
                 {
-                    sb.Append($"\"splitAdmins[i]\"");
+                    sb.Append($"\"{splitAdmins[i]}\"");
                     if (i != splitAdmins.Length - 1)
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(" ]");
                 }
-                sb.AppendLine(",");
+                sb.AppendLine(" ],");
             }
 
             sb.AppendLine($"\"scenarioId\": \"{ScenarioId}\",");
