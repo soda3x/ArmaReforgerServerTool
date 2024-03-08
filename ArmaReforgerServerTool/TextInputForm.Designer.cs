@@ -59,7 +59,6 @@
             ClientSize = new Size(624, 441);
             Controls.Add(okBtn);
             Controls.Add(textInputField);
-            MaximizeBox = false;
             MinimumSize = new Size(640, 480);
             Name = "TextInputForm";
             ShowIcon = false;

@@ -16,6 +16,7 @@ namespace ReforgerServerApp
         public AddModDialog(ReforgerServerApp reforgerApp)
         {
             InitializeComponent();
+            this.Text = "Arma Reforger Dedicated Server Tool - Add Mod";
             m_reforgerApp = reforgerApp;
         }
 
