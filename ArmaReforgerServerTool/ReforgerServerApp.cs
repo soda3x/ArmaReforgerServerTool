@@ -89,8 +89,6 @@ namespace ReforgerServerApp
             enableModToolTip.SetToolTip(addToEnabledBtn, Constants.ENABLE_MOD_STR);
             ToolTip disableModToolTip = new();
             disableModToolTip.SetToolTip(removeFromEnabledBtn, Constants.DISABLE_MOD_STR);
-            ToolTip aiLimitToolTip = new();
-            aiLimitToolTip.SetToolTip(serverParamDict["aiLimit"].UnderlyingType, Constants.AI_LIMIT_TOOLTIP_STR);
             ToolTip ndsToolTip = new();
             ndsToolTip.SetToolTip(ndsLabel, Constants.NDS_TOOLTIP_STR);
             ToolTip nwkResolutionToolTip = new();
@@ -347,9 +345,10 @@ namespace ReforgerServerApp
                     .WithDisableNavmeshStreaming(Convert.ToBoolean(configParams["disableNavmeshStreaming"]))
                     .WithDisableServerShutdown(Convert.ToBoolean(configParams["disableServerShutdown"]))
                     .WithDisableCrashReporter(Convert.ToBoolean(configParams["disableCrashReporter"]))
+                    .WithDisableAI(Convert.ToBoolean(configParams["disableAI"]))
                     .WithMissionHeader(configParams["missionHeader"])
                     .WithAdmins(configParams["admins"]);
-                    
+
                 try
                 {
                     string[] modEntries = File.ReadAllLines(configParams["modCollection"]);
@@ -396,6 +395,7 @@ namespace ReforgerServerApp
                 serverParamDict["disableServerShutdown"].ParameterValue = serverConfig.DisableServerShutdown;
                 serverParamDict["slotReservationTimeout"].ParameterValue = serverConfig.SlotReservationTimeout;
                 serverParamDict["VONCanTransmitCrossFaction"].ParameterValue = serverConfig.VONCanTransmitCrossFaction;
+                serverParamDict["disableAI"].ParameterValue = serverConfig.DisableAI;
 
                 enabledMods.Items.Clear();
 
@@ -413,8 +413,11 @@ namespace ReforgerServerApp
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
-                MessageBox.Show("An error occurred while attempting to load the configuration file.\r\nIt may have been created for an earlier version.\r\nThe configuration has not been loaded.",
+                MessageBox.Show($"An error occurred while attempting to load the configuration file.\r\n" +
+                    $"It may have been created for an earlier version.\r\n" +
+                    $"The configuration has not been loaded.\r\n\r\n" +
+                    $"Detail: {e.Message}\r\n\r\n" +
+                    $"Include the detail above in your bug reports.",
                     Constants.ERROR_MESSAGEBOX_TITLE_STR);
             }
         }
@@ -457,7 +460,8 @@ namespace ReforgerServerApp
                 .WithDisableServerShutdown((bool)serverParamDict["disableServerShutdown"].ParameterValue)
                 .WithDisableCrashReporter((bool)serverParamDict["disableCrashReporter"].ParameterValue)
                 .WithMissionHeader(serverConfig.MissionHeader)
-                .WithAdmins(serverConfig.Admins);
+                .WithAdmins(serverConfig.Admins)
+                .WithDisableAI(serverConfig.DisableAI);
 
             foreach (Mod m in enabledMods.Items)
             {
@@ -1267,19 +1271,22 @@ namespace ReforgerServerApp
             ServerParameterString serverName = new()
             {
                 ParameterName = "name",
-                ParameterFriendlyName = "Server Name"
+                ParameterFriendlyName = "Server Name",
+                ParameterTooltip = Constants.SERVER_PARAM_NAME_TOOLTIP_STR
             };
             serverParameters.Controls.Add(serverName);
             ServerParameterString serverPassword = new()
             {
                 ParameterName = "password",
-                ParameterFriendlyName = "Server Password"
+                ParameterFriendlyName = "Server Password",
+                ParameterTooltip = Constants.SERVER_PARAM_PASSWORD_TOOLTIP_STR
             };
             serverParameters.Controls.Add(serverPassword);
             ServerParameterString adminPassword = new()
             {
                 ParameterName = "passwordAdmin",
-                ParameterFriendlyName = "Admin Password"
+                ParameterFriendlyName = "Admin Password",
+                ParameterTooltip = Constants.SERVER_PARAM_ADMIN_PASSWORD_TOOLTIP_STR
             };
             serverParameters.Controls.Add(adminPassword);
             ServerParameterNumeric maxPlayers = new()
@@ -1289,21 +1296,24 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = 1,
                 ParameterMax = 256,
-                ParameterValue = 64
+                ParameterValue = 64,
+                ParameterTooltip = Constants.SERVER_PARAM_MAX_PLAYERS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(maxPlayers);
             ServerParameterBool visible = new()
             {
                 ParameterName = "visible",
                 ParameterFriendlyName = "Server Visible",
-                ParameterValue = true
+                ParameterValue = true,
+                ParameterTooltip = Constants.SERVER_PARAM_VISIBLE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(visible);
             ServerParameterString bindAddress = new()
             {
                 ParameterName = "bindAddress",
                 ParameterFriendlyName = "Bind Address",
-                ParameterValue = "0.0.0.0"
+                ParameterValue = "0.0.0.0",
+                ParameterTooltip = Constants.SERVER_PARAM_BIND_ADDRESS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(bindAddress);
             ServerParameterNumeric bindPort = new()
@@ -1313,14 +1323,16 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = 1,
                 ParameterMax = 65535,
-                ParameterValue = 2001
+                ParameterValue = 2001,
+                ParameterTooltip = Constants.SERVER_PARAM_BIND_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(bindPort);
             ServerParameterString publicAddress = new()
             {
                 ParameterName = "publicAddress",
                 ParameterFriendlyName = "Public Address",
-                ParameterValue = "0.0.0.0"
+                ParameterValue = "0.0.0.0",
+                ParameterTooltip = Constants.SERVER_PARAM_PUBLIC_ADDRESS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(publicAddress);
             ServerParameterNumeric publicPort = new()
@@ -1330,7 +1342,8 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = 1,
                 ParameterMax = 65535,
-                ParameterValue = 2001
+                ParameterValue = 2001,
+                ParameterTooltip = Constants.SERVER_PARAM_PUBLIC_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(publicPort);
             ServerParameterNumeric steamQueryPort = new()
@@ -1340,7 +1353,8 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = 1,
                 ParameterMax = 65535,
-                ParameterValue = 17777
+                ParameterValue = 17777,
+                ParameterTooltip = Constants.SERVER_PARAM_STEAM_QUERY_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(steamQueryPort);
             ServerParameterNumeric playerSaveTime = new()
@@ -1350,7 +1364,8 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = 1,
                 ParameterMax = 65535,
-                ParameterValue = 120
+                ParameterValue = 120,
+                ParameterTooltip = Constants.SERVER_PARAM_PLAYER_SAVE_TIME_TOOLTIP_STR
             };
             serverParameters.Controls.Add(playerSaveTime);
             ServerParameterNumeric serverMaxViewDistance = new()
@@ -1360,7 +1375,8 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = 500,
                 ParameterMax = 10000,
-                ParameterValue = 1600
+                ParameterValue = 1600,
+                ParameterTooltip = Constants.SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(serverMaxViewDistance);
             ServerParameterNumeric serverMinGrassDistance = new()
@@ -1370,7 +1386,8 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = 0,
                 ParameterMax = 150,
-                ParameterValue = 50
+                ParameterValue = 50,
+                ParameterTooltip = Constants.SERVER_PARAM_SERVER_MIN_GRASS_DISTANCE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(serverMinGrassDistance);
             ServerParameterNumeric networkViewDistance = new()
@@ -1380,63 +1397,72 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = 500,
                 ParameterMax = 5000,
-                ParameterValue = 1500
+                ParameterValue = 1500,
+                ParameterTooltip = Constants.SERVER_PARAM_NETWORK_VIEW_DISTANCE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(networkViewDistance);
             ServerParameterBool disableThirdPerson = new()
             {
                 ParameterName = "disableThirdPerson",
                 ParameterFriendlyName = "Disable Third Person",
-                ParameterValue = false
+                ParameterValue = false,
+                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_THIRD_PERSON_TOOLTIP_STR
             };
             serverParameters.Controls.Add(disableThirdPerson);
             ServerParameterBool fastValidation = new()
             {
                 ParameterName = "fastValidation",
                 ParameterFriendlyName = "Fast Validation",
-                ParameterValue = true
+                ParameterValue = true,
+                ParameterTooltip = Constants.SERVER_PARAM_FAST_VALIDATION_TOOLTIP_STR
             };
             serverParameters.Controls.Add(fastValidation);
             ServerParameterBool battlEye = new()
             {
                 ParameterName = "battlEye",
                 ParameterFriendlyName = "BattlEye",
-                ParameterValue = true
+                ParameterValue = true,
+                ParameterTooltip = Constants.SERVER_PARAM_BATTLEYE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(battlEye);
             ServerParameterBool lobbyPlayerSynchronise = new()
             {
                 ParameterName = "lobbyPlayerSynchronise",
                 ParameterFriendlyName = "Lobby Player Synchronise",
-                ParameterValue = true
+                ParameterValue = true,
+                ParameterTooltip = Constants.SERVER_PARAM_LOBBY_PLAYER_SYNC_TOOLTIP_STR
             };
             serverParameters.Controls.Add(lobbyPlayerSynchronise);
             ServerParameterBool vonDisableUI = new()
             {
                 ParameterName = "VONDisableUI",
                 ParameterFriendlyName = "VON Disable UI",
-                ParameterValue = false
+                ParameterValue = false,
+                ParameterTooltip = Constants.SERVER_PARAM_VON_DISABLE_UI_TOOLTIP_STR
             };
             serverParameters.Controls.Add(vonDisableUI);
             ServerParameterBool vonDisableDirectSpeechUI = new()
             {
                 ParameterName = "VONDisableDirectSpeechUI",
                 ParameterFriendlyName = "VON Disable Direct Speech UI",
-                ParameterValue = false
+                ParameterValue = false,
+                ParameterTooltip = Constants.SERVER_PARAM_VON_DISABLE_DIRECT_SPEECH_UI_TOOLTIP_STR
             };
             serverParameters.Controls.Add(vonDisableDirectSpeechUI);
             ServerParameterBool vonCanTransmitCrossFaction = new()
             {
                 ParameterName = "VONCanTransmitCrossFaction",
                 ParameterFriendlyName = "VON Can Transmit Cross Faction",
-                ParameterValue = false
+                ParameterValue = false,
+                ParameterTooltip = Constants.SERVER_PARAM_VON_CAN_TRANSMIT_ACROSS_FACTION_TOOLTIP_STR
             };
             serverParameters.Controls.Add(vonCanTransmitCrossFaction);
             ServerParameterBool crossPlatform = new()
             {
                 ParameterName = "crossPlatform",
                 ParameterFriendlyName = "Cross Platform",
-                ParameterValue = false
+                ParameterValue = false,
+                ParameterTooltip = Constants.SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR
             };
             serverParameters.Controls.Add(crossPlatform);
             ServerParameterNumeric aiLimit = new()
@@ -1446,7 +1472,8 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = -1,
                 ParameterMax = 1000,
-                ParameterValue = -1
+                ParameterValue = -1,
+                ParameterTooltip = Constants.SERVER_PARAM_AI_LIMIT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(aiLimit);
             ServerParameterNumeric slotReservationTimeout = new()
@@ -1456,30 +1483,42 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterMin = 5,
                 ParameterMax = 300,
-                ParameterValue = 60
+                ParameterValue = 60,
+                ParameterTooltip = Constants.SERVER_PARAM_SLOT_RESERVATION_TIMEOUT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(slotReservationTimeout);
             ServerParameterBool disableNavmeshStreaming = new()
             {
                 ParameterName = "disableNavmeshStreaming",
                 ParameterFriendlyName = "Disable Navmesh Streaming",
-                ParameterValue = false
+                ParameterValue = false,
+                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR
             };
             serverParameters.Controls.Add(disableNavmeshStreaming);
             ServerParameterBool disableServerShutdown = new()
             {
                 ParameterName = "disableServerShutdown",
                 ParameterFriendlyName = "Disable Server Shutdown",
-                ParameterValue = false
+                ParameterValue = false,
+                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_SERVER_SHUTDOWN_TOOLTIP_STR
             };
             serverParameters.Controls.Add(disableServerShutdown);
             ServerParameterBool disableCrashReporter = new()
             {
                 ParameterName = "disableCrashReporter",
                 ParameterFriendlyName = "Disable Crash Reporter",
-                ParameterValue = false
+                ParameterValue = false,
+                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_CRASH_REPORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(disableCrashReporter);
+            ServerParameterBool disableAI = new()
+            {
+                ParameterName = "disableAI",
+                ParameterFriendlyName = "Disable AI",
+                ParameterValue = false,
+                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_AI_TOOLTIP_STR
+            };
+            serverParameters.Controls.Add(disableAI);
 
             foreach (ServerParameter param in serverParameters.Controls)
             {
