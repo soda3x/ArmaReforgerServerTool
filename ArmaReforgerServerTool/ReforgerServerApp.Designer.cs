@@ -299,7 +299,7 @@
             serverParameters.AutoScroll = true;
             serverParameters.FlowDirection = FlowDirection.TopDown;
             serverParameters.Location = new Point(6, 221);
-            serverParameters.Margin = new Padding(0);
+            serverParameters.Margin = new Padding(15, 0, 15, 0);
             serverParameters.Name = "serverParameters";
             serverParameters.Size = new Size(845, 423);
             serverParameters.TabIndex = 90;

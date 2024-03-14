@@ -34,6 +34,8 @@ namespace ReforgerServerApp
         public bool DisableCrashReporter { get; set; }
         public string MissionHeader { get; set; }
         public string Admins { get; set; }
+
+        public bool DisableAI { get; set; }
         public List<Mod> Mods { get; }
 
         public ServerConfiguration()
@@ -157,7 +159,8 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"slotReservationTimeout\": {SlotReservationTimeout.ToString()},");
             sb.AppendLine($"\"disableNavmeshStreaming\": {DisableNavmeshStreaming.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"disableServerShutdown\": {DisableServerShutdown.ToString().ToLowerInvariant()},");
-            sb.AppendLine($"\"disableCrashReporter\": {DisableCrashReporter.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"\"disableCrashReporter\": {DisableCrashReporter.ToString().ToLowerInvariant()},");
+            sb.AppendLine($"\"disableAI\": {DisableAI.ToString().ToLowerInvariant()}");
             sb.AppendLine("}");
 
             sb.AppendLine("}");
@@ -201,6 +204,7 @@ namespace ReforgerServerApp
             sb.AppendLine($"disableNavmeshStreaming={DisableNavmeshStreaming.ToString().ToLowerInvariant()}");
             sb.AppendLine($"disableServerShutdown={DisableServerShutdown.ToString().ToLowerInvariant()}");
             sb.AppendLine($"disableCrashReporter={DisableCrashReporter.ToString().ToLowerInvariant()}");
+            sb.AppendLine($"disableAI={DisableAI.ToString().ToLowerInvariant()}");
             sb.AppendLine($"missionHeader={ConvertMissionHeaderLineEndingsToKV()}");
             sb.AppendLine($"modCollection={modFilePath}");
             return sb.ToString();
@@ -438,6 +442,13 @@ namespace ReforgerServerApp
             {
                 InitialiseServerConfigIfNull();
                 m_serverConfiguration.DisableCrashReporter = disableCrashReporter;
+                return this;
+            }
+
+            public ServerConfigurationBuilder WithDisableAI(bool disableAI)
+            {
+                InitialiseServerConfigIfNull();
+                m_serverConfiguration.DisableAI = disableAI;
                 return this;
             }
 
