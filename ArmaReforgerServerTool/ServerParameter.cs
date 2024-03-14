@@ -5,10 +5,12 @@
     {
         private string parameterProperName = string.Empty;
         protected Control underlyingControl;
+        private ToolTip toolTip;
 
         public ServerParameter()
         {
             InitializeComponent();
+            toolTip = new();
         }
 
         public virtual object ParameterValue
@@ -32,6 +34,11 @@
         public Control UnderlyingType
         {
             get => underlyingControl;
+        }
+
+        public string ParameterTooltip
+        {
+            set { toolTip.SetToolTip(parameterName, value); toolTip.SetToolTip(underlyingControl, value); toolTip.SetToolTip(this, value); }
         }
 
         public void SetFieldEnabled(bool fieldEnabled)
