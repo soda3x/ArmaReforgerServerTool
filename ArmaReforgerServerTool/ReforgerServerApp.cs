@@ -74,6 +74,8 @@ namespace ReforgerServerApp
             AlphabetiseModListBox(GetEnabledModsList());
 
             CheckForUpdates();
+
+            Mod.GetScenariosForMod("591AF5BDA9F7CE8B");
         }
 
         /// <summary>
@@ -297,6 +299,31 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
+        /// Get Config Parameter for Server Configuration file (dictionary), if it's not present, use default value for the parameter
+        /// </summary>
+        /// <param name="dict"></param>
+        /// <param name="paramKey"></param>
+        /// <returns>Value to set config parameter to (likely either an int, boolean or string)</returns>
+        private object? GetConfigParameterOrDefault(Dictionary<string, string> dict, string paramKey)
+        {
+            try
+            {
+                return dict[paramKey];
+            }
+            catch (Exception)
+            {
+                foreach (ServerParameter sp in serverParameters.Controls)
+                {
+                    if (sp.ParameterName == paramKey)
+                    {
+                        return sp.ParameterValue;
+                    }
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
         /// This method populates the GUI controls from an imported comma-separated settings file.
         /// It is important that the order of the settings file does not change as this method will break if indexes are wrong.
         /// This method also calls the alphabetise list box methods and will write the imported mods to the mod_database.txt file.`
@@ -317,37 +344,37 @@ namespace ReforgerServerApp
             {
                 ServerConfigurationBuilder builder = new();
                 builder
-                    .WithBindAddress(configParams["bindAddress"])
-                    .WithBindPort(Convert.ToInt32(configParams["bindPort"]))
-                    .WithPublicAddress(configParams["publicAddress"])
-                    .WithPublicPort(Convert.ToInt32(configParams["publicPort"]))
-                    .WithAdminPassword(configParams["passwordAdmin"])
-                    .WithServerName(configParams["name"])
-                    .WithServerPassword(configParams["password"])
-                    .WithScenarioId(configParams["scenarioId"])
-                    .WithMaxPlayers(Convert.ToInt32(configParams["maxPlayers"]))
-                    .WithVisible(Convert.ToBoolean(configParams["visible"]))
-                    .WithCrossPlatform(Convert.ToBoolean(configParams["crossPlatform"]))
-                    .WithServerMaxViewDistance(Convert.ToInt32(configParams["serverMaxViewDistance"]))
-                    .WithServerMinGrassDistance(Convert.ToInt32(configParams["serverMinGrassDistance"]))
-                    .WithNetworkViewDistance(Convert.ToInt32(configParams["networkViewDistance"]))
-                    .WithDisableThirdPerson(Convert.ToBoolean(configParams["disableThirdPerson"]))
-                    .WithFastValidation(Convert.ToBoolean(configParams["fastValidation"]))
-                    .WithBattlEye(Convert.ToBoolean(configParams["battlEye"]))
-                    .WithSteamQueryPort(Convert.ToInt32(configParams["steamQueryPort"]))
-                    .WithVONDisableUI(Convert.ToBoolean(configParams["vonDisableUI"]))
-                    .WithVONDisableDirectSpeechUI(Convert.ToBoolean(configParams["vonDisableDirectSpeechUI"]))
-                    .WithLobbyPlayerSynchronise(Convert.ToBoolean(configParams["lobbyPlayerSynchronise"]))
-                    .WithPlayerSaveTime(Convert.ToInt32(configParams["playerSaveTime"]))
-                    .WithAILimit(Convert.ToInt32(configParams["aiLimit"]))
-                    .WithVONCanTransmitCrossFaction(Convert.ToBoolean(configParams["vonCanTransmitCrossFaction"]))
-                    .WithSlotReservationTimeout(Convert.ToInt32(configParams["slotReservationTimeout"]))
-                    .WithDisableNavmeshStreaming(Convert.ToBoolean(configParams["disableNavmeshStreaming"]))
-                    .WithDisableServerShutdown(Convert.ToBoolean(configParams["disableServerShutdown"]))
-                    .WithDisableCrashReporter(Convert.ToBoolean(configParams["disableCrashReporter"]))
-                    .WithDisableAI(Convert.ToBoolean(configParams["disableAI"]))
-                    .WithMissionHeader(configParams["missionHeader"])
-                    .WithAdmins(configParams["admins"]);
+                    .WithBindAddress(Convert.ToString(GetConfigParameterOrDefault(configParams, "bindAddress")))
+                    .WithBindPort(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "bindPort")))
+                    .WithPublicAddress(Convert.ToString(GetConfigParameterOrDefault(configParams, "publicAddress")))
+                    .WithPublicPort(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "publicPort")))
+                    .WithAdminPassword(Convert.ToString(GetConfigParameterOrDefault(configParams, "passwordAdmin")))
+                    .WithServerName(Convert.ToString(GetConfigParameterOrDefault(configParams, "name")))
+                    .WithServerPassword(Convert.ToString(GetConfigParameterOrDefault(configParams, "password")))
+                    .WithScenarioId(Convert.ToString(GetConfigParameterOrDefault(configParams, "scenarioId")))
+                    .WithMaxPlayers(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "maxPlayers")))
+                    .WithVisible(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "visible")))
+                    .WithCrossPlatform(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "crossPlatform")))
+                    .WithServerMaxViewDistance(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "serverMaxViewDistance")))
+                    .WithServerMinGrassDistance(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "serverMinGrassDistance")))
+                    .WithNetworkViewDistance(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "networkViewDistance")))
+                    .WithDisableThirdPerson(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "disableThirdPerson")))
+                    .WithFastValidation(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "fastValidation")))
+                    .WithBattlEye(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "battlEye")))
+                    .WithSteamQueryPort(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "steamQueryPort")))
+                    .WithVONDisableUI(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "vonDisableUI")))
+                    .WithVONDisableDirectSpeechUI(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "vonDisableDirectSpeechUI")))
+                    .WithLobbyPlayerSynchronise(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "lobbyPlayerSynchronise")))
+                    .WithPlayerSaveTime(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "playerSaveTime")))
+                    .WithAILimit(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "aiLimit")))
+                    .WithVONCanTransmitCrossFaction(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "vonCanTransmitCrossFaction")))
+                    .WithSlotReservationTimeout(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "slotReservationTimeout")))
+                    .WithDisableNavmeshStreaming(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "disableNavmeshStreaming")))
+                    .WithDisableServerShutdown(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "disableServerShutdown")))
+                    .WithDisableCrashReporter(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "disableCrashReporter")))
+                    .WithDisableAI(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "disableAI")))
+                    .WithMissionHeader(Convert.ToString(GetConfigParameterOrDefault(configParams, "missionHeader")))
+                    .WithAdmins(Convert.ToString(GetConfigParameterOrDefault(configParams, "admins")));
 
                 try
                 {
@@ -1235,7 +1262,7 @@ namespace ReforgerServerApp
         /// </summary>
         private void SpawnScenarioSelect()
         {
-            ScenarioSelector scenarioSelector = new(this, serverConfig, installDirectory, File.Exists(steamCmdFile));
+            ScenarioSelector scenarioSelector = new(this, serverConfig);
             scenarioSelector.ShowDialog();
         }
 
