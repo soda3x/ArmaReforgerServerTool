@@ -74,6 +74,8 @@ namespace ReforgerServerApp
             AlphabetiseModListBox(GetEnabledModsList());
 
             CheckForUpdates();
+
+            Mod.GetScenariosForMod("591AF5BDA9F7CE8B");
         }
 
         /// <summary>
@@ -1235,7 +1237,7 @@ namespace ReforgerServerApp
         /// </summary>
         private void SpawnScenarioSelect()
         {
-            ScenarioSelector scenarioSelector = new(this, serverConfig, installDirectory, File.Exists(steamCmdFile));
+            ScenarioSelector scenarioSelector = new(this, serverConfig);
             scenarioSelector.ShowDialog();
         }
 
