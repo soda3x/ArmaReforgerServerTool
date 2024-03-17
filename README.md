@@ -11,12 +11,6 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 - Powerful mod management with the ability to import mods from saved configurations
 - Easily select the desired scenario you want to play
 
-## Windows Default Terminal Behaviour
-
-Currently there is a Windows bug (so far Windows 11 and Windows Server 2022 have been reported) preventing the Scenario Selector window from working correctly if your default terminal is set to "Windows Terminal". Workaround is to set your default terminal to "Windows Console Host".
-
-[Here](https://devblogs.microsoft.com/commandline/windows-terminal-as-your-default-command-line-experience/) is an article explaining how to change your default terminal.
-
 ## Requirements
 - [dotNET 6 Runtime](https://dotnet.microsoft.com/en-us/download)
 
