@@ -1,144 +1,92 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Timers;
-using System.Windows.Forms;
+﻿
 
 namespace ReforgerServerApp
 {
     public partial class ScenarioSelector : Form
     {
-        private string launchPath;
-        private string scenariosOutput;
-        // Matches string like "SCRIPT       : {ECC61978EDCC2B5A}Missions/23_Campaign.conf"
-        private string regexScenarioPattern = @"SCRIPT\W*:\W\{.*.conf";
-        private Process serverProcess;
         private ServerConfiguration serverConfig;
         private ReforgerServerApp parentForm;
+        Thread getScenariosThread;
+        private bool getScenariosThreadRunning = true;
+        private bool getScenariosRequested = false;
 
-        private const int THREE_SECONDS_IN_MS = 3000;
-        System.Timers.Timer timer;
-
-        public ScenarioSelector(ReforgerServerApp parent, ServerConfiguration sc, string path, bool serverInstalled)
+        public ScenarioSelector(ReforgerServerApp parent, ServerConfiguration sc)
         {
             InitializeComponent();
-            launchPath = path ?? string.Empty;
             serverConfig = sc;
             PrintSelectedScenario();
-            scenariosOutput = string.Empty;
             parentForm = parent;
 
-            serverProcess = new();
-            ProcessStartInfo serverStartInfo = new();
-            serverStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            serverStartInfo.UseShellExecute = false;
-            serverStartInfo.WorkingDirectory = $"{launchPath}\\arma_reforger";
-            serverStartInfo.FileName = $"{launchPath}\\arma_reforger\\ArmaReforgerServer.exe";
-            serverStartInfo.Arguments = "-listScenarios";
-            serverStartInfo.RedirectStandardOutput = true;
-            serverStartInfo.RedirectStandardError = true;
-            serverStartInfo.CreateNoWindow = true;
-            serverProcess.EnableRaisingEvents = true;
-            serverProcess.StartInfo = serverStartInfo;
-
-            timer = new(THREE_SECONDS_IN_MS);
-
-            if (!serverInstalled)
-            {
-                reloadScenariosBtn.Enabled = false;
-                selectScenarioBtn.Enabled = false;
-                currentlySelectedLbl.Text = Constants.SERVER_FILES_NOT_FOUND_SCENARIO_SELECT_STR;
-            }
-            else
-            {
-                GetScenarios();
-            }
+            getScenariosRequested = true;
+            getScenariosThread = new(new ThreadStart(DoGetScenarios));
+            getScenariosThread.Start();
         }
 
         /// <summary>
-        /// Main logic here, will call 'Stop' to make sure theres no process already running and then 
-        /// it will start the -listScenarios process. It will then kill the process after 3 seconds 
-        /// (plenty of time for the script to run)
+        /// Get List of Stock Scenarios
+        /// </summary>
+        /// <returns>List of strings representing stock scenarios</returns>
+        private static List<string> GetStockScenarios()
+        {
+            List<string> scenarios = new();
+            const string campaignScen = "{ECC61978EDCC2B5A}Missions/23_Campaign.conf";
+            const string gmEdenScen = "{59AD59368755F41A}Missions/21_GM_Eden.conf";
+            const string arlandTutScen = "{94FDA7451242150B}Missions/103_Arland_Tutorial.conf";
+            const string gmArlandScen = "{2BBBE828037C6F4B}Missions/22_GM_Arland.conf";
+            const string campNthCentralScen = "{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf";
+            const string campSWCoastScen = "{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf";
+            const string combatOpsScen = "{DAA03C6E6099D50F}Missions/24_CombatOps.conf";
+            const string campArlandScen = "{C41618FD18E9D714}Missions/23_Campaign_Arland.conf";
+            const string combatOpsEveronScen = "{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf";
+            scenarios.Add(campaignScen);
+            scenarios.Add(gmEdenScen);
+            scenarios.Add(arlandTutScen);
+            scenarios.Add(gmArlandScen);
+            scenarios.Add(campNthCentralScen);
+            scenarios.Add(campSWCoastScen);
+            scenarios.Add(combatOpsScen);
+            scenarios.Add(campArlandScen);
+            scenarios.Add(combatOpsEveronScen);
+            return scenarios;
+        }
+
+        /// <summary>
+        /// Retrieve Scenarios from Enabled mods
         /// </summary>
         private void GetScenarios()
         {
-            StartServerProcess();
-
-            // Close the Server after 3 seconds as by this time we should already have our results
-            timer.Elapsed += new ElapsedEventHandler(TimerCompleted);
-            timer.Enabled = true;
-        }
-
-        /// <summary>
-        /// Logic to start the List Scenarios Process
-        /// </summary>
-        private void StartServerProcess()
-        {
-            try
+            List<string> scenarios = new();
+            foreach (Mod m in parentForm.GetEnabledModsList().Items)
             {
-                serverProcess.OutputDataReceived += SteamCmdDataReceived;
-                serverProcess.ErrorDataReceived += SteamCmdDataReceived;
-                serverProcess.Start();
-                serverProcess.BeginOutputReadLine();
-                serverProcess.BeginErrorReadLine();
-                reloadScenariosBtn.Enabled = false;
-                selectScenarioBtn.Enabled = false;
-                currentlySelectedLbl.Text = "Retrieving Scenarios...";
+                scenarios.AddRange(Mod.GetScenariosForMod(m.GetModID()));
             }
-            catch (Exception)
+
+            foreach (string scenId in scenarios)
             {
-                Console.WriteLine("Failed to kill process, probably because its already running.");
+                scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scenId)));
             }
         }
 
-        /// <summary>
-        /// Logic to stop the List Scenarios Process
-        /// </summary>
-        private void StopServerProcess()
+        private void DoGetScenarios()
         {
-            try
+            while (getScenariosThreadRunning)
             {
-                serverProcess.OutputDataReceived -= SteamCmdDataReceived;
-                serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
-                serverProcess.CancelOutputRead();
-                serverProcess.CancelErrorRead();
-                serverProcess.Kill();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to kill process, probably because its not running.");
-            }
-            reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = true));
-            selectScenarioBtn.Invoke((MethodInvoker)(() => selectScenarioBtn.Enabled = true));
-            currentlySelectedLbl.Invoke((MethodInvoker)(() => PrintSelectedScenario()));
-        }
-
-        /// <summary>
-        /// Handler for when data is received from the Std Output or Error from SteamCMD or the Arma Server processes
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SteamCmdDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.Data))
-            {
-                lock (scenariosOutput)
+                if (getScenariosRequested)
                 {
-                    scenariosOutput = e.Data;
-
-                    foreach (Match match in Regex.Matches(scenariosOutput, regexScenarioPattern, RegexOptions.None, TimeSpan.FromSeconds(1)))
+                    if (reloadScenariosBtn.IsHandleCreated)
                     {
-                        // Remove the extraneous SCRIPT stuff from the start of the scenario and only display the scenario name itself
-                        string scenarioRaw = match.Value;
-                        string[] scenarioSplit = scenarioRaw.Split(" :");
-                        scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scenarioSplit[1].Trim())));
+                        currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = "Fetching scenarios from the workshop..."));
+                        getScenariosRequested = false;
+                        reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = false));
+
+                        foreach (String scen in GetStockScenarios())
+                        {
+                            scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scen)));
+                        }
+
+                        GetScenarios();
+                        reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = true));
+                        currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
                     }
                 }
             }
@@ -151,17 +99,8 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void ReloadScenariosButtonClicked(object sender, EventArgs e)
         {
-            GetScenarios();
-        }
-
-        /// <summary>
-        /// Handler for when the Timer for the List Scenarios Server Process elapses
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="e"></param>
-        private void TimerCompleted(Object source, ElapsedEventArgs e)
-        {
-            StopServerProcess();
+            scenarioList.Items.Clear();
+            getScenariosRequested = true;
         }
 
         /// <summary>
@@ -223,38 +162,19 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
-        /// Handler for when the Scenario Selector form closes
-        /// Basically just cleans up the resources like resetting the timer and stopping any processes that were spawned
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            base.OnFormClosing(e);
-            timer.Stop();
-            timer.Enabled = false;
-            try
-            {
-                if (!serverProcess.HasExited)
-                {
-                    StopServerProcess();
-                }
-            }
-            catch (InvalidOperationException)
-            {
-                // Catch Invalid Operation Exception here, it's harmless, its just throwing to let us know that there is no process associated with the object yet,
-                // which makes sense as the Reforger Server Files haven't been installed yet if this is being thrown
-                Debug.WriteLine("Program attempted to close the Scenario ID process before the Reforger Server Files were installed. This can be safely ignored...");
-            }
-        }
-
-        /// <summary>
         /// Handler for when text changes in the Manual Scenario ID field
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ManualScenarioIDTextChanged(object sender, EventArgs e)
         {
-            _ = manualScenarioIdTextBox.Text != string.Empty || scenarioList.Items.Count > 0 ? selectScenarioBtn.Enabled = true : selectScenarioBtn.Enabled = false;
+            _ = manualScenarioIdTextBox.Text != string.Empty || scenarioList.Items.Count > 0 ?
+                selectScenarioBtn.Enabled = true : selectScenarioBtn.Enabled = false;
+        }
+
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            getScenariosThreadRunning = false;
         }
     }
 }

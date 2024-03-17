@@ -103,6 +103,7 @@
             Name = "ScenarioSelector";
             ShowIcon = false;
             Text = "Arma Reforger Dedicated Server Tool - Select Scenario";
+            FormClosing += OnFormClosing;
             ResumeLayout(false);
             PerformLayout();
         }
