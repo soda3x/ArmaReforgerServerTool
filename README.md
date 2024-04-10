@@ -23,3 +23,7 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 ![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/servertoolscreen4.png)
 
 ![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/servertoolscreen2.png)
+
+## Discord
+
+Come discuss with fellow users, seek help etc. on the Discord server [here](https://discord.gg/RmTH7gKdfK)
