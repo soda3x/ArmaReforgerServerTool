@@ -14,6 +14,13 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 ## Requirements
 - [dotNET 6 Runtime](https://dotnet.microsoft.com/en-us/download)
 
+## Discord
+
+Come discuss with fellow users, seek help etc. on the Discord server [here](https://discord.gg/RmTH7gKdfK)
+
+## Settings
+See [here](docs/SETTINGS.md) for more information on the settings in the app.
+
 ## Screenshots
 
 ![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/servertoolscreen.png)
@@ -23,7 +30,3 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 ![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/servertoolscreen4.png)
 
 ![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/servertoolscreen2.png)
-
-## Discord
-
-Come discuss with fellow users, seek help etc. on the Discord server [here](https://discord.gg/RmTH7gKdfK)
