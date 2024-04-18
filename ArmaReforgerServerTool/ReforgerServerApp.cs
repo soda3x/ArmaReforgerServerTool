@@ -260,11 +260,11 @@ namespace ReforgerServerApp
             StringBuilder sb = new();
             foreach (Mod mod in availableMods.Items)
             {
-                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()}");
+                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()},{mod.GetModVersion()}");
             }
             foreach (Mod mod in enabledMods.Items)
             {
-                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()}");
+                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()},{mod.GetModVersion()}");
             }
             File.WriteAllText(MOD_DATABASE_FILE, sb.ToString().Trim());
         }
@@ -286,7 +286,13 @@ namespace ReforgerServerApp
                     // Only attempt to add mods if the file isn't empty
                     if (split.Length > 1)
                     {
-                        Mod m = new(split[0], split[1]);
+                        // So we don't break old mod databases pre 0.8.3, if split[2] is null, just use latest 
+                        string modVers = "latest";
+                        if (split.Length > 2)
+                        {
+                            modVers = split[2];
+                        }
+                        Mod m = new(split[0], split[1], modVers);
                         if (!GetAvailableModsList().Items.Contains(m))
                         {
                             GetAvailableModsList().Items.Add(m);
@@ -1358,7 +1364,6 @@ namespace ReforgerServerApp
             {
                 ParameterName = "publicAddress",
                 ParameterFriendlyName = "Public Address",
-                ParameterValue = "0.0.0.0",
                 ParameterTooltip = Constants.SERVER_PARAM_PUBLIC_ADDRESS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(publicAddress);
