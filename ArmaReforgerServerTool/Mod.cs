@@ -1,11 +1,5 @@
 ﻿using HtmlAgilityPack;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace ReforgerServerApp
@@ -14,17 +8,29 @@ namespace ReforgerServerApp
     {
         readonly string ModID;
         readonly string ModName;
+        readonly string ModVersion;
+
+        private readonly static string LATEST_MOD_VER_STR = "latest";
+
+        public Mod(string modId, string modName, string modVersion)
+        {
+            ModID = modId;
+            ModName = modName;
+            ModVersion = modVersion;
+        }
 
         public Mod(string modId, string modName)
         {
             ModID = modId;
             ModName = modName;
+            ModVersion = LATEST_MOD_VER_STR;
         }
 
         public Mod(Mod m)
         {
             ModID = m.ModID;
             ModName = m.ModName;
+            ModVersion = m.ModVersion;
         }
 
         public string GetModID()
@@ -37,9 +43,14 @@ namespace ReforgerServerApp
             return ModName;
         }
 
+        public string GetModVersion()
+        {
+            return ModVersion;
+        }
+
         public override string ToString()
         {
-            return ModName;
+            return $"{ModName} | {ModVersion}";
         }
 
         public override bool Equals(object? obj)
@@ -54,7 +65,11 @@ namespace ReforgerServerApp
             }
             if (obj.GetType() == typeof(Mod))
             {
-                return GetModName().Equals(((Mod)obj).GetModName()) && GetModID().Equals(((Mod)obj).GetModID());
+                Mod other = (Mod) obj;
+                bool modNameSame = ModName.Equals(other.ModName);
+                bool modIdSame = ModID.Equals(other.ModID);
+                bool modVerSame = ModVersion.Equals(other.ModVersion);
+                return modNameSame && modIdSame && modVerSame;
             }
             return false;
         }
