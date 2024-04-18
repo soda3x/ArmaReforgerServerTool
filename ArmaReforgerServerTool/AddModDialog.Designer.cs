@@ -127,7 +127,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(484, 164);
+            ClientSize = new Size(484, 141);
             ControlBox = false;
             Controls.Add(label4);
             Controls.Add(label3);
@@ -138,7 +138,7 @@
             Controls.Add(modId);
             Controls.Add(label1);
             Controls.Add(modName);
-            MaximumSize = new Size(500, 220);
+            MaximumSize = new Size(500, 180);
             MinimumSize = new Size(500, 180);
             Name = "AddModDialog";
             SizeGripStyle = SizeGripStyle.Hide;
