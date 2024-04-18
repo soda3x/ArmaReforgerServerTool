@@ -1,4 +1,4 @@
-# Settings
+# Server Parameters
 
 ## Overview
 This page documents each configurable setting.
