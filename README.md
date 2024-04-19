@@ -27,3 +27,6 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 ## Discord
 
 Come discuss with fellow users, seek help etc. on the Discord server [here](https://discord.gg/RmTH7gKdfK)
+
+## Server Parameters
+See [here](docs/PARAMETERS.md) for more information on the parameters in the app.
