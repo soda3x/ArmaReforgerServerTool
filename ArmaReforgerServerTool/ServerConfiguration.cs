@@ -135,7 +135,16 @@ namespace ReforgerServerApp
                 {
                     sb.AppendLine("{");
                     sb.AppendLine($"\"modId\": \"{Mods[i].GetModID()}\",");
-                    sb.AppendLine($"\"name\": \"{Mods[i].GetModName()}\"");
+                    // Add Mod Version if it is anything other than 'latest'
+                    if (!Mods[i].GetModVersion().Equals("latest"))
+                    {
+                        sb.AppendLine($"\"name\": \"{Mods[i].GetModName()}\",");
+                        sb.AppendLine($"\"version\": \"{Mods[i].GetModVersion()}\"");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"\"name\": \"{Mods[i].GetModName()}\"");
+                    }
                     if (i == Mods.Count - 1)
                     {
                         sb.AppendLine("}");
@@ -218,7 +227,7 @@ namespace ReforgerServerApp
             StringBuilder sb = new();
             foreach (Mod m in Mods)
             {
-                sb.AppendLine($"modId,{m.GetModID()},modName,{m.GetModName()}");
+                sb.AppendLine($"modId,{m.GetModID()},modName,{m.GetModName()},modVersion,{m.GetModVersion()}");
             }
             return sb.ToString();
         }

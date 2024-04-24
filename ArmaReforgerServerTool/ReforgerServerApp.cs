@@ -159,6 +159,32 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
+        /// Event Handler for when the Selected Mod changes in the Available Mods
+        /// list
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AvailableModsSelectedIndexChanged(object sender, EventArgs e)
+        {
+            _ = availableMods.SelectedItem != null ? editModBtn.Enabled = true : editModBtn.Enabled = false;
+            _ = availableMods.SelectedItem != null ? removeModBtn.Enabled = true : removeModBtn.Enabled = false;
+        }
+
+        /// <summary>
+        /// Event Handler for when the Edit Mod button is pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EditModBtnPressed(object sender, EventArgs e)
+        {
+            if (availableMods.SelectedItem != null)
+            {
+                AddModDialog addModDialog = new(this, (Mod)availableMods.SelectedItem, availableMods.SelectedIndex);
+                addModDialog.ShowDialog();
+            }
+        }
+
+        /// <summary>
         /// Remove the selected mod from the Available Mods ListBox when the "Remove Mod" button is pressed.
         /// </summary>
         /// <param name="sender"></param>
@@ -166,6 +192,7 @@ namespace ReforgerServerApp
         private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
         {
             GetAvailableModsList().Items.Remove(GetAvailableModsList().SelectedItem);
+            WriteModsDatabase();
         }
 
         /// <summary>
@@ -260,11 +287,11 @@ namespace ReforgerServerApp
             StringBuilder sb = new();
             foreach (Mod mod in availableMods.Items)
             {
-                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()}");
+                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()},{mod.GetModVersion()}");
             }
             foreach (Mod mod in enabledMods.Items)
             {
-                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()}");
+                sb.AppendLine($"{mod.GetModID()},{mod.GetModName()},{mod.GetModVersion()}");
             }
             File.WriteAllText(MOD_DATABASE_FILE, sb.ToString().Trim());
         }
@@ -286,7 +313,13 @@ namespace ReforgerServerApp
                     // Only attempt to add mods if the file isn't empty
                     if (split.Length > 1)
                     {
-                        Mod m = new(split[0], split[1]);
+                        // So we don't break old mod databases pre 0.8.3, if split[2] is null, just use latest 
+                        string modVers = "latest";
+                        if (split.Length > 2)
+                        {
+                            modVers = split[2];
+                        }
+                        Mod m = new(split[0], split[1], modVers);
                         if (!GetAvailableModsList().Items.Contains(m))
                         {
                             GetAvailableModsList().Items.Add(m);
@@ -382,6 +415,15 @@ namespace ReforgerServerApp
                     foreach (string mod in modEntries)
                     {
                         string[] modEntry = mod.Split(',');
+                        string modVers = "latest";
+                        if (modEntry.Length > 4)
+                        {
+                            modVers = modEntry[5];
+                        }
+                        if (!modVers.Equals("latest"))
+                        {
+                            builder.AddModToConfiguration(new(modEntry[1], modEntry[3], modEntry[5]));
+                        }
                         builder.AddModToConfiguration(new(modEntry[1], modEntry[3]));
                     }
                 }
@@ -1358,7 +1400,6 @@ namespace ReforgerServerApp
             {
                 ParameterName = "publicAddress",
                 ParameterFriendlyName = "Public Address",
-                ParameterValue = "0.0.0.0",
                 ParameterTooltip = Constants.SERVER_PARAM_PUBLIC_ADDRESS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(publicAddress);

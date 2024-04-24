@@ -84,7 +84,7 @@
             "\tWhen a mismatch occurs, it is possible to point at particular entity or component where things start to differ.\r\n" +
             "\tWhen developing locally (ie. both server and client run on the same machine), it is fine to disable fast validation to more easily pin point source of the problem.";
 
-        public static string SERVER_PARAM_SERVER_MIN_GRASS_DISTANCE_TOOLTIP_STR = "Minimum grass distance in meters. If set to 0 no distance is forced upon clients.";
+        public static string SERVER_PARAM_SERVER_MIN_GRASS_DISTANCE_TOOLTIP_STR = "Minimum grass distance in meters. Lowest allowed value is 50";
 
         public static string SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_TOOLTIP_STR = "Maximum view distance enforced by the server.";
 
