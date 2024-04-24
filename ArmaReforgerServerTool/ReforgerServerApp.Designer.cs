@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReforgerServerApp));
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            editModBtn = new Button();
             serverRunningLabel = new Label();
             addModBtn = new Button();
             removeModBtn = new Button();
@@ -131,6 +132,7 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(editModBtn);
             tabPage1.Controls.Add(serverRunningLabel);
             tabPage1.Controls.Add(addModBtn);
             tabPage1.Controls.Add(removeModBtn);
@@ -146,12 +148,24 @@
             tabPage1.Text = "Server Configuration";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // editModBtn
+            // 
+            editModBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            editModBtn.Enabled = false;
+            editModBtn.Location = new Point(85, 721);
+            editModBtn.Name = "editModBtn";
+            editModBtn.Size = new Size(132, 23);
+            editModBtn.TabIndex = 51;
+            editModBtn.Text = "Edit Selected Mod";
+            editModBtn.UseVisualStyleBackColor = true;
+            editModBtn.Click += EditModBtnPressed;
+            // 
             // serverRunningLabel
             // 
             serverRunningLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             serverRunningLabel.AutoSize = true;
             serverRunningLabel.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            serverRunningLabel.Location = new Point(312, 723);
+            serverRunningLabel.Location = new Point(504, 723);
             serverRunningLabel.Name = "serverRunningLabel";
             serverRunningLabel.Size = new Size(128, 17);
             serverRunningLabel.TabIndex = 50;
@@ -171,7 +185,8 @@
             // removeModBtn
             // 
             removeModBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            removeModBtn.Location = new Point(85, 721);
+            removeModBtn.Enabled = false;
+            removeModBtn.Location = new Point(223, 721);
             removeModBtn.Name = "removeModBtn";
             removeModBtn.Size = new Size(146, 23);
             removeModBtn.TabIndex = 48;
@@ -275,6 +290,7 @@
             availableMods.Name = "availableMods";
             availableMods.Size = new Size(294, 649);
             availableMods.TabIndex = 0;
+            availableMods.SelectedIndexChanged += AvailableModsSelectedIndexChanged;
             // 
             // groupBox1
             // 
@@ -1009,5 +1025,6 @@
         private CheckBox loadSessionSave;
         private Button editAdminListBtn;
         private FlowLayoutPanel serverParameters;
+        private Button editModBtn;
     }
 }

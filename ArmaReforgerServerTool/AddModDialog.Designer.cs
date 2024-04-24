@@ -73,14 +73,14 @@
             modId.Location = new Point(117, 41);
             modId.Name = "modId";
             modId.Size = new Size(355, 23);
-            modId.TabIndex = 2;
+            modId.TabIndex = 1;
             // 
             // addBtn
             // 
             addBtn.Location = new Point(397, 106);
             addBtn.Name = "addBtn";
             addBtn.Size = new Size(75, 23);
-            addBtn.TabIndex = 6;
+            addBtn.TabIndex = 4;
             addBtn.Text = "Add";
             addBtn.UseVisualStyleBackColor = true;
             addBtn.Click += AddBtnPressed;
@@ -90,7 +90,7 @@
             cancelBtn.Location = new Point(316, 106);
             cancelBtn.Name = "cancelBtn";
             cancelBtn.Size = new Size(75, 23);
-            cancelBtn.TabIndex = 7;
+            cancelBtn.TabIndex = 3;
             cancelBtn.Text = "Cancel";
             cancelBtn.UseVisualStyleBackColor = true;
             cancelBtn.Click += CancelBtnPressed;
@@ -111,7 +111,7 @@
             modVers.Location = new Point(117, 70);
             modVers.Name = "modVers";
             modVers.Size = new Size(355, 23);
-            modVers.TabIndex = 8;
+            modVers.TabIndex = 2;
             // 
             // label4
             // 
@@ -142,7 +142,7 @@
             MinimumSize = new Size(500, 180);
             Name = "AddModDialog";
             SizeGripStyle = SizeGripStyle.Hide;
-            Text = "Arma Refoger Dedicated Server Tool - Add Mod";
+            Text = "Arma Reforger Dedicated Server Tool - Add Mod";
             ResumeLayout(false);
             PerformLayout();
         }
