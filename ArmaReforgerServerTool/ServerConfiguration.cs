@@ -227,7 +227,7 @@ namespace ReforgerServerApp
             StringBuilder sb = new();
             foreach (Mod m in Mods)
             {
-                sb.AppendLine($"modId,{m.GetModID()},modName,{m.GetModName()}");
+                sb.AppendLine($"modId,{m.GetModID()},modName,{m.GetModName()},modVersion,{m.GetModVersion()}");
             }
             return sb.ToString();
         }

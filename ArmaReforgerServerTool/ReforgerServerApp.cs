@@ -159,6 +159,32 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
+        /// Event Handler for when the Selected Mod changes in the Available Mods
+        /// list
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AvailableModsSelectedIndexChanged(object sender, EventArgs e)
+        {
+            _ = availableMods.SelectedItem != null ? editModBtn.Enabled = true : editModBtn.Enabled = false;
+            _ = availableMods.SelectedItem != null ? removeModBtn.Enabled = true : removeModBtn.Enabled = false;
+        }
+
+        /// <summary>
+        /// Event Handler for when the Edit Mod button is pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EditModBtnPressed(object sender, EventArgs e)
+        {
+            if (availableMods.SelectedItem != null)
+            {
+                AddModDialog addModDialog = new(this, (Mod)availableMods.SelectedItem, availableMods.SelectedIndex);
+                addModDialog.ShowDialog();
+            }
+        }
+
+        /// <summary>
         /// Remove the selected mod from the Available Mods ListBox when the "Remove Mod" button is pressed.
         /// </summary>
         /// <param name="sender"></param>
@@ -166,6 +192,7 @@ namespace ReforgerServerApp
         private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
         {
             GetAvailableModsList().Items.Remove(GetAvailableModsList().SelectedItem);
+            WriteModsDatabase();
         }
 
         /// <summary>
@@ -388,6 +415,15 @@ namespace ReforgerServerApp
                     foreach (string mod in modEntries)
                     {
                         string[] modEntry = mod.Split(',');
+                        string modVers = "latest";
+                        if (modEntry.Length > 4)
+                        {
+                            modVers = modEntry[5];
+                        }
+                        if (!modVers.Equals("latest"))
+                        {
+                            builder.AddModToConfiguration(new(modEntry[1], modEntry[3], modEntry[5]));
+                        }
                         builder.AddModToConfiguration(new(modEntry[1], modEntry[3]));
                     }
                 }
