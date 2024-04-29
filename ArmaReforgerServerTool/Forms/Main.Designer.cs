@@ -1,6 +1,6 @@
 ﻿namespace ReforgerServerApp
 {
-    partial class ReforgerServerApp
+    partial class Main
     {
         /// <summary>
         ///  Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReforgerServerApp));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             editModBtn = new Button();

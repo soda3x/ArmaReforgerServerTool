@@ -4,22 +4,19 @@ namespace ReforgerServerApp
 {
     public partial class ScenarioSelector : Form
     {
-        private ServerConfiguration serverConfig;
-        private ReforgerServerApp parentForm;
-        Thread getScenariosThread;
-        private bool getScenariosThreadRunning = true;
-        private bool getScenariosRequested = false;
+        private readonly Main    m_parentForm;
+        private readonly Thread  m_getScenariosThread;
+        private bool             m_getScenariosThreadRunning = true;
+        private bool             m_getScenariosRequested     = false;
 
-        public ScenarioSelector(ReforgerServerApp parent, ServerConfiguration sc)
+        public ScenarioSelector(Main parent)
         {
             InitializeComponent();
-            serverConfig = sc;
             PrintSelectedScenario();
-            parentForm = parent;
-
-            getScenariosRequested = true;
-            getScenariosThread = new(new ThreadStart(DoGetScenarios));
-            getScenariosThread.Start();
+            m_parentForm            = parent;
+            m_getScenariosRequested = true;
+            m_getScenariosThread    = new(new ThreadStart(DoGetScenarios));
+            m_getScenariosThread.Start();
         }
 
         /// <summary>
@@ -29,14 +26,14 @@ namespace ReforgerServerApp
         private static List<string> GetStockScenarios()
         {
             List<string> scenarios = new();
-            const string campaignScen = "{ECC61978EDCC2B5A}Missions/23_Campaign.conf";
-            const string gmEdenScen = "{59AD59368755F41A}Missions/21_GM_Eden.conf";
-            const string arlandTutScen = "{94FDA7451242150B}Missions/103_Arland_Tutorial.conf";
-            const string gmArlandScen = "{2BBBE828037C6F4B}Missions/22_GM_Arland.conf";
-            const string campNthCentralScen = "{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf";
-            const string campSWCoastScen = "{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf";
-            const string combatOpsScen = "{DAA03C6E6099D50F}Missions/24_CombatOps.conf";
-            const string campArlandScen = "{C41618FD18E9D714}Missions/23_Campaign_Arland.conf";
+            const string campaignScen        = "{ECC61978EDCC2B5A}Missions/23_Campaign.conf";
+            const string gmEdenScen          = "{59AD59368755F41A}Missions/21_GM_Eden.conf";
+            const string arlandTutScen       = "{94FDA7451242150B}Missions/103_Arland_Tutorial.conf";
+            const string gmArlandScen        = "{2BBBE828037C6F4B}Missions/22_GM_Arland.conf";
+            const string campNthCentralScen  = "{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf";
+            const string campSWCoastScen     = "{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf";
+            const string combatOpsScen       = "{DAA03C6E6099D50F}Missions/24_CombatOps.conf";
+            const string campArlandScen      = "{C41618FD18E9D714}Missions/23_Campaign_Arland.conf";
             const string combatOpsEveronScen = "{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf";
             scenarios.Add(campaignScen);
             scenarios.Add(gmEdenScen);
@@ -56,7 +53,7 @@ namespace ReforgerServerApp
         private void GetScenarios()
         {
             List<string> scenarios = new();
-            foreach (Mod m in parentForm.GetEnabledModsList().Items)
+            foreach (Mod m in m_parentForm.GetEnabledModsList().Items)
             {
                 scenarios.AddRange(Mod.GetScenariosForMod(m.GetModID()));
             }
@@ -69,14 +66,14 @@ namespace ReforgerServerApp
 
         private void DoGetScenarios()
         {
-            while (getScenariosThreadRunning)
+            while (m_getScenariosThreadRunning)
             {
-                if (getScenariosRequested)
+                if (m_getScenariosRequested)
                 {
                     if (reloadScenariosBtn.IsHandleCreated)
                     {
                         currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = "Fetching scenarios from the workshop..."));
-                        getScenariosRequested = false;
+                        m_getScenariosRequested = false;
                         reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = false));
 
                         foreach (String scen in GetStockScenarios())
@@ -100,7 +97,7 @@ namespace ReforgerServerApp
         private void ReloadScenariosButtonClicked(object sender, EventArgs e)
         {
             scenarioList.Items.Clear();
-            getScenariosRequested = true;
+            m_getScenariosRequested = true;
         }
 
         /// <summary>
@@ -113,17 +110,16 @@ namespace ReforgerServerApp
         {
             if (manualScenarioIdTextBox.Text != String.Empty)
             {
-                serverConfig.ScenarioId = manualScenarioIdTextBox.Text;
+                ConfigurationManager.GetInstance().GetServerConfiguration().root.game.scenarioId = manualScenarioIdTextBox.Text;
             }
             else
             {
                 if (scenarioList.SelectedItem != null)
                 {
-                    serverConfig.ScenarioId = scenarioList.SelectedItem.ToString();
-
+                    ConfigurationManager.GetInstance().GetServerConfiguration().root.game.scenarioId = scenarioList.SelectedItem.ToString();
                 }
             }
-            parentForm.RefreshLoadedScenario();
+            m_parentForm.RefreshLoadedScenario();
             this.Close();
         }
 
@@ -151,9 +147,10 @@ namespace ReforgerServerApp
         /// </summary>
         private void PrintSelectedScenario()
         {
-            if (serverConfig.ScenarioId != null && serverConfig.ScenarioId != string.Empty)
+            string scenId = ConfigurationManager.GetInstance().GetServerConfiguration().root.game.scenarioId;
+            if (scenId != null && scenId != string.Empty)
             {
-                currentlySelectedLbl.Text = $"{Constants.CURRENTLY_SELECTED_STR} {serverConfig.ScenarioId}";
+                currentlySelectedLbl.Text = $"{Constants.CURRENTLY_SELECTED_STR} {scenId}";
             }
             else
             {
@@ -174,7 +171,7 @@ namespace ReforgerServerApp
 
         private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            getScenariosThreadRunning = false;
+            m_getScenariosThreadRunning = false;
         }
     }
 }
