@@ -13,8 +13,6 @@ namespace ReforgerServerApp
 {
     public partial class Main : Form
     {
-        
-
         public Main()
         {
             InitializeComponent();
@@ -32,6 +30,7 @@ namespace ReforgerServerApp
             loadedScenarioLabel.Text = "No scenario ID chosen.";
 
             UpdateSteamCmdInstallStatus();
+
             fpsLimitUpDown.Enabled = false;
             restartIntervalUpDown.Enabled = false;
             restartUnitsComboBox.Enabled = false;
@@ -42,6 +41,7 @@ namespace ReforgerServerApp
             streamingBudgetUpDown.Enabled = false;
             streamsDeltaUpDown.Enabled = false;
             sessionSave.Enabled = false;
+
             Utilities.AlphabetiseModListBox(GetAvailableModsList());
             Utilities.AlphabetiseModListBox(GetEnabledModsList());
 
@@ -709,17 +709,25 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_PUBLIC_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(publicPort);
-            ServerParameterNumeric steamQueryPort = new()
+            ServerParameterString a2sAddress = new()
             {
-                ParameterName = "steamQueryPort",
-                ParameterFriendlyName = "Steam Query Port",
+                ParameterName = "address",
+                ParameterFriendlyName = "A2S Address",
+                ParameterValue = "0.0.0.0",
+                ParameterTooltip = Constants.SERVER_PARAM_A2S_ADDRESS_TOOLTIP_STR
+            };
+            serverParameters.Controls.Add(a2sAddress);
+            ServerParameterNumeric a2sPort = new()
+            {
+                ParameterName = "port",
+                ParameterFriendlyName = "A2S Port",
                 ParameterIncrement = 1,
                 ParameterMin = 1,
                 ParameterMax = 65535,
                 ParameterValue = 17777,
-                ParameterTooltip = Constants.SERVER_PARAM_STEAM_QUERY_PORT_TOOLTIP_STR
+                ParameterTooltip = Constants.SERVER_PARAM_A2S_PORT_TOOLTIP_STR
             };
-            serverParameters.Controls.Add(steamQueryPort);
+            serverParameters.Controls.Add(a2sPort);
             ServerParameterNumeric playerSaveTime = new()
             {
                 ParameterName = "playerSaveTime",

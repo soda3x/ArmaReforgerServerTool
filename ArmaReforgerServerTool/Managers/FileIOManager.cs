@@ -114,7 +114,7 @@ namespace ReforgerServerApp.Managers
         {
             using OpenFileDialog ofd = new();
             ofd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
-            ofd.Filter = "Properties files (*.json)|*.json";
+            ofd.Filter = "JSON (*.json)|*.json";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string filePath = ofd.FileName;

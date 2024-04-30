@@ -50,53 +50,22 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
-        /// Get Config Parameter for Server Configuration file (dictionary), if it's not present, use default value for the parameter
-        /// </summary>
-        /// <param name="paramKey"></param>
-        /// <returns>Value to set config parameter to (likely either an int, boolean or string)</returns>
-        private object? GetConfigParameterOrDefault(string paramKey)
-        {
-            try
-            {
-                return m_serverParamsDictionary[paramKey];
-            }
-            catch (Exception)
-            {
-                foreach (ServerParameter sp in m_serverParamsDictionary.Values)
-                {
-                    if (sp.ParameterName == paramKey)
-                    {
-                        return sp.ParameterValue;
-                    }
-                }
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// This method populates the GUI controls from an imported comma-separated settings file.
-        /// This method also calls the alphabetise list methods and will write the imported mods to the mod_database.txt file.`
+        /// This method populates the GUI controls from the server config model
         /// </summary>
         /// <param name="input"></param>
         public void PopulateServerConfiguration(string input)
         {
-            string[] configLines = input.Trim().Split(Environment.NewLine);
-            Dictionary<string, string> configParams = new();
-
-            foreach (string line in configLines)
-            {
-                string[] splitLine = line.Split("=");
-                configParams.Add(splitLine[0], splitLine[1]);
-            }
-
             try
             {
-                m_serverConfig = JsonSerializer.Deserialize<ServerConfiguration>(input)!;
+                m_serverConfig.SetServerConfigurationFromJson(input);
 
                 m_serverParamsDictionary["bindAddress"].ParameterValue   = m_serverConfig.root.bindAddress!;
                 m_serverParamsDictionary["bindPort"].ParameterValue      = m_serverConfig.root.bindPort;
                 m_serverParamsDictionary["publicAddress"].ParameterValue = m_serverConfig.root.publicAddress!;
                 m_serverParamsDictionary["publicPort"].ParameterValue    = m_serverConfig.root.publicPort;
+
+                m_serverParamsDictionary["address"].ParameterValue = m_serverConfig.root.a2s.address;
+                m_serverParamsDictionary["port"].ParameterValue    = m_serverConfig.root.a2s.port;
 
                 m_serverParamsDictionary["passwordAdmin"].ParameterValue = m_serverConfig.root.game.passwordAdmin!;
                 m_serverParamsDictionary["name"].ParameterValue          = m_serverConfig.root.game.name!;
@@ -105,7 +74,7 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["maxPlayers"].ParameterValue    = m_serverConfig.root.game.maxPlayers;
                 m_serverParamsDictionary["visible"].ParameterValue       = m_serverConfig.root.game.visible;
                 m_serverParamsDictionary["crossPlatform"].ParameterValue = m_serverConfig.root.game.crossPlatform;
-                // TODO need to add supported platforms
+                m_serverConfig.root.game.supportedPlatforms              = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
 
                 m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue      = m_serverConfig.root.game.gameProperties.serverMaxViewDistance;
                 m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue     = m_serverConfig.root.game.gameProperties.serverMinGrassDistance;
@@ -116,7 +85,6 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["VONCanTransmitCrossFaction"].ParameterValue = m_serverConfig.root.game.gameProperties.vonCanTransmitCrossFaction;
                 m_serverParamsDictionary["VONDisableUI"].ParameterValue               = m_serverConfig.root.game.gameProperties.vonDisableUI;
                 m_serverParamsDictionary["VONDisableDirectSpeechUI"].ParameterValue   = m_serverConfig.root.game.gameProperties.vonDisableDirectSpeechUI;
-                //m_serverParamsDictionary["steamQueryPort"].ParameterValue = // TODO: Need to change this to A2S
 
                 m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue  = m_serverConfig.root.operating.lobbyPlayerSynchronise;
                 m_serverParamsDictionary["playerSaveTime"].ParameterValue          = m_serverConfig.root.operating.playerSaveTime;
@@ -138,8 +106,7 @@ namespace ReforgerServerApp
                     }
                 }
 
-                Utilities.AlphabetiseModList(ref m_availableMods);
-                Utilities.AlphabetiseModList(ref m_enabledMods);
+                AlphabetiseModLists();
 
                 FileIOManager.GetInstance().WriteModsDatabase();
             }
@@ -155,49 +122,48 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
-        /// This method is used to create a server configuration object, from the GUI controls.
+        /// This method is used to populate the server config model from the GUI controls.
         /// </summary>
-        /// <returns></returns>
         public void CreateConfiguration()
         {
-            ServerConfiguration sc = new();
+            m_serverConfig.root.bindAddress   = (string)m_serverParamsDictionary["bindAddress"].ParameterValue;
+            m_serverConfig.root.bindPort      = Convert.ToInt32(m_serverParamsDictionary["bindPort"].ParameterValue);
+            m_serverConfig.root.publicAddress = (string)m_serverParamsDictionary["publicAddress"].ParameterValue;
+            m_serverConfig.root.publicPort    = Convert.ToInt32(m_serverParamsDictionary["publicPort"].ParameterValue);
 
-            sc.root.bindAddress   = (string)m_serverParamsDictionary["bindAddress"].ParameterValue;
-            sc.root.bindPort      = Convert.ToInt32(m_serverParamsDictionary["bindPort"].ParameterValue);
-            sc.root.publicAddress = (string)m_serverParamsDictionary["publicAddress"].ParameterValue;
-            sc.root.publicPort    = Convert.ToInt32(m_serverParamsDictionary["publicPort"].ParameterValue);
+            m_serverConfig.root.a2s.port    = Convert.ToInt32(m_serverParamsDictionary["port"].ParameterValue);
+            m_serverConfig.root.a2s.address = (string)m_serverParamsDictionary["address"].ParameterValue;
 
-            sc.root.game.passwordAdmin = (string)m_serverParamsDictionary["passwordAdmin"].ParameterValue;
-            sc.root.game.name          = (string)m_serverParamsDictionary["name"].ParameterValue;
-            sc.root.game.password      = (string)m_serverParamsDictionary["password"].ParameterValue;
-            //sc.root.game.scenarioId    = loadedScenarioLabel.Text; // TODO: How do i get the loaded scenario label
-            sc.root.game.maxPlayers    = Convert.ToInt32(m_serverParamsDictionary["maxPlayers"].ParameterValue);
-            sc.root.game.visible       = (bool)m_serverParamsDictionary["visible"].ParameterValue;
-            sc.root.game.admins        = Array.Empty<string>(); // TODO??
-            sc.root.game.crossPlatform = (bool)m_serverParamsDictionary["crossPlatform"].ParameterValue;
-            sc.root.game.mods          = m_enabledMods.ToArray();
-            // TODO Add supported platforms
+            m_serverConfig.root.game.passwordAdmin      = (string)m_serverParamsDictionary["passwordAdmin"].ParameterValue;
+            m_serverConfig.root.game.name               = (string)m_serverParamsDictionary["name"].ParameterValue;
+            m_serverConfig.root.game.password           = (string)m_serverParamsDictionary["password"].ParameterValue;
+            m_serverConfig.root.game.maxPlayers         = Convert.ToInt32(m_serverParamsDictionary["maxPlayers"].ParameterValue);
+            m_serverConfig.root.game.visible            = (bool)m_serverParamsDictionary["visible"].ParameterValue;
+            m_serverConfig.root.game.crossPlatform      = (bool)m_serverParamsDictionary["crossPlatform"].ParameterValue;
+            m_serverConfig.root.game.mods               = m_enabledMods.ToArray();
+            m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
+            // m_serverConfig.root.game.admins     - Don't need to set admins as its set directly from the Edit Admin list Form
+            // m_serverConfig.root.game.scenarioId - Don't need to set scenarioId as its set directly from the Scenario Selector Form
 
-            sc.root.game.gameProperties.serverMaxViewDistance      = Convert.ToInt32(m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue);
-            sc.root.game.gameProperties.serverMinGrassDistance     = Convert.ToInt32(m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue);
-            sc.root.game.gameProperties.networkViewDistance        = Convert.ToInt32(m_serverParamsDictionary["networkViewDistance"].ParameterValue);
-            sc.root.game.gameProperties.disableThirdPerson         = (bool)m_serverParamsDictionary["disableThirdPerson"].ParameterValue;
-            sc.root.game.gameProperties.fastValidation             = (bool)m_serverParamsDictionary["fastValidation"].ParameterValue;
-            sc.root.game.gameProperties.battlEye                   = (bool)m_serverParamsDictionary["battlEye"].ParameterValue;
-            sc.root.game.gameProperties.vonDisableUI               = (bool)m_serverParamsDictionary["VONDisableUI"].ParameterValue;
-            sc.root.game.gameProperties.vonDisableDirectSpeechUI   = (bool)m_serverParamsDictionary["VONDisableDirectSpeechUI"].ParameterValue;
-            sc.root.game.gameProperties.missionHeader              = new Dictionary<string, string>(); // TODO
-            sc.root.game.gameProperties.vonCanTransmitCrossFaction = (bool)m_serverParamsDictionary["VONCanTransmitCrossFaction"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.serverMaxViewDistance      = Convert.ToInt32(m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue);
+            m_serverConfig.root.game.gameProperties.serverMinGrassDistance     = Convert.ToInt32(m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue);
+            m_serverConfig.root.game.gameProperties.networkViewDistance        = Convert.ToInt32(m_serverParamsDictionary["networkViewDistance"].ParameterValue);
+            m_serverConfig.root.game.gameProperties.disableThirdPerson         = (bool)m_serverParamsDictionary["disableThirdPerson"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.fastValidation             = (bool)m_serverParamsDictionary["fastValidation"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.battlEye                   = (bool)m_serverParamsDictionary["battlEye"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.vonDisableUI               = (bool)m_serverParamsDictionary["VONDisableUI"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.vonDisableDirectSpeechUI   = (bool)m_serverParamsDictionary["VONDisableDirectSpeechUI"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.vonCanTransmitCrossFaction = (bool)m_serverParamsDictionary["VONCanTransmitCrossFaction"].ParameterValue;
+            // m_serverConfig.root.game.gameProperties.missionHeader - Don't need to set missionHeader as its set directly from the Edit Mission Header Form
 
-            //.WithSteamQueryPort(Convert.ToInt32(m_serverParamsDictionary["steamQueryPort"].ParameterValue)) TODO: Change to A2S
-            sc.root.operating.lobbyPlayerSynchronise  = (bool)m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue;
-            sc.root.operating.playerSaveTime          = Convert.ToInt32(m_serverParamsDictionary["playerSaveTime"].ParameterValue);
-            sc.root.operating.aiLimit                 = Convert.ToInt32(m_serverParamsDictionary["aiLimit"].ParameterValue);
-            sc.root.operating.slotReservationTimeout  = Convert.ToInt32(m_serverParamsDictionary["slotReservationTimeout"].ParameterValue);
-            sc.root.operating.disableNavmeshStreaming = (bool)m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
-            sc.root.operating.disableServerShutdown   = (bool)m_serverParamsDictionary["disableServerShutdown"].ParameterValue;
-            sc.root.operating.disableCrashReporter    = (bool)m_serverParamsDictionary["disableCrashReporter"].ParameterValue;
-            sc.root.operating.disableAI               = (bool)m_serverParamsDictionary["disableAI"].ParameterValue;
+            m_serverConfig.root.operating.lobbyPlayerSynchronise  = (bool)m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue;
+            m_serverConfig.root.operating.playerSaveTime          = Convert.ToInt32(m_serverParamsDictionary["playerSaveTime"].ParameterValue);
+            m_serverConfig.root.operating.aiLimit                 = Convert.ToInt32(m_serverParamsDictionary["aiLimit"].ParameterValue);
+            m_serverConfig.root.operating.slotReservationTimeout  = Convert.ToInt32(m_serverParamsDictionary["slotReservationTimeout"].ParameterValue);
+            m_serverConfig.root.operating.disableNavmeshStreaming = (bool)m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
+            m_serverConfig.root.operating.disableServerShutdown   = (bool)m_serverParamsDictionary["disableServerShutdown"].ParameterValue;
+            m_serverConfig.root.operating.disableCrashReporter    = (bool)m_serverParamsDictionary["disableCrashReporter"].ParameterValue;
+            m_serverConfig.root.operating.disableAI               = (bool)m_serverParamsDictionary["disableAI"].ParameterValue;
         }
 
         /// <summary>

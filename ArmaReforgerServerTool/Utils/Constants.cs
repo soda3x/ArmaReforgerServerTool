@@ -44,6 +44,9 @@
         public static string SERVER_FILES_NOT_FOUND_SCENARIO_SELECT_STR = "Arma Reforger server files not found, you will need to install them from the Server Management tab first.";
         public static string SELECT_SCENARIO_STR = "Select a scenario from the list";
 
+        public static string SUPPORTED_PLATFORM_PC   = "PLATFORM_PC";
+        public static string SUPPORTED_PLATFORM_XBOX = "PLATFORM_XBL";
+
         public static string SERVER_PARAM_DISABLE_AI_TOOLTIP_STR = "If enabled, the server will prevent initialization and ticking of AIWorld and its components.\r\n" +
             "Will completely disable AI functionality on the server.";
 
@@ -101,7 +104,10 @@
 
         public static string SERVER_PARAM_NAME_TOOLTIP_STR = "Server name (what the Server will be seen as in the Server Browser)";
 
-        public static string SERVER_PARAM_STEAM_QUERY_PORT_TOOLTIP_STR = "Change Steam Query UDP port on which game listens to A2S requests.";
+        public static string SERVER_PARAM_A2S_ADDRESS_TOOLTIP_STR = "IP address to which A2S socket will be bound.\r\n" +
+            "It can be used to restrict A2S queries to a particular network interface. ";
+
+        public static string SERVER_PARAM_A2S_PORT_TOOLTIP_STR = "Change Steam Query UDP port on which game listens to A2S requests.";
 
         public static string SERVER_PARAM_PUBLIC_PORT_TOOLTIP_STR = "UDP port registered in backend. If the server itself has a public IP address, this should be the same value as in bindPort.\r\n" +
             "Otherwise, this is the UDP port that is forwarded to the server.";
