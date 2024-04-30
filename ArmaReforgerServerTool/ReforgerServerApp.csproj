@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="arma_icon_white.ico" />
+    <Content Include="Resources\arma_icon_white.ico" />
   </ItemGroup>
 
   <ItemGroup>

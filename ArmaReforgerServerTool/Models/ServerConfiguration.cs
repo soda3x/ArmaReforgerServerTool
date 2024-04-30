@@ -104,6 +104,7 @@ namespace ReforgerServerApp
         public ServerConfiguration()
         {
             root = new();
+            root.game.admins = Array.Empty<string>();
         }
 
         /// <summary>
