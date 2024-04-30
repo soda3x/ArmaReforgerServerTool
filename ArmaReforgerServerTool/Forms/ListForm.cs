@@ -21,22 +21,14 @@
 
         private void CloseBtnClicked(object sender, EventArgs e)
         {
-            if (adminListView.Items.Count == 0)
+            string[] newAdmins = new string[adminListView.Items.Count];
+
+            for (int i = 0; i < adminListView.Items.Count; i++)
             {
-                ConfigurationManager.GetInstance().GetServerConfiguration().root.game.admins = Array.Empty<string>();
+                newAdmins[i] = adminListView.Items[i].Text;
             }
-            string[] newAdmins = Array.Empty<string>();
-            foreach (ListViewItem lvi in adminListView.Items)
-            {
-                if (lvi.Text.Trim() != string.Empty)
-                {
-                    newAdmins = (string[]) newAdmins.Append<string>(lvi.Text.Trim());
-                }
-            }
-            if (newAdmins != Array.Empty<string>())
-            {
-                ConfigurationManager.GetInstance().GetServerConfiguration().root.game.admins = newAdmins;
-            }
+
+            ConfigurationManager.GetInstance().GetServerConfiguration().root.game.admins = newAdmins;
             Close();
         }
 
