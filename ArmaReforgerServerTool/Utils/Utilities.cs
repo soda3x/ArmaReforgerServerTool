@@ -1,4 +1,6 @@
-﻿namespace ReforgerServerApp.Utils
+﻿using System.Text.Json;
+
+namespace ReforgerServerApp.Utils
 {
     /// <summary>
     /// Static class containing utility methods for performing various simple tasks
@@ -45,6 +47,39 @@
         public static string GetTimestamp()
         {
             return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        /// <summary>
+        /// Convenience method to return a formatted JSON string
+        /// </summary>
+        /// <param name="input">to serialize</param>
+        /// <returns>Formatted serialized JSON string</returns>
+        public static string GetFormattedJsonString(object input)
+        {
+            string serializedJson = JsonSerializer.Serialize(input, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            return serializedJson;
+        }
+
+        /// <summary>
+        /// Set supported platforms, seeing as its invalid to only host Xbox servers,
+        /// if crossplay is enabled, its safe to assume PC and XBL are supported platforms
+        /// </summary>
+        /// <param name="crossplayEnabled"></param>
+        /// <returns>Supported Platforms based on whether crossplay is enabled</returns>
+        public static string[] GetSupportedPlatforms(bool crossplayEnabled)
+        {
+            if (crossplayEnabled)
+            {
+                return new string[] { Constants.SUPPORTED_PLATFORM_PC, Constants.SUPPORTED_PLATFORM_XBOX };
+            }
+            else
+            {
+                return new string[] { Constants.SUPPORTED_PLATFORM_PC };
+            }
         }
     }
 }

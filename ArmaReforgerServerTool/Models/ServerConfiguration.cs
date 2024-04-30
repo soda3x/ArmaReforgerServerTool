@@ -1,11 +1,11 @@
-﻿using System.Text;
+﻿using ReforgerServerApp.Utils;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace ReforgerServerApp
 {
     /// <summary>
-    /// Enum representing the permissions for
-    /// RCon clients
+    /// Enum representing the permissions for RCon clients
     /// </summary>
     public enum RconPermission { ADMIN, MONITOR }
 
@@ -14,14 +14,16 @@ namespace ReforgerServerApp
     /// </summary>
     public struct Root
     {
-        public string    bindAddress;
-        public int       bindPort;
-        public string    publicAddress;
-        public int       publicPort;
-        public A2S       a2s;
-        // public Rcon rcon; TODO: This is not implemented yet, uncomment this once its ready to go
-        public Game      game;
-        public Operating operating;
+        public string    bindAddress   = string.Empty;
+        public int       bindPort      = 0;
+        public string    publicAddress = string.Empty;
+        public int       publicPort    = 0;
+        public A2S       a2s           = new();
+        //public Rcon      rcon          = new(); TODO: This is not implemented yet, uncomment this once its ready to go
+        public Game      game          = new();
+        public Operating operating     = new();
+
+        public Root() {}
     }
 
     /// <summary>
@@ -29,8 +31,10 @@ namespace ReforgerServerApp
     /// </summary>
     public struct A2S
     {
-        public string address;
-        public int    port;
+        public string address = string.Empty;
+        public int    port    = 0;
+
+        public A2S() {}
     }
 
     /// <summary>
@@ -38,13 +42,15 @@ namespace ReforgerServerApp
     /// </summary>
     public struct Rcon
     {
-        public string         address;
-        public int            port;
-        public string         password;
-        public RconPermission permission;
-        public string[]       blacklist;
-        public string[]       whitelist;
-        public int            maxClients;
+        public string         address    = string.Empty;
+        public int            port       = 0;
+        public string         password   = string.Empty;
+        public RconPermission permission = RconPermission.MONITOR;
+        public string[]       blacklist  = Array.Empty<string>();
+        public string[]       whitelist  = Array.Empty<string>();
+        public int            maxClients = 0;
+
+        public Rcon() {}
     }
 
     /// <summary>
@@ -52,17 +58,19 @@ namespace ReforgerServerApp
     /// </summary>
     public struct Game
     {
-        public string         name;
-        public string         password;
-        public string         passwordAdmin;
-        public string[]       admins;
-        public string         scenarioId;
-        public int            maxPlayers;
-        public bool           visible;
-        public bool           crossPlatform;
-        public string[]       supportedPlatforms;
-        public GameProperties gameProperties;
-        public Mod[]          mods;
+        public string         name               = string.Empty;
+        public string         password           = string.Empty;
+        public string         passwordAdmin      = string.Empty;
+        public string[]       admins             = Array.Empty<string>();
+        public string         scenarioId         = string.Empty;
+        public int            maxPlayers         = 0;
+        public bool           visible            = false;
+        public bool           crossPlatform      = false;
+        public string[]       supportedPlatforms = Array.Empty<string>();
+        public GameProperties gameProperties     = new();
+        public Mod[]          mods               = Array.Empty<Mod>();
+
+        public Game() {}
     }
 
     /// <summary>
@@ -70,16 +78,18 @@ namespace ReforgerServerApp
     /// </summary>
     public struct GameProperties
     {
-        public int                        serverMaxViewDistance;
-        public int                        serverMinGrassDistance;
-        public int                        networkViewDistance;
-        public bool                       disableThirdPerson;
-        public bool                       fastValidation;
-        public bool                       battlEye;
-        public bool                       vonDisableUI;
-        public bool                       vonDisableDirectSpeechUI;
-        public Dictionary<string, string> missionHeader;
-        public bool                       vonCanTransmitCrossFaction;
+        public int          serverMaxViewDistance      = 0;
+        public int          serverMinGrassDistance     = 0;
+        public int          networkViewDistance        = 0;
+        public bool         disableThirdPerson         = false;
+        public bool         fastValidation             = false;
+        public bool         battlEye                   = false;
+        public bool         vonDisableUI               = false;
+        public bool         vonDisableDirectSpeechUI   = false;
+        public bool         vonCanTransmitCrossFaction = false;
+        public JsonDocument missionHeader              = JsonDocument.Parse("{}");
+
+        public GameProperties() {}
     }
 
     /// <summary>
@@ -87,14 +97,16 @@ namespace ReforgerServerApp
     /// </summary>
     public struct Operating
     {
-        public bool lobbyPlayerSynchronise;
-        public int  playerSaveTime;
-        public int  aiLimit;
-        public int  slotReservationTimeout;
-        public bool disableNavmeshStreaming;
-        public bool disableServerShutdown;
-        public bool disableCrashReporter;
-        public bool disableAI;
+        public bool lobbyPlayerSynchronise  = false;
+        public int  playerSaveTime          = 0;
+        public int  aiLimit                 = 0;
+        public int  slotReservationTimeout  = 0;
+        public bool disableNavmeshStreaming = false;
+        public bool disableServerShutdown   = false;
+        public bool disableCrashReporter    = false;
+        public bool disableAI               = false;
+
+        public Operating() {}
     }
 
     public class ServerConfiguration
@@ -104,7 +116,6 @@ namespace ReforgerServerApp
         public ServerConfiguration()
         {
             root = new();
-            root.game.admins = Array.Empty<string>();
         }
 
         /// <summary>
@@ -113,7 +124,7 @@ namespace ReforgerServerApp
         /// <returns>JSON string representation of the Server Configuration</returns>
         public string AsJsonString()
         {
-            return JsonSerializer.Serialize(root);
+            return Utilities.GetFormattedJsonString(root);
         }
 
         /// <summary>
@@ -122,7 +133,7 @@ namespace ReforgerServerApp
         /// <returns>JSON string representation of the Server Configuration's Mods</returns>
         public string ModsAsJsonString()
         {
-            return JsonSerializer.Serialize(root.game.mods);
+            return Utilities.GetFormattedJsonString(root.game.mods);
         }
 
         /// <summary>
@@ -131,7 +142,7 @@ namespace ReforgerServerApp
         /// <returns>JSON string representation of the Server Configuration's Mission Header</returns>
         public string MissionHeaderAsJsonString()
         {
-            return JsonSerializer.Serialize(root.game.gameProperties.missionHeader);
+            return Utilities.GetFormattedJsonString(root.game.gameProperties.missionHeader);
         }
 
         /// <summary>
@@ -149,7 +160,7 @@ namespace ReforgerServerApp
         /// <param name="json">to convert into the Mission Header</param>
         public void SetMissionHeaderFromJson(string json)
         {
-            root.game.gameProperties.missionHeader = JsonSerializer.Deserialize<Dictionary<string, string>>(json)!;
+            root.game.gameProperties.missionHeader = JsonSerializer.Deserialize<JsonDocument>(json)!;
         }
     }
 }
