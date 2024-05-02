@@ -1,6 +1,6 @@
 ﻿namespace ReforgerServerApp
 {
-    partial class ListForm
+    partial class AdminManager
     {
         /// <summary>
         /// Required designer variable.
@@ -33,6 +33,9 @@
             removeBtn = new Button();
             closeBtn = new Button();
             adminTB = new TextBox();
+            label1 = new Label();
+            linkLblSteamIdIo = new LinkLabel();
+            linkLblSteamIdFinder = new LinkLabel();
             SuspendLayout();
             // 
             // adminListView
@@ -40,10 +43,10 @@
             adminListView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             adminListView.FullRowSelect = true;
             adminListView.GridLines = true;
-            adminListView.Location = new Point(12, 12);
+            adminListView.Location = new Point(12, 72);
             adminListView.MultiSelect = false;
             adminListView.Name = "adminListView";
-            adminListView.Size = new Size(776, 391);
+            adminListView.Size = new Size(776, 331);
             adminListView.TabIndex = 0;
             adminListView.UseCompatibleStateImageBehavior = false;
             adminListView.View = View.List;
@@ -89,20 +92,54 @@
             adminTB.Size = new Size(374, 23);
             adminTB.TabIndex = 4;
             // 
-            // ListForm
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(359, 30);
+            label1.TabIndex = 5;
+            label1.Text = "Players can be made admins by adding their SteamID 64 to this list.\r\nYou can use services like steamid.io to get the user's SteamID 64.";
+            // 
+            // linkLblSteamIdIo
+            // 
+            linkLblSteamIdIo.AutoSize = true;
+            linkLblSteamIdIo.Location = new Point(12, 39);
+            linkLblSteamIdIo.Name = "linkLblSteamIdIo";
+            linkLblSteamIdIo.Size = new Size(107, 15);
+            linkLblSteamIdIo.TabIndex = 7;
+            linkLblSteamIdIo.TabStop = true;
+            linkLblSteamIdIo.Text = "https://steamid.io/";
+            linkLblSteamIdIo.LinkClicked += linkLblSteamIdIo_LinkClicked;
+            // 
+            // linkLblSteamIdFinder
+            // 
+            linkLblSteamIdFinder.AutoSize = true;
+            linkLblSteamIdFinder.Location = new Point(12, 54);
+            linkLblSteamIdFinder.Name = "linkLblSteamIdFinder";
+            linkLblSteamIdFinder.Size = new Size(182, 15);
+            linkLblSteamIdFinder.TabIndex = 8;
+            linkLblSteamIdFinder.TabStop = true;
+            linkLblSteamIdFinder.Text = "https://www.steamidfinder.com/";
+            linkLblSteamIdFinder.LinkClicked += linkLblSteamIdFinder_LinkClicked;
+            // 
+            // AdminManager
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(linkLblSteamIdFinder);
+            Controls.Add(linkLblSteamIdIo);
+            Controls.Add(label1);
             Controls.Add(adminTB);
             Controls.Add(closeBtn);
             Controls.Add(removeBtn);
             Controls.Add(addBtn);
             Controls.Add(adminListView);
             MinimumSize = new Size(640, 480);
-            Name = "ListForm";
+            Name = "AdminManager";
             ShowIcon = false;
-            Text = "ListForm";
+            Text = "Admin Manager";
             ResumeLayout(false);
             PerformLayout();
         }
@@ -114,5 +151,8 @@
         private Button removeBtn;
         private Button closeBtn;
         private TextBox adminTB;
+        private Label label1;
+        private LinkLabel linkLblSteamIdIo;
+        private LinkLabel linkLblSteamIdFinder;
     }
 }

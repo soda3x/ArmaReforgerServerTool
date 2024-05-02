@@ -1316,7 +1316,7 @@ namespace ReforgerServerApp
 
         private void EditAdminsListBtnClicked(object sender, EventArgs e)
         {
-            ListForm lf = new(serverConfig, "Edit Admins");
+            AdminManager lf = new(serverConfig, "Edit Admins");
             lf.ShowDialog();
         }
 
