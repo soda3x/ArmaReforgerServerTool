@@ -58,7 +58,7 @@
             addBtn.Name = "addBtn";
             addBtn.Size = new Size(75, 23);
             addBtn.TabIndex = 1;
-            addBtn.Text = "Add";
+            addBtn.Text = "&Add user";
             addBtn.UseVisualStyleBackColor = true;
             addBtn.Click += AddBtnClicked;
             // 
@@ -69,7 +69,7 @@
             removeBtn.Name = "removeBtn";
             removeBtn.Size = new Size(75, 23);
             removeBtn.TabIndex = 2;
-            removeBtn.Text = "Remove";
+            removeBtn.Text = "&Remove Selected User";
             removeBtn.UseVisualStyleBackColor = true;
             removeBtn.Click += RemoveBtnClicked;
             // 
@@ -80,7 +80,7 @@
             closeBtn.Name = "closeBtn";
             closeBtn.Size = new Size(75, 23);
             closeBtn.TabIndex = 3;
-            closeBtn.Text = "Close";
+            closeBtn.Text = "&Close";
             closeBtn.UseVisualStyleBackColor = true;
             closeBtn.Click += CloseBtnClicked;
             // 
@@ -89,6 +89,7 @@
             adminTB.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             adminTB.Location = new Point(12, 415);
             adminTB.Name = "adminTB";
+            adminTB.PlaceholderText = "User's SteamID 64 here";
             adminTB.Size = new Size(374, 23);
             adminTB.TabIndex = 4;
             // 
