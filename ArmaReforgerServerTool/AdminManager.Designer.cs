@@ -99,7 +99,7 @@
             label1.Name = "label1";
             label1.Size = new Size(359, 30);
             label1.TabIndex = 5;
-            label1.Text = "Players can be made admins by adding their SteamID 64 to this list.\r\nYou can use services like steamid.io to get the user's SteamID 64.";
+            label1.Text = "Players can be made admins by adding their SteamID 64 to this list.\r\nYou can either of the services below to get the user's SteamID 64.";
             // 
             // linkLblSteamIdIo
             // 
