@@ -33,7 +33,7 @@
             removeBtn = new Button();
             closeBtn = new Button();
             adminTB = new TextBox();
-            label1 = new Label();
+            lblHelpText = new Label();
             linkLblSteamIdIo = new LinkLabel();
             linkLblSteamIdFinder = new LinkLabel();
             SuspendLayout();
@@ -93,14 +93,14 @@
             adminTB.Size = new Size(374, 23);
             adminTB.TabIndex = 4;
             // 
-            // label1
+            // lblHelpText
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(359, 30);
-            label1.TabIndex = 5;
-            label1.Text = "Players can be made admins by adding their SteamID 64 to this list.\r\nYou can either of the services below to get the user's SteamID 64.";
+            lblHelpText.AutoSize = true;
+            lblHelpText.Location = new Point(12, 9);
+            lblHelpText.Name = "lblHelpText";
+            lblHelpText.Size = new Size(359, 30);
+            lblHelpText.TabIndex = 5;
+            lblHelpText.Text = "Players can be made admins by adding their SteamID 64 to this list.\r\nYou can either of the services below to get the user's SteamID 64.";
             // 
             // linkLblSteamIdIo
             // 
@@ -131,7 +131,7 @@
             ClientSize = new Size(800, 450);
             Controls.Add(linkLblSteamIdFinder);
             Controls.Add(linkLblSteamIdIo);
-            Controls.Add(label1);
+            Controls.Add(lblHelpText);
             Controls.Add(adminTB);
             Controls.Add(closeBtn);
             Controls.Add(removeBtn);
@@ -152,7 +152,7 @@
         private Button removeBtn;
         private Button closeBtn;
         private TextBox adminTB;
-        private Label label1;
+        private Label lblHelpText;
         private LinkLabel linkLblSteamIdIo;
         private LinkLabel linkLblSteamIdFinder;
     }
