@@ -48,7 +48,7 @@
             okBtn.Name = "okBtn";
             okBtn.Size = new Size(75, 23);
             okBtn.TabIndex = 1;
-            okBtn.Text = "OK";
+            okBtn.Text = "&OK";
             okBtn.UseVisualStyleBackColor = true;
             okBtn.Click += OkBtnClicked;
             // 
