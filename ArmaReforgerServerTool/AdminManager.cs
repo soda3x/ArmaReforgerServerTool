@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ReforgerServerApp.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +15,9 @@ namespace ReforgerServerApp
     public partial class AdminManager : Form
     {
         private ServerConfiguration serverConfig;
+        private const string STEAM_ID_IO_LINK = "https://steamid.io/";
+        private const string STEAM_ID_FINDER_LINK = "https://www.steamidfinder.com/";
+
         public AdminManager(ServerConfiguration sc, string windowTitle)
         {
             InitializeComponent();
@@ -72,22 +76,12 @@ namespace ReforgerServerApp
 
         private void linkLblSteamIdIo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            ProcessStartInfo psInfo = new ProcessStartInfo
-            {
-                FileName = "https://steamid.io/",
-                UseShellExecute = true
-            };
-            Process.Start(psInfo);
+            BrowserHelper.Open(STEAM_ID_IO_LINK);
         }
 
         private void linkLblSteamIdFinder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            ProcessStartInfo psInfo = new ProcessStartInfo
-            {
-                FileName = "https://www.steamidfinder.com/",
-                UseShellExecute = true
-            };
-            Process.Start(psInfo);
+            BrowserHelper.Open(STEAM_ID_FINDER_LINK);
         }
     }
 }
