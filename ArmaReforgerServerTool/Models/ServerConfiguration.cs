@@ -1,6 +1,7 @@
 ﻿using ReforgerServerApp.Utils;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ReforgerServerApp
 {
@@ -12,110 +13,191 @@ namespace ReforgerServerApp
     /// <summary>
     /// Structure representing the root of the Server Config
     /// </summary>
-    public struct Root
+    public class Root
     {
-        public string    bindAddress   = string.Empty;
-        public int       bindPort      = 0;
-        public string    publicAddress = string.Empty;
-        public int       publicPort    = 0;
-        public A2S       a2s           = new();
-        //public Rcon      rcon          = new(); TODO: This is not implemented yet, uncomment this once its ready to go
-        public Game      game          = new();
-        public Operating operating     = new();
+        public string bindAddress { get; set; }
+        public int bindPort { get; set; }
+        public string publicAddress { get; set; }
+        public int publicPort { get; set; }
+        public A2S a2s { get; set; }
+        //public Rcon rcon { get; set; } TODO: This is not implemented yet, uncomment this once its ready to go
+        public Game game { get; set; }
+        public Operating operating { get; set; }
 
-        public Root() {}
+        public Root(string bindAddress, int bindPort, string publicAddress, 
+            int publicPort, A2S a2s, Game game, Operating operating)
+        {
+            this.bindAddress = bindAddress;
+            this.bindPort = bindPort;
+            this.publicAddress = publicAddress;
+            this.publicPort = publicPort;
+            this.a2s = a2s;
+            // TODO will eventually need to add Rcon here too
+            this.game = game;
+            this.operating = operating;
+        }
+
+        public static Root Default => new(string.Empty, 0, string.Empty, 0, A2S.Default, 
+            Game.Default, Operating.Default);
+        
     }
 
     /// <summary>
     /// Structure representing the a2s block of the Server Config
     /// </summary>
-    public struct A2S
+    public class A2S
     {
-        public string address = string.Empty;
-        public int    port    = 0;
+        public string address { get; set; }
+        public int port { get; set; }
 
-        public A2S() {}
+        public A2S(string address, int port) 
+        {
+            this.address = address;
+            this.port = port;
+        }
+
+        public static A2S Default => new(string.Empty, 0);
     }
 
     /// <summary>
     /// Structure representing the rcon block of the Server Config
     /// </summary>
-    public struct Rcon
+    public class Rcon
     {
-        public string         address    = string.Empty;
-        public int            port       = 0;
-        public string         password   = string.Empty;
-        public RconPermission permission = RconPermission.MONITOR;
-        public string[]       blacklist  = Array.Empty<string>();
-        public string[]       whitelist  = Array.Empty<string>();
-        public int            maxClients = 0;
+        public string address { get; set; }
+        public int port { get; set; }
+        public string password { get; set; }
+        public RconPermission permission { get; set; }
+        public string[] blacklist { get; set; }
+        public string[] whitelist { get; set; }
+        public int maxClients { get; set; }
 
-        public Rcon() {}
+        public Rcon(string address, int port, string password, 
+            RconPermission permission, string[] blacklist, string[] whitelist, int maxClients) 
+        {
+            this.address = address;
+            this.port = port;
+            this.password = password;
+            this.permission = permission;
+            this.blacklist = blacklist;
+            this.whitelist = whitelist;
+            this.maxClients = maxClients;
+        }
+
+        public static Rcon Default => new(string.Empty, 0, string.Empty, RconPermission.MONITOR, 
+            Array.Empty<string>(), Array.Empty<string>(), 0);
     }
 
     /// <summary>
     /// Structure representing the game block of the Server Config
     /// </summary>
-    public struct Game
+    public class Game
     {
-        public string         name               = string.Empty;
-        public string         password           = string.Empty;
-        public string         passwordAdmin      = string.Empty;
-        public string[]       admins             = Array.Empty<string>();
-        public string         scenarioId         = string.Empty;
-        public int            maxPlayers         = 0;
-        public bool           visible            = false;
-        public bool           crossPlatform      = false;
-        public string[]       supportedPlatforms = Array.Empty<string>();
-        public GameProperties gameProperties     = new();
-        public Mod[]          mods               = Array.Empty<Mod>();
+        public string name { get; set; }
+        public string password { get; set; }
+        public string passwordAdmin { get; set; }
+        public string[] admins { get; set; }
+        public string scenarioId { get; set; }
+        public int maxPlayers { get; set; }
+        public bool visible { get; set; }
+        public bool crossPlatform { get; set; }
+        public string[] supportedPlatforms { get; set; }
+        public GameProperties gameProperties { get; set; }
+        public Mod[] mods { get; set; }
 
-        public Game() {}
+        public Game(string name, string password, string passwordAdmin, string[] admins, 
+            string scenarioId, int maxPlayers, bool visible, bool crossPlatform, 
+            string[] supportedPlatforms, GameProperties gameProperties, Mod[] mods) 
+        {
+            this.name = name;
+            this.password = password;
+            this.passwordAdmin = passwordAdmin;
+            this.admins = admins;
+            this.scenarioId = scenarioId;
+            this.maxPlayers = maxPlayers;
+            this.visible = visible;
+            this.crossPlatform = crossPlatform;
+            this.supportedPlatforms = supportedPlatforms;
+            this.gameProperties = gameProperties;
+            this.mods = mods;
+        }
+
+        public static Game Default => new(string.Empty, string.Empty, string.Empty, Array.Empty<string>(), 
+            string.Empty, 0, false, false, Array.Empty<string>(), GameProperties.Default, Array.Empty<Mod>());
     }
 
     /// <summary>
     /// Structure representing the gameProperties block of the Server Config
     /// </summary>
-    public struct GameProperties
+    public class GameProperties
     {
-        public int          serverMaxViewDistance      = 0;
-        public int          serverMinGrassDistance     = 0;
-        public int          networkViewDistance        = 0;
-        public bool         disableThirdPerson         = false;
-        public bool         fastValidation             = false;
-        public bool         battlEye                   = false;
-        public bool         vonDisableUI               = false;
-        public bool         vonDisableDirectSpeechUI   = false;
-        public bool         vonCanTransmitCrossFaction = false;
-        public JsonDocument missionHeader              = JsonDocument.Parse("{}");
+        public int serverMaxViewDistance { get; set; }
+        public int serverMinGrassDistance { get; set; }
+        public int networkViewDistance { get; set; }
+        public bool disableThirdPerson { get; set; }
+        public bool fastValidation { get; set; }
+        public bool battlEye { get; set; }
+        public bool vonDisableUI { get; set; }
+        public bool vonDisableDirectSpeechUI { get; set; }
+        public bool vonCanTransmitCrossFaction { get; set; }
+        public JsonDocument missionHeader { get; set; }
 
-        public GameProperties() {}
+        public GameProperties(int serverMaxViewDistance, int serverMinGrassDistance, int networkViewDistance, 
+            bool disableThirdPerson, bool fastValidation, bool battlEye, bool vonDisableUI, bool vonDisableDirectSpeechUI, 
+            bool vonCanTransmitCrossFaction, JsonDocument missionHeader)
+        {
+            this.serverMaxViewDistance = serverMaxViewDistance;
+            this.serverMinGrassDistance = serverMinGrassDistance;
+            this.networkViewDistance = networkViewDistance;
+            this.disableThirdPerson = disableThirdPerson;
+            this.fastValidation = fastValidation;
+            this.battlEye = battlEye;
+            this.vonDisableUI = vonDisableUI;
+            this.vonDisableDirectSpeechUI = vonDisableDirectSpeechUI;
+            this.vonCanTransmitCrossFaction = vonCanTransmitCrossFaction;
+            this.missionHeader = missionHeader;
+        }
+
+        public static GameProperties Default => new(0, 0, 0, false, false, false, false, false, false, JsonDocument.Parse("{}"));
     }
 
     /// <summary>
     /// Structure representing the operating block of the Server Config
     /// </summary>
-    public struct Operating
+    public class Operating
     {
-        public bool lobbyPlayerSynchronise  = false;
-        public int  playerSaveTime          = 0;
-        public int  aiLimit                 = 0;
-        public int  slotReservationTimeout  = 0;
-        public bool disableNavmeshStreaming = false;
-        public bool disableServerShutdown   = false;
-        public bool disableCrashReporter    = false;
-        public bool disableAI               = false;
+        public bool lobbyPlayerSynchronise { get; set; }
+        public int playerSaveTime { get; set; }
+        public int aiLimit { get; set; }
+        public int slotReservationTimeout { get; set; }
+        public bool disableNavmeshStreaming { get; set; }
+        public bool disableServerShutdown { get; set; }
+        public bool disableCrashReporter { get; set; }
+        public bool disableAI { get; set; }
 
-        public Operating() {}
+        public Operating(bool lobbyPlayerSynchronise, int playerSaveTime, int aiLimit, int slotReservationTimeout, 
+            bool disableNavmeshStreaming, bool disableServerShutdown, bool disableCrashReporter, bool disableAI)
+        {
+            this.lobbyPlayerSynchronise = lobbyPlayerSynchronise;
+            this.playerSaveTime = playerSaveTime;
+            this.aiLimit = aiLimit;
+            this.slotReservationTimeout = slotReservationTimeout;
+            this.disableNavmeshStreaming = disableNavmeshStreaming;
+            this.disableServerShutdown = disableServerShutdown;
+            this.disableCrashReporter = disableCrashReporter;
+            this.disableAI = disableAI;
+        }
+
+        public static Operating Default => new(false, 0, 0, 0, false, false, false, false);
     }
 
     public class ServerConfiguration
     {
-        public Root root;
+        public Root root { get; set; }
 
         public ServerConfiguration()
         {
-            root = new();
+            root = Root.Default;
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel;
+using System.Text.Json;
 
 namespace ReforgerServerApp.Utils
 {
@@ -12,7 +13,7 @@ namespace ReforgerServerApp.Utils
         /// Convenience method to sort a list of Mods in order of Mod Name
         /// </summary>
         /// <param name="list"> takes a list of Mods as a reference</param>
-        public static void AlphabetiseModList(ref List<Mod> list)
+        public static void AlphabetiseModList(ref BindingList<Mod> list)
         {
             List<Mod> temp = new(list);
             temp.Sort((x, y) => string.Compare(x.GetModName(), y.GetModName()));
@@ -21,22 +22,6 @@ namespace ReforgerServerApp.Utils
             foreach (Mod m in list)
             {
                 list.Add(m);
-            }
-        }
-
-        /// <summary>
-        /// Convenience method to sort the Mod ListBoxes in order of Mod Name
-        /// </summary>
-        /// <param name="listBox"></param>
-        public static void AlphabetiseModListBox(ListBox listBox)
-        {
-            List<Mod> list = listBox.Items.OfType<Mod>().ToList();
-            list.Sort((x, y) => string.Compare(x.GetModName(), y.GetModName()));
-            listBox.Items.Clear();
-
-            foreach (Mod m in list)
-            {
-                listBox.Items.Add(m);
             }
         }
 
@@ -80,6 +65,21 @@ namespace ReforgerServerApp.Utils
             {
                 return new string[] { Constants.SUPPORTED_PLATFORM_PC };
             }
+        }
+
+        /// <summary>
+        /// Convenience method for Displaying an Error Messagebox
+        /// </summary>
+        /// <param name="genMsg">General info about the error</param>
+        /// <param name="errMsg">detailed message from the exception, if applicable</param>
+        public static void DisplayErrorMessage(string genMsg, string errMsg)
+        {
+            MessageBox.Show(
+                    $"{genMsg}\r\n\r\n" +
+                    $"Detail: {errMsg}\r\n\r\n" +
+                    $"Include the detail above in your bug reports.",
+                    Constants.ERROR_MESSAGEBOX_TITLE_STR
+                    );
         }
     }
 }

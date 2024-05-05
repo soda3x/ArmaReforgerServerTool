@@ -61,14 +61,12 @@ namespace ReforgerServerApp
                 }
                 if (m_isEditMode)
                 {
-                    m_reforgerApp.GetAvailableModsList().Items[m_idx] = mod;
+                    ConfigurationManager.GetInstance().GetAvailableMods()[m_idx] = mod;
                 }
                 else
                 {
-                    m_reforgerApp.GetAvailableModsList().Items.Add(mod);
+                    ConfigurationManager.GetInstance().GetAvailableMods().Add(mod);
                 }
-                Utilities.AlphabetiseModListBox(m_reforgerApp.GetAvailableModsList());
-                Utilities.AlphabetiseModListBox(m_reforgerApp.GetEnabledModsList());
                 FileIOManager.GetInstance().WriteModsDatabase();
                 Close();
             }

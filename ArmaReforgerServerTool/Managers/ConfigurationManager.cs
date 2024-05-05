@@ -1,9 +1,16 @@
 ﻿using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
-using System.Text.Json;
+using System.ComponentModel;
 
 namespace ReforgerServerApp
-{
+{ 
+
+    internal class ScenarioIdEventArgs : EventArgs
+    {
+        public string scenarioId;
+        public ScenarioIdEventArgs(string scenarioId) { this.scenarioId = scenarioId; }
+    }
+
     /// <summary>
     /// This class manages the manipulation of the Server Configuration
     /// </summary>
@@ -12,14 +19,17 @@ namespace ReforgerServerApp
         private static ConfigurationManager?                 m_instance;
         private readonly Dictionary<string, ServerParameter> m_serverParamsDictionary;
         private ServerConfiguration                          m_serverConfig;
-        private List<Mod>                                    m_availableMods;
-        private List<Mod>                                    m_enabledMods;
+        private BindingList<Mod>                             m_availableMods;
+        private BindingList<Mod>                             m_enabledMods;
+
+        public delegate void UpdateScenarioIdFromLoadedConfig(object sender, ScenarioIdEventArgs e);
+        public event UpdateScenarioIdFromLoadedConfig UpdateScenarioIdFromLoadedConfigEvent;
 
         private ConfigurationManager()
         {
             m_serverParamsDictionary = new Dictionary<string, ServerParameter>();
-            m_availableMods          = new List<Mod>();
-            m_enabledMods            = new List<Mod>();
+            m_availableMods          = new BindingList<Mod>();
+            m_enabledMods            = new BindingList<Mod>();
             m_serverConfig           = new ServerConfiguration();
         }
 
@@ -34,12 +44,12 @@ namespace ReforgerServerApp
             return m_serverConfig;
         }
 
-        public List<Mod> GetAvailableMods()
+        public BindingList<Mod> GetAvailableMods()
         {
             return m_availableMods;
         }
 
-        public List<Mod> GetEnabledMods()
+        public BindingList<Mod> GetEnabledMods()
         { 
             return m_enabledMods;
         }
@@ -70,7 +80,10 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["passwordAdmin"].ParameterValue = m_serverConfig.root.game.passwordAdmin!;
                 m_serverParamsDictionary["name"].ParameterValue          = m_serverConfig.root.game.name!;
                 m_serverParamsDictionary["password"].ParameterValue      = m_serverConfig.root.game.password!;
-                m_serverParamsDictionary["scenarioId"].ParameterValue    = m_serverConfig.root.game.scenarioId!;
+
+                ScenarioIdEventArgs scenarioId = new(m_serverConfig.root.game.scenarioId);
+                OnUpdateScenarioIdFromLoadedConfig(scenarioId);
+
                 m_serverParamsDictionary["maxPlayers"].ParameterValue    = m_serverConfig.root.game.maxPlayers;
                 m_serverParamsDictionary["visible"].ParameterValue       = m_serverConfig.root.game.visible;
                 m_serverParamsDictionary["crossPlatform"].ParameterValue = m_serverConfig.root.game.crossPlatform;
@@ -112,12 +125,9 @@ namespace ReforgerServerApp
             }
             catch (Exception e)
             {
-                MessageBox.Show($"An error occurred while attempting to load the configuration file.\r\n" +
-                    $"It may have been created for an earlier version.\r\n" +
-                    $"The configuration has not been loaded.\r\n\r\n" +
-                    $"Detail: {e.Message}\r\n\r\n" +
-                    $"Include the detail above in your bug reports.",
-                    Constants.ERROR_MESSAGEBOX_TITLE_STR);
+                Utilities.DisplayErrorMessage($"An error occurred while attempting to load the configuration file.\r\n" +
+                $"It may have been created for an earlier version.\r\n" +
+                $"The configuration has not been loaded.", e.Message);
             }
         }
 
@@ -173,6 +183,15 @@ namespace ReforgerServerApp
         {
             Utilities.AlphabetiseModList(ref m_availableMods);
             Utilities.AlphabetiseModList(ref m_enabledMods);
+        }
+
+        /// <summary>
+        /// Sender for the 'UpdateScenarioIdFromLoadedConfig' Event
+        /// </summary>
+        /// <param name="e">Arguments to pass to the GUI to inform it that it needs to update the Scenario ID</param>
+        protected virtual void OnUpdateScenarioIdFromLoadedConfig(ScenarioIdEventArgs e)
+        {
+            UpdateScenarioIdFromLoadedConfigEvent?.Invoke(this, e);
         }
     }
 }

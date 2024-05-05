@@ -73,10 +73,12 @@ namespace ReforgerServerApp.Managers
 
             if (m_isServerStarted)
             {
-                if (File.Exists(FileIOManager.GetInstance().GetInstallDirectory() + Constants.SERVER_JSON_STR))
+                if (!FileIOManager.GetInstance().ResetServerFile())
                 {
-                    File.Delete(FileIOManager.GetInstance().GetInstallDirectory() + Constants.SERVER_JSON_STR);
+                    // Couldn't verify the initial state of the 'server.json file' so don't bother continuing
+                    return;
                 }
+
                 worker.CancelAsync();
                 try
                 {
@@ -103,13 +105,17 @@ namespace ReforgerServerApp.Managers
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error: {ex.Message}", Constants.ERROR_MESSAGEBOX_TITLE_STR);
+                    Utilities.DisplayErrorMessage("Error", ex.Message);
                 }
             }
             else
             {
-                string jsonConfig = ConfigurationManager.GetInstance().GetServerConfiguration().AsJsonString();
-                File.WriteAllText(FileIOManager.GetInstance().GetInstallDirectory() + Constants.SERVER_JSON_STR, jsonConfig);
+                if (!FileIOManager.SaveConfigurationToFile(FileIOManager.GetInstance().GetAbsolutePathToServerFile()))
+                {
+                    // We couldn't save the configuration to file, don't continue
+                    return;
+                }
+
                 m_isServerStarted = true;
 
                 GuiModelEventArgs guiModel = new()
@@ -142,10 +148,12 @@ namespace ReforgerServerApp.Managers
 
             if (m_isServerStarted)
             {
-                if (File.Exists($"{FileIOManager.GetInstance().GetInstallDirectory()}{Constants.SERVER_JSON_STR}"))
+                if (!FileIOManager.GetInstance().ResetServerFile())
                 {
-                    File.Delete($"{FileIOManager.GetInstance().GetInstallDirectory()}{Constants.SERVER_JSON_STR}");
+                    // Couldn't verify the initial state of the 'server.json file' so don't bother continuing
+                    return;
                 }
+
                 m_isServerStarted = false;
                 worker.CancelAsync();
 
@@ -173,11 +181,16 @@ namespace ReforgerServerApp.Managers
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error: {ex.Message}", Constants.ERROR_MESSAGEBOX_TITLE_STR);
+                    Utilities.DisplayErrorMessage("Error", ex.Message);
                 }
             }
-            string jsonConfig = ConfigurationManager.GetInstance().GetServerConfiguration().AsJsonString();
-            File.WriteAllText($"{FileIOManager.GetInstance().GetInstallDirectory()}{Constants.SERVER_JSON_STR}", jsonConfig);
+
+            if (!FileIOManager.SaveConfigurationToFile(FileIOManager.GetInstance().GetAbsolutePathToServerFile()))
+            {
+                // We couldn't save the configuration to file, don't continue
+                return;
+            }
+
             m_isServerStarted = true;
 
             guiModel = new()
@@ -239,46 +252,61 @@ namespace ReforgerServerApp.Managers
         /// <param name="e"></param>
         private void SteamCmdUpdateWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            m_steamCmdUpdateProcess = new();
-            ProcessStartInfo startInfo = new();
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.FileName = FileIOManager.GetInstance().GetSteamCmdFile();
-            startInfo.Arguments = "+force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit";
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            m_steamCmdUpdateProcess.EnableRaisingEvents = true;
-            startInfo.CreateNoWindow = true;
-            m_steamCmdUpdateProcess.StartInfo = startInfo;
+            ProcessStartInfo steamCmdStartInfo = new()
+            {
+                WindowStyle = ProcessWindowStyle.Hidden,
+                FileName = FileIOManager.GetInstance().GetSteamCmdFile(),
+                Arguments = "+force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            m_steamCmdUpdateProcess = new()
+            {
+                EnableRaisingEvents = true,
+                StartInfo = steamCmdStartInfo
+
+            };
+
             m_steamCmdUpdateProcess.OutputDataReceived += SteamCmdDataReceived;
             m_steamCmdUpdateProcess.ErrorDataReceived += SteamCmdDataReceived;
             m_steamCmdUpdateProcess.Start();
             m_steamCmdUpdateProcess.BeginOutputReadLine();
             m_steamCmdUpdateProcess.BeginErrorReadLine();
             m_steamCmdUpdateProcess.WaitForExit();
+            
 
             if (m_steamCmdUpdateProcess.HasExited)
             {
                 GuiModelEventArgs guiModel = new()
                 {
-                    startServerText = Constants.START_SERVER_STR,
-                    enableServerFields = true,
-                    serverRunningLabelText = string.Empty,
+                    startServerText = Constants.STOP_SERVER_STR,
+                    enableServerFields = false,
+                    serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
                     startServerBtnEnabled = true
                 };
                 OnUpdateGuiControlsEvent(guiModel);
 
-                m_serverProcess = new();
-                ProcessStartInfo serverStartInfo = new();
-                serverStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                serverStartInfo.UseShellExecute = false;
-                serverStartInfo.WorkingDirectory = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger";
-                serverStartInfo.FileName = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger\\ArmaReforgerServer.exe";
-                serverStartInfo.Arguments = GetLaunchArguments();
-                serverStartInfo.RedirectStandardOutput = true;
-                serverStartInfo.RedirectStandardError = true;
-                serverStartInfo.CreateNoWindow = true;
-                m_serverProcess.EnableRaisingEvents = true;
-                m_serverProcess.StartInfo = serverStartInfo;
+
+                ProcessStartInfo serverStartInfo = new()
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = false,
+                    WorkingDirectory = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger",
+                    FileName = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger\\ArmaReforgerServer.exe",
+                    Arguments = GetLaunchArguments(),
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                m_serverProcess = new()
+                {
+                    EnableRaisingEvents = true,
+                    StartInfo = serverStartInfo
+                };
+
                 m_serverProcess.OutputDataReceived += SteamCmdDataReceived;
                 m_serverProcess.ErrorDataReceived += SteamCmdDataReceived;
                 m_serverProcess.Start();
@@ -326,7 +354,7 @@ namespace ReforgerServerApp.Managers
         }
 
         /// <summary>
-        /// Sender for the 'OnUpdateSteamCmdLog' Event
+        /// Sender for the 'UpdateSteamCmdLog' Event
         /// </summary>
         /// <param name="e">Arguments to pass to the GUI to inform it that it needs to update the Steam CMD Log</param>
         protected virtual void OnUpdateSteamCmdLogEvent(SteamCmdLogEventArgs e)
@@ -335,7 +363,7 @@ namespace ReforgerServerApp.Managers
         }
 
         /// <summary>
-        /// Sender for the 'OnUpdateGuiControls' Event
+        /// Sender for the 'UpdateGuiControls' Event
         /// </summary>
         /// <param name="e">Arguments to pass to the GUI to inform it that it needs to update various controls</param>
         protected virtual void OnUpdateGuiControlsEvent(GuiModelEventArgs e)
