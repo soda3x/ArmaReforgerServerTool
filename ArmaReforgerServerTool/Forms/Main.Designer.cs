@@ -1,4 +1,6 @@
-﻿namespace ReforgerServerApp
+﻿using ReforgerServerApp.Components;
+
+namespace ReforgerServerApp
 {
     partial class Main
     {
@@ -42,8 +44,8 @@
             label15 = new Label();
             removeFromEnabledBtn = new Button();
             addToEnabledBtn = new Button();
-            enabledMods = new ListBox();
-            availableMods = new ListBox();
+            enabledMods = new BoundListBox();
+            availableMods = new BoundListBox();
             groupBox1 = new GroupBox();
             serverParameters = new FlowLayoutPanel();
             editAdminListBtn = new Button();

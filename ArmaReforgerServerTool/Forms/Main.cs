@@ -23,7 +23,8 @@ namespace ReforgerServerApp
 
             ProcessManager.GetInstance().UpdateGuiControlsEvent += HandleUpdateGuiControlsEvent;
             ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
-
+            ConfigurationManager.GetInstance().UpdateScenarioIdFromLoadedConfigEvent += HandleUpdateScenarioIdFromLoadedConfigEvent;
+            
             // Create tooltips
             CreateTooltips();
 
@@ -42,8 +43,10 @@ namespace ReforgerServerApp
             streamsDeltaUpDown.Enabled = false;
             sessionSave.Enabled = false;
 
-            Utilities.AlphabetiseModListBox(GetAvailableModsList());
-            Utilities.AlphabetiseModListBox(GetEnabledModsList());
+            availableMods.DataSource = ConfigurationManager.GetInstance().GetAvailableMods();
+            enabledMods.DataSource = ConfigurationManager.GetInstance().GetEnabledMods();
+
+            ConfigurationManager.GetInstance().AlphabetiseModLists();
 
             FileIOManager.CheckForUpdates();
 
@@ -163,7 +166,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
         {
-            GetAvailableModsList().Items.Remove(GetAvailableModsList().SelectedItem);
+            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
             FileIOManager.GetInstance().WriteModsDatabase();
         }
 
@@ -180,14 +183,14 @@ namespace ReforgerServerApp
             if ((Mod)GetAvailableModsList().SelectedItem != null)
             {
                 Mod m = (Mod)GetAvailableModsList().SelectedItem;
-                GetAvailableModsList().Items.Remove(m);
-                if (!GetEnabledModsList().Items.Contains(m))
+          
+                if (!ConfigurationManager.GetInstance().GetEnabledMods().Contains(m))
                 {
-                    GetEnabledModsList().Items.Add(m);
+                    ConfigurationManager.GetInstance().GetEnabledMods().Add(new(m));
                 }
+                ConfigurationManager.GetInstance().GetAvailableMods().Remove(m);
             }
-            Utilities.AlphabetiseModListBox(GetAvailableModsList());
-            Utilities.AlphabetiseModListBox(GetEnabledModsList());
+            ConfigurationManager.GetInstance().AlphabetiseModLists();
         }
 
         /// <summary>
@@ -209,8 +212,7 @@ namespace ReforgerServerApp
                     GetAvailableModsList().Items.Add(m);
                 }
             }
-            Utilities.AlphabetiseModListBox(GetAvailableModsList());
-            Utilities.AlphabetiseModListBox(GetEnabledModsList());
+            ConfigurationManager.GetInstance().AlphabetiseModLists();
         }
 
         /// <summary>
@@ -340,8 +342,7 @@ namespace ReforgerServerApp
                     GetAvailableModsList().Items.Remove(m);
                 }
             }
-            Utilities.AlphabetiseModListBox(GetAvailableModsList());
-            Utilities.AlphabetiseModListBox(GetEnabledModsList());
+            ConfigurationManager.GetInstance().AlphabetiseModLists();
         }
 
         /// <summary>
@@ -361,8 +362,7 @@ namespace ReforgerServerApp
                     GetEnabledModsList().Items.Remove(m);
                 }
             }
-            Utilities.AlphabetiseModListBox(GetAvailableModsList());
-            Utilities.AlphabetiseModListBox(GetEnabledModsList());
+            ConfigurationManager.GetInstance().AlphabetiseModLists();
         }
 
         /// <summary>
@@ -426,6 +426,7 @@ namespace ReforgerServerApp
             saveSettingsBtn.Enabled = enabled;
             addModBtn.Enabled = enabled;
             removeModBtn.Enabled = enabled;
+            editModBtn.Enabled = enabled;
             deleteServerFilesBtn.Enabled = enabled;
             locateServerFilesBtn.Enabled = enabled;
             limitFPS.Enabled = enabled;
@@ -899,25 +900,61 @@ namespace ReforgerServerApp
 
         /// <summary>
         /// Event Handler for the 'UpdateSteamCmdLog' event
+        /// This method is called twice if the call came from a non-UI thread
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">contains the line to append to the Steam CMD log</param>
         private void HandleUpdateSteamCmdLogEvent(object sender, SteamCmdLogEventArgs e)
         {
-            steamCmdLog.AppendText(e.line);
+            if (steamCmdLog.InvokeRequired)
+            {
+                steamCmdLog.Invoke(new Action(() => HandleUpdateSteamCmdLogEvent(sender, e)));
+            }
+            else
+            {
+                steamCmdLog.AppendText(e.line);
+            }
         }
 
         /// <summary>
-        /// Event Handler for the 'HandleUpdateGuiControls' event
+        /// Event Handler for the 'UpdateGuiControls' event
+        /// This method is called twice if the call came from a non-UI thread
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">contains values to update various GUI controls with</param>
         private void HandleUpdateGuiControlsEvent(object sender, GuiModelEventArgs e)
         {
-            startServerBtn.Enabled  = e.startServerBtnEnabled;
-            serverRunningLabel.Text = e.serverRunningLabelText;
-            startServerBtn.Text     = e.startServerText;
-            EnableServerFields(e.enableServerFields);
+            if (startServerBtn.InvokeRequired)
+            {
+                // We can invoke with any GUI element here
+                startServerBtn.Invoke(new Action(() => HandleUpdateGuiControlsEvent(sender, e)));
+            }
+            else
+            {
+                startServerBtn.Enabled = e.startServerBtnEnabled;
+                serverRunningLabel.Text = e.serverRunningLabelText;
+                startServerBtn.Text = e.startServerText;
+                EnableServerFields(e.enableServerFields);
+            }
+        }
+
+        /// <summary>
+        /// Event Handler for the 'UpdateScenarioIdFromLoadedConfigEvent' event
+        /// This method is called twice if the call came from a non-UI thread
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">contains values to update various GUI controls with</param>
+        private void HandleUpdateScenarioIdFromLoadedConfigEvent(object sender, ScenarioIdEventArgs e)
+        {
+            if (loadedScenarioLabel.InvokeRequired)
+            {
+                loadedScenarioLabel.Invoke(new Action(() => 
+                    HandleUpdateScenarioIdFromLoadedConfigEvent(sender, e)));
+            }
+            else
+            {
+                loadedScenarioLabel.Text = e.scenarioId;
+            }
         }
 
         /// <summary>

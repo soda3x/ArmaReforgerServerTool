@@ -52,13 +52,12 @@ namespace ReforgerServerApp.Managers
         public string GetModDatabaseFile() { return m_modDatabaseFile; }
         public string GetSteamCmdFile() {  return m_steamCmdFile; }
         public string GetInstallDirFile() {  return m_installDirFile; }
+        public string GetAbsolutePathToServerFile() { return $"{m_installDir}{Constants.SERVER_JSON_STR}"; }
 
         public bool IsSteamCMDInstalled() {  return File.Exists(m_steamCmdFile); }
 
         /// <summary>
-        /// Write the available and enabled mods from the ListBoxes to the mod_database.txt file so that on next open, 
-        /// they can be imported without the need for re-adding.
-        /// The mods are stored in a comma separated format of "MOD_ID,MOD_NAME" on each line.
+        /// Write the available and enabled mods from the ListBoxes
         /// </summary>
         public void WriteModsDatabase()
         {
@@ -73,7 +72,7 @@ namespace ReforgerServerApp.Managers
         }
 
         /// <summary>
-        /// Read the mods_database.txt file.
+        /// Read the Mods Database file
         /// This method also calls the AlphabetiseModListBox method so the ListBoxes are always 
         /// displaying the mods in alphabetical order.
         /// </summary>
@@ -81,7 +80,7 @@ namespace ReforgerServerApp.Managers
         {
             using StreamReader sr = File.OpenText(m_modDatabaseFile);
             string json = sr.ReadToEnd().Trim();
-            List<Mod> loadedMods = JsonSerializer.Deserialize<List<Mod>>(json)!;
+            Mod[] loadedMods = JsonSerializer.Deserialize<Mod[]>(json)!;
             foreach (Mod mod in loadedMods)
             {
                 if (!ConfigurationManager.GetInstance().GetAvailableMods().Contains(mod))
@@ -103,7 +102,27 @@ namespace ReforgerServerApp.Managers
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 ConfigurationManager.GetInstance().CreateConfiguration();
-                File.WriteAllText(sfd.FileName, ConfigurationManager.GetInstance().GetServerConfiguration().AsJsonString());
+                SaveConfigurationToFile(sfd.FileName);
+            }
+        }
+
+        /// <summary>
+        /// Save Configuration to JSON file
+        /// </summary>
+        /// <param name="path">File path to save to</param>
+        /// <returns>True if file was saved successfully, false otherwise</returns>
+        public static bool SaveConfigurationToFile(string path)
+        {
+            try
+            {
+                ConfigurationManager.GetInstance().CreateConfiguration();
+                File.WriteAllText(path, ConfigurationManager.GetInstance().GetServerConfiguration().AsJsonString());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Utilities.DisplayErrorMessage($"An error occurred while trying to write server configuration.", ex.Message);
+                return false;
             }
         }
 
@@ -186,10 +205,10 @@ namespace ReforgerServerApp.Managers
                     }
                 }
             }
-            catch (WebException)
+            catch (WebException e)
             {
-                MessageBox.Show("Unable to check for updates," +
-                    " you may not be using the latest version of the Arma Reforger Dedicated Server Tool.", "Arma Reforger Dedicated Server Tool");
+                Utilities.DisplayErrorMessage($"Unable to check for updates," +
+                    " you may not be using the latest version of the Arma Reforger Dedicated Server Tool.\r\nPlease consider checking your internet connection.", e.Message);
             }
         }
 
@@ -241,6 +260,27 @@ namespace ReforgerServerApp.Managers
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Convenience method for deleting the 'server.json' file and recreating it
+        /// </summary>
+        /// <returns>True if the operation completed successfully, false otherwise</returns>
+        public bool ResetServerFile()
+        {
+            try
+            {
+                if (File.Exists(GetAbsolutePathToServerFile()))
+                {
+                    File.Delete(GetAbsolutePathToServerFile());
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Utilities.DisplayErrorMessage($"An error occurred while trying to reset server configuration.", ex.Message);
+                return false;
+            }
         }
     }
 }
