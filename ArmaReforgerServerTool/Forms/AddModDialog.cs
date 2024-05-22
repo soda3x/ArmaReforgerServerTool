@@ -1,5 +1,4 @@
 ﻿using ReforgerServerApp.Managers;
-using ReforgerServerApp.Utils;
 
 namespace ReforgerServerApp
 {
@@ -47,11 +46,11 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AddBtnPressed(object sender, EventArgs e)
         {
-            if (!String.IsNullOrWhiteSpace(modId.Text) && !String.IsNullOrWhiteSpace(modName.Text))
+            if (!string.IsNullOrWhiteSpace(modId.Text) && !string.IsNullOrWhiteSpace(modName.Text))
             {
                 Mod mod;
 
-                if (!String.IsNullOrWhiteSpace(modVers.Text))
+                if (!string.IsNullOrWhiteSpace(modVers.Text))
                 {
                     mod = new(modId.Text, modName.Text, modVers.Text);
                 }
@@ -68,6 +67,7 @@ namespace ReforgerServerApp
                     ConfigurationManager.GetInstance().GetAvailableMods().Add(mod);
                 }
                 FileIOManager.GetInstance().WriteModsDatabase();
+                ConfigurationManager.GetInstance().AlphabetiseModLists();
                 Close();
             }
         }

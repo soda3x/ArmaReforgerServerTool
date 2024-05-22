@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ReforgerServerApp.Models
+﻿namespace ReforgerServerApp.Models
 {
     public class LaunchArgument
     {
         private readonly Dictionary<string, string> m_underlyingDict;
-        private string m_key;
+        private readonly string m_key;
 
         public LaunchArgument(string key, string val)
         {

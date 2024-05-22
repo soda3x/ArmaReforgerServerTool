@@ -1,13 +1,6 @@
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
-using ReforgerServerApp.Utils;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing.Text;
-using System.IO.Compression;
-using System.Net;
-using System.Reflection;
-using System.Text;
 
 namespace ReforgerServerApp
 {
@@ -32,19 +25,19 @@ namespace ReforgerServerApp
 
             UpdateSteamCmdInstallStatus();
 
-            fpsLimitUpDown.Enabled = false;
-            restartIntervalUpDown.Enabled = false;
-            restartUnitsComboBox.Enabled = false;
+            fpsLimitUpDown.Enabled            = false;
+            restartIntervalUpDown.Enabled     = false;
+            restartUnitsComboBox.Enabled      = false;
             overridePortNumericUpDown.Enabled = false;
-            ndsUpDown.Enabled = false;
-            nwkResolutionUpDown.Enabled = false;
-            staggeringBudgetUpDown.Enabled = false;
-            streamingBudgetUpDown.Enabled = false;
-            streamsDeltaUpDown.Enabled = false;
-            sessionSave.Enabled = false;
+            ndsUpDown.Enabled                 = false;
+            nwkResolutionUpDown.Enabled       = false;
+            staggeringBudgetUpDown.Enabled    = false;
+            streamingBudgetUpDown.Enabled     = false;
+            streamsDeltaUpDown.Enabled        = false;
+            sessionSave.Enabled               = false;
 
             availableMods.DataSource = ConfigurationManager.GetInstance().GetAvailableMods();
-            enabledMods.DataSource = ConfigurationManager.GetInstance().GetEnabledMods();
+            enabledMods.DataSource   = ConfigurationManager.GetInstance().GetEnabledMods();
 
             ConfigurationManager.GetInstance().AlphabetiseModLists();
 
@@ -141,8 +134,8 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AvailableModsSelectedIndexChanged(object sender, EventArgs e)
         {
-            _ = availableMods.SelectedItem != null ? editModBtn.Enabled = true : editModBtn.Enabled = false;
-            _ = availableMods.SelectedItem != null ? removeModBtn.Enabled = true : removeModBtn.Enabled = false;
+            editModBtn.Enabled   = availableMods.SelectedItem != null;
+            removeModBtn.Enabled = availableMods.SelectedItem != null;
         }
 
         /// <summary>
@@ -203,16 +196,17 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemovedFromEnabledModsBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod)GetEnabledModsList().SelectedItem != null)
+            if ((Mod) GetEnabledModsList().SelectedItem != null)
             {
                 Mod m = (Mod)GetEnabledModsList().SelectedItem;
-                GetEnabledModsList().Items.Remove(m);
-                if (!GetAvailableModsList().Items.Contains(m))
+
+                if (!ConfigurationManager.GetInstance().GetAvailableMods().Contains(m))
                 {
-                    GetAvailableModsList().Items.Add(m);
+                    ConfigurationManager.GetInstance().GetAvailableMods().Add(new(m));
                 }
+                ConfigurationManager.GetInstance().GetEnabledMods().Remove(m);
             }
-            ConfigurationManager.GetInstance().AlphabetiseModLists();
+            ConfigurationManager.GetInstance().AlphabetiseModLists(); 
         }
 
         /// <summary>
@@ -333,15 +327,14 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void EnableAllModsBtnPressed(object sender, EventArgs e)
         {
-            List<Mod> availableMods = GetAvailableModsList().Items.OfType<Mod>().ToList();
-            foreach (Mod m in availableMods)
+            foreach (Mod m in ConfigurationManager.GetInstance().GetAvailableMods())
             {
-                if (!GetEnabledModsList().Items.Contains(m))
+                if (!ConfigurationManager.GetInstance().GetEnabledMods().Contains(m))
                 {
-                    GetEnabledModsList().Items.Add(m);
-                    GetAvailableModsList().Items.Remove(m);
+                    ConfigurationManager.GetInstance().GetEnabledMods().Add(new(m));
                 }
             }
+            ConfigurationManager.GetInstance().GetAvailableMods().Clear();
             ConfigurationManager.GetInstance().AlphabetiseModLists();
         }
 
@@ -353,15 +346,14 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void DisableAllModsBtnPressed(object sender, EventArgs e)
         {
-            List<Mod> enabledMods = GetEnabledModsList().Items.OfType<Mod>().ToList();
-            foreach (Mod m in enabledMods)
+            foreach (Mod m in ConfigurationManager.GetInstance().GetEnabledMods())
             {
-                if (!GetAvailableModsList().Items.Contains(m))
+                if (!ConfigurationManager.GetInstance().GetAvailableMods().Contains(m))
                 {
-                    GetAvailableModsList().Items.Add(m);
-                    GetEnabledModsList().Items.Remove(m);
+                    ConfigurationManager.GetInstance().GetAvailableMods().Add(new(m));
                 }
             }
+            ConfigurationManager.GetInstance().GetEnabledMods().Clear();
             ConfigurationManager.GetInstance().AlphabetiseModLists();
         }
 
