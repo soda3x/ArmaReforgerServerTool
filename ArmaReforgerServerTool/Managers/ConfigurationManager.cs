@@ -181,8 +181,12 @@ namespace ReforgerServerApp
         /// </summary>
         public void AlphabetiseModLists()
         {
-            Utilities.AlphabetiseModList(ref m_availableMods);
-            Utilities.AlphabetiseModList(ref m_enabledMods);
+            var tempAvailableMods = Utilities.AlphabetiseModList(m_availableMods);
+            var tempEnabledMods   = Utilities.AlphabetiseModList(m_enabledMods);
+            m_availableMods.Clear();
+            m_enabledMods.Clear();
+            foreach(Mod mod in tempAvailableMods){m_availableMods.Add(mod);}
+            foreach(Mod mod in tempEnabledMods) { m_enabledMods.Add(mod);}
         }
 
         /// <summary>

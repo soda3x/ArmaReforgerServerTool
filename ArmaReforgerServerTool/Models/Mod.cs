@@ -7,56 +7,53 @@ namespace ReforgerServerApp
 {
     public class Mod
     {
-        readonly string m_modId;
-        readonly string m_modName;
-        readonly string m_modVersion;
+        public string modId {get; set;}
+        public string name { get; set; }
+        public string version { get; set; }
 
-        private readonly static string LATEST_MOD_VER_STR = "latest";
+        private const string LATEST_MOD_VER_STR = "latest";
 
-        public Mod() 
-        {
-            // Exists purely for JSON (de)serializing
-        }
+        public Mod() { /* Exists only for JSON deserializing */ }
 
         public Mod(string modId, string modName, string modVersion)
         {
-            m_modId = modId;
-            m_modName = modName;
-            m_modVersion = modVersion;
+            this.modId   = modId;
+            this.name    = modName;
+            this.version = modVersion;
         }
 
         public Mod(string modId, string modName)
         {
-            m_modId = modId;
-            m_modName = modName;
-            m_modVersion = LATEST_MOD_VER_STR;
+            this.modId   = modId;
+            this.name    = modName;
+            this.version = LATEST_MOD_VER_STR;
         }
 
         public Mod(Mod m)
         {
-            m_modId = m.m_modId;
-            m_modName = m.m_modName;
-            m_modVersion = m.m_modVersion;
+            this.modId   = m.modId;
+            this.name    = m.name;
+            this.version = m.version;
         }
 
         public string GetModID()
         {
-            return m_modId;
+            return modId!;
         }
 
         public string GetModName()
         {
-            return m_modName;
+            return name!;
         }
 
         public string GetModVersion()
         {
-            return m_modVersion;
+            return version!;
         }
 
         public override string ToString()
         {
-            return $"{m_modName} | {m_modVersion}";
+            return $"{name} | {version}";
         }
 
         public override bool Equals(object? obj)
@@ -71,18 +68,18 @@ namespace ReforgerServerApp
             }
             if (obj.GetType() == typeof(Mod))
             {
-                Mod other = (Mod) obj;
-                bool modNameSame = m_modName.Equals(other.m_modName);
-                bool modIdSame = m_modId.Equals(other.m_modId);
-                bool modVerSame = m_modVersion.Equals(other.m_modVersion);
-                return modNameSame && modIdSame && modVerSame;
+                Mod other    = (Mod) obj;
+                bool modSame = name!.Equals(other.name);
+                modSame     &= modId!.Equals(other.modId);
+                modSame     &= version!.Equals(other.version);
+                return modSame;
             }
             return false;
         }
 
         public override int GetHashCode()
         {
-            return m_modId.GetHashCode() + m_modName.GetHashCode();
+            return modId!.GetHashCode() + name!.GetHashCode();
         }
 
         public static List<string> GetScenariosForMod(string modId)
@@ -90,11 +87,10 @@ namespace ReforgerServerApp
             List<string> scenarios = new();
             try
             {
-                
-                string fetchUrl = $"https://reforger.armaplatform.com/workshop/{modId}/scenarios";
-                HtmlWeb web = new();
-                HtmlDocument doc = web.Load(fetchUrl);
-                const string className = "text-start";
+                string fetchUrl               = $"https://reforger.armaplatform.com/workshop/{modId}/scenarios";
+                HtmlWeb web                   = new();
+                HtmlDocument doc              = web.Load(fetchUrl);
+                const string className        = "text-start";
                 HtmlNodeCollection rawScenIds = doc.DocumentNode.SelectNodes($"//*[contains(@class,'{className}')]");
                 if (rawScenIds != null)
                 {
@@ -111,7 +107,6 @@ namespace ReforgerServerApp
             catch (Exception ex)
             {
                 Utilities.DisplayErrorMessage("Unable to fetch Scenario IDs from Arma Reforger Workshop, please check your internet connection.", ex.Message);
-                
             }
             return scenarios;
         }

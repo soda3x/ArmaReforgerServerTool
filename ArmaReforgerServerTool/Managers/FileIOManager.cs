@@ -17,8 +17,8 @@ namespace ReforgerServerApp.Managers
     /// </summary>
     internal class FileIOManager
     {
-        private static FileIOManager?   m_instance;
-        private readonly string         m_modDatabaseFile  = "./mod_database.txt";
+        private static FileIOManager?   INSTANCE;
+        private readonly string         m_modDatabaseFile  = "./mod_database.json";
         private readonly string         m_installDirFile   = "./install_directory.txt";
         private string                  m_steamCmdFile;
         private string                  m_installDir;
@@ -44,8 +44,8 @@ namespace ReforgerServerApp.Managers
 
         public static FileIOManager GetInstance()
         {
-            m_instance ??= new FileIOManager();
-            return m_instance;
+            INSTANCE ??= new FileIOManager();
+            return INSTANCE;
         }
 
         public string GetInstallDirectory() { return m_installDir; }
@@ -68,7 +68,7 @@ namespace ReforgerServerApp.Managers
             combined.AddRange(enabled);
             combined.AddRange(available);
 
-            File.WriteAllText(m_modDatabaseFile, JsonSerializer.Serialize(combined));
+            File.WriteAllText(m_modDatabaseFile, Utilities.GetFormattedJsonString(combined));
         }
 
         /// <summary>

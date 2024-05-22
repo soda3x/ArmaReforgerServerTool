@@ -13,16 +13,11 @@ namespace ReforgerServerApp.Utils
         /// Convenience method to sort a list of Mods in order of Mod Name
         /// </summary>
         /// <param name="list"> takes a list of Mods as a reference</param>
-        public static void AlphabetiseModList(ref BindingList<Mod> list)
+        public static List<Mod> AlphabetiseModList(BindingList<Mod> list)
         {
             List<Mod> temp = new(list);
             temp.Sort((x, y) => string.Compare(x.GetModName(), y.GetModName()));
-            list.Clear();
-
-            foreach (Mod m in list)
-            {
-                list.Add(m);
-            }
+            return temp;
         }
 
         /// <summary>
