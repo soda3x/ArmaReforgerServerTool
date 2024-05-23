@@ -1,4 +1,10 @@
-﻿
+﻿/******************************************************************************
+ * File Name:    ScenarioSelector.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This is the Scenario Selector Form
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
 
 namespace ReforgerServerApp
 {

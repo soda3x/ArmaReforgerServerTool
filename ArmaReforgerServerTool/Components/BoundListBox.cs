@@ -1,4 +1,18 @@
-﻿namespace ReforgerServerApp.Components
+﻿/******************************************************************************
+ * File Name:    BoundListBox.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  The BoundListBox component is an extension of the ListBox
+ *               component with the addition of automatically refreshing its
+ *               contents upon updates to the List Box's underlying data
+ *               source.
+ *               
+ *               Performs the same as a List Box when the DataSource property
+ *               is not set.
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+namespace ReforgerServerApp.Components
 {
     internal class BoundListBox : ListBox
     {

@@ -1,4 +1,15 @@
-﻿using ReforgerServerApp.Models;
+﻿/******************************************************************************
+ * File Name:    ProcessManager.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This file contains the singleton ProcessManager class
+ *               responsible for the management, launching and handling of
+ *               threaded operations and spawned processes such as SteamCMD
+ *               and the Arma Reforger Server executable itself
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
 using System.ComponentModel;
 using System.Diagnostics;

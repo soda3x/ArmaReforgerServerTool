@@ -1,6 +1,13 @@
+/******************************************************************************
+ * File Name:    Main.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This is the Main Form
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
-using System.Diagnostics;
 
 namespace ReforgerServerApp
 {
@@ -721,6 +728,57 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_A2S_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(a2sPort);
+            ServerParameterBool rcon = new()
+            {
+                ParameterName = "rconEnabled",
+                ParameterFriendlyName = "Enable Rcon",
+                ParameterTooltip = Constants.TODO_STR
+            };
+            serverParameters.Controls.Add(rcon);
+            ServerParameterString rconAddress = new()
+            {
+                ParameterName = "rconAddress",
+                ParameterFriendlyName = "Rcon Address",
+                ParameterTooltip = Constants.TODO_STR
+            };
+            serverParameters.Controls.Add(rconAddress);
+            ServerParameterNumeric rconPort = new()
+            {
+                ParameterName = "rconPort",
+                ParameterFriendlyName = "Rcon Port",
+                ParameterIncrement = 1,
+                ParameterMin = 1,
+                ParameterMax = 65535,
+                ParameterValue = 19999,
+                ParameterTooltip = Constants.TODO_STR
+            };
+            serverParameters.Controls.Add(rconPort);
+            ServerParameterString rconPassword = new()
+            {
+                ParameterName = "rconPassword",
+                ParameterFriendlyName = "Rcon Password",
+                ParameterTooltip = Constants.TODO_STR
+            };
+            serverParameters.Controls.Add(rconPassword);
+            ServerParameterNumeric rconMaxClients = new()
+            {
+                ParameterName = "rconMaxClients",
+                ParameterFriendlyName = "Rcon Max Clients",
+                ParameterTooltip = Constants.TODO_STR,
+                ParameterIncrement = 1,
+                ParameterMin = 1,
+                ParameterMax = 16,
+                ParameterValue = 16
+            };
+            serverParameters.Controls.Add(rconMaxClients);
+            ServerParameterSelect rconPermission = new()
+            {
+                ParameterName = "rconPermission",
+                ParameterFriendlyName = "Rcon Permission",
+                ParameterTooltip = Constants.TODO_STR,
+                ParameterValue = new[]{"admin", "monitor"}
+            };
+            serverParameters.Controls.Add(rconPermission);
             ServerParameterNumeric playerSaveTime = new()
             {
                 ParameterName = "playerSaveTime",

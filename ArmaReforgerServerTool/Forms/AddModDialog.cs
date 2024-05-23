@@ -1,4 +1,12 @@
-﻿using ReforgerServerApp.Managers;
+﻿/******************************************************************************
+ * File Name:    AddModDialog.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This is the Add Mod Dialog Form
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+using ReforgerServerApp.Managers;
 
 namespace ReforgerServerApp
 {

@@ -1,3 +1,11 @@
+/******************************************************************************
+ * File Name:    Program.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  Entry point for the application
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
 namespace ReforgerServerApp
 {
     internal static class Program

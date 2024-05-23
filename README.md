@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/soda3x/ArmaReforgerServerTool/raw/main/logo.png" />
+  <img src="https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/logo.png" />
 </p>
 
 ## Features
@@ -10,19 +10,20 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 - Automatically schedule your server to restart (minutes / hours / days interval)
 - Powerful mod management with the ability to import mods from saved configurations
 - Easily select the desired scenario you want to play
+- Automatically fetches Scenario IDs for your mods from the Arma Workshop
 
 ## Requirements
 - [dotNET 6 Runtime](https://dotnet.microsoft.com/en-us/download)
 
 ## Screenshots
 
-![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/servertoolscreen.png)
+![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/servertoolscreen.png)
 
-![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/servertoolscreen3.png)
+![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/servertoolscreen3.png)
 
-![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/servertoolscreen4.png)
+![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/servertoolscreen4.png)
 
-![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/servertoolscreen2.png)
+![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/servertoolscreen2.png)
 
 ## Discord
 

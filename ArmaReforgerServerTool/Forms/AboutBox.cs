@@ -1,4 +1,12 @@
-﻿using System.Reflection;
+﻿/******************************************************************************
+ * File Name:    AboutBox.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This is the AboutBox Form
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+using System.Reflection;
 using System.Text;
 
 namespace ReforgerServerApp

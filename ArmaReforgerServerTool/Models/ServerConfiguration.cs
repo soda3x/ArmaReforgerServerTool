@@ -1,7 +1,14 @@
-﻿using ReforgerServerApp.Utils;
-using System.Diagnostics;
+﻿/******************************************************************************
+ * File Name:    ServerConfiguration.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This file contains the ServerConfiguration class, which is
+ *               a model representing the Arma Reforger server configuration
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+using ReforgerServerApp.Utils;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace ReforgerServerApp
 {
@@ -20,25 +27,25 @@ namespace ReforgerServerApp
         public string publicAddress { get; set; }
         public int publicPort { get; set; }
         public A2S a2s { get; set; }
-        //public Rcon rcon { get; set; } TODO: This is not implemented yet, uncomment this once its ready to go
+        public Rcon rcon { get; set; }
         public Game game { get; set; }
         public Operating operating { get; set; }
 
         public Root(string bindAddress, int bindPort, string publicAddress, 
-            int publicPort, A2S a2s, Game game, Operating operating)
+            int publicPort, A2S a2s, Rcon rcon, Game game, Operating operating)
         {
             this.bindAddress = bindAddress;
             this.bindPort = bindPort;
             this.publicAddress = publicAddress;
             this.publicPort = publicPort;
             this.a2s = a2s;
-            // TODO will eventually need to add Rcon here too
+            this.rcon = rcon;
             this.game = game;
             this.operating = operating;
         }
 
         public static Root Default => new(string.Empty, 0, string.Empty, 0, A2S.Default, 
-            Game.Default, Operating.Default);
+            Rcon.Default, Game.Default, Operating.Default);
         
     }
 
