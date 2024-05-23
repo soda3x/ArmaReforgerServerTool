@@ -1,4 +1,14 @@
-﻿using ReforgerServerApp.Managers;
+﻿/******************************************************************************
+ * File Name:    ConfigurationManager.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This file contains the singleton ConfigurationManager class
+ *               in charge of manipulating and representing the server's 
+ *               configuration
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
 using System.ComponentModel;
 
@@ -185,8 +195,8 @@ namespace ReforgerServerApp
             var tempEnabledMods   = Utilities.AlphabetiseModList(m_enabledMods);
             m_availableMods.Clear();
             m_enabledMods.Clear();
-            foreach(Mod mod in tempAvailableMods){m_availableMods.Add(mod);}
-            foreach(Mod mod in tempEnabledMods) { m_enabledMods.Add(mod);}
+            foreach(Mod mod in tempAvailableMods) {m_availableMods.Add(mod);}
+            foreach(Mod mod in tempEnabledMods)   {m_enabledMods.Add(mod);}
         }
 
         /// <summary>

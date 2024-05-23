@@ -1,17 +1,17 @@
 ﻿/******************************************************************************
- * File Name:    ServerParameterString.cs
+ * File Name:    ServerParameterSelect.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
- * Description:  The ServerParameterString component represents a graphical
- *               means to manage string server configuration parameters
+ * Description:  The ServerParameterSelect component represents a graphical
+ *               means to manage choices
  * 
  * Author:       Bradley Newman
  ******************************************************************************/
 
 namespace ReforgerServerApp
 {
-    public partial class ServerParameterString : ServerParameter
+    public partial class ServerParameterSelect : ServerParameter
     {
-        public ServerParameterString()
+        public ServerParameterSelect()
         {
             InitializeComponent();
             underlyingControl = parameterValue;
@@ -19,8 +19,8 @@ namespace ReforgerServerApp
 
         public override object ParameterValue
         {
-            get => parameterValue.Text;
-            set => parameterValue.Text = (string) value;
+            get => parameterValue.SelectedText;
+            set => parameterValue.DataSource = value;
         }
     }
 }

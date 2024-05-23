@@ -1,14 +1,18 @@
-﻿using ReforgerServerApp.Utils;
-using System;
-using System.Collections.Generic;
+﻿/******************************************************************************
+ * File Name:    FileIOManager.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This file contains the singleton FileIOManager class
+ *               responsible for all I/O operations on files
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+using ReforgerServerApp.Utils;
 using System.Diagnostics;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ReforgerServerApp.Managers
 {
@@ -18,13 +22,24 @@ namespace ReforgerServerApp.Managers
     internal class FileIOManager
     {
         private static FileIOManager?   INSTANCE;
-        private readonly string         m_modDatabaseFile  = "./mod_database.json";
-        private readonly string         m_installDirFile   = "./install_directory.txt";
+        private readonly string         m_legacyModDatabaseFile = "./mod_database.txt";
+        private readonly string         m_modDatabaseFile       = "./mod_database.json";
+        private readonly string         m_installDirFile        = "./install_directory.txt";
         private string                  m_steamCmdFile;
         private string                  m_installDir;
         private FileIOManager()
         {
-            if (File.Exists(m_modDatabaseFile))
+            bool modDatabaseExists = File.Exists(m_modDatabaseFile);
+
+            if (!modDatabaseExists && File.Exists(m_legacyModDatabaseFile))
+            {
+                if (Utilities.DisplayConfirmationMessage(Constants.MIGRATE_LEGACY_MOD_DB_PROMPT_STR, true))
+                {
+                    MigrateLegacyModDatabase(m_legacyModDatabaseFile);
+                }
+            }
+
+            if (modDatabaseExists)
             {
                 ReadModsDatabase();
             }
@@ -50,11 +65,11 @@ namespace ReforgerServerApp.Managers
 
         public string GetInstallDirectory() { return m_installDir; }
         public string GetModDatabaseFile() { return m_modDatabaseFile; }
-        public string GetSteamCmdFile() {  return m_steamCmdFile; }
-        public string GetInstallDirFile() {  return m_installDirFile; }
+        public string GetSteamCmdFile() { return m_steamCmdFile; }
+        public string GetInstallDirFile() { return m_installDirFile; }
         public string GetAbsolutePathToServerFile() { return $"{m_installDir}{Constants.SERVER_JSON_STR}"; }
 
-        public bool IsSteamCMDInstalled() {  return File.Exists(m_steamCmdFile); }
+        public bool IsSteamCMDInstalled() { return File.Exists(m_steamCmdFile); }
 
         /// <summary>
         /// Write the available and enabled mods from the ListBoxes
@@ -140,6 +155,46 @@ namespace ReforgerServerApp.Managers
                 using StreamReader sr = File.OpenText(filePath);
                 ConfigurationManager.GetInstance().PopulateServerConfiguration(sr.ReadToEnd());
             }
+        }
+
+        /// <summary>
+        /// Load legacy Mod Database file (from <= 0.8.3) and convert to JSON format
+        /// Note that this will replace the existing current-format mod
+        /// database
+        /// </summary>
+        /// <param name="path">File path of legacy mod database</param>
+        /// <returns>True if successful, false otherwise</returns>
+        public static bool MigrateLegacyModDatabase(string path)
+        {
+            using StreamReader sr   = File.OpenText(path);
+            List<string> legacyMods = new(sr.ReadToEnd().Split(Environment.NewLine));
+            foreach (string s in legacyMods)
+            {
+                string[] splitMod = s.Split(',');
+
+                if (splitMod.Length < 2)
+                {
+                    Utilities.DisplayErrorMessage("Importing legacy mods failed.", "At least one legacy mod was in an invalid format.");
+                    return false;
+                }
+
+                if (splitMod.Length > 2)
+                {
+                    ConfigurationManager.GetInstance()
+                                        .GetAvailableMods()
+                                        .Add(new Mod(splitMod[0].Trim(), splitMod[1].Trim(), splitMod[2].Trim()));
+                }
+                else
+                {
+                    ConfigurationManager.GetInstance()
+                                        .GetAvailableMods()
+                                        .Add(new Mod(splitMod[0].Trim(), splitMod[1].Trim()));
+                }
+            }
+            GetInstance().WriteModsDatabase();
+            File.Delete(path);
+            MessageBox.Show("Legacy Mod Database successfully migrated");
+            return true;
         }
 
         /// <summary>

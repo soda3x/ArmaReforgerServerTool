@@ -1,4 +1,13 @@
-﻿namespace ReforgerServerApp
+﻿/******************************************************************************
+ * File Name:    ServerParameterNumeric.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  The ServerParameterNumeric component represents a graphical
+ *               means to manage numeric server configuration parameters
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+namespace ReforgerServerApp
 {
     public partial class ServerParameterNumeric : ServerParameter
     {

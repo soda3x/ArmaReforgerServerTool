@@ -1,4 +1,12 @@
-﻿namespace ReforgerServerApp
+﻿/******************************************************************************
+ * File Name:    Constants.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This file contains all big constants used in the program
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+namespace ReforgerServerApp
 {
     /// <summary>
     /// This class contains constants used throughout the application.
@@ -6,7 +14,12 @@
     /// </summary>
     internal class Constants
     {
+        // TODO String for development
+        public static string TODO_STR = "TODO: This needs to be implemented";
+
         public static string ERROR_MESSAGEBOX_TITLE_STR = "Arma Reforger Dedicated Server Tool - Error";
+        public static string WARN_MESSAGEBOX_TITLE_STR = "Arma Reforger Dedicated Server Tool - Warning";
+        public static string INFO_MESSAGEBOX_TITLE_STR = "Arma Reforger Dedicated Server Tool - Information";
         public static string ENABLE_ALL_MODS_STR = "Enable All Mods";
         public static string DISABLE_ALL_MODS_STR = "Disable All Mods";
         public static string ENABLE_MOD_STR = "Enable Mod";
@@ -119,5 +132,10 @@
 
         public static string SERVER_PARAM_BIND_ADDRESS_TOOLTIP_STR = "IP address to which the server socket will be bound. In most cases, this should be left empty.\r\n" +
             "It can be used to restrict connections to a particular network interface. When left out or empty, 0.0.0.0 is used, which allows connections through any IP address.";
+
+        public static string MIGRATE_LEGACY_MOD_DB_PROMPT_STR = "A mod database from a previous version of the Arma Reforger Dedicated Server Tool was found.\r\n\r\n" +
+            "This version of the tool is not compatible with this file type.\r\n\r\n" +
+            "Would you like to migrate this mod database to the new format?\r\n\r\n" +
+            "(If you select Yes, the legacy file will be deleted after the migration is complete, selecting No will create a new Mod Database in the new format)";
     }
 }

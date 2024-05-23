@@ -1,4 +1,13 @@
-﻿using HtmlAgilityPack;
+﻿/******************************************************************************
+ * File Name:    Mod.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This file contains the Mod class, a model representing the
+ *               Mod structure in the Arma Reforger server configuration
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+using HtmlAgilityPack;
 using ReforgerServerApp.Utils;
 using System.Diagnostics;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;

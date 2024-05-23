@@ -1,4 +1,15 @@
-﻿namespace ReforgerServerApp.Models
+﻿/******************************************************************************
+ * File Name:    LaunchArguments.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This file contains the LaunchArgument class, a model 
+ *               representing a launch argument for the Arma Reforger Server,
+ *               it also holds a structure containing all known Launch 
+ *               Arguments
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+namespace ReforgerServerApp.Models
 {
     public class LaunchArgument
     {
@@ -41,6 +52,7 @@
             return $"-{m_key} {m_underlyingDict[m_key]}".Trim();
         }
     }
+
     public struct LaunchArguments
     {
         public LaunchArgument config;

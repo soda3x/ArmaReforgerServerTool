@@ -1,4 +1,13 @@
-﻿using System.ComponentModel;
+﻿/******************************************************************************
+ * File Name:    Utilities.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  Static class containing utility methods for 
+ *               performing various simple tasks
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+using System.ComponentModel;
 using System.Text.Json;
 
 namespace ReforgerServerApp.Utils
@@ -70,11 +79,27 @@ namespace ReforgerServerApp.Utils
         public static void DisplayErrorMessage(string genMsg, string errMsg)
         {
             MessageBox.Show(
-                    $"{genMsg}\r\n\r\n" +
-                    $"Detail: {errMsg}\r\n\r\n" +
-                    $"Include the detail above in your bug reports.",
-                    Constants.ERROR_MESSAGEBOX_TITLE_STR
-                    );
+                $"{genMsg}\r\n\r\n" +
+                $"Detail: {errMsg}\r\n\r\n" +
+                $"Include the detail above in your bug reports.",
+                Constants.ERROR_MESSAGEBOX_TITLE_STR);
+        }
+
+        /// <summary>
+        /// Convenience method for Displaying a Confirmation Messagebox 
+        /// (message box with OK and Cancel buttons, or Yes and No if useYesOrNo = true)
+        /// </summary>
+        /// <param name="msg">Warning message to display</param>
+        /// <param name="useYesOrNo">Use Yes or No buttons instead of OK and Cancel</param>
+        /// <returns>True if the following logic should continue, False otherwise</returns>
+        public static bool DisplayConfirmationMessage(string msg, bool useYesOrNo = false)
+        {
+            DialogResult result = 
+                MessageBox.Show($"{msg}", 
+                Constants.WARN_MESSAGEBOX_TITLE_STR,
+                useYesOrNo ? MessageBoxButtons.YesNo : MessageBoxButtons.OKCancel);
+
+            return result == DialogResult.OK || result == DialogResult.Yes;
         }
     }
 }
