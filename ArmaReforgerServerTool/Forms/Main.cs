@@ -612,8 +612,9 @@ namespace ReforgerServerApp
 
         private void EditAdminsListBtnClicked(object sender, EventArgs e)
         {
-            ListForm lf = new("Edit Admins");
+            ListForm lf = new("Edit Admins", ConfigurationManager.GetInstance().GetServerConfiguration().root.game.admins);
             lf.ShowDialog();
+            ConfigurationManager.GetInstance().GetServerConfiguration().root.game.admins = lf.GetItems();
         }
 
         /// <summary>

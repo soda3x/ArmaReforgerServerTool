@@ -1,4 +1,6 @@
-﻿namespace ReforgerServerApp
+﻿using ReforgerServerApp.Components;
+
+namespace ReforgerServerApp
 {
     partial class ListForm
     {
@@ -28,29 +30,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            adminListView = new ListView();
+            itemListView = new BoundListBox();
             addBtn = new Button();
             removeBtn = new Button();
             closeBtn = new Button();
-            adminTB = new TextBox();
+            itemTB = new TextBox();
             SuspendLayout();
             // 
-            // adminListView
+            // itemListView
             // 
-            adminListView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            adminListView.FullRowSelect = true;
-            adminListView.GridLines = true;
-            adminListView.Location = new Point(12, 12);
-            adminListView.MultiSelect = false;
-            adminListView.Name = "adminListView";
-            adminListView.Size = new Size(776, 391);
-            adminListView.TabIndex = 0;
-            adminListView.UseCompatibleStateImageBehavior = false;
-            adminListView.View = View.List;
+            itemListView.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            itemListView.Location = new Point(12, 12);
+            itemListView.Name = "itemListView";
+            itemListView.Size = new Size(776, 391);
+            itemListView.TabIndex = 0;
             // 
             // addBtn
             // 
-            addBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            addBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
             addBtn.Location = new Point(392, 415);
             addBtn.Name = "addBtn";
             addBtn.Size = new Size(75, 23);
@@ -61,7 +58,7 @@
             // 
             // removeBtn
             // 
-            removeBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            removeBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
             removeBtn.Location = new Point(473, 415);
             removeBtn.Name = "removeBtn";
             removeBtn.Size = new Size(75, 23);
@@ -72,7 +69,7 @@
             // 
             // closeBtn
             // 
-            closeBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            closeBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
             closeBtn.Location = new Point(713, 415);
             closeBtn.Name = "closeBtn";
             closeBtn.Size = new Size(75, 23);
@@ -81,24 +78,24 @@
             closeBtn.UseVisualStyleBackColor = true;
             closeBtn.Click += CloseBtnClicked;
             // 
-            // adminTB
+            // itemTB
             // 
-            adminTB.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            adminTB.Location = new Point(12, 415);
-            adminTB.Name = "adminTB";
-            adminTB.Size = new Size(374, 23);
-            adminTB.TabIndex = 4;
+            itemTB.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            itemTB.Location = new Point(12, 415);
+            itemTB.Name = "itemTB";
+            itemTB.Size = new Size(374, 23);
+            itemTB.TabIndex = 4;
             // 
             // ListForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(adminTB);
+            Controls.Add(itemTB);
             Controls.Add(closeBtn);
             Controls.Add(removeBtn);
             Controls.Add(addBtn);
-            Controls.Add(adminListView);
+            Controls.Add(itemListView);
             MinimumSize = new Size(640, 480);
             Name = "ListForm";
             ShowIcon = false;
@@ -109,10 +106,10 @@
 
         #endregion
 
-        private ListView adminListView;
+        private BoundListBox itemListView;
         private Button addBtn;
         private Button removeBtn;
         private Button closeBtn;
-        private TextBox adminTB;
+        private TextBox itemTB;
     }
 }

@@ -10,6 +10,8 @@
 using HtmlAgilityPack;
 using ReforgerServerApp.Utils;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
+using static ReforgerServerApp.Utils.Utilities;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace ReforgerServerApp
@@ -18,6 +20,8 @@ namespace ReforgerServerApp
     {
         public string modId {get; set;}
         public string name { get; set; }
+
+        [JsonConverter(typeof(ConditionalFieldConverter))]
         public string version { get; set; }
 
         private const string LATEST_MOD_VER_STR = "latest";
@@ -80,7 +84,11 @@ namespace ReforgerServerApp
                 Mod other    = (Mod) obj;
                 bool modSame = name!.Equals(other.name);
                 modSame     &= modId!.Equals(other.modId);
-                modSame     &= version!.Equals(other.version);
+                if (version != null)
+                {
+                    modSame &= version!.Equals(other.version);
+                }
+                
                 return modSame;
             }
             return false;
