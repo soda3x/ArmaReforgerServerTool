@@ -7,8 +7,10 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using System;
 using System.ComponentModel;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ReforgerServerApp.Utils
 {
@@ -42,15 +44,41 @@ namespace ReforgerServerApp.Utils
         /// Convenience method to return a formatted JSON string
         /// </summary>
         /// <param name="input">to serialize</param>
+        /// <param name="converters">optional any custom converters to use</param>
         /// <returns>Formatted serialized JSON string</returns>
-        public static string GetFormattedJsonString(object input)
+        public static string GetFormattedJsonString(object input, params JsonConverter[] converters)
         {
-            string serializedJson = JsonSerializer.Serialize(input, new JsonSerializerOptions
+            var options = new JsonSerializerOptions
             {
                 WriteIndented = true
-            });
+            };
+            foreach (JsonConverter jc in converters)
+            {
+                options.Converters.Add(jc);
+            }
 
+            string serializedJson = JsonSerializer.Serialize(input, options);
             return serializedJson;
+        }
+
+        /// <summary>
+        /// Convenience method for retrieving a deserialized Server Config object from
+        /// JSON
+        /// </summary>
+        /// <param name="json">to deserialise</param>
+        /// <param name="converters">optional any custom converters to use</param>
+        /// <returns>'Root' object representing a server configuration</returns>
+        public static Root GetServerConfigFromJson(string json, params JsonConverter[] converters)
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            foreach (JsonConverter jc in converters)
+            {
+                options.Converters.Add(jc);
+            }
+            return JsonSerializer.Deserialize<Root>(json, options);
         }
 
         /// <summary>
@@ -100,6 +128,82 @@ namespace ReforgerServerApp.Utils
                 useYesOrNo ? MessageBoxButtons.YesNo : MessageBoxButtons.OKCancel);
 
             return result == DialogResult.OK || result == DialogResult.Yes;
+        }
+
+        /// <summary>
+        /// Custom JSON Converter for conditional fields
+        /// </summary>
+        public class ConditionalFieldConverter : JsonConverter<string>
+        {
+            public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                return reader.GetString()!;
+            }
+
+            public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
+            {
+                // This method is intentionally left empty because we handle the writing logic in the Write method of the ModConverter.
+            }
+        }
+
+        /// <summary>
+        /// JSON Converter for the Mod model, this will exclude the 'version' field if version == latest (not a valid value for the server config)
+        /// </summary>
+        public class ModConverter : JsonConverter<Mod>
+        {
+            public override Mod Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                Mod mod = new Mod();
+
+                while (reader.Read())
+                {
+                    if (reader.TokenType == JsonTokenType.EndObject)
+                    {
+                        break;
+                    }
+
+                    if (reader.TokenType == JsonTokenType.PropertyName)
+                    {
+                        string propertyName = reader.GetString();
+                        reader.Read();
+
+                        switch (propertyName)
+                        {
+                            case nameof(mod.modId):
+                            mod.modId = reader.GetString();
+                            break;
+                            case nameof(mod.name):
+                            mod.name = reader.GetString();
+                            break;
+                            case nameof(mod.version):
+                            mod.version = reader.GetString();
+                            break;
+                        }
+                    }
+                }
+
+                // Initialize version with 'latest' if it not present
+                if (mod.version == null)
+                {
+                    mod.version = "latest";
+                }
+
+                return mod;
+            }
+
+            public override void Write(Utf8JsonWriter writer, Mod value, JsonSerializerOptions options)
+            {
+                writer.WriteStartObject();
+                writer.WriteString(nameof(value.modId), value.modId);
+                writer.WriteString(nameof(value.name), value.name);
+
+                // Only write version if it is not 'latest'
+                if (value.version != "latest")
+                {
+                    writer.WriteString(nameof(value.version), value.version);
+                }
+                writer.WriteEndObject();
+            }
         }
     }
 }

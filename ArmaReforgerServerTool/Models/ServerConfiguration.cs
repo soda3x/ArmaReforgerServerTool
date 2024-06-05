@@ -213,7 +213,7 @@ namespace ReforgerServerApp
         /// <returns>JSON string representation of the Server Configuration</returns>
         public string AsJsonString()
         {
-            return Utilities.GetFormattedJsonString(root);
+            return Utilities.GetFormattedJsonString(root, new Utilities.ModConverter());
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace ReforgerServerApp
         /// <returns>JSON string representation of the Server Configuration's Mods</returns>
         public string ModsAsJsonString()
         {
-            return Utilities.GetFormattedJsonString(root.game.mods);
+            return Utilities.GetFormattedJsonString(root.game.mods, new Utilities.ModConverter());
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace ReforgerServerApp
         /// <param name="json">to convert into the Server Configuration</param>
         public void SetServerConfigurationFromJson(string json)
         {
-            root = JsonSerializer.Deserialize<Root>(json);
+            root = Utilities.GetServerConfigFromJson(json, new Utilities.ModConverter());
         }
 
         /// <summary>

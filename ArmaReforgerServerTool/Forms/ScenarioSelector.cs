@@ -6,6 +6,8 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using ReforgerServerApp.Utils;
+
 namespace ReforgerServerApp
 {
     public partial class ScenarioSelector : Form
@@ -58,15 +60,23 @@ namespace ReforgerServerApp
         /// </summary>
         private void GetScenarios()
         {
-            List<string> scenarios = new();
-            foreach (Mod m in m_parentForm.GetEnabledModsList().Items)
+            try
             {
-                scenarios.AddRange(Mod.GetScenariosForMod(m.GetModID()));
+                List<string> scenarios = new();
+                foreach (Mod m in m_parentForm.GetEnabledModsList().Items)
+                {
+                    scenarios.AddRange(Mod.GetScenariosForMod(m.GetModID()));
+                }
+
+                foreach (string scenId in scenarios)
+                {
+                    scenarioList.Invoke((MethodInvoker) (() => scenarioList.Items.Add(scenId)));
+                }
             }
 
-            foreach (string scenId in scenarios)
+            catch (Exception ex)
             {
-                scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scenId)));
+                Utilities.DisplayErrorMessage("An error occurred while loading scenarios.", ex.Message);
             }
         }
 
@@ -74,23 +84,30 @@ namespace ReforgerServerApp
         {
             while (m_getScenariosThreadRunning)
             {
-                if (m_getScenariosRequested)
+                try
                 {
-                    if (reloadScenariosBtn.IsHandleCreated)
+                    if (m_getScenariosRequested)
                     {
-                        currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = "Fetching scenarios from the workshop..."));
-                        m_getScenariosRequested = false;
-                        reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = false));
-
-                        foreach (String scen in GetStockScenarios())
+                        if (reloadScenariosBtn.IsHandleCreated)
                         {
-                            scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scen)));
-                        }
+                            currentlySelectedLbl.Invoke((MethodInvoker) (() => currentlySelectedLbl.Text = "Fetching scenarios from the workshop..."));
+                            m_getScenariosRequested = false;
+                            reloadScenariosBtn.Invoke((MethodInvoker) (() => reloadScenariosBtn.Enabled = false));
 
-                        GetScenarios();
-                        reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = true));
-                        currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
+                            foreach (string scen in GetStockScenarios())
+                            {
+                                scenarioList.Invoke((MethodInvoker) (() => scenarioList.Items.Add(scen)));
+                            }
+
+                            GetScenarios();
+                            reloadScenariosBtn.Invoke((MethodInvoker) (() => reloadScenariosBtn.Enabled = true));
+                            currentlySelectedLbl.Invoke((MethodInvoker) (() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Utilities.DisplayErrorMessage("Scenario Fetch thread encountered an error.", ex.Message);
                 }
             }
         }

@@ -31,12 +31,10 @@ namespace ReforgerServerApp.Managers
         {
             bool modDatabaseExists = File.Exists(m_modDatabaseFile);
 
-            if (!modDatabaseExists && File.Exists(m_legacyModDatabaseFile))
+            if (!modDatabaseExists && File.Exists(m_legacyModDatabaseFile) && 
+                Utilities.DisplayConfirmationMessage(Constants.MIGRATE_LEGACY_MOD_DB_PROMPT_STR, true))
             {
-                if (Utilities.DisplayConfirmationMessage(Constants.MIGRATE_LEGACY_MOD_DB_PROMPT_STR, true))
-                {
-                    MigrateLegacyModDatabase(m_legacyModDatabaseFile);
-                }
+                MigrateLegacyModDatabase(m_legacyModDatabaseFile);
             }
 
             if (modDatabaseExists)
@@ -83,7 +81,7 @@ namespace ReforgerServerApp.Managers
             combined.AddRange(enabled);
             combined.AddRange(available);
 
-            File.WriteAllText(m_modDatabaseFile, Utilities.GetFormattedJsonString(combined));
+            File.WriteAllText(m_modDatabaseFile, Utilities.GetFormattedJsonString(combined, new Utilities.ModConverter()));
         }
 
         /// <summary>
@@ -98,6 +96,10 @@ namespace ReforgerServerApp.Managers
             Mod[] loadedMods = JsonSerializer.Deserialize<Mod[]>(json)!;
             foreach (Mod mod in loadedMods)
             {
+                if (mod.version == null)
+                {
+                    mod.version = "latest";
+                }
                 if (!ConfigurationManager.GetInstance().GetAvailableMods().Contains(mod))
                 {
                     ConfigurationManager.GetInstance().GetAvailableMods().Add(mod);
@@ -180,20 +182,25 @@ namespace ReforgerServerApp.Managers
 
                 if (splitMod.Length > 2)
                 {
-                    ConfigurationManager.GetInstance()
-                                        .GetAvailableMods()
-                                        .Add(new Mod(splitMod[0].Trim(), splitMod[1].Trim(), splitMod[2].Trim()));
-                }
-                else
-                {
-                    ConfigurationManager.GetInstance()
-                                        .GetAvailableMods()
-                                        .Add(new Mod(splitMod[0].Trim(), splitMod[1].Trim()));
+                    string versString = splitMod[2].Trim();
+                    if (versString != null && !versString.Equals("latest"))
+                    {
+                        ConfigurationManager.GetInstance()
+                                            .GetAvailableMods()
+                                            .Add(new Mod(splitMod[0].Trim(), splitMod[1].Trim(), splitMod[2].Trim()));
+                    } else
+                    {
+                        ConfigurationManager.GetInstance()
+                                            .GetAvailableMods()
+                                            .Add(new Mod(splitMod[0].Trim(), splitMod[1].Trim()));
+                    }
                 }
             }
             GetInstance().WriteModsDatabase();
-            File.Delete(path);
-            MessageBox.Show("Legacy Mod Database successfully migrated");
+            if (DeleteFile(path))
+            {
+                MessageBox.Show("Legacy Mod Database successfully migrated");
+            }
             return true;
         }
 
@@ -280,7 +287,7 @@ namespace ReforgerServerApp.Managers
             {
                 Directory.Delete(m_installDir, true);
                 m_installDir = string.Empty;
-                File.Delete(m_installDirFile);
+                DeleteFile(m_installDirFile);
                 MessageBox.Show("Server files deleted.", "Warning", MessageBoxButtons.OK);
                 return !Directory.Exists(m_installDir);
             }
@@ -323,17 +330,28 @@ namespace ReforgerServerApp.Managers
         /// <returns>True if the operation completed successfully, false otherwise</returns>
         public bool ResetServerFile()
         {
+            return DeleteFile(GetAbsolutePathToServerFile());
+        }
+
+        /// <summary>
+        /// Convenience method for wrapping the File.Delete method
+        /// Handles errors and will do nothing if the file does not exist
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>True if deletion successful, false otherwise</returns>
+        public static bool DeleteFile(string path)
+        {
             try
             {
-                if (File.Exists(GetAbsolutePathToServerFile()))
+                if (File.Exists (path))
                 {
-                    File.Delete(GetAbsolutePathToServerFile());
+                    File.Delete(path);
                 }
                 return true;
             }
             catch (Exception ex)
             {
-                Utilities.DisplayErrorMessage($"An error occurred while trying to reset server configuration.", ex.Message);
+                Utilities.DisplayErrorMessage($"An error occurred while attempting to delete file '{path}'.", ex.Message);
                 return false;
             }
         }
