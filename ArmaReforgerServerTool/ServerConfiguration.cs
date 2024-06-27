@@ -166,7 +166,6 @@ namespace ReforgerServerApp
             sb.AppendLine($"\"playerSaveTime\": {PlayerSaveTime.ToString()},");
             sb.AppendLine($"\"aiLimit\": {AiLimit.ToString()},");
             sb.AppendLine($"\"slotReservationTimeout\": {SlotReservationTimeout.ToString()},");
-            sb.AppendLine($"\"disableNavmeshStreaming\": {DisableNavmeshStreaming.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"disableServerShutdown\": {DisableServerShutdown.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"disableCrashReporter\": {DisableCrashReporter.ToString().ToLowerInvariant()},");
             sb.AppendLine($"\"disableAI\": {DisableAI.ToString().ToLowerInvariant()}");
