@@ -402,7 +402,7 @@ namespace ReforgerServerApp
                     .WithAILimit(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "aiLimit")))
                     .WithVONCanTransmitCrossFaction(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "vonCanTransmitCrossFaction")))
                     .WithSlotReservationTimeout(Convert.ToInt32(GetConfigParameterOrDefault(configParams, "slotReservationTimeout")))
-                    .WithDisableNavmeshStreaming(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "disableNavmeshStreaming")))
+                    .WithDisableNavmeshStreaming(false)
                     .WithDisableServerShutdown(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "disableServerShutdown")))
                     .WithDisableCrashReporter(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "disableCrashReporter")))
                     .WithDisableAI(Convert.ToBoolean(GetConfigParameterOrDefault(configParams, "disableAI")))
@@ -460,7 +460,6 @@ namespace ReforgerServerApp
                 serverParamDict["playerSaveTime"].ParameterValue = serverConfig.PlayerSaveTime;
                 serverParamDict["aiLimit"].ParameterValue = serverConfig.AiLimit;
                 serverParamDict["disableCrashReporter"].ParameterValue = serverConfig.DisableCrashReporter;
-                serverParamDict["disableNavmeshStreaming"].ParameterValue = serverConfig.DisableNavmeshStreaming;
                 serverParamDict["disableServerShutdown"].ParameterValue = serverConfig.DisableServerShutdown;
                 serverParamDict["slotReservationTimeout"].ParameterValue = serverConfig.SlotReservationTimeout;
                 serverParamDict["VONCanTransmitCrossFaction"].ParameterValue = serverConfig.VONCanTransmitCrossFaction;
@@ -525,7 +524,6 @@ namespace ReforgerServerApp
                 .WithAILimit(Convert.ToInt32(serverParamDict["aiLimit"].ParameterValue))
                 .WithVONCanTransmitCrossFaction((bool)serverParamDict["VONCanTransmitCrossFaction"].ParameterValue)
                 .WithSlotReservationTimeout(Convert.ToInt32(serverParamDict["slotReservationTimeout"].ParameterValue))
-                .WithDisableNavmeshStreaming((bool)serverParamDict["disableNavmeshStreaming"].ParameterValue)
                 .WithDisableServerShutdown((bool)serverParamDict["disableServerShutdown"].ParameterValue)
                 .WithDisableCrashReporter((bool)serverParamDict["disableCrashReporter"].ParameterValue)
                 .WithMissionHeader(serverConfig.MissionHeader)
@@ -1555,14 +1553,6 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_SLOT_RESERVATION_TIMEOUT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(slotReservationTimeout);
-            ServerParameterBool disableNavmeshStreaming = new()
-            {
-                ParameterName = "disableNavmeshStreaming",
-                ParameterFriendlyName = "Disable Navmesh Streaming",
-                ParameterValue = false,
-                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR
-            };
-            serverParameters.Controls.Add(disableNavmeshStreaming);
             ServerParameterBool disableServerShutdown = new()
             {
                 ParameterName = "disableServerShutdown",
