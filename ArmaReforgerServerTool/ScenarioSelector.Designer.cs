@@ -53,7 +53,7 @@
             selectScenarioBtn.Name = "selectScenarioBtn";
             selectScenarioBtn.Size = new Size(115, 23);
             selectScenarioBtn.TabIndex = 1;
-            selectScenarioBtn.Text = "Select Scenario";
+            selectScenarioBtn.Text = "&Select Scenario";
             selectScenarioBtn.UseVisualStyleBackColor = true;
             selectScenarioBtn.Click += SelectScenarioButtonClicked;
             // 
@@ -64,7 +64,7 @@
             reloadScenariosBtn.Name = "reloadScenariosBtn";
             reloadScenariosBtn.Size = new Size(115, 23);
             reloadScenariosBtn.TabIndex = 2;
-            reloadScenariosBtn.Text = "Reload Scenarios";
+            reloadScenariosBtn.Text = "&Reload Scenarios";
             reloadScenariosBtn.UseVisualStyleBackColor = true;
             reloadScenariosBtn.Click += ReloadScenariosButtonClicked;
             // 

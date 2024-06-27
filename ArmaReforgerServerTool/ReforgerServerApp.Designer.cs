@@ -156,7 +156,7 @@
             editModBtn.Name = "editModBtn";
             editModBtn.Size = new Size(132, 23);
             editModBtn.TabIndex = 51;
-            editModBtn.Text = "Edit Selected Mod";
+            editModBtn.Text = "&Edit Selected Mod";
             editModBtn.UseVisualStyleBackColor = true;
             editModBtn.Click += EditModBtnPressed;
             // 
@@ -178,7 +178,7 @@
             addModBtn.Name = "addModBtn";
             addModBtn.Size = new Size(73, 23);
             addModBtn.TabIndex = 49;
-            addModBtn.Text = "Add Mod";
+            addModBtn.Text = "Add &Mod";
             addModBtn.UseVisualStyleBackColor = true;
             addModBtn.Click += AddModBtnPressed;
             // 
@@ -190,7 +190,7 @@
             removeModBtn.Name = "removeModBtn";
             removeModBtn.Size = new Size(146, 23);
             removeModBtn.TabIndex = 48;
-            removeModBtn.Text = "Remove Selected Mod";
+            removeModBtn.Text = "&Remove Selected Mod";
             removeModBtn.UseVisualStyleBackColor = true;
             removeModBtn.Click += RemoveSelectedModBtnPressed;
             // 
@@ -327,7 +327,7 @@
             editAdminListBtn.Name = "editAdminListBtn";
             editAdminListBtn.Size = new Size(177, 23);
             editAdminListBtn.TabIndex = 89;
-            editAdminListBtn.Text = "Edit Admin List";
+            editAdminListBtn.Text = "Edit &Admin List";
             editAdminListBtn.UseVisualStyleBackColor = true;
             editAdminListBtn.Click += EditAdminsListBtnClicked;
             // 
@@ -338,7 +338,7 @@
             editMissionHeaderBtn.Name = "editMissionHeaderBtn";
             editMissionHeaderBtn.Size = new Size(177, 23);
             editMissionHeaderBtn.TabIndex = 85;
-            editMissionHeaderBtn.Text = "Edit Mission Header";
+            editMissionHeaderBtn.Text = "Edit Mission &Header";
             editMissionHeaderBtn.UseVisualStyleBackColor = true;
             editMissionHeaderBtn.Click += EditMissionHeaderBtnClicked;
             // 
@@ -361,7 +361,7 @@
             scenarioSelectBtn.Name = "scenarioSelectBtn";
             scenarioSelectBtn.Size = new Size(177, 23);
             scenarioSelectBtn.TabIndex = 82;
-            scenarioSelectBtn.Text = "Select a Scenario";
+            scenarioSelectBtn.Text = "Select a &Scenario";
             scenarioSelectBtn.UseVisualStyleBackColor = true;
             scenarioSelectBtn.Click += ScenarioSelectBtnClicked;
             // 
@@ -384,7 +384,7 @@
             saveSettingsBtn.Name = "saveSettingsBtn";
             saveSettingsBtn.Size = new Size(153, 23);
             saveSettingsBtn.TabIndex = 2;
-            saveSettingsBtn.Text = "Save Settings to File";
+            saveSettingsBtn.Text = "&Save Settings to File";
             saveSettingsBtn.UseVisualStyleBackColor = true;
             saveSettingsBtn.Click += SaveSettingsToFileBtnPressed;
             // 
@@ -395,7 +395,7 @@
             loadSettingsBtn.Name = "loadSettingsBtn";
             loadSettingsBtn.Size = new Size(153, 23);
             loadSettingsBtn.TabIndex = 1;
-            loadSettingsBtn.Text = "Load Settings from File";
+            loadSettingsBtn.Text = "&Load Settings from File";
             loadSettingsBtn.UseVisualStyleBackColor = true;
             loadSettingsBtn.Click += LoadSettingsFromFileBtnPressed;
             // 
@@ -554,7 +554,7 @@
             loadSessionSaveLabel.Name = "loadSessionSaveLabel";
             loadSessionSaveLabel.Size = new Size(104, 15);
             loadSessionSaveLabel.TabIndex = 31;
-            loadSessionSaveLabel.Text = "Load Session Save";
+            loadSessionSaveLabel.Text = "&Load Session Save";
             // 
             // loadSessionSave
             // 
@@ -604,7 +604,7 @@
             label20.Name = "label20";
             label20.Size = new Size(119, 15);
             label20.TabIndex = 1;
-            label20.Text = "Limit Server Max FPS";
+            label20.Text = "Limit Server Max &FPS";
             // 
             // nwkResolutionLabel
             // 
@@ -614,7 +614,7 @@
             nwkResolutionLabel.Name = "nwkResolutionLabel";
             nwkResolutionLabel.Size = new Size(129, 15);
             nwkResolutionLabel.TabIndex = 18;
-            nwkResolutionLabel.Text = "Spatial Map Resolution";
+            nwkResolutionLabel.Text = "Spatial &Map Resolution";
             // 
             // restartUnitsComboBox
             // 
@@ -644,7 +644,7 @@
             streamsDeltaLabel.Name = "streamsDeltaLabel";
             streamsDeltaLabel.Size = new Size(81, 15);
             streamsDeltaLabel.TabIndex = 28;
-            streamsDeltaLabel.Text = "Streams Delta";
+            streamsDeltaLabel.Text = "Streams &Delta";
             // 
             // nwkResolution
             // 
@@ -693,7 +693,7 @@
             staggeringBudgetLabel.Name = "staggeringBudgetLabel";
             staggeringBudgetLabel.Size = new Size(106, 15);
             staggeringBudgetLabel.TabIndex = 21;
-            staggeringBudgetLabel.Text = "Staggering Budget";
+            staggeringBudgetLabel.Text = "&Staggering Budget";
             // 
             // streamsDelta
             // 
@@ -722,7 +722,7 @@
             label23.Name = "label23";
             label23.Size = new Size(77, 15);
             label23.TabIndex = 10;
-            label23.Text = "Override Port";
+            label23.Text = "&Override Port";
             // 
             // staggeringBudgetUpDown
             // 
@@ -771,7 +771,7 @@
             ndsLabel.Name = "ndsLabel";
             ndsLabel.Size = new Size(164, 15);
             ndsLabel.TabIndex = 14;
-            ndsLabel.Text = "Network Dynamic Simulation";
+            ndsLabel.Text = "&Network Dynamic Simulation";
             // 
             // overridePortNumericUpDown
             // 
@@ -801,7 +801,7 @@
             label6.Name = "label6";
             label6.Size = new Size(120, 15);
             label6.TabIndex = 5;
-            label6.Text = "Automatically Restart";
+            label6.Text = "Automatically &Restart";
             // 
             // label21
             // 
@@ -821,7 +821,7 @@
             streamingBudgetLabel.Name = "streamingBudgetLabel";
             streamingBudgetLabel.Size = new Size(103, 15);
             streamingBudgetLabel.TabIndex = 25;
-            streamingBudgetLabel.Text = "Streaming Budget";
+            streamingBudgetLabel.Text = "Streaming &Budget";
             // 
             // nds
             // 
@@ -869,7 +869,7 @@
             startServerBtn.Name = "startServerBtn";
             startServerBtn.Size = new Size(87, 23);
             startServerBtn.TabIndex = 4;
-            startServerBtn.Text = "Start Server";
+            startServerBtn.Text = "Start S&erver";
             startServerBtn.UseVisualStyleBackColor = true;
             startServerBtn.Click += StartServerBtnPressed;
             // 
