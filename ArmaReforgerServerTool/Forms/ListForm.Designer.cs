@@ -30,20 +30,12 @@ namespace ReforgerServerApp
         /// </summary>
         private void InitializeComponent()
         {
-            itemListView = new BoundListBox();
             addBtn = new Button();
             removeBtn = new Button();
             closeBtn = new Button();
             itemTB = new TextBox();
+            itemListView = new BoundListBox();
             SuspendLayout();
-            // 
-            // itemListView
-            // 
-            itemListView.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            itemListView.Location = new Point(12, 12);
-            itemListView.Name = "itemListView";
-            itemListView.Size = new Size(776, 391);
-            itemListView.TabIndex = 0;
             // 
             // addBtn
             // 
@@ -86,6 +78,15 @@ namespace ReforgerServerApp
             itemTB.Size = new Size(374, 23);
             itemTB.TabIndex = 4;
             // 
+            // itemListView
+            // 
+            itemListView.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            itemListView.ItemHeight = 15;
+            itemListView.Location = new Point(12, 12);
+            itemListView.Name = "itemListView";
+            itemListView.Size = new Size(776, 379);
+            itemListView.TabIndex = 0;
+            // 
             // ListForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -105,11 +106,10 @@ namespace ReforgerServerApp
         }
 
         #endregion
-
-        private BoundListBox itemListView;
         private Button addBtn;
         private Button removeBtn;
         private Button closeBtn;
         private TextBox itemTB;
+        private BoundListBox itemListView;
     }
 }
