@@ -1,6 +1,6 @@
 ﻿namespace ReforgerServerApp
 {
-    partial class ServerParameterSelect
+    partial class ServerParameterList
     {
         /// <summary> 
         /// Required designer variable.
@@ -46,19 +46,16 @@
             // parameterValue
             // 
             parameterValue.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            parameterValue.Location = new Point(264, 5);
+            parameterValue.Location = new Point(160, 5);
             parameterValue.Name = "parameterValue";
-            parameterValue.Size = new Size(114, 23);
+            parameterValue.Size = new Size(216, 23);
             parameterValue.TabIndex = 1;
             // 
-            // ServerParameterSelect
+            // ServerParameterList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(parameterValue);
-            Controls.Add(parameterName);
-            Name = "ServerParameterSelect";
-            Size = new Size(400, 30);
+            Name = "ServerParameterList";
             ResumeLayout(false);
             PerformLayout();
         }

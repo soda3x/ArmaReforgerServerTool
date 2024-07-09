@@ -23,6 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Components\ServerParameterList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Components\ServerParameterSelect.cs" />
     <Compile Update="Components\ServerParameterSpacer.cs" />
     <Compile Update="Properties\Resources.Designer.cs">
