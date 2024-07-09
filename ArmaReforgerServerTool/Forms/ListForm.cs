@@ -31,6 +31,8 @@ namespace ReforgerServerApp
                 m_items.Add(itemTB.Text);
                 itemTB.Text = string.Empty;
             }
+
+            itemListView.RefreshItems();
         }
 
         private void RemoveBtnClicked(object sender, EventArgs e)
@@ -39,6 +41,8 @@ namespace ReforgerServerApp
             {
                 m_items.Remove(itemListView.Text);
             }
+
+            itemListView.RefreshItems();
         }
 
         public string[] GetItems() { return m_items.ToArray(); }
