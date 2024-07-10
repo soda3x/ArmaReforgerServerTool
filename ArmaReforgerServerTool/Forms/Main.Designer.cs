@@ -48,7 +48,6 @@ namespace ReforgerServerApp
             availableMods = new BoundListBox();
             groupBox1 = new GroupBox();
             serverParameters = new FlowLayoutPanel();
-            editAdminListBtn = new Button();
             editMissionHeaderBtn = new Button();
             loadedScenarioLabel = new Label();
             scenarioSelectBtn = new Button();
@@ -298,7 +297,6 @@ namespace ReforgerServerApp
             // 
             groupBox1.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.Controls.Add(serverParameters);
-            groupBox1.Controls.Add(editAdminListBtn);
             groupBox1.Controls.Add(editMissionHeaderBtn);
             groupBox1.Controls.Add(loadedScenarioLabel);
             groupBox1.Controls.Add(scenarioSelectBtn);
@@ -322,21 +320,10 @@ namespace ReforgerServerApp
             serverParameters.Size = new Size(845, 423);
             serverParameters.TabIndex = 90;
             // 
-            // editAdminListBtn
-            // 
-            editAdminListBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-            editAdminListBtn.Location = new Point(671, 650);
-            editAdminListBtn.Name = "editAdminListBtn";
-            editAdminListBtn.Size = new Size(177, 23);
-            editAdminListBtn.TabIndex = 89;
-            editAdminListBtn.Text = "Edit Admin List";
-            editAdminListBtn.UseVisualStyleBackColor = true;
-            editAdminListBtn.Click += EditAdminsListBtnClicked;
-            // 
             // editMissionHeaderBtn
             // 
-            editMissionHeaderBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-            editMissionHeaderBtn.Location = new Point(488, 650);
+            editMissionHeaderBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+            editMissionHeaderBtn.Location = new Point(189, 650);
             editMissionHeaderBtn.Name = "editMissionHeaderBtn";
             editMissionHeaderBtn.Size = new Size(177, 23);
             editMissionHeaderBtn.TabIndex = 85;
@@ -346,20 +333,20 @@ namespace ReforgerServerApp
             // 
             // loadedScenarioLabel
             // 
-            loadedScenarioLabel.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
+            loadedScenarioLabel.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
             loadedScenarioLabel.AutoEllipsis = true;
             loadedScenarioLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            loadedScenarioLabel.Location = new Point(305, 676);
+            loadedScenarioLabel.Location = new Point(6, 676);
             loadedScenarioLabel.Name = "loadedScenarioLabel";
-            loadedScenarioLabel.Size = new Size(543, 21);
+            loadedScenarioLabel.Size = new Size(842, 21);
             loadedScenarioLabel.TabIndex = 83;
             loadedScenarioLabel.Text = "Scenario ID";
             loadedScenarioLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // scenarioSelectBtn
             // 
-            scenarioSelectBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-            scenarioSelectBtn.Location = new Point(305, 650);
+            scenarioSelectBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+            scenarioSelectBtn.Location = new Point(6, 650);
             scenarioSelectBtn.Name = "scenarioSelectBtn";
             scenarioSelectBtn.Size = new Size(177, 23);
             scenarioSelectBtn.TabIndex = 82;
@@ -1023,7 +1010,6 @@ namespace ReforgerServerApp
         private TextBox sessionSave;
         private Label loadSessionSaveLabel;
         private CheckBox loadSessionSave;
-        private Button editAdminListBtn;
         private FlowLayoutPanel serverParameters;
         private Button editModBtn;
         private BoundListBox enabledMods;

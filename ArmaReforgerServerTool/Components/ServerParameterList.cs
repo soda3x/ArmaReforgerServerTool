@@ -15,12 +15,24 @@ namespace ReforgerServerApp
         {
             InitializeComponent();
             underlyingControl = parameterValue;
+            ParameterList = Array.Empty<string>();
         }
+
+        public string[] ParameterList { get; set; }
 
         public override object ParameterValue
         {
-            get => parameterValue.SelectedText;
-            set => parameterValue.DataSource = value;
+            get => ParameterList;
+            set => ParameterList = (string[]) value;
         }
+
+        private void OnButtonPressed(object sender, EventArgs e)
+        {
+            ListForm lf = new(ParameterFriendlyName, ParameterList);
+            lf.ShowDialog();
+            ParameterList = lf.GetItems();
+        }
+
+        
     }
 }

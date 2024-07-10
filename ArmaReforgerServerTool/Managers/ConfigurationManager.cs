@@ -87,9 +87,26 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["address"].ParameterValue = m_serverConfig.root.a2s.address;
                 m_serverParamsDictionary["port"].ParameterValue    = m_serverConfig.root.a2s.port;
 
+                if (m_serverConfig.root.rcon == null)
+                {
+                    m_serverConfig.root.rcon = Rcon.Default;
+                }
+                
+                m_serverParamsDictionary["rconAddress"].ParameterValue    = m_serverConfig.root.rcon.address;
+                m_serverParamsDictionary["rconPort"].ParameterValue       = m_serverConfig.root.rcon.port == 0 ? 
+                    Rcon.Default.port : m_serverConfig.root.rcon.port;
+                m_serverParamsDictionary["rconPassword"].ParameterValue   = m_serverConfig.root.rcon.password;
+                m_serverParamsDictionary["rconMaxClients"].ParameterValue = m_serverConfig.root.rcon.maxClients == 0 ? 
+                    Rcon.Default.maxClients : m_serverConfig.root.rcon.maxClients;
+                m_serverParamsDictionary["rconWhitelist"].ParameterValue  = m_serverConfig.root.rcon.whitelist;
+                m_serverParamsDictionary["rconBlacklist"].ParameterValue  = m_serverConfig.root.rcon.blacklist;
+                ((ServerParameterSelect) m_serverParamsDictionary["rconPermission"])
+                    .ParameterValueSelection(Utilities.RconPermissionToString(m_serverConfig.root.rcon.permission));
+
                 m_serverParamsDictionary["passwordAdmin"].ParameterValue = m_serverConfig.root.game.passwordAdmin!;
                 m_serverParamsDictionary["name"].ParameterValue          = m_serverConfig.root.game.name!;
                 m_serverParamsDictionary["password"].ParameterValue      = m_serverConfig.root.game.password!;
+                m_serverParamsDictionary["admins"].ParameterValue        = m_serverConfig.root.game.admins;
 
                 ScenarioIdEventArgs scenarioId = new(m_serverConfig.root.game.scenarioId);
                 OnUpdateScenarioIdFromLoadedConfig(scenarioId);
@@ -113,7 +130,7 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["playerSaveTime"].ParameterValue          = m_serverConfig.root.operating.playerSaveTime;
                 m_serverParamsDictionary["aiLimit"].ParameterValue                 = m_serverConfig.root.operating.aiLimit;
                 m_serverParamsDictionary["disableCrashReporter"].ParameterValue    = m_serverConfig.root.operating.disableCrashReporter;
-                m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue = m_serverConfig.root.operating.disableNavmeshStreaming;
+                m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue = m_serverConfig.root.operating.disableNavmeshStreaming!;
                 m_serverParamsDictionary["disableServerShutdown"].ParameterValue   = m_serverConfig.root.operating.disableServerShutdown;
                 m_serverParamsDictionary["slotReservationTimeout"].ParameterValue  = m_serverConfig.root.operating.slotReservationTimeout;
                 m_serverParamsDictionary["disableAI"].ParameterValue               = m_serverConfig.root.operating.disableAI;
@@ -154,6 +171,22 @@ namespace ReforgerServerApp
             m_serverConfig.root.a2s.port    = Convert.ToInt32(m_serverParamsDictionary["port"].ParameterValue);
             m_serverConfig.root.a2s.address = (string)m_serverParamsDictionary["address"].ParameterValue;
 
+            // Determine whether Rcon should be included in the server configuration
+            GetServerConfiguration().rconEnabled = (bool) m_serverParamsDictionary["rconEnabled"].ParameterValue;
+            m_serverConfig.root.rcon             = Rcon.Default;
+            m_serverConfig.root.rcon.address     = (string) m_serverParamsDictionary["rconAddress"].ParameterValue;
+            m_serverConfig.root.rcon.port        = Convert.ToInt32(m_serverParamsDictionary["rconPort"].ParameterValue);
+            m_serverConfig.root.rcon.password    = (string) m_serverParamsDictionary["rconPassword"].ParameterValue;
+            m_serverConfig.root.rcon.permission  = Utilities.StringToEnum<RconPermission>((string) m_serverParamsDictionary["rconPermission"].ParameterValue);
+            m_serverConfig.root.rcon.maxClients  = Convert.ToInt32(m_serverParamsDictionary["rconMaxClients"].ParameterValue);
+            m_serverConfig.root.rcon.whitelist   = (string[]) m_serverParamsDictionary["rconWhitelist"].ParameterValue;
+            m_serverConfig.root.rcon.blacklist   = (string[]) m_serverParamsDictionary["rconBlacklist"].ParameterValue;
+
+            if (!GetServerConfiguration().rconEnabled)
+            {
+                m_serverConfig.root.rcon = null;
+            }
+
             m_serverConfig.root.game.passwordAdmin      = (string)m_serverParamsDictionary["passwordAdmin"].ParameterValue;
             m_serverConfig.root.game.name               = (string)m_serverParamsDictionary["name"].ParameterValue;
             m_serverConfig.root.game.password           = (string)m_serverParamsDictionary["password"].ParameterValue;
@@ -162,7 +195,7 @@ namespace ReforgerServerApp
             m_serverConfig.root.game.crossPlatform      = (bool)m_serverParamsDictionary["crossPlatform"].ParameterValue;
             m_serverConfig.root.game.mods               = m_enabledMods.ToArray();
             m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
-            // m_serverConfig.root.game.admins     - Don't need to set admins as its set directly from the Edit Admin list Form
+            m_serverConfig.root.game.admins             = (string[]) m_serverParamsDictionary["admins"].ParameterValue;
             // m_serverConfig.root.game.scenarioId - Don't need to set scenarioId as its set directly from the Scenario Selector Form
 
             m_serverConfig.root.game.gameProperties.serverMaxViewDistance      = Convert.ToInt32(m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue);
@@ -180,7 +213,7 @@ namespace ReforgerServerApp
             m_serverConfig.root.operating.playerSaveTime          = Convert.ToInt32(m_serverParamsDictionary["playerSaveTime"].ParameterValue);
             m_serverConfig.root.operating.aiLimit                 = Convert.ToInt32(m_serverParamsDictionary["aiLimit"].ParameterValue);
             m_serverConfig.root.operating.slotReservationTimeout  = Convert.ToInt32(m_serverParamsDictionary["slotReservationTimeout"].ParameterValue);
-            m_serverConfig.root.operating.disableNavmeshStreaming = (bool)m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
+            m_serverConfig.root.operating.disableNavmeshStreaming = (string[])m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
             m_serverConfig.root.operating.disableServerShutdown   = (bool)m_serverParamsDictionary["disableServerShutdown"].ParameterValue;
             m_serverConfig.root.operating.disableCrashReporter    = (bool)m_serverParamsDictionary["disableCrashReporter"].ParameterValue;
             m_serverConfig.root.operating.disableAI               = (bool)m_serverParamsDictionary["disableAI"].ParameterValue;
@@ -191,12 +224,19 @@ namespace ReforgerServerApp
         /// </summary>
         public void AlphabetiseModLists()
         {
-            var tempAvailableMods = Utilities.AlphabetiseModList(m_availableMods);
-            var tempEnabledMods   = Utilities.AlphabetiseModList(m_enabledMods);
-            m_availableMods.Clear();
-            m_enabledMods.Clear();
-            foreach(Mod mod in tempAvailableMods) {m_availableMods.Add(mod);}
-            foreach(Mod mod in tempEnabledMods)   {m_enabledMods.Add(mod);}
+            if (!Utilities.IsSorted(m_availableMods))
+            {
+                var tempAvailableMods = Utilities.AlphabetiseModList(m_availableMods);
+                m_availableMods.Clear();
+                foreach (Mod mod in tempAvailableMods) { m_availableMods.Add(mod); }
+            }
+            
+            if (!Utilities.IsSorted(m_enabledMods))
+            {
+                var tempEnabledMods = Utilities.AlphabetiseModList(m_enabledMods);
+                m_enabledMods.Clear();
+                foreach (Mod mod in tempEnabledMods) { m_enabledMods.Add(mod); }
+            }
         }
 
         /// <summary>

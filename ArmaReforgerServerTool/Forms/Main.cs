@@ -448,7 +448,6 @@ namespace ReforgerServerApp
             editMissionHeaderBtn.Enabled = enabled;
             sessionSave.Enabled = enabled;
             loadSessionSave.Enabled = enabled;
-            editAdminListBtn.Enabled = enabled;
 
             // Handle these differently as we don't want them enabled if 'Automatically Restart' isn't enabled
             if (automaticallyRestart.Enabled && automaticallyRestart.Checked)
@@ -654,6 +653,16 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_ADMIN_PASSWORD_TOOLTIP_STR
             };
             serverParameters.Controls.Add(adminPassword);
+            ServerParameterList admins = new()
+            {
+                ParameterName = "admins",
+                ParameterFriendlyName = "Admins",
+                ParameterTooltip = Constants.TODO_STR,
+                ParameterList = ConfigurationManager.GetInstance()
+                                                    .GetServerConfiguration()
+                                                    .root.game.admins
+            };
+            serverParameters.Controls.Add(admins);
             ServerParameterNumeric maxPlayers = new()
             {
                 ParameterName = "maxPlayers",
@@ -729,13 +738,13 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_A2S_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(a2sPort);
-            ServerParameterBool rcon = new()
+            ServerParameterBool rconEnabled = new()
             {
                 ParameterName = "rconEnabled",
                 ParameterFriendlyName = "Enable Rcon",
                 ParameterTooltip = Constants.TODO_STR
             };
-            serverParameters.Controls.Add(rcon);
+            serverParameters.Controls.Add(rconEnabled);
             ServerParameterString rconAddress = new()
             {
                 ParameterName = "rconAddress",
@@ -780,6 +789,26 @@ namespace ReforgerServerApp
                 ParameterValue = new[]{"admin", "monitor"}
             };
             serverParameters.Controls.Add(rconPermission);
+            ServerParameterList rconWhitelist = new()
+            {
+                ParameterName = "rconWhitelist",
+                ParameterFriendlyName = "Rcon Whitelist",
+                ParameterTooltip = Constants.TODO_STR,
+                ParameterList = ConfigurationManager.GetInstance()
+                                                    .GetServerConfiguration()
+                                                    .root.rcon.whitelist
+            };
+            serverParameters.Controls.Add(rconWhitelist);
+            ServerParameterList rconBlacklist = new()
+            {
+                ParameterName = "rconBlacklist",
+                ParameterFriendlyName = "Rcon Blacklist",
+                ParameterTooltip = Constants.TODO_STR,
+                ParameterList = ConfigurationManager.GetInstance()
+                                                    .GetServerConfiguration()
+                                                    .root.rcon.blacklist
+            };
+            serverParameters.Controls.Add(rconBlacklist);
             ServerParameterNumeric playerSaveTime = new()
             {
                 ParameterName = "playerSaveTime",
@@ -910,12 +939,14 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_SLOT_RESERVATION_TIMEOUT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(slotReservationTimeout);
-            ServerParameterBool disableNavmeshStreaming = new()
+            ServerParameterList disableNavmeshStreaming = new()
             {
                 ParameterName = "disableNavmeshStreaming",
                 ParameterFriendlyName = "Disable Navmesh Streaming",
-                ParameterValue = false,
-                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR
+                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR,
+                ParameterList = ConfigurationManager.GetInstance()
+                                                    .GetServerConfiguration()
+                                                    .root.operating.disableNavmeshStreaming
             };
             serverParameters.Controls.Add(disableNavmeshStreaming);
             ServerParameterBool disableServerShutdown = new()
@@ -1004,7 +1035,7 @@ namespace ReforgerServerApp
             }
             else
             {
-                loadedScenarioLabel.Text = e.scenarioId;
+                loadedScenarioLabel.Text = $"Loaded scenario: {e.scenarioId}";
             }
         }
 

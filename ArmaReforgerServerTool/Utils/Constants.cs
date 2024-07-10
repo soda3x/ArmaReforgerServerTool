@@ -14,6 +14,8 @@ namespace ReforgerServerApp
     /// </summary>
     internal class Constants
     {
+        public static int RCON_PORT_DEFAULT        = 19999;
+        public static int RCON_MAX_CLIENTS_DEFAULT = 16;
         // TODO String for development
         public static string TODO_STR = "TODO: This needs to be implemented";
 

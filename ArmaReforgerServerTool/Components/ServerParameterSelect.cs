@@ -19,8 +19,16 @@ namespace ReforgerServerApp
 
         public override object ParameterValue
         {
-            get => parameterValue.SelectedText;
+            get => parameterValue.Text;
             set => parameterValue.DataSource = value;
+        }
+
+        public void ParameterValueSelection(string selectionString)
+        {
+            if (parameterValue.Items.Contains(selectionString))
+            {
+                parameterValue.SelectedIndex = parameterValue.Items.IndexOf(selectionString);
+            }
         }
     }
 }
