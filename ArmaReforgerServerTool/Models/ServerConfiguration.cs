@@ -9,12 +9,15 @@
 
 using ReforgerServerApp.Utils;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using static ReforgerServerApp.Utils.Utilities;
 
 namespace ReforgerServerApp
 {
     /// <summary>
     /// Enum representing the permissions for RCon clients
     /// </summary>
+    [JsonConverter(typeof(LowercaseEnumConverter<RconPermission>))]
     public enum RconPermission { ADMIN, MONITOR }
 
     /// <summary>
@@ -69,6 +72,7 @@ namespace ReforgerServerApp
     /// <summary>
     /// Structure representing the rcon block of the Server Config
     /// </summary>
+    [JsonConverter(typeof(RconConditionalConverter))]
     public class Rcon
     {
         public string address { get; set; }
@@ -91,8 +95,8 @@ namespace ReforgerServerApp
             this.maxClients = maxClients;
         }
 
-        public static Rcon Default => new(string.Empty, 0, string.Empty, RconPermission.MONITOR, 
-            Array.Empty<string>(), Array.Empty<string>(), 0);
+        public static Rcon Default => new(string.Empty, Constants.RCON_PORT_DEFAULT, string.Empty, RconPermission.MONITOR, 
+            Array.Empty<string>(), Array.Empty<string>(), Constants.RCON_MAX_CLIENTS_DEFAULT);
     }
 
     /// <summary>
@@ -144,8 +148,11 @@ namespace ReforgerServerApp
         public bool disableThirdPerson { get; set; }
         public bool fastValidation { get; set; }
         public bool battlEye { get; set; }
+        [JsonPropertyName("VONDisableUI")]
         public bool vonDisableUI { get; set; }
+        [JsonPropertyName("VONDisableDirectSpeechUI")]
         public bool vonDisableDirectSpeechUI { get; set; }
+        [JsonPropertyName("VONCanTransmitCrossFaction")]
         public bool vonCanTransmitCrossFaction { get; set; }
         public JsonDocument missionHeader { get; set; }
 
@@ -177,13 +184,13 @@ namespace ReforgerServerApp
         public int playerSaveTime { get; set; }
         public int aiLimit { get; set; }
         public int slotReservationTimeout { get; set; }
-        public bool disableNavmeshStreaming { get; set; }
+        public string[] disableNavmeshStreaming { get; set; }
         public bool disableServerShutdown { get; set; }
         public bool disableCrashReporter { get; set; }
         public bool disableAI { get; set; }
 
-        public Operating(bool lobbyPlayerSynchronise, int playerSaveTime, int aiLimit, int slotReservationTimeout, 
-            bool disableNavmeshStreaming, bool disableServerShutdown, bool disableCrashReporter, bool disableAI)
+        public Operating(bool lobbyPlayerSynchronise, int playerSaveTime, int aiLimit, int slotReservationTimeout,
+            string[] disableNavmeshStreaming, bool disableServerShutdown, bool disableCrashReporter, bool disableAI)
         {
             this.lobbyPlayerSynchronise = lobbyPlayerSynchronise;
             this.playerSaveTime = playerSaveTime;
@@ -195,12 +202,14 @@ namespace ReforgerServerApp
             this.disableAI = disableAI;
         }
 
-        public static Operating Default => new(false, 0, 0, 0, false, false, false, false);
+        public static Operating Default => new(false, 0, 0, 0, Array.Empty<string>(), false, false, false);
     }
 
     public class ServerConfiguration
     {
         public Root root { get; set; }
+
+        public bool rconEnabled { get; set; }
 
         public ServerConfiguration()
         {
@@ -249,7 +258,15 @@ namespace ReforgerServerApp
         /// <param name="json">to convert into the Mission Header</param>
         public void SetMissionHeaderFromJson(string json)
         {
-            root.game.gameProperties.missionHeader = JsonSerializer.Deserialize<JsonDocument>(json)!;
+            try
+            {
+                root.game.gameProperties.missionHeader = JsonSerializer.Deserialize<JsonDocument>(json)!;
+            }
+            catch
+            {
+                Utilities.DisplayErrorMessage("The mission header is malformed. Please check your formatting is valid JSON and try again.",
+                    "Unable to parse Mission Header.");
+            }
         }
     }
 }

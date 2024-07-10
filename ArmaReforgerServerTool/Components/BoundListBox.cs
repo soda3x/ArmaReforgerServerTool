@@ -18,6 +18,7 @@ namespace ReforgerServerApp.Components
     {
         public new void RefreshItems()
         {
+            SelectedIndex = -1;
             base.RefreshItems();
         }
     }

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             parameterName = new Label();
-            parameterValue = new ComboBox();
+            parameterValue = new Button();
             SuspendLayout();
             // 
             // parameterName
@@ -46,16 +46,22 @@
             // parameterValue
             // 
             parameterValue.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            parameterValue.Location = new Point(160, 5);
+            parameterValue.Location = new Point(300, 5);
             parameterValue.Name = "parameterValue";
-            parameterValue.Size = new Size(216, 23);
+            parameterValue.Size = new Size(80, 23);
             parameterValue.TabIndex = 1;
+            parameterValue.Text = "Edit";
+            parameterValue.Click += OnButtonPressed;
             // 
             // ServerParameterList
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(parameterValue);
+            Controls.Add(parameterName);
             Name = "ServerParameterList";
+            Controls.SetChildIndex(parameterName, 0);
+            Controls.SetChildIndex(parameterValue, 0);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -63,6 +69,6 @@
         #endregion
 
         private Label parameterName;
-        private ComboBox parameterValue;
+        private Button parameterValue;
     }
 }
