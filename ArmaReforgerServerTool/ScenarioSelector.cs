@@ -63,7 +63,10 @@ namespace ReforgerServerApp
 
             foreach (string scenId in scenarios)
             {
-                scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scenId)));
+                if (IsHandleCreated)
+                {
+                    scenarioList.Invoke((MethodInvoker) (() => scenarioList.Items.Add(scenId)));
+                }
             }
         }
 
@@ -79,14 +82,19 @@ namespace ReforgerServerApp
                         getScenariosRequested = false;
                         reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = false));
 
-                        foreach (String scen in GetStockScenarios())
+                        foreach (string scen in GetStockScenarios())
                         {
                             scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scen)));
                         }
 
                         GetScenarios();
-                        reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = true));
-                        currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
+
+                        // In the case where the window is closed while we were getting scenarios (common), recheck the handle
+                        if (reloadScenariosBtn.IsHandleCreated)
+                        {
+                            reloadScenariosBtn.Invoke((MethodInvoker) (() => reloadScenariosBtn.Enabled = true));
+                            currentlySelectedLbl.Invoke((MethodInvoker) (() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
+                        }
                     }
                 }
             }
