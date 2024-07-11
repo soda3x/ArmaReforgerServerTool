@@ -14,6 +14,9 @@ The password required to join the server.
 Defines the server's admin password, allows a server administrator to login and control the server.
 To access this either open the chat input box by pressing C in the lobby or Enter in-game followed by: `#login <password>`.
 
+Admins can be added to the server configuration by adding the user's SteamID 64 under "Edit Admin List".
+You can use services like [steamid.io]("https://steamid.io/") and [steamidfinder](https://www.steamidfinder.com/") to get the SteamID 64.
+
 ### Max Players
 Set the maximum amount of players on the server.
 

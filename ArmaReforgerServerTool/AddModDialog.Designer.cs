@@ -81,7 +81,7 @@
             addBtn.Name = "addBtn";
             addBtn.Size = new Size(75, 23);
             addBtn.TabIndex = 4;
-            addBtn.Text = "Add";
+            addBtn.Text = "&Add";
             addBtn.UseVisualStyleBackColor = true;
             addBtn.Click += AddBtnPressed;
             // 
@@ -91,7 +91,7 @@
             cancelBtn.Name = "cancelBtn";
             cancelBtn.Size = new Size(75, 23);
             cancelBtn.TabIndex = 3;
-            cancelBtn.Text = "Cancel";
+            cancelBtn.Text = "&Cancel";
             cancelBtn.UseVisualStyleBackColor = true;
             cancelBtn.Click += CancelBtnPressed;
             // 

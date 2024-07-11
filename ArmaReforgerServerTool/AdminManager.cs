@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ReforgerServerApp.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,10 +12,13 @@ using System.Windows.Forms;
 
 namespace ReforgerServerApp
 {
-    public partial class ListForm : Form
+    public partial class AdminManager : Form
     {
         private ServerConfiguration serverConfig;
-        public ListForm(ServerConfiguration sc, string windowTitle)
+        private const string STEAM_ID_IO_LINK = "https://steamid.io/";
+        private const string STEAM_ID_FINDER_LINK = "https://www.steamidfinder.com/";
+
+        public AdminManager(ServerConfiguration sc, string windowTitle)
         {
             InitializeComponent();
             this.Text = $"Arma Reforger Dedicated Server Tool - {windowTitle}";
@@ -67,6 +72,16 @@ namespace ReforgerServerApp
             {
                 adminListView.Items.RemoveAt(adminListView.SelectedItems[0].Index);
             }
+        }
+
+        private void linkLblSteamIdIo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            BrowserHelper.Open(STEAM_ID_IO_LINK);
+        }
+
+        private void linkLblSteamIdFinder_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            BrowserHelper.Open(STEAM_ID_FINDER_LINK);
         }
     }
 }
