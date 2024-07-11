@@ -21,9 +21,9 @@ namespace ReforgerServerApp
         {
             InitializeComponent();
             PrintSelectedScenario();
-            m_parentForm            = parent;
+            m_parentForm = parent;
             m_getScenariosRequested = true;
-            m_getScenariosThread    = new(new ThreadStart(DoGetScenarios));
+            m_getScenariosThread = new(new ThreadStart(DoGetScenarios));
             m_getScenariosThread.Start();
         }
 
@@ -100,8 +100,13 @@ namespace ReforgerServerApp
                             }
 
                             GetScenarios();
-                            reloadScenariosBtn.Invoke((MethodInvoker) (() => reloadScenariosBtn.Enabled = true));
-                            currentlySelectedLbl.Invoke((MethodInvoker) (() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
+
+                            // In the case where the window is closed while we were getting scenarios (common), recheck the handle
+                            if (reloadScenariosBtn.IsHandleCreated)
+                            {
+                                reloadScenariosBtn.Invoke((MethodInvoker) (() => reloadScenariosBtn.Enabled = true));
+                                currentlySelectedLbl.Invoke((MethodInvoker) (() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
+                            }
                         }
                     }
                 }
