@@ -15,6 +15,7 @@ namespace ReforgerServerApp
         private readonly string INSTALL_DIR_FILE = "./install_directory.txt";
         private string steamCmdFile;
         private string installDirectory;
+        private string lastUsedDirectory;
         private bool serverStarted;
         private bool serverStartedWithTimer;
         private Process steamCmdUpdateProcess;
@@ -249,13 +250,24 @@ namespace ReforgerServerApp
         private void SaveSettingsToFileBtnPressed(object sender, EventArgs e)
         {
             using SaveFileDialog sfd = new();
-            sfd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
+            // Use the last used directory if available, otherwise default to UserProfile
+            if (!string.IsNullOrEmpty(lastUsedDirectory))
+            {
+                sfd.InitialDirectory = lastUsedDirectory;
+            }
+            else
+            {
+                sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            }
             sfd.Filter = "Properties files (*.prop)|*.prop";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                string modsFilename = $"{sfd.FileName}_mods.txt";
-                File.WriteAllText(sfd.FileName, CreateConfiguration().AsKeyValue(modsFilename));
+                string filePath = sfd.FileName;
+                string modsFilename = $"{filePath}_mods.txt";
+                File.WriteAllText(filePath, CreateConfiguration().AsKeyValue(modsFilename));
                 File.WriteAllText(modsFilename, CreateConfiguration().ModsAsCommaSeparatedString());
+                // Update the last used directory
+                lastUsedDirectory = Path.GetDirectoryName(filePath) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             }
         }
 
@@ -267,13 +279,23 @@ namespace ReforgerServerApp
         private void LoadSettingsFromFileBtnPressed(object sender, EventArgs e)
         {
             using OpenFileDialog ofd = new();
-            ofd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
+            // Use the last used directory if available, otherwise default to UserProfile
+            if (!string.IsNullOrEmpty(lastUsedDirectory))
+            {
+                ofd.InitialDirectory = lastUsedDirectory;
+            }
+            else
+            {
+                ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            }
             ofd.Filter = "Properties files (*.prop)|*.prop";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string filePath = ofd.FileName;
                 using StreamReader sr = File.OpenText(filePath);
                 PopulateServerConfiguration(sr.ReadToEnd());
+                // Update the last used directory
+                lastUsedDirectory = Path.GetDirectoryName(filePath) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             }
         }
 
