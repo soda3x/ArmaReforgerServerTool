@@ -10,14 +10,13 @@
 using ReforgerServerApp.Utils;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using static ReforgerServerApp.Utils.Utilities;
 
 namespace ReforgerServerApp
 {
     /// <summary>
     /// Enum representing the permissions for RCon clients
     /// </summary>
-    [JsonConverter(typeof(LowercaseEnumConverter<RconPermission>))]
+    [JsonConverter(typeof(JsonUtils.LowercaseEnumConverter<RconPermission>))]
     public enum RconPermission { ADMIN, MONITOR }
 
     /// <summary>
@@ -72,7 +71,7 @@ namespace ReforgerServerApp
     /// <summary>
     /// Structure representing the rcon block of the Server Config
     /// </summary>
-    [JsonConverter(typeof(RconConditionalConverter))]
+    [JsonConverter(typeof(JsonUtils.RconConditionalConverter))]
     public class Rcon
     {
         public string address { get; set; }
@@ -178,6 +177,7 @@ namespace ReforgerServerApp
     /// <summary>
     /// Structure representing the operating block of the Server Config
     /// </summary>
+    [JsonConverter(typeof(JsonUtils.OperatingConditionalConverter))]
     public class Operating
     {
         public bool lobbyPlayerSynchronise { get; set; }
@@ -211,6 +211,8 @@ namespace ReforgerServerApp
 
         public bool rconEnabled { get; set; }
 
+        public bool toggleDisableNavmeshStreaming { get; set; }
+
         public ServerConfiguration()
         {
             root = Root.Default;
@@ -222,7 +224,7 @@ namespace ReforgerServerApp
         /// <returns>JSON string representation of the Server Configuration</returns>
         public string AsJsonString()
         {
-            return Utilities.GetFormattedJsonString(root, new Utilities.ModConverter());
+            return Utilities.GetFormattedJsonString(root, new JsonUtils.ModConverter());
         }
 
         /// <summary>
@@ -231,7 +233,7 @@ namespace ReforgerServerApp
         /// <returns>JSON string representation of the Server Configuration's Mods</returns>
         public string ModsAsJsonString()
         {
-            return Utilities.GetFormattedJsonString(root.game.mods, new Utilities.ModConverter());
+            return Utilities.GetFormattedJsonString(root.game.mods, new JsonUtils.ModConverter());
         }
 
         /// <summary>
@@ -249,7 +251,7 @@ namespace ReforgerServerApp
         /// <param name="json">to convert into the Server Configuration</param>
         public void SetServerConfigurationFromJson(string json)
         {
-            root = Utilities.GetServerConfigFromJson(json, new Utilities.ModConverter());
+            root = Utilities.GetServerConfigFromJson(json, new JsonUtils.ModConverter());
         }
 
         /// <summary>

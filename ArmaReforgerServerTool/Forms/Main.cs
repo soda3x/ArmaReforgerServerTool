@@ -939,11 +939,18 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_SLOT_RESERVATION_TIMEOUT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(slotReservationTimeout);
+            ServerParameterBool toggleDisableNavmeshStreaming = new()
+            {
+                ParameterName = "toggleDisableNavmeshStreaming",
+                ParameterFriendlyName = "Disable Navmesh Streaming",
+                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR
+            };
+            serverParameters.Controls.Add(toggleDisableNavmeshStreaming);
             ServerParameterList disableNavmeshStreaming = new()
             {
                 ParameterName = "disableNavmeshStreaming",
-                ParameterFriendlyName = "Disable Navmesh Streaming",
-                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR,
+                ParameterFriendlyName = "Disable Specific Navmesh Streaming",
+                ParameterTooltip = Constants.TODO_STR,
                 ParameterList = ConfigurationManager.GetInstance()
                                                     .GetServerConfiguration()
                                                     .root.operating.disableNavmeshStreaming

@@ -21,7 +21,7 @@ namespace ReforgerServerApp
         public string modId {get; set;}
         public string name { get; set; }
 
-        [JsonConverter(typeof(ConditionalFieldConverter))]
+        [JsonConverter(typeof(JsonUtils.ConditionalFieldConverter))]
         public string version { get; set; }
 
         private const string LATEST_MOD_VER_STR = "latest";

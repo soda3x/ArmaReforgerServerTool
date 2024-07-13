@@ -81,7 +81,7 @@ namespace ReforgerServerApp.Managers
             combined.AddRange(enabled);
             combined.AddRange(available);
 
-            File.WriteAllText(m_modDatabaseFile, Utilities.GetFormattedJsonString(combined, new Utilities.ModConverter()));
+            File.WriteAllText(m_modDatabaseFile, Utilities.GetFormattedJsonString(combined, new JsonUtils.ModConverter()));
         }
 
         /// <summary>
