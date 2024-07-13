@@ -184,6 +184,7 @@ namespace ReforgerServerApp
 
             if (!GetServerConfiguration().rconEnabled)
             {
+                // Setting rcon to null will stop it from being added as rcon: null in the Json output
                 m_serverConfig.root.rcon = null;
             }
 
@@ -213,7 +214,7 @@ namespace ReforgerServerApp
             m_serverConfig.root.operating.playerSaveTime          = Convert.ToInt32(m_serverParamsDictionary["playerSaveTime"].ParameterValue);
             m_serverConfig.root.operating.aiLimit                 = Convert.ToInt32(m_serverParamsDictionary["aiLimit"].ParameterValue);
             m_serverConfig.root.operating.slotReservationTimeout  = Convert.ToInt32(m_serverParamsDictionary["slotReservationTimeout"].ParameterValue);
-            m_serverConfig.root.operating.disableNavmeshStreaming = (string[])m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
+            m_serverConfig.root.operating.disableNavmeshStreaming = (string[]) m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
             m_serverConfig.root.operating.disableServerShutdown   = (bool)m_serverParamsDictionary["disableServerShutdown"].ParameterValue;
             m_serverConfig.root.operating.disableCrashReporter    = (bool)m_serverParamsDictionary["disableCrashReporter"].ParameterValue;
             m_serverConfig.root.operating.disableAI               = (bool)m_serverParamsDictionary["disableAI"].ParameterValue;
