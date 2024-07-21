@@ -5,6 +5,9 @@ using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Windows.Forms;
 using static ReforgerServerApp.ServerConfiguration;
 
 namespace ReforgerServerApp
@@ -157,6 +160,147 @@ namespace ReforgerServerApp
             AddModDialog addModDialog = new(this);
             addModDialog.ShowDialog();
         }
+
+        private void ExportAllModsBtnPressed(object sender, EventArgs e)
+        {
+            ListBox availableMods = GetAvailableModsList();
+            ListBox enabledMods = GetEnabledModsList();
+            if((availableMods.Items == null || availableMods.Items?.Count < 1) && (enabledMods.Items == null || enabledMods.Items?.Count < 1))
+            { // No Mods selected => return
+                MessageBox.Show("You currently have no mods in your list that could be exported", "No mods to export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // Create JSON
+            bool errorWhileExporting = false; // To track errors while exporting mods and inform the user
+            JSONModConverter converter = new JSONModConverter();
+
+            foreach (Mod mod in availableMods?.Items)
+            {
+                if(mod == null)
+                {
+                    errorWhileExporting = true;
+                    System.Diagnostics.Debug.WriteLine($"AvailableMod couldn't be exported: Mod was null");
+                    continue;
+                }
+
+                converter.AddAvailableMod(mod);
+            }
+
+            foreach (Mod mod in enabledMods?.Items)
+            {
+                if (mod == null)
+                {
+                    errorWhileExporting = true;
+                    System.Diagnostics.Debug.WriteLine($"EnabledMod couldn't be exported: Mod was null");
+                    continue;
+                }
+
+                converter.AddEnabledMod(mod);
+            }
+
+            
+            if(errorWhileExporting)
+            {
+                DialogResult exportAnywayResult = MessageBox.Show("It appears there was an error while trying to export mods and not all mods could be exported. Do you want to export those mods anyway?", "Export Mods anyway?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (exportAnywayResult != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+        
+            //Save File Dialog
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = "ArmaReforgerServerTool-ModList";
+            saveFileDialog.DefaultExt = "json";
+            saveFileDialog.AddExtension = true;
+            DialogResult result = saveFileDialog.ShowDialog();
+
+            if(result == DialogResult.Cancel)
+            {
+                System.Diagnostics.Debug.WriteLine("User canceled Dialog");
+                return;
+            }
+
+            string fullFilePath = saveFileDialog.FileName;
+
+            // Create File and check if creation was successful
+            File.Create(fullFilePath).Close();
+            if(!File.Exists(fullFilePath))
+            {
+                MessageBox.Show($"File \"{fullFilePath}\" couldn't be created", "File was not created", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                System.Diagnostics.Debug.WriteLine($"File: \"{fullFilePath}\" - could not be created");
+                return;
+            }
+
+            string json = converter.ToJSON();
+            File.WriteAllText(fullFilePath, json);
+            System.Diagnostics.Debug.WriteLine($"Exported Mods successfully: {json}");
+        }
+
+        private void ImportAllModsBtnPressed(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            DialogResult result = openFileDialog.ShowDialog(this);
+
+            if(result == DialogResult.Cancel)
+            {
+                System.Diagnostics.Debug.WriteLine("User canceled Dialog");
+                return;
+            }
+
+            string fullFilePath = openFileDialog.FileName;
+            if(!File.Exists(fullFilePath))
+            {
+                System.Diagnostics.Debug.WriteLine($"File: \"{fullFilePath}\" - doesn't exist");
+                MessageBox.Show($"File: \"{fullFilePath}\" - doesn't exist!", "File not found", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            string json = File.ReadAllText(fullFilePath);
+            JSONModConverter converter = JsonSerializer.Deserialize<JSONModConverter>(json);
+            if(converter == null)
+            {
+                MessageBox.Show("An error occured whilst trying to parse the file content to mods", "Error while importing", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            ListBox.ObjectCollection availableMods = this.availableMods?.Items;
+            ListBox.ObjectCollection enabledMods = this.enabledMods?.Items;
+
+            if(availableMods == null || enabledMods == null)
+            {
+                MessageBox.Show("An error occured while trying to import the mods: couldn't access the list", "Error while importing", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            foreach (JSONModConverter.InternalMod internalMod in converter.AvailableMods)
+            {
+                Mod mod = new Mod(internalMod.ModID, internalMod.ModName, internalMod.ModVersion);
+
+                if (!this.IsModInList(mod))
+                {
+                    this.availableMods?.Items?.Add(mod);
+                }
+            }
+
+            foreach (JSONModConverter.InternalMod internalMod in converter.EnabledMods)
+            {
+                Mod mod = new Mod(internalMod.ModID, internalMod.ModName, internalMod.ModVersion);
+
+                if(!this.IsModInList(mod))
+                {
+                    this.enabledMods?.Items?.Add(mod);
+                }
+            }
+        }
+
+        private bool IsModInList(Mod mod)
+        {
+            return (this.availableMods?.Items?.IndexOf(mod) >= 0) || (this.enabledMods?.Items?.IndexOf(mod) >= 0);
+        }
+       
 
         /// <summary>
         /// Event Handler for when the Selected Mod changes in the Available Mods
@@ -973,6 +1117,8 @@ namespace ReforgerServerApp
             loadSettingsBtn.Enabled = enabled;
             saveSettingsBtn.Enabled = enabled;
             addModBtn.Enabled = enabled;
+            exportAllModsBtn.Enabled = enabled;
+            importAllModsBtn.Enabled = enabled;
             removeModBtn.Enabled = enabled;
             deleteServerFilesBtn.Enabled = enabled;
             locateServerFilesBtn.Enabled = enabled;

@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReforgerServerApp));
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            exportAllModsBtn = new Button();
             editModBtn = new Button();
             serverRunningLabel = new Label();
             addModBtn = new Button();
@@ -100,6 +101,7 @@
             steamCmdLog = new TextBox();
             steamCmdAlert = new Label();
             downloadSteamCmdBtn = new Button();
+            importAllModsBtn = new Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -124,14 +126,17 @@
             tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(12, 12);
+            tabControl1.Location = new Point(17, 20);
+            tabControl1.Margin = new Padding(4, 5, 4, 5);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1526, 778);
+            tabControl1.Size = new Size(2180, 1297);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(importAllModsBtn);
+            tabPage1.Controls.Add(exportAllModsBtn);
             tabPage1.Controls.Add(editModBtn);
             tabPage1.Controls.Add(serverRunningLabel);
             tabPage1.Controls.Add(addModBtn);
@@ -140,21 +145,48 @@
             tabPage1.Controls.Add(groupBox1);
             tabPage1.Controls.Add(saveSettingsBtn);
             tabPage1.Controls.Add(loadSettingsBtn);
-            tabPage1.Location = new Point(4, 24);
+            tabPage1.Location = new Point(4, 34);
+            tabPage1.Margin = new Padding(4, 5, 4, 5);
             tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(1518, 750);
+            tabPage1.Padding = new Padding(4, 5, 4, 5);
+            tabPage1.Size = new Size(2172, 1259);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Server Configuration";
             tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // exportAllModsBtn
+            // 
+            exportAllModsBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            exportAllModsBtn.Location = new Point(536, 1202);
+            exportAllModsBtn.Margin = new Padding(4, 5, 4, 5);
+            exportAllModsBtn.Name = "exportAllModsBtn";
+            exportAllModsBtn.Size = new Size(104, 38);
+            exportAllModsBtn.TabIndex = 49;
+            exportAllModsBtn.Text = "Export All Mods";
+            exportAllModsBtn.UseVisualStyleBackColor = true;
+            exportAllModsBtn.Click += ExportAllModsBtnPressed;
+
+            // 
+            // exportAllModsBtn
+            // 
+            importAllModsBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            importAllModsBtn.Location = new Point(536, 1202);
+            importAllModsBtn.Margin = new Padding(4, 5, 4, 5);
+            importAllModsBtn.Name = "importAllMods";
+            importAllModsBtn.Size = new Size(104, 38);
+            importAllModsBtn.TabIndex = 49;
+            importAllModsBtn.Text = "Import All Mods";
+            importAllModsBtn.UseVisualStyleBackColor = true;
+            importAllModsBtn.Click += ImportAllModsBtnPressed;
             // 
             // editModBtn
             // 
             editModBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             editModBtn.Enabled = false;
-            editModBtn.Location = new Point(85, 721);
+            editModBtn.Location = new Point(121, 1202);
+            editModBtn.Margin = new Padding(4, 5, 4, 5);
             editModBtn.Name = "editModBtn";
-            editModBtn.Size = new Size(132, 23);
+            editModBtn.Size = new Size(189, 38);
             editModBtn.TabIndex = 51;
             editModBtn.Text = "Edit Selected Mod";
             editModBtn.UseVisualStyleBackColor = true;
@@ -165,18 +197,20 @@
             serverRunningLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             serverRunningLabel.AutoSize = true;
             serverRunningLabel.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            serverRunningLabel.Location = new Point(504, 723);
+            serverRunningLabel.Location = new Point(720, 1205);
+            serverRunningLabel.Margin = new Padding(4, 0, 4, 0);
             serverRunningLabel.Name = "serverRunningLabel";
-            serverRunningLabel.Size = new Size(128, 17);
+            serverRunningLabel.Size = new Size(193, 28);
             serverRunningLabel.TabIndex = 50;
             serverRunningLabel.Text = "serverRunningLabel";
             // 
             // addModBtn
             // 
             addModBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            addModBtn.Location = new Point(6, 721);
+            addModBtn.Location = new Point(0, 0);
+            addModBtn.Margin = new Padding(4, 5, 4, 5);
             addModBtn.Name = "addModBtn";
-            addModBtn.Size = new Size(73, 23);
+            addModBtn.Size = new Size(104, 38);
             addModBtn.TabIndex = 49;
             addModBtn.Text = "Add Mod";
             addModBtn.UseVisualStyleBackColor = true;
@@ -186,9 +220,10 @@
             // 
             removeModBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             removeModBtn.Enabled = false;
-            removeModBtn.Location = new Point(223, 721);
+            removeModBtn.Location = new Point(319, 1202);
+            removeModBtn.Margin = new Padding(4, 5, 4, 5);
             removeModBtn.Name = "removeModBtn";
-            removeModBtn.Size = new Size(146, 23);
+            removeModBtn.Size = new Size(209, 38);
             removeModBtn.TabIndex = 48;
             removeModBtn.Text = "Remove Selected Mod";
             removeModBtn.UseVisualStyleBackColor = true;
@@ -206,18 +241,21 @@
             groupBox2.Controls.Add(enabledMods);
             groupBox2.Controls.Add(availableMods);
             groupBox2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox2.Location = new Point(6, 6);
+            groupBox2.Location = new Point(9, 10);
+            groupBox2.Margin = new Padding(4, 5, 4, 5);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(636, 709);
+            groupBox2.Padding = new Padding(4, 5, 4, 5);
+            groupBox2.Size = new Size(909, 1182);
             groupBox2.TabIndex = 47;
             groupBox2.TabStop = false;
             groupBox2.Text = "Mods";
             // 
             // disableAllModsBtn
             // 
-            disableAllModsBtn.Location = new Point(306, 423);
+            disableAllModsBtn.Location = new Point(437, 705);
+            disableAllModsBtn.Margin = new Padding(4, 5, 4, 5);
             disableAllModsBtn.Name = "disableAllModsBtn";
-            disableAllModsBtn.Size = new Size(23, 52);
+            disableAllModsBtn.Size = new Size(33, 87);
             disableAllModsBtn.TabIndex = 7;
             disableAllModsBtn.Text = "<<";
             disableAllModsBtn.UseVisualStyleBackColor = true;
@@ -225,9 +263,10 @@
             // 
             // enableAllModsBtn
             // 
-            enableAllModsBtn.Location = new Point(306, 207);
+            enableAllModsBtn.Location = new Point(437, 345);
+            enableAllModsBtn.Margin = new Padding(4, 5, 4, 5);
             enableAllModsBtn.Name = "enableAllModsBtn";
-            enableAllModsBtn.Size = new Size(23, 52);
+            enableAllModsBtn.Size = new Size(33, 87);
             enableAllModsBtn.TabIndex = 6;
             enableAllModsBtn.Text = ">>";
             enableAllModsBtn.UseVisualStyleBackColor = true;
@@ -236,26 +275,29 @@
             // label16
             // 
             label16.AutoSize = true;
-            label16.Location = new Point(335, 19);
+            label16.Location = new Point(479, 32);
+            label16.Margin = new Padding(4, 0, 4, 0);
             label16.Name = "label16";
-            label16.Size = new Size(82, 15);
+            label16.Size = new Size(130, 25);
             label16.TabIndex = 5;
             label16.Text = "Enabled Mods";
             // 
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(6, 19);
+            label15.Location = new Point(9, 32);
+            label15.Margin = new Padding(4, 0, 4, 0);
             label15.Name = "label15";
-            label15.Size = new Size(88, 15);
+            label15.Size = new Size(139, 25);
             label15.TabIndex = 4;
             label15.Text = "Available Mods";
             // 
             // removeFromEnabledBtn
             // 
-            removeFromEnabledBtn.Location = new Point(306, 351);
+            removeFromEnabledBtn.Location = new Point(437, 585);
+            removeFromEnabledBtn.Margin = new Padding(4, 5, 4, 5);
             removeFromEnabledBtn.Name = "removeFromEnabledBtn";
-            removeFromEnabledBtn.Size = new Size(23, 52);
+            removeFromEnabledBtn.Size = new Size(33, 87);
             removeFromEnabledBtn.TabIndex = 3;
             removeFromEnabledBtn.Text = "<";
             removeFromEnabledBtn.UseVisualStyleBackColor = true;
@@ -263,9 +305,10 @@
             // 
             // addToEnabledBtn
             // 
-            addToEnabledBtn.Location = new Point(306, 277);
+            addToEnabledBtn.Location = new Point(437, 462);
+            addToEnabledBtn.Margin = new Padding(4, 5, 4, 5);
             addToEnabledBtn.Name = "addToEnabledBtn";
-            addToEnabledBtn.Size = new Size(23, 52);
+            addToEnabledBtn.Size = new Size(33, 87);
             addToEnabledBtn.TabIndex = 2;
             addToEnabledBtn.Text = ">";
             addToEnabledBtn.UseVisualStyleBackColor = true;
@@ -275,20 +318,22 @@
             // 
             enabledMods.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             enabledMods.FormattingEnabled = true;
-            enabledMods.ItemHeight = 15;
-            enabledMods.Location = new Point(335, 44);
+            enabledMods.ItemHeight = 25;
+            enabledMods.Location = new Point(479, 73);
+            enabledMods.Margin = new Padding(4, 5, 4, 5);
             enabledMods.Name = "enabledMods";
-            enabledMods.Size = new Size(291, 649);
+            enabledMods.Size = new Size(414, 1079);
             enabledMods.TabIndex = 1;
             // 
             // availableMods
             // 
             availableMods.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             availableMods.FormattingEnabled = true;
-            availableMods.ItemHeight = 15;
-            availableMods.Location = new Point(6, 44);
+            availableMods.ItemHeight = 25;
+            availableMods.Location = new Point(9, 73);
+            availableMods.Margin = new Padding(4, 5, 4, 5);
             availableMods.Name = "availableMods";
-            availableMods.Size = new Size(294, 649);
+            availableMods.Size = new Size(418, 1079);
             availableMods.TabIndex = 0;
             availableMods.SelectedIndexChanged += AvailableModsSelectedIndexChanged;
             // 
@@ -302,9 +347,11 @@
             groupBox1.Controls.Add(scenarioSelectBtn);
             groupBox1.Controls.Add(pictureBox1);
             groupBox1.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            groupBox1.Location = new Point(648, 6);
+            groupBox1.Location = new Point(926, 10);
+            groupBox1.Margin = new Padding(4, 5, 4, 5);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(857, 709);
+            groupBox1.Padding = new Padding(4, 5, 4, 5);
+            groupBox1.Size = new Size(1224, 1182);
             groupBox1.TabIndex = 46;
             groupBox1.TabStop = false;
             groupBox1.Text = "Server Settings";
@@ -314,18 +361,19 @@
             serverParameters.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             serverParameters.AutoScroll = true;
             serverParameters.FlowDirection = FlowDirection.TopDown;
-            serverParameters.Location = new Point(6, 221);
-            serverParameters.Margin = new Padding(15, 0, 15, 0);
+            serverParameters.Location = new Point(9, 368);
+            serverParameters.Margin = new Padding(21, 0, 21, 0);
             serverParameters.Name = "serverParameters";
-            serverParameters.Size = new Size(845, 423);
+            serverParameters.Size = new Size(1207, 705);
             serverParameters.TabIndex = 90;
             // 
             // editAdminListBtn
             // 
             editAdminListBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            editAdminListBtn.Location = new Point(671, 650);
+            editAdminListBtn.Location = new Point(959, 1083);
+            editAdminListBtn.Margin = new Padding(4, 5, 4, 5);
             editAdminListBtn.Name = "editAdminListBtn";
-            editAdminListBtn.Size = new Size(177, 23);
+            editAdminListBtn.Size = new Size(253, 38);
             editAdminListBtn.TabIndex = 89;
             editAdminListBtn.Text = "Edit Admin List";
             editAdminListBtn.UseVisualStyleBackColor = true;
@@ -334,9 +382,10 @@
             // editMissionHeaderBtn
             // 
             editMissionHeaderBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            editMissionHeaderBtn.Location = new Point(488, 650);
+            editMissionHeaderBtn.Location = new Point(697, 1083);
+            editMissionHeaderBtn.Margin = new Padding(4, 5, 4, 5);
             editMissionHeaderBtn.Name = "editMissionHeaderBtn";
-            editMissionHeaderBtn.Size = new Size(177, 23);
+            editMissionHeaderBtn.Size = new Size(253, 38);
             editMissionHeaderBtn.TabIndex = 85;
             editMissionHeaderBtn.Text = "Edit Mission Header";
             editMissionHeaderBtn.UseVisualStyleBackColor = true;
@@ -347,9 +396,10 @@
             loadedScenarioLabel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             loadedScenarioLabel.AutoEllipsis = true;
             loadedScenarioLabel.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
-            loadedScenarioLabel.Location = new Point(305, 676);
+            loadedScenarioLabel.Location = new Point(436, 1127);
+            loadedScenarioLabel.Margin = new Padding(4, 0, 4, 0);
             loadedScenarioLabel.Name = "loadedScenarioLabel";
-            loadedScenarioLabel.Size = new Size(543, 21);
+            loadedScenarioLabel.Size = new Size(776, 35);
             loadedScenarioLabel.TabIndex = 83;
             loadedScenarioLabel.Text = "Scenario ID";
             loadedScenarioLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -357,9 +407,10 @@
             // scenarioSelectBtn
             // 
             scenarioSelectBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            scenarioSelectBtn.Location = new Point(305, 650);
+            scenarioSelectBtn.Location = new Point(436, 1083);
+            scenarioSelectBtn.Margin = new Padding(4, 5, 4, 5);
             scenarioSelectBtn.Name = "scenarioSelectBtn";
-            scenarioSelectBtn.Size = new Size(177, 23);
+            scenarioSelectBtn.Size = new Size(253, 38);
             scenarioSelectBtn.TabIndex = 82;
             scenarioSelectBtn.Text = "Select a Scenario";
             scenarioSelectBtn.UseVisualStyleBackColor = true;
@@ -370,9 +421,10 @@
             pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             pictureBox1.BackgroundImageLayout = ImageLayout.Center;
             pictureBox1.Image = (Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new Point(107, 19);
+            pictureBox1.Location = new Point(153, 32);
+            pictureBox1.Margin = new Padding(4, 5, 4, 5);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(631, 199);
+            pictureBox1.Size = new Size(901, 332);
             pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
             pictureBox1.TabIndex = 51;
             pictureBox1.TabStop = false;
@@ -380,9 +432,10 @@
             // saveSettingsBtn
             // 
             saveSettingsBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            saveSettingsBtn.Location = new Point(1352, 721);
+            saveSettingsBtn.Location = new Point(1931, 1202);
+            saveSettingsBtn.Margin = new Padding(4, 5, 4, 5);
             saveSettingsBtn.Name = "saveSettingsBtn";
-            saveSettingsBtn.Size = new Size(153, 23);
+            saveSettingsBtn.Size = new Size(219, 38);
             saveSettingsBtn.TabIndex = 2;
             saveSettingsBtn.Text = "Save Settings to File";
             saveSettingsBtn.UseVisualStyleBackColor = true;
@@ -391,9 +444,10 @@
             // loadSettingsBtn
             // 
             loadSettingsBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            loadSettingsBtn.Location = new Point(1193, 721);
+            loadSettingsBtn.Location = new Point(1704, 1202);
+            loadSettingsBtn.Margin = new Padding(4, 5, 4, 5);
             loadSettingsBtn.Name = "loadSettingsBtn";
-            loadSettingsBtn.Size = new Size(153, 23);
+            loadSettingsBtn.Size = new Size(219, 38);
             loadSettingsBtn.TabIndex = 1;
             loadSettingsBtn.Text = "Load Settings from File";
             loadSettingsBtn.UseVisualStyleBackColor = true;
@@ -412,10 +466,11 @@
             tabPage2.Controls.Add(groupBox3);
             tabPage2.Controls.Add(steamCmdAlert);
             tabPage2.Controls.Add(downloadSteamCmdBtn);
-            tabPage2.Location = new Point(4, 24);
+            tabPage2.Location = new Point(4, 34);
+            tabPage2.Margin = new Padding(4, 5, 4, 5);
             tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1518, 750);
+            tabPage2.Padding = new Padding(4, 5, 4, 5);
+            tabPage2.Size = new Size(2172, 1259);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Server Management";
             tabPage2.UseVisualStyleBackColor = true;
@@ -425,9 +480,10 @@
             label30.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             label30.AutoSize = true;
             label30.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label30.Location = new Point(234, 725);
+            label30.Location = new Point(334, 1208);
+            label30.Margin = new Padding(4, 0, 4, 0);
             label30.Name = "label30";
-            label30.Size = new Size(57, 15);
+            label30.Size = new Size(91, 25);
             label30.TabIndex = 30;
             label30.Text = "Log Level";
             // 
@@ -436,18 +492,20 @@
             logLevelComboBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             logLevelComboBox.FormattingEnabled = true;
             logLevelComboBox.Items.AddRange(new object[] { "normal", "warning", "error", "fatal" });
-            logLevelComboBox.Location = new Point(297, 721);
+            logLevelComboBox.Location = new Point(424, 1202);
+            logLevelComboBox.Margin = new Padding(4, 5, 4, 5);
             logLevelComboBox.Name = "logLevelComboBox";
-            logLevelComboBox.Size = new Size(96, 23);
+            logLevelComboBox.Size = new Size(135, 33);
             logLevelComboBox.TabIndex = 30;
             logLevelComboBox.Text = "normal";
             // 
             // locateServerFilesBtn
             // 
             locateServerFilesBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            locateServerFilesBtn.Location = new Point(1222, 28);
+            locateServerFilesBtn.Location = new Point(1746, 47);
+            locateServerFilesBtn.Margin = new Padding(4, 5, 4, 5);
             locateServerFilesBtn.Name = "locateServerFilesBtn";
-            locateServerFilesBtn.Size = new Size(111, 23);
+            locateServerFilesBtn.Size = new Size(159, 38);
             locateServerFilesBtn.TabIndex = 7;
             locateServerFilesBtn.Text = "Locate Server Files";
             locateServerFilesBtn.UseVisualStyleBackColor = true;
@@ -456,9 +514,10 @@
             // clearLogBtn
             // 
             clearLogBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            clearLogBtn.Location = new Point(1446, 722);
+            clearLogBtn.Location = new Point(2066, 1203);
+            clearLogBtn.Margin = new Padding(4, 5, 4, 5);
             clearLogBtn.Name = "clearLogBtn";
-            clearLogBtn.Size = new Size(66, 23);
+            clearLogBtn.Size = new Size(94, 38);
             clearLogBtn.TabIndex = 6;
             clearLogBtn.Text = "Clear Log";
             clearLogBtn.UseVisualStyleBackColor = true;
@@ -467,9 +526,10 @@
             // deleteServerFilesBtn
             // 
             deleteServerFilesBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            deleteServerFilesBtn.Location = new Point(1339, 28);
+            deleteServerFilesBtn.Location = new Point(1913, 47);
+            deleteServerFilesBtn.Margin = new Padding(4, 5, 4, 5);
             deleteServerFilesBtn.Name = "deleteServerFilesBtn";
-            deleteServerFilesBtn.Size = new Size(111, 23);
+            deleteServerFilesBtn.Size = new Size(159, 38);
             deleteServerFilesBtn.TabIndex = 5;
             deleteServerFilesBtn.Text = "Delete Server Files";
             deleteServerFilesBtn.UseVisualStyleBackColor = true;
@@ -478,9 +538,10 @@
             // aboutBtn
             // 
             aboutBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            aboutBtn.Location = new Point(1456, 28);
+            aboutBtn.Location = new Point(2080, 47);
+            aboutBtn.Margin = new Padding(4, 5, 4, 5);
             aboutBtn.Name = "aboutBtn";
-            aboutBtn.Size = new Size(56, 23);
+            aboutBtn.Size = new Size(80, 38);
             aboutBtn.TabIndex = 4;
             aboutBtn.Text = "About";
             aboutBtn.UseVisualStyleBackColor = true;
@@ -490,9 +551,11 @@
             // 
             groupBox4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             groupBox4.Controls.Add(panel1);
-            groupBox4.Location = new Point(6, 57);
+            groupBox4.Location = new Point(9, 95);
+            groupBox4.Margin = new Padding(4, 5, 4, 5);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(222, 662);
+            groupBox4.Padding = new Padding(4, 5, 4, 5);
+            groupBox4.Size = new Size(317, 1103);
             groupBox4.TabIndex = 4;
             groupBox4.TabStop = false;
             groupBox4.Text = "Advanced";
@@ -534,34 +597,38 @@
             panel1.Controls.Add(label22);
             panel1.Controls.Add(streamingBudget);
             panel1.Controls.Add(automaticallyRestart);
-            panel1.Location = new Point(3, 19);
+            panel1.Location = new Point(4, 32);
+            panel1.Margin = new Padding(4, 5, 4, 5);
             panel1.Name = "panel1";
-            panel1.Size = new Size(216, 640);
+            panel1.Size = new Size(309, 1067);
             panel1.TabIndex = 30;
             // 
             // sessionSave
             // 
-            sessionSave.Location = new Point(3, 575);
+            sessionSave.Location = new Point(4, 958);
+            sessionSave.Margin = new Padding(4, 5, 4, 5);
             sessionSave.Name = "sessionSave";
-            sessionSave.Size = new Size(199, 23);
+            sessionSave.Size = new Size(283, 31);
             sessionSave.TabIndex = 33;
             // 
             // loadSessionSaveLabel
             // 
             loadSessionSaveLabel.AutoSize = true;
             loadSessionSaveLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            loadSessionSaveLabel.Location = new Point(24, 554);
+            loadSessionSaveLabel.Location = new Point(34, 923);
+            loadSessionSaveLabel.Margin = new Padding(4, 0, 4, 0);
             loadSessionSaveLabel.Name = "loadSessionSaveLabel";
-            loadSessionSaveLabel.Size = new Size(104, 15);
+            loadSessionSaveLabel.Size = new Size(163, 25);
             loadSessionSaveLabel.TabIndex = 31;
             loadSessionSaveLabel.Text = "Load Session Save";
             // 
             // loadSessionSave
             // 
             loadSessionSave.AutoSize = true;
-            loadSessionSave.Location = new Point(3, 555);
+            loadSessionSave.Location = new Point(4, 925);
+            loadSessionSave.Margin = new Padding(4, 5, 4, 5);
             loadSessionSave.Name = "loadSessionSave";
-            loadSessionSave.Size = new Size(15, 14);
+            loadSessionSave.Size = new Size(22, 21);
             loadSessionSave.TabIndex = 30;
             loadSessionSave.UseVisualStyleBackColor = true;
             loadSessionSave.CheckedChanged += LoadSessionSaveCheckChanged;
@@ -569,30 +636,33 @@
             // limitFPS
             // 
             limitFPS.AutoSize = true;
-            limitFPS.Location = new Point(3, 4);
+            limitFPS.Location = new Point(4, 7);
+            limitFPS.Margin = new Padding(4, 5, 4, 5);
             limitFPS.Name = "limitFPS";
-            limitFPS.Size = new Size(15, 14);
+            limitFPS.Size = new Size(22, 21);
             limitFPS.TabIndex = 0;
             limitFPS.UseVisualStyleBackColor = true;
             limitFPS.CheckedChanged += LimitFPSCheckedChanged;
             // 
             // streamsDeltaUpDown
             // 
-            streamsDeltaUpDown.Location = new Point(3, 522);
+            streamsDeltaUpDown.Location = new Point(4, 870);
+            streamsDeltaUpDown.Margin = new Padding(4, 5, 4, 5);
             streamsDeltaUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             streamsDeltaUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             streamsDeltaUpDown.Name = "streamsDeltaUpDown";
-            streamsDeltaUpDown.Size = new Size(199, 23);
+            streamsDeltaUpDown.Size = new Size(284, 31);
             streamsDeltaUpDown.TabIndex = 29;
             streamsDeltaUpDown.Value = new decimal(new int[] { 100, 0, 0, 0 });
             // 
             // nwkResolutionUpDown
             // 
-            nwkResolutionUpDown.Location = new Point(3, 319);
+            nwkResolutionUpDown.Location = new Point(4, 532);
+            nwkResolutionUpDown.Margin = new Padding(4, 5, 4, 5);
             nwkResolutionUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             nwkResolutionUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             nwkResolutionUpDown.Name = "nwkResolutionUpDown";
-            nwkResolutionUpDown.Size = new Size(199, 23);
+            nwkResolutionUpDown.Size = new Size(284, 31);
             nwkResolutionUpDown.TabIndex = 19;
             nwkResolutionUpDown.Value = new decimal(new int[] { 500, 0, 0, 0 });
             // 
@@ -600,9 +670,10 @@
             // 
             label20.AutoSize = true;
             label20.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label20.Location = new Point(24, 3);
+            label20.Location = new Point(34, 5);
+            label20.Margin = new Padding(4, 0, 4, 0);
             label20.Name = "label20";
-            label20.Size = new Size(119, 15);
+            label20.Size = new Size(188, 25);
             label20.TabIndex = 1;
             label20.Text = "Limit Server Max FPS";
             // 
@@ -610,9 +681,10 @@
             // 
             nwkResolutionLabel.AutoSize = true;
             nwkResolutionLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            nwkResolutionLabel.Location = new Point(24, 298);
+            nwkResolutionLabel.Location = new Point(34, 497);
+            nwkResolutionLabel.Margin = new Padding(4, 0, 4, 0);
             nwkResolutionLabel.Name = "nwkResolutionLabel";
-            nwkResolutionLabel.Size = new Size(129, 15);
+            nwkResolutionLabel.Size = new Size(205, 25);
             nwkResolutionLabel.TabIndex = 18;
             nwkResolutionLabel.Text = "Spatial Map Resolution";
             // 
@@ -620,18 +692,20 @@
             // 
             restartUnitsComboBox.FormattingEnabled = true;
             restartUnitsComboBox.Items.AddRange(new object[] { "Mins", "Hours", "Days" });
-            restartUnitsComboBox.Location = new Point(142, 96);
+            restartUnitsComboBox.Location = new Point(203, 160);
+            restartUnitsComboBox.Margin = new Padding(4, 5, 4, 5);
             restartUnitsComboBox.Name = "restartUnitsComboBox";
-            restartUnitsComboBox.Size = new Size(60, 23);
+            restartUnitsComboBox.Size = new Size(84, 33);
             restartUnitsComboBox.TabIndex = 8;
             restartUnitsComboBox.Text = "Mins";
             // 
             // staggeringBudget
             // 
             staggeringBudget.AutoSize = true;
-            staggeringBudget.Location = new Point(3, 355);
+            staggeringBudget.Location = new Point(4, 592);
+            staggeringBudget.Margin = new Padding(4, 5, 4, 5);
             staggeringBudget.Name = "staggeringBudget";
-            staggeringBudget.Size = new Size(15, 14);
+            staggeringBudget.Size = new Size(22, 21);
             staggeringBudget.TabIndex = 20;
             staggeringBudget.UseVisualStyleBackColor = true;
             staggeringBudget.CheckedChanged += StaggeringBudgetCheckChanged;
@@ -640,18 +714,20 @@
             // 
             streamsDeltaLabel.AutoSize = true;
             streamsDeltaLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            streamsDeltaLabel.Location = new Point(24, 501);
+            streamsDeltaLabel.Location = new Point(34, 835);
+            streamsDeltaLabel.Margin = new Padding(4, 0, 4, 0);
             streamsDeltaLabel.Name = "streamsDeltaLabel";
-            streamsDeltaLabel.Size = new Size(81, 15);
+            streamsDeltaLabel.Size = new Size(127, 25);
             streamsDeltaLabel.TabIndex = 28;
             streamsDeltaLabel.Text = "Streams Delta";
             // 
             // nwkResolution
             // 
             nwkResolution.AutoSize = true;
-            nwkResolution.Location = new Point(3, 299);
+            nwkResolution.Location = new Point(4, 498);
+            nwkResolution.Margin = new Padding(4, 5, 4, 5);
             nwkResolution.Name = "nwkResolution";
-            nwkResolution.Size = new Size(15, 14);
+            nwkResolution.Size = new Size(22, 21);
             nwkResolution.TabIndex = 17;
             nwkResolution.UseVisualStyleBackColor = true;
             nwkResolution.CheckedChanged += NWKCheckChanged;
@@ -659,9 +735,10 @@
             // forcePortCheckBox
             // 
             forcePortCheckBox.AutoSize = true;
-            forcePortCheckBox.Location = new Point(3, 137);
+            forcePortCheckBox.Location = new Point(4, 228);
+            forcePortCheckBox.Margin = new Padding(4, 5, 4, 5);
             forcePortCheckBox.Name = "forcePortCheckBox";
-            forcePortCheckBox.Size = new Size(15, 14);
+            forcePortCheckBox.Size = new Size(22, 21);
             forcePortCheckBox.TabIndex = 9;
             forcePortCheckBox.UseVisualStyleBackColor = true;
             forcePortCheckBox.CheckedChanged += OverridePortCheckChanged;
@@ -670,18 +747,20 @@
             // 
             label28.AutoSize = true;
             label28.Font = new Font("Segoe UI Semibold", 7F, FontStyle.Bold, GraphicsUnit.Point);
-            label28.Location = new Point(3, 265);
+            label28.Location = new Point(4, 442);
+            label28.Margin = new Padding(4, 0, 4, 0);
             label28.Name = "label28";
-            label28.Size = new Size(127, 24);
+            label28.Size = new Size(175, 38);
             label28.TabIndex = 16;
             label28.Text = "This is set to '2' by default\r\nif unchecked.\r\n";
             // 
             // restartIntervalUpDown
             // 
-            restartIntervalUpDown.Location = new Point(42, 97);
+            restartIntervalUpDown.Location = new Point(60, 162);
+            restartIntervalUpDown.Margin = new Padding(4, 5, 4, 5);
             restartIntervalUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             restartIntervalUpDown.Name = "restartIntervalUpDown";
-            restartIntervalUpDown.Size = new Size(94, 23);
+            restartIntervalUpDown.Size = new Size(134, 31);
             restartIntervalUpDown.TabIndex = 7;
             restartIntervalUpDown.Value = new decimal(new int[] { 60, 0, 0, 0 });
             // 
@@ -689,28 +768,31 @@
             // 
             staggeringBudgetLabel.AutoSize = true;
             staggeringBudgetLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            staggeringBudgetLabel.Location = new Point(24, 354);
+            staggeringBudgetLabel.Location = new Point(34, 590);
+            staggeringBudgetLabel.Margin = new Padding(4, 0, 4, 0);
             staggeringBudgetLabel.Name = "staggeringBudgetLabel";
-            staggeringBudgetLabel.Size = new Size(106, 15);
+            staggeringBudgetLabel.Size = new Size(169, 25);
             staggeringBudgetLabel.TabIndex = 21;
             staggeringBudgetLabel.Text = "Staggering Budget";
             // 
             // streamsDelta
             // 
             streamsDelta.AutoSize = true;
-            streamsDelta.Location = new Point(3, 502);
+            streamsDelta.Location = new Point(4, 837);
+            streamsDelta.Margin = new Padding(4, 5, 4, 5);
             streamsDelta.Name = "streamsDelta";
-            streamsDelta.Size = new Size(15, 14);
+            streamsDelta.Size = new Size(22, 21);
             streamsDelta.TabIndex = 27;
             streamsDelta.UseVisualStyleBackColor = true;
             streamsDelta.CheckedChanged += StreamsDeltaCheckChanged;
             // 
             // ndsUpDown
             // 
-            ndsUpDown.Location = new Point(3, 239);
+            ndsUpDown.Location = new Point(4, 398);
+            ndsUpDown.Margin = new Padding(4, 5, 4, 5);
             ndsUpDown.Maximum = new decimal(new int[] { 2, 0, 0, 0 });
             ndsUpDown.Name = "ndsUpDown";
-            ndsUpDown.Size = new Size(199, 23);
+            ndsUpDown.Size = new Size(284, 31);
             ndsUpDown.TabIndex = 15;
             ndsUpDown.Value = new decimal(new int[] { 2, 0, 0, 0 });
             // 
@@ -718,19 +800,21 @@
             // 
             label23.AutoSize = true;
             label23.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label23.Location = new Point(24, 136);
+            label23.Location = new Point(34, 227);
+            label23.Margin = new Padding(4, 0, 4, 0);
             label23.Name = "label23";
-            label23.Size = new Size(77, 15);
+            label23.Size = new Size(126, 25);
             label23.TabIndex = 10;
             label23.Text = "Override Port";
             // 
             // staggeringBudgetUpDown
             // 
-            staggeringBudgetUpDown.Location = new Point(3, 375);
+            staggeringBudgetUpDown.Location = new Point(4, 625);
+            staggeringBudgetUpDown.Margin = new Padding(4, 5, 4, 5);
             staggeringBudgetUpDown.Maximum = new decimal(new int[] { 10201, 0, 0, 0 });
             staggeringBudgetUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             staggeringBudgetUpDown.Name = "staggeringBudgetUpDown";
-            staggeringBudgetUpDown.Size = new Size(199, 23);
+            staggeringBudgetUpDown.Size = new Size(284, 31);
             staggeringBudgetUpDown.TabIndex = 22;
             staggeringBudgetUpDown.Value = new decimal(new int[] { 5000, 0, 0, 0 });
             // 
@@ -738,28 +822,31 @@
             // 
             label10.AutoSize = true;
             label10.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label10.Location = new Point(1, 100);
+            label10.Location = new Point(1, 167);
+            label10.Margin = new Padding(4, 0, 4, 0);
             label10.Name = "label10";
-            label10.Size = new Size(35, 15);
+            label10.Size = new Size(57, 25);
             label10.TabIndex = 6;
             label10.Text = "Every";
             // 
             // fpsLimitUpDown
             // 
-            fpsLimitUpDown.Location = new Point(3, 24);
+            fpsLimitUpDown.Location = new Point(4, 40);
+            fpsLimitUpDown.Margin = new Padding(4, 5, 4, 5);
             fpsLimitUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             fpsLimitUpDown.Name = "fpsLimitUpDown";
-            fpsLimitUpDown.Size = new Size(199, 23);
+            fpsLimitUpDown.Size = new Size(284, 31);
             fpsLimitUpDown.TabIndex = 2;
             fpsLimitUpDown.Value = new decimal(new int[] { 60, 0, 0, 0 });
             // 
             // streamingBudgetUpDown
             // 
-            streamingBudgetUpDown.Location = new Point(3, 470);
+            streamingBudgetUpDown.Location = new Point(4, 783);
+            streamingBudgetUpDown.Margin = new Padding(4, 5, 4, 5);
             streamingBudgetUpDown.Maximum = new decimal(new int[] { 10201, 0, 0, 0 });
             streamingBudgetUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
             streamingBudgetUpDown.Name = "streamingBudgetUpDown";
-            streamingBudgetUpDown.Size = new Size(199, 23);
+            streamingBudgetUpDown.Size = new Size(284, 31);
             streamingBudgetUpDown.TabIndex = 26;
             streamingBudgetUpDown.Value = new decimal(new int[] { 500, 0, 0, 0 });
             // 
@@ -767,19 +854,21 @@
             // 
             ndsLabel.AutoSize = true;
             ndsLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            ndsLabel.Location = new Point(24, 218);
+            ndsLabel.Location = new Point(34, 363);
+            ndsLabel.Margin = new Padding(4, 0, 4, 0);
             ndsLabel.Name = "ndsLabel";
-            ndsLabel.Size = new Size(164, 15);
+            ndsLabel.Size = new Size(255, 25);
             ndsLabel.TabIndex = 14;
             ndsLabel.Text = "Network Dynamic Simulation";
             // 
             // overridePortNumericUpDown
             // 
-            overridePortNumericUpDown.Location = new Point(3, 157);
+            overridePortNumericUpDown.Location = new Point(4, 262);
+            overridePortNumericUpDown.Margin = new Padding(4, 5, 4, 5);
             overridePortNumericUpDown.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             overridePortNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             overridePortNumericUpDown.Name = "overridePortNumericUpDown";
-            overridePortNumericUpDown.Size = new Size(199, 23);
+            overridePortNumericUpDown.Size = new Size(284, 31);
             overridePortNumericUpDown.TabIndex = 11;
             overridePortNumericUpDown.Value = new decimal(new int[] { 2001, 0, 0, 0 });
             // 
@@ -787,9 +876,10 @@
             // 
             label27.AutoSize = true;
             label27.Font = new Font("Segoe UI Semibold", 7F, FontStyle.Bold, GraphicsUnit.Point);
-            label27.Location = new Point(3, 401);
+            label27.Location = new Point(4, 668);
+            label27.Margin = new Padding(4, 0, 4, 0);
             label27.Name = "label27";
-            label27.Size = new Size(141, 48);
+            label27.Size = new Size(194, 76);
             label27.TabIndex = 23;
             label27.Text = "If not set, uses the \r\nNetwork Dynamic Simulation\r\ndiameter.\r\n\r\n";
             // 
@@ -797,9 +887,10 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label6.Location = new Point(24, 76);
+            label6.Location = new Point(34, 127);
+            label6.Margin = new Padding(4, 0, 4, 0);
             label6.Name = "label6";
-            label6.Size = new Size(120, 15);
+            label6.Size = new Size(191, 25);
             label6.TabIndex = 5;
             label6.Text = "Automatically Restart";
             // 
@@ -807,9 +898,10 @@
             // 
             label21.AutoSize = true;
             label21.Font = new Font("Segoe UI Semibold", 7F, FontStyle.Bold, GraphicsUnit.Point);
-            label21.Location = new Point(3, 50);
+            label21.Location = new Point(4, 83);
+            label21.Margin = new Padding(4, 0, 4, 0);
             label21.Name = "label21";
-            label21.Size = new Size(145, 12);
+            label21.Size = new Size(198, 19);
             label21.TabIndex = 3;
             label21.Text = "Recommended at the moment";
             // 
@@ -817,18 +909,20 @@
             // 
             streamingBudgetLabel.AutoSize = true;
             streamingBudgetLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            streamingBudgetLabel.Location = new Point(24, 449);
+            streamingBudgetLabel.Location = new Point(34, 748);
+            streamingBudgetLabel.Margin = new Padding(4, 0, 4, 0);
             streamingBudgetLabel.Name = "streamingBudgetLabel";
-            streamingBudgetLabel.Size = new Size(103, 15);
+            streamingBudgetLabel.Size = new Size(163, 25);
             streamingBudgetLabel.TabIndex = 25;
             streamingBudgetLabel.Text = "Streaming Budget";
             // 
             // nds
             // 
             nds.AutoSize = true;
-            nds.Location = new Point(3, 219);
+            nds.Location = new Point(4, 365);
+            nds.Margin = new Padding(4, 5, 4, 5);
             nds.Name = "nds";
-            nds.Size = new Size(15, 14);
+            nds.Size = new Size(22, 21);
             nds.TabIndex = 13;
             nds.UseVisualStyleBackColor = true;
             nds.CheckedChanged += NDSCheckChanged;
@@ -837,18 +931,20 @@
             // 
             label22.AutoSize = true;
             label22.Font = new Font("Segoe UI Semibold", 7F, FontStyle.Bold, GraphicsUnit.Point);
-            label22.Location = new Point(3, 183);
+            label22.Location = new Point(4, 305);
+            label22.Margin = new Padding(4, 0, 4, 0);
             label22.Name = "label22";
-            label22.Size = new Size(133, 24);
+            label22.Size = new Size(183, 38);
             label22.TabIndex = 12;
             label22.Text = "Override the ports specified\r\nin Server Configuration";
             // 
             // streamingBudget
             // 
             streamingBudget.AutoSize = true;
-            streamingBudget.Location = new Point(3, 450);
+            streamingBudget.Location = new Point(4, 750);
+            streamingBudget.Margin = new Padding(4, 5, 4, 5);
             streamingBudget.Name = "streamingBudget";
-            streamingBudget.Size = new Size(15, 14);
+            streamingBudget.Size = new Size(22, 21);
             streamingBudget.TabIndex = 24;
             streamingBudget.UseVisualStyleBackColor = true;
             streamingBudget.CheckedChanged += StreamingBudgetCheckChanged;
@@ -856,18 +952,20 @@
             // automaticallyRestart
             // 
             automaticallyRestart.AutoSize = true;
-            automaticallyRestart.Location = new Point(3, 77);
+            automaticallyRestart.Location = new Point(4, 128);
+            automaticallyRestart.Margin = new Padding(4, 5, 4, 5);
             automaticallyRestart.Name = "automaticallyRestart";
-            automaticallyRestart.Size = new Size(15, 14);
+            automaticallyRestart.Size = new Size(22, 21);
             automaticallyRestart.TabIndex = 4;
             automaticallyRestart.UseVisualStyleBackColor = true;
             automaticallyRestart.CheckedChanged += AutoRestartCheckedChanged;
             // 
             // startServerBtn
             // 
-            startServerBtn.Location = new Point(93, 28);
+            startServerBtn.Location = new Point(133, 47);
+            startServerBtn.Margin = new Padding(4, 5, 4, 5);
             startServerBtn.Name = "startServerBtn";
-            startServerBtn.Size = new Size(87, 23);
+            startServerBtn.Size = new Size(124, 38);
             startServerBtn.TabIndex = 4;
             startServerBtn.Text = "Start Server";
             startServerBtn.UseVisualStyleBackColor = true;
@@ -877,9 +975,11 @@
             // 
             groupBox3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox3.Controls.Add(steamCmdLog);
-            groupBox3.Location = new Point(234, 57);
+            groupBox3.Location = new Point(334, 95);
+            groupBox3.Margin = new Padding(4, 5, 4, 5);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1278, 662);
+            groupBox3.Padding = new Padding(4, 5, 4, 5);
+            groupBox3.Size = new Size(1826, 1103);
             groupBox3.TabIndex = 3;
             groupBox3.TabStop = false;
             groupBox3.Text = "Log";
@@ -887,43 +987,58 @@
             // steamCmdLog
             // 
             steamCmdLog.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            steamCmdLog.Location = new Point(6, 22);
+            steamCmdLog.Location = new Point(9, 37);
+            steamCmdLog.Margin = new Padding(4, 5, 4, 5);
             steamCmdLog.Multiline = true;
             steamCmdLog.Name = "steamCmdLog";
             steamCmdLog.ReadOnly = true;
             steamCmdLog.ScrollBars = ScrollBars.Vertical;
-            steamCmdLog.Size = new Size(1266, 634);
+            steamCmdLog.Size = new Size(1807, 1054);
             steamCmdLog.TabIndex = 1;
             // 
             // steamCmdAlert
             // 
             steamCmdAlert.AutoSize = true;
             steamCmdAlert.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-            steamCmdAlert.Location = new Point(6, 6);
+            steamCmdAlert.Location = new Point(9, 10);
+            steamCmdAlert.Margin = new Padding(4, 0, 4, 0);
             steamCmdAlert.Name = "steamCmdAlert";
-            steamCmdAlert.Size = new Size(573, 17);
+            steamCmdAlert.Size = new Size(864, 28);
             steamCmdAlert.TabIndex = 2;
             steamCmdAlert.Text = "SteamCMD and the Arma Server files were not detected, please Download before continuing.";
             steamCmdAlert.TextAlign = ContentAlignment.MiddleRight;
             // 
             // downloadSteamCmdBtn
             // 
-            downloadSteamCmdBtn.Location = new Point(6, 28);
+            downloadSteamCmdBtn.Location = new Point(9, 47);
+            downloadSteamCmdBtn.Margin = new Padding(4, 5, 4, 5);
             downloadSteamCmdBtn.Name = "downloadSteamCmdBtn";
-            downloadSteamCmdBtn.Size = new Size(81, 23);
+            downloadSteamCmdBtn.Size = new Size(116, 38);
             downloadSteamCmdBtn.TabIndex = 0;
             downloadSteamCmdBtn.Text = "Download";
             downloadSteamCmdBtn.UseVisualStyleBackColor = true;
             downloadSteamCmdBtn.Click += DownloadSteamCmdBtnPressed;
             // 
+            // importAllModsBtn
+            // 
+            importAllModsBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            importAllModsBtn.Location = new Point(648, 1201);
+            importAllModsBtn.Margin = new Padding(4, 5, 4, 5);
+            importAllModsBtn.Name = "importAllModsBtn";
+            importAllModsBtn.Size = new Size(104, 38);
+            importAllModsBtn.TabIndex = 53;
+            importAllModsBtn.Text = "Import All Mods";
+            importAllModsBtn.UseVisualStyleBackColor = true;
+            // 
             // ReforgerServerApp
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1550, 811);
+            ClientSize = new Size(2214, 1352);
             Controls.Add(tabControl1);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MinimumSize = new Size(1440, 814);
+            Margin = new Padding(4, 5, 4, 5);
+            MinimumSize = new Size(2048, 1319);
             Name = "ReforgerServerApp";
             Text = "Arma Reforger Dedicated Server Tool";
             tabControl1.ResumeLayout(false);
@@ -980,6 +1095,7 @@
         private Label label20;
         private CheckBox limitFPS;
         private Label label21;
+        private Button importAllModsBtn;
         private Button disableAllModsBtn;
         private Button enableAllModsBtn;
         private Button aboutBtn;
@@ -1026,5 +1142,6 @@
         private Button editAdminListBtn;
         private FlowLayoutPanel serverParameters;
         private Button editModBtn;
+        private Button exportAllModsBtn;
     }
 }
