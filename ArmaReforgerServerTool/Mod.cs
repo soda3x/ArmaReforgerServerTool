@@ -33,6 +33,11 @@ namespace ReforgerServerApp
             ModVersion = m.ModVersion;
         }
 
+        public Mod()
+        {
+
+        }
+
         public string GetModID()
         {
             return ModID;
@@ -51,6 +56,15 @@ namespace ReforgerServerApp
         public override string ToString()
         {
             return $"{ModName} | {ModVersion}";
+        }
+
+        public string ToJSON()
+        {
+            string json = $"\"ModID\":\"{ModID}\"," +
+                       $"\"ModName\":\"{ModName}\", " +
+                       $"\"ModVersion\":\"{ModVersion}\"";
+
+            return "{" + json + "}" ;
         }
 
         public override bool Equals(object? obj)
