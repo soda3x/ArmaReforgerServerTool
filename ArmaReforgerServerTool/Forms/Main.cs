@@ -8,11 +8,15 @@
 
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace ReforgerServerApp
 {
     public partial class Main : Form
     {
+        private BindingSource m_availableModsBindingSource;
+        private BindingSource m_enabledModsBindingSource;
         public Main()
         {
             InitializeComponent();
@@ -24,7 +28,7 @@ namespace ReforgerServerApp
             ProcessManager.GetInstance().UpdateGuiControlsEvent += HandleUpdateGuiControlsEvent;
             ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
             ConfigurationManager.GetInstance().UpdateScenarioIdFromLoadedConfigEvent += HandleUpdateScenarioIdFromLoadedConfigEvent;
-            
+
             // Create tooltips
             CreateTooltips();
 
@@ -32,19 +36,29 @@ namespace ReforgerServerApp
 
             UpdateSteamCmdInstallStatus();
 
-            fpsLimitUpDown.Enabled            = false;
-            restartIntervalUpDown.Enabled     = false;
-            restartUnitsComboBox.Enabled      = false;
+            fpsLimitUpDown.Enabled = false;
+            restartIntervalUpDown.Enabled = false;
+            restartUnitsComboBox.Enabled = false;
             overridePortNumericUpDown.Enabled = false;
-            ndsUpDown.Enabled                 = false;
-            nwkResolutionUpDown.Enabled       = false;
-            staggeringBudgetUpDown.Enabled    = false;
-            streamingBudgetUpDown.Enabled     = false;
-            streamsDeltaUpDown.Enabled        = false;
-            sessionSave.Enabled               = false;
+            ndsUpDown.Enabled = false;
+            nwkResolutionUpDown.Enabled = false;
+            staggeringBudgetUpDown.Enabled = false;
+            streamingBudgetUpDown.Enabled = false;
+            streamsDeltaUpDown.Enabled = false;
+            sessionSave.Enabled = false;
 
-            availableMods.DataSource = ConfigurationManager.GetInstance().GetAvailableMods();
-            enabledMods.DataSource   = ConfigurationManager.GetInstance().GetEnabledMods();
+
+            m_availableModsBindingSource = new()
+            {
+                DataSource = ConfigurationManager.GetInstance().GetAvailableMods()
+            };
+
+            m_enabledModsBindingSource = new()
+            {
+                DataSource = ConfigurationManager.GetInstance().GetEnabledMods()
+            };
+
+            ResetModFilters();
 
             ConfigurationManager.GetInstance().AlphabetiseModLists();
 
@@ -89,7 +103,7 @@ namespace ReforgerServerApp
         {
             if (FileIOManager.GetInstance().IsSteamCMDInstalled())
             {
-                steamCmdAlert.Text = $"Using Arma Reforger Server files found at: { FileIOManager.GetInstance().GetInstallDirectory() }";
+                steamCmdAlert.Text = $"Using Arma Reforger Server files found at: {FileIOManager.GetInstance().GetInstallDirectory()}";
                 downloadSteamCmdBtn.Enabled = false;
                 startServerBtn.Enabled = true;
                 deleteServerFilesBtn.Enabled = true;
@@ -141,7 +155,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AvailableModsSelectedIndexChanged(object sender, EventArgs e)
         {
-            editModBtn.Enabled   = availableMods.SelectedItem != null;
+            editModBtn.Enabled = availableMods.SelectedItem != null;
             removeModBtn.Enabled = availableMods.SelectedItem != null;
         }
 
@@ -180,10 +194,10 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AddToEnabledModsBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod)GetAvailableModsList().SelectedItem != null)
+            if ((Mod) GetAvailableModsList().SelectedItem != null)
             {
                 Mod m = (Mod)GetAvailableModsList().SelectedItem;
-          
+
                 if (!ConfigurationManager.GetInstance().GetEnabledMods().Contains(m))
                 {
                     ConfigurationManager.GetInstance().GetEnabledMods().Add(new(m));
@@ -191,6 +205,7 @@ namespace ReforgerServerApp
                 ConfigurationManager.GetInstance().GetAvailableMods().Remove(m);
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
+            ResetModFilters();
         }
 
         /// <summary>
@@ -213,7 +228,8 @@ namespace ReforgerServerApp
                 }
                 ConfigurationManager.GetInstance().GetEnabledMods().Remove(m);
             }
-            ConfigurationManager.GetInstance().AlphabetiseModLists(); 
+            ConfigurationManager.GetInstance().AlphabetiseModLists();
+            ResetModFilters();
         }
 
         /// <summary>
@@ -244,7 +260,7 @@ namespace ReforgerServerApp
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void DownloadSteamCmdBtnPressed(object sender, EventArgs e)
-        { 
+        {
             FileIOManager.GetInstance().DownloadSteamCMD();
             UpdateSteamCmdInstallStatus();
         }
@@ -301,14 +317,14 @@ namespace ReforgerServerApp
                 switch (restartUnitsComboBox.SelectedIndex)
                 {
                     case (int) ServerRestartIntervalUnit.MINUTES:
-                        interval = TimeSpan.FromMinutes((int)restartIntervalUpDown.Value);
-                        break;
+                    interval = TimeSpan.FromMinutes((int) restartIntervalUpDown.Value);
+                    break;
                     case (int) ServerRestartIntervalUnit.HOURS:
-                        interval = TimeSpan.FromHours((int)restartIntervalUpDown.Value);
-                        break;
+                    interval = TimeSpan.FromHours((int) restartIntervalUpDown.Value);
+                    break;
                     case (int) ServerRestartIntervalUnit.DAYS:
-                        interval = TimeSpan.FromDays((int)restartIntervalUpDown.Value);
-                        break;
+                    interval = TimeSpan.FromDays((int) restartIntervalUpDown.Value);
+                    break;
                 }
                 ProcessManager.GetInstance().ConfigureAutomaticRestartTask(interval);
             }
@@ -343,6 +359,7 @@ namespace ReforgerServerApp
             }
             ConfigurationManager.GetInstance().GetAvailableMods().Clear();
             ConfigurationManager.GetInstance().AlphabetiseModLists();
+            ResetModFilters();
         }
 
         /// <summary>
@@ -362,6 +379,7 @@ namespace ReforgerServerApp
             }
             ConfigurationManager.GetInstance().GetEnabledMods().Clear();
             ConfigurationManager.GetInstance().AlphabetiseModLists();
+            ResetModFilters();
         }
 
         /// <summary>
@@ -411,7 +429,7 @@ namespace ReforgerServerApp
         /// <param name="enabled"></param>
         private void EnableServerFields(bool enabled)
         {
-            foreach (KeyValuePair<string, ServerParameter> param in 
+            foreach (KeyValuePair<string, ServerParameter> param in
                 ConfigurationManager.GetInstance().GetServerParametersDictionary())
             {
                 param.Value.SetFieldEnabled(enabled);
@@ -657,7 +675,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "admins",
                 ParameterFriendlyName = "Admins",
-                ParameterTooltip = Constants.TODO_STR,
+                ParameterTooltip = Constants.SERVER_PARAM_ADMINS_TOOLTIP_STR,
                 ParameterList = ConfigurationManager.GetInstance()
                                                     .GetServerConfiguration()
                                                     .root.game.admins
@@ -742,14 +760,14 @@ namespace ReforgerServerApp
             {
                 ParameterName = "rconEnabled",
                 ParameterFriendlyName = "Enable Rcon",
-                ParameterTooltip = Constants.TODO_STR
+                ParameterTooltip = Constants.SERVER_PARAM_ENABLE_RCON_TOOLTIP_STR
             };
             serverParameters.Controls.Add(rconEnabled);
             ServerParameterString rconAddress = new()
             {
                 ParameterName = "rconAddress",
                 ParameterFriendlyName = "Rcon Address",
-                ParameterTooltip = Constants.TODO_STR
+                ParameterTooltip = Constants.SERVER_PARAM_RCON_ADDRESS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(rconAddress);
             ServerParameterNumeric rconPort = new()
@@ -760,21 +778,21 @@ namespace ReforgerServerApp
                 ParameterMin = 1,
                 ParameterMax = 65535,
                 ParameterValue = 19999,
-                ParameterTooltip = Constants.TODO_STR
+                ParameterTooltip = Constants.SERVER_PARAM_RCON_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(rconPort);
             ServerParameterString rconPassword = new()
             {
                 ParameterName = "rconPassword",
                 ParameterFriendlyName = "Rcon Password",
-                ParameterTooltip = Constants.TODO_STR
+                ParameterTooltip = Constants.SERVER_PARAM_RCON_PASSWORD_TOOLTIP_STR
             };
             serverParameters.Controls.Add(rconPassword);
             ServerParameterNumeric rconMaxClients = new()
             {
                 ParameterName = "rconMaxClients",
                 ParameterFriendlyName = "Rcon Max Clients",
-                ParameterTooltip = Constants.TODO_STR,
+                ParameterTooltip = Constants.SERVER_PARAM_RCON_MAX_CLIENTS_TOOLTIP_STR,
                 ParameterIncrement = 1,
                 ParameterMin = 1,
                 ParameterMax = 16,
@@ -785,7 +803,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "rconPermission",
                 ParameterFriendlyName = "Rcon Permission",
-                ParameterTooltip = Constants.TODO_STR,
+                ParameterTooltip = Constants.SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR,
                 ParameterValue = new[]{"admin", "monitor"}
             };
             serverParameters.Controls.Add(rconPermission);
@@ -793,7 +811,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "rconWhitelist",
                 ParameterFriendlyName = "Rcon Whitelist",
-                ParameterTooltip = Constants.TODO_STR,
+                ParameterTooltip = Constants.SERVER_PARAM_RCON_WHITELIST_TOOLTIP_STR,
                 ParameterList = ConfigurationManager.GetInstance()
                                                     .GetServerConfiguration()
                                                     .root.rcon.whitelist
@@ -803,7 +821,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "rconBlacklist",
                 ParameterFriendlyName = "Rcon Blacklist",
-                ParameterTooltip = Constants.TODO_STR,
+                ParameterTooltip = Constants.SERVER_PARAM_RCON_BLACKLIST_TOOLTIP_STR,
                 ParameterList = ConfigurationManager.GetInstance()
                                                     .GetServerConfiguration()
                                                     .root.rcon.blacklist
@@ -950,7 +968,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "disableNavmeshStreaming",
                 ParameterFriendlyName = "Disable Specific Navmesh Streaming",
-                ParameterTooltip = Constants.TODO_STR,
+                ParameterTooltip = Constants.SERVER_PARAM_DISABLE_SPECIFIC_NAVMESH_STREAMING_TOOLTIP_STR,
                 ParameterList = ConfigurationManager.GetInstance()
                                                     .GetServerConfiguration()
                                                     .root.operating.disableNavmeshStreaming
@@ -1037,7 +1055,7 @@ namespace ReforgerServerApp
         {
             if (loadedScenarioLabel.InvokeRequired)
             {
-                loadedScenarioLabel.Invoke(new Action(() => 
+                loadedScenarioLabel.Invoke(new Action(() =>
                     HandleUpdateScenarioIdFromLoadedConfigEvent(sender, e)));
             }
             else
@@ -1105,6 +1123,46 @@ namespace ReforgerServerApp
             }
 
             ProcessManager.GetInstance().SetLaunchArgumentsModel(args);
+        }
+
+        private static List<Mod> FilterModList(string filter, BindingList<Mod> modList)
+        {
+            return modList
+                .Where(mod => mod.name.ToLower().Contains(filter))
+                .ToList();
+        }
+
+        private void OnSearchEnabledModsTextChanged(object sender, EventArgs e)
+        {
+            string filter = enabledModsSearchTB.Text.ToLower();
+            if (string.IsNullOrEmpty(filter))
+            {
+                m_enabledModsBindingSource.DataSource = ConfigurationManager.GetInstance().GetEnabledMods();
+            }
+            else
+            {
+                m_enabledModsBindingSource.DataSource = FilterModList(filter, ConfigurationManager.GetInstance().GetEnabledMods());
+            }
+        }
+
+        private void OnSearchAvailableModsTextChanged(object sender, EventArgs e)
+        {
+            string filter = availableModsSearchTB.Text.ToLower();
+            if (string.IsNullOrEmpty(filter))
+            {
+                m_availableModsBindingSource.DataSource = ConfigurationManager.GetInstance().GetAvailableMods();
+            } else
+            {
+                m_availableModsBindingSource.DataSource = FilterModList(filter, ConfigurationManager.GetInstance().GetAvailableMods());
+            }
+        }
+
+        private void ResetModFilters()
+        {
+            availableMods.DataSource   = m_availableModsBindingSource;
+            enabledMods.DataSource     = m_enabledModsBindingSource;
+            availableModsSearchTB.Text = string.Empty;
+            enabledModsSearchTB.Text   = string.Empty;
         }
     }
 }

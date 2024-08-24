@@ -10,6 +10,7 @@
 
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Diagnostics;
 
 namespace ReforgerServerApp.Utils
 {
@@ -227,6 +228,9 @@ namespace ReforgerServerApp.Utils
 
                 Operating oper = Operating.Default;
 
+                // Make this null so if we don't find this tag in the JSON, we can check if it's null later
+                oper.disableNavmeshStreaming = null;
+
                 while (reader.Read())
                 {
                     if (reader.TokenType == JsonTokenType.EndObject)
@@ -278,7 +282,6 @@ namespace ReforgerServerApp.Utils
 
             public override void Write(Utf8JsonWriter writer, Operating value, JsonSerializerOptions options)
             {
-                writer.WritePropertyName("operating");
                 writer.WriteStartObject();
                 writer.WriteBoolean(nameof(Operating.lobbyPlayerSynchronise), value.lobbyPlayerSynchronise);
                 writer.WriteNumber(nameof(Operating.playerSaveTime), value.playerSaveTime);

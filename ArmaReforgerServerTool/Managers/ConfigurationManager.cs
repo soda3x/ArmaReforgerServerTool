@@ -130,10 +130,19 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["playerSaveTime"].ParameterValue          = m_serverConfig.root.operating.playerSaveTime;
                 m_serverParamsDictionary["aiLimit"].ParameterValue                 = m_serverConfig.root.operating.aiLimit;
                 m_serverParamsDictionary["disableCrashReporter"].ParameterValue    = m_serverConfig.root.operating.disableCrashReporter;
-                m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue = m_serverConfig.root.operating.disableNavmeshStreaming!;
-                m_serverParamsDictionary["disableServerShutdown"].ParameterValue   = m_serverConfig.root.operating.disableServerShutdown;
-                m_serverParamsDictionary["slotReservationTimeout"].ParameterValue  = m_serverConfig.root.operating.slotReservationTimeout;
-                m_serverParamsDictionary["disableAI"].ParameterValue               = m_serverConfig.root.operating.disableAI;
+
+                // If there is either a valid empty list or list with elements loaded in, assume disableNavmeshStreaming is enabled
+                bool disableNavmeshStreaming = m_serverConfig.root.operating.disableNavmeshStreaming != null;
+
+                if (disableNavmeshStreaming)
+                {
+                    m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue = m_serverConfig.root.operating.disableNavmeshStreaming!;
+                }
+                m_serverParamsDictionary["toggleDisableNavmeshStreaming"].ParameterValue = disableNavmeshStreaming;
+
+                m_serverParamsDictionary["disableServerShutdown"].ParameterValue  = m_serverConfig.root.operating.disableServerShutdown;
+                m_serverParamsDictionary["slotReservationTimeout"].ParameterValue = m_serverConfig.root.operating.slotReservationTimeout;
+                m_serverParamsDictionary["disableAI"].ParameterValue              = m_serverConfig.root.operating.disableAI;
 
                 m_enabledMods.Clear();
 
@@ -214,7 +223,14 @@ namespace ReforgerServerApp
             m_serverConfig.root.operating.playerSaveTime          = Convert.ToInt32(m_serverParamsDictionary["playerSaveTime"].ParameterValue);
             m_serverConfig.root.operating.aiLimit                 = Convert.ToInt32(m_serverParamsDictionary["aiLimit"].ParameterValue);
             m_serverConfig.root.operating.slotReservationTimeout  = Convert.ToInt32(m_serverParamsDictionary["slotReservationTimeout"].ParameterValue);
-            m_serverConfig.root.operating.disableNavmeshStreaming = (string[]) m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
+
+            // Determine whether Navmesh streaming is to be disabled
+            GetServerConfiguration().toggleDisableNavmeshStreaming = (bool) m_serverParamsDictionary["toggleDisableNavmeshStreaming"].ParameterValue;
+
+            if (GetServerConfiguration().toggleDisableNavmeshStreaming)
+            {
+                m_serverConfig.root.operating.disableNavmeshStreaming = (string[]) m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
+            }
             m_serverConfig.root.operating.disableServerShutdown   = (bool)m_serverParamsDictionary["disableServerShutdown"].ParameterValue;
             m_serverConfig.root.operating.disableCrashReporter    = (bool)m_serverParamsDictionary["disableCrashReporter"].ParameterValue;
             m_serverConfig.root.operating.disableAI               = (bool)m_serverParamsDictionary["disableAI"].ParameterValue;
