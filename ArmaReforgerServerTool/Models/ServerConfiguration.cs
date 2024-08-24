@@ -224,7 +224,7 @@ namespace ReforgerServerApp
         /// <returns>JSON string representation of the Server Configuration</returns>
         public string AsJsonString()
         {
-            return Utilities.GetFormattedJsonString(root, new JsonUtils.ModConverter());
+            return Utilities.GetFormattedJsonString(root, new JsonUtils.ModConverter(), new JsonUtils.OperatingConditionalConverter());
         }
 
         /// <summary>

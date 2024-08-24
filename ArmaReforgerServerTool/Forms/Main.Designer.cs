@@ -38,6 +38,8 @@ namespace ReforgerServerApp
             addModBtn = new Button();
             removeModBtn = new Button();
             groupBox2 = new GroupBox();
+            enabledModsSearchTB = new TextBox();
+            availableModsSearchTB = new TextBox();
             disableAllModsBtn = new Button();
             enableAllModsBtn = new Button();
             label16 = new Label();
@@ -198,6 +200,8 @@ namespace ReforgerServerApp
             // groupBox2
             // 
             groupBox2.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            groupBox2.Controls.Add(enabledModsSearchTB);
+            groupBox2.Controls.Add(availableModsSearchTB);
             groupBox2.Controls.Add(disableAllModsBtn);
             groupBox2.Controls.Add(enableAllModsBtn);
             groupBox2.Controls.Add(label16);
@@ -213,6 +217,26 @@ namespace ReforgerServerApp
             groupBox2.TabIndex = 47;
             groupBox2.TabStop = false;
             groupBox2.Text = "Mods";
+            // 
+            // enabledModsSearchTB
+            // 
+            enabledModsSearchTB.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            enabledModsSearchTB.Location = new Point(335, 37);
+            enabledModsSearchTB.Name = "enabledModsSearchTB";
+            enabledModsSearchTB.PlaceholderText = "Search Enabled Mods...";
+            enabledModsSearchTB.Size = new Size(291, 23);
+            enabledModsSearchTB.TabIndex = 9;
+            enabledModsSearchTB.TextChanged += OnSearchEnabledModsTextChanged;
+            // 
+            // availableModsSearchTB
+            // 
+            availableModsSearchTB.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            availableModsSearchTB.Location = new Point(6, 37);
+            availableModsSearchTB.Name = "availableModsSearchTB";
+            availableModsSearchTB.PlaceholderText = "Search Available Mods...";
+            availableModsSearchTB.Size = new Size(294, 23);
+            availableModsSearchTB.TabIndex = 8;
+            availableModsSearchTB.TextChanged += OnSearchAvailableModsTextChanged;
             // 
             // disableAllModsBtn
             // 
@@ -277,9 +301,9 @@ namespace ReforgerServerApp
             enabledMods.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             enabledMods.FormattingEnabled = true;
             enabledMods.ItemHeight = 15;
-            enabledMods.Location = new Point(335, 44);
+            enabledMods.Location = new Point(335, 74);
             enabledMods.Name = "enabledMods";
-            enabledMods.Size = new Size(291, 649);
+            enabledMods.Size = new Size(291, 619);
             enabledMods.TabIndex = 1;
             // 
             // availableMods
@@ -287,9 +311,9 @@ namespace ReforgerServerApp
             availableMods.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             availableMods.FormattingEnabled = true;
             availableMods.ItemHeight = 15;
-            availableMods.Location = new Point(6, 44);
+            availableMods.Location = new Point(6, 74);
             availableMods.Name = "availableMods";
-            availableMods.Size = new Size(294, 649);
+            availableMods.Size = new Size(294, 619);
             availableMods.TabIndex = 0;
             availableMods.SelectedIndexChanged += AvailableModsSelectedIndexChanged;
             // 
@@ -1014,5 +1038,7 @@ namespace ReforgerServerApp
         private Button editModBtn;
         private BoundListBox enabledMods;
         private BoundListBox availableMods;
+        private TextBox enabledModsSearchTB;
+        private TextBox availableModsSearchTB;
     }
 }

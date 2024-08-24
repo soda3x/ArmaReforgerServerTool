@@ -13,7 +13,9 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 - Automatically fetches Scenario IDs for your mods from the Arma Workshop
 
 ## Requirements
+
 - [dotNET 6 Runtime](https://dotnet.microsoft.com/en-us/download)
+- Any dependencies for the Arma Reforger Dedicated Server (namely Microsoft Visual C++ Runtime)
 
 ## Screenshots
 
@@ -25,9 +27,10 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 
 ![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/servertoolscreen2.png)
 
+## Server Parameters
+
+See [here](docs/PARAMETERS.md) for more information on the parameters in the app.
+
 ## Discord
 
 Come discuss with fellow users, seek help etc. on the Discord server [here](https://discord.gg/RmTH7gKdfK)
-
-## Server Parameters
-See [here](docs/PARAMETERS.md) for more information on the parameters in the app.
