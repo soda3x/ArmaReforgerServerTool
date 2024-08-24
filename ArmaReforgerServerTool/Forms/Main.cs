@@ -9,7 +9,6 @@
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 namespace ReforgerServerApp
 {
@@ -1125,6 +1124,12 @@ namespace ReforgerServerApp
             ProcessManager.GetInstance().SetLaunchArgumentsModel(args);
         }
 
+        /// <summary>
+        /// Filter a Source, searching for a given string
+        /// </summary>
+        /// <param name="filter">to use when searching for matching items</param>
+        /// <param name="modList">source list to search</param>
+        /// <returns>filtered list</returns>
         private static List<Mod> FilterModList(string filter, BindingList<Mod> modList)
         {
             return modList
@@ -1132,6 +1137,12 @@ namespace ReforgerServerApp
                 .ToList();
         }
 
+        /// <summary>
+        /// Event Handler for when text is entered or removed in the 
+        /// Search Enabled Mods text box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">arguments</param>
         private void OnSearchEnabledModsTextChanged(object sender, EventArgs e)
         {
             string filter = enabledModsSearchTB.Text.ToLower();
@@ -1145,6 +1156,12 @@ namespace ReforgerServerApp
             }
         }
 
+        /// <summary>
+        /// Event Handler for when text is entered or removed in the 
+        /// Search Available Mods text box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">arguments</param>
         private void OnSearchAvailableModsTextChanged(object sender, EventArgs e)
         {
             string filter = availableModsSearchTB.Text.ToLower();
@@ -1157,6 +1174,10 @@ namespace ReforgerServerApp
             }
         }
 
+        /// <summary>
+        /// Convenience method for clearing filters and removing text 
+        /// from the filter text fields
+        /// </summary>
         private void ResetModFilters()
         {
             availableMods.DataSource   = m_availableModsBindingSource;
