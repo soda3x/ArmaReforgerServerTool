@@ -24,8 +24,8 @@ namespace ReforgerServerApp
     /// </summary>
     public class Root
     {
-        public static readonly int DEFAULT_PORT  = 2001;
-        public static readonly string DEFAULT_ADDRESS = "0.0.0.0";
+        public static readonly int DEFAULT_PORT              = 2001;
+        public static readonly string DEFAULT_BIND_ADDRESS   = "0.0.0.0";
 
         public string bindAddress { get; set; }
         public int bindPort { get; set; }
@@ -50,7 +50,7 @@ namespace ReforgerServerApp
         }
 
         public static Root Default => new(
-            DEFAULT_ADDRESS,
+            DEFAULT_BIND_ADDRESS,
             DEFAULT_PORT,
             string.Empty,
             DEFAULT_PORT,
@@ -67,8 +67,8 @@ namespace ReforgerServerApp
     /// </summary>
     public class A2S
     {
-        public static readonly string DEFAULT_ADDRESS = "0.0.0.0";
-        public static readonly int DEFAULT_PORT = 17777;
+        public static readonly string DEFAULT_ADDRESS    = "0.0.0.0";
+        public static readonly int DEFAULT_PORT          = 17777;
 
         public string address { get; set; }
         public int port { get; set; }
@@ -88,12 +88,12 @@ namespace ReforgerServerApp
     [JsonConverter(typeof(JsonUtils.RconConditionalConverter))]
     public class Rcon
     {
-        public static readonly int DEFAULT_PORT = 19999;
-        public static readonly int MIN_CLIENTS = 1;
-        public static readonly int MAX_CLIENTS = 16;
-        public static readonly int DEFAULT_CLIENTS = 16;
-        public static readonly String[] PERMISSIONS = { "admin", "monitor" };
-        public static readonly RconPermission DEFAULT_PERMISSION = RconPermission.MONITOR;
+        public static readonly int DEFAULT_PORT              = 19999;
+        public static readonly int MIN_CLIENTS               = 1;
+        public static readonly int MAX_CLIENTS               = 16;
+        public static readonly int DEFAULT_CLIENTS           = 16;
+        public static readonly String[] PERMISSIONS          = { "admin", "monitor" };
+        public static readonly String DEFAULT_PERMISSION     = PERMISSIONS[1];
 
         public string address { get; set; }
         public int port { get; set; }
@@ -119,7 +119,7 @@ namespace ReforgerServerApp
             string.Empty,
             DEFAULT_PORT,
             string.Empty,
-            DEFAULT_PERMISSION,
+            RconPermission.MONITOR,
             Array.Empty<string>(),
             Array.Empty<string>(),
             DEFAULT_CLIENTS
@@ -131,11 +131,11 @@ namespace ReforgerServerApp
     /// </summary>
     public class Game
     {
-        public static readonly int MIN_PLAYERS = 1;
-        public static readonly int MAX_PLAYERS = 256;
-        public static readonly int DEFAULT_PLAYERS = 64;
-        public static readonly bool DEFAULT_VISIBLE = true;
-        public static readonly bool DEFAULT_CROSS_PLATFORM = false;
+        public static readonly int MIN_PLAYERS               = 1;
+        public static readonly int MAX_PLAYERS               = 256;
+        public static readonly int DEFAULT_PLAYERS           = 64;
+        public static readonly bool DEFAULT_VISIBLE          = true;
+        public static readonly bool DEFAULT_CROSS_PLATFORM   = false;
 
         public string name { get; set; }
         public string password { get; set; }
@@ -186,21 +186,21 @@ namespace ReforgerServerApp
     /// </summary>
     public class GameProperties
     {
-        public static readonly int MIN_SERVER_VIEW_DISTANCE = 500;
-        public static readonly int MAX_SERVER_VIEW_DISTANCE = 10000;
-        public static readonly int DEFAULT_SERVER_VIEW_DISTANCE = 1600;
-        public static readonly int MIN_SERVER_GRASS_DISTANCE = 0;
-        public static readonly int MAX_SERVER_GRASS_DISTANCE = 150;
-        public static readonly int DEFAULT_SERVER_GRASS_DISTANCE = 50;
-        public static readonly int MIN_NETWORK_VIEW_DISTANCE = 500;
-        public static readonly int MAX_NETWORK_VIEW_DISTANCE = 5000;
-        public static readonly int DEFAULT_NETWORK_VIEW_DISTANCE = 1500;
-        public static readonly bool DEFAULT_DISABLE_THIRD_PERSON = false;
-        public static readonly bool DEFAULT_FAST_VALIDATION = true;
-        public static readonly bool DEFAULT_BATTLE_EYE = true;
-        public static readonly bool DEFAULT_VON_DISABLE_UI = false;
-        public static readonly bool DEFAULT_VON_DISABLE_DIRECT_SPEECH_UI = false;
-        public static readonly bool DEFAULT_VON_CAN_TRANSMIT_CROSS_FACTION = false;
+        public static readonly int MIN_SERVER_VIEW_DISTANCE                  = 500;
+        public static readonly int MAX_SERVER_VIEW_DISTANCE                  = 10000;
+        public static readonly int DEFAULT_SERVER_VIEW_DISTANCE              = 1600;
+        public static readonly int MIN_SERVER_GRASS_DISTANCE                 = 0;
+        public static readonly int MAX_SERVER_GRASS_DISTANCE                 = 150;
+        public static readonly int DEFAULT_SERVER_GRASS_DISTANCE             = 50;
+        public static readonly int MIN_NETWORK_VIEW_DISTANCE                 = 500;
+        public static readonly int MAX_NETWORK_VIEW_DISTANCE                 = 5000;
+        public static readonly int DEFAULT_NETWORK_VIEW_DISTANCE             = 1500;
+        public static readonly bool DEFAULT_DISABLE_THIRD_PERSON             = false;
+        public static readonly bool DEFAULT_FAST_VALIDATION                  = true;
+        public static readonly bool DEFAULT_BATTLE_EYE                       = true;
+        public static readonly bool DEFAULT_VON_DISABLE_UI                   = false;
+        public static readonly bool DEFAULT_VON_DISABLE_DIRECT_SPEECH_UI     = false;
+        public static readonly bool DEFAULT_VON_CAN_TRANSMIT_CROSS_FACTION   = false;
 
         public int serverMaxViewDistance { get; set; }
         public int serverMinGrassDistance { get; set; }
@@ -252,19 +252,19 @@ namespace ReforgerServerApp
     [JsonConverter(typeof(JsonUtils.OperatingConditionalConverter))]
     public class Operating
     {
-        public static readonly bool DEFAULT_LOBBY_PLAYER_SYNCHRONISE = true;
-        public static readonly int MIN_PLAYER_SAVE_TIME = 1;
-        public static readonly int MAX_PLAYER_SAVE_TIME = ushort.MaxValue;
-        public static readonly int DEFAULT_PLAYER_SAVE_TIME = 120;
-        public static readonly int MIN_AI_LIMIT = -1;
-        public static readonly int MAX_AI_LIMIT = 1000;
-        public static readonly int DEFAULT_AI_LIMIT = -1;
-        public static readonly int MIN_SLOT_RESERVATION_TIMEOUT = 5;
-        public static readonly int MAX_SLOT_RESERVATION_TIMEOUT = 300;
-        public static readonly int DEFAULT_SLOT_RESERVATION_TIMEOUT = 60;
-        public static readonly bool DEFAULT_DISABLE_SERVER_SHUTDOWN = false;
-        public static readonly bool DEFAULT_DISABLE_CRASH_REPORTER = false;
-        public static readonly bool DEFAULT_DISABLE_AI = false;
+        public static readonly bool DEFAULT_LOBBY_PLAYER_SYNCHRONISE     = true;
+        public static readonly int MIN_PLAYER_SAVE_TIME                  = 1;
+        public static readonly int MAX_PLAYER_SAVE_TIME                  = ushort.MaxValue;
+        public static readonly int DEFAULT_PLAYER_SAVE_TIME              = 120;
+        public static readonly int MIN_AI_LIMIT                          = -1;
+        public static readonly int MAX_AI_LIMIT                          = 1000;
+        public static readonly int DEFAULT_AI_LIMIT                      = -1;
+        public static readonly int MIN_SLOT_RESERVATION_TIMEOUT          = 5;
+        public static readonly int MAX_SLOT_RESERVATION_TIMEOUT          = 300;
+        public static readonly int DEFAULT_SLOT_RESERVATION_TIMEOUT      = 60;
+        public static readonly bool DEFAULT_DISABLE_SERVER_SHUTDOWN      = false;
+        public static readonly bool DEFAULT_DISABLE_CRASH_REPORTER       = false;
+        public static readonly bool DEFAULT_DISABLE_AI                   = false;
 
         public bool lobbyPlayerSynchronise { get; set; }
         public int playerSaveTime { get; set; }

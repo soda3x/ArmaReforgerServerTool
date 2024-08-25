@@ -703,7 +703,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "bindAddress",
                 ParameterFriendlyName = "Bind Address",
-                ParameterValue = Root.DEFAULT_ADDRESS,
+                ParameterValue = Root.DEFAULT_BIND_ADDRESS,
                 ParameterTooltip = Constants.SERVER_PARAM_BIND_ADDRESS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(bindAddress);
@@ -805,7 +805,7 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR,
                 ParameterValue = Rcon.PERMISSIONS,
             };
-            rconPermission.ParameterValueSelection(Rcon.PERMISSIONS[(int)Rcon.DEFAULT_PERMISSION]);
+            rconPermission.ParameterValueSelection(Rcon.DEFAULT_PERMISSION);
             serverParameters.Controls.Add(rconPermission);
             ServerParameterList rconWhitelist = new()
             {
@@ -883,7 +883,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "fastValidation",
                 ParameterFriendlyName = "Fast Validation",
-                ParameterValue = GameProperties.Default.fastValidation,
+                ParameterValue = GameProperties.DEFAULT_FAST_VALIDATION,
                 ParameterTooltip = Constants.SERVER_PARAM_FAST_VALIDATION_TOOLTIP_STR
             };
             serverParameters.Controls.Add(fastValidation);
