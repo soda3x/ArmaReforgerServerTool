@@ -267,7 +267,7 @@ namespace ReforgerServerApp
         public static readonly bool DEFAULT_DISABLE_AI = false;
 
         public bool lobbyPlayerSynchronise { get; set; }
-        public int playerSaveTime { get; set; } = 120;
+        public int playerSaveTime { get; set; }
         public int aiLimit { get; set; }
         public int slotReservationTimeout { get; set; }
         public string[] disableNavmeshStreaming { get; set; }
