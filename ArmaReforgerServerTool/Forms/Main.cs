@@ -803,8 +803,9 @@ namespace ReforgerServerApp
                 ParameterName = "rconPermission",
                 ParameterFriendlyName = "Rcon Permission",
                 ParameterTooltip = Constants.SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR,
-                ParameterValue = new[]{"admin", "monitor"}
+                ParameterValue = Rcon.PERMISSIONS,
             };
+            rconPermission.ParameterValueSelection(Rcon.PERMISSIONS[(int)Rcon.DEFAULT_PERMISSION]);
             serverParameters.Controls.Add(rconPermission);
             ServerParameterList rconWhitelist = new()
             {
