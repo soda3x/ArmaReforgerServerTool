@@ -685,9 +685,9 @@ namespace ReforgerServerApp
                 ParameterName = "maxPlayers",
                 ParameterFriendlyName = "Max Players",
                 ParameterIncrement = 1,
-                ParameterMin = 1,
-                ParameterMax = 256,
-                ParameterValue = 64,
+                ParameterMin = Game.MIN_PLAYERS,
+                ParameterMax = Game.MAX_PLAYERS,
+                ParameterValue = Game.DEFAULT_PLAYERS,
                 ParameterTooltip = Constants.SERVER_PARAM_MAX_PLAYERS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(maxPlayers);
@@ -695,7 +695,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "visible",
                 ParameterFriendlyName = "Server Visible",
-                ParameterValue = true,
+                ParameterValue = Game.DEFAULT_VISIBLE,
                 ParameterTooltip = Constants.SERVER_PARAM_VISIBLE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(visible);
@@ -703,7 +703,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "bindAddress",
                 ParameterFriendlyName = "Bind Address",
-                ParameterValue = "0.0.0.0",
+                ParameterValue = Root.DEFAULT_BIND_ADDRESS,
                 ParameterTooltip = Constants.SERVER_PARAM_BIND_ADDRESS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(bindAddress);
@@ -712,9 +712,9 @@ namespace ReforgerServerApp
                 ParameterName = "bindPort",
                 ParameterFriendlyName = "Bind Port",
                 ParameterIncrement = 1,
-                ParameterMin = 1,
-                ParameterMax = 65535,
-                ParameterValue = 2001,
+                ParameterMin = Constants.SERVER_PARAM_MIN_PORT,
+                ParameterMax = Constants.SERVER_PARAM_MAX_PORT,
+                ParameterValue = Root.DEFAULT_PORT,
                 ParameterTooltip = Constants.SERVER_PARAM_BIND_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(bindPort);
@@ -730,9 +730,9 @@ namespace ReforgerServerApp
                 ParameterName = "publicPort",
                 ParameterFriendlyName = "Public Port",
                 ParameterIncrement = 1,
-                ParameterMin = 1,
-                ParameterMax = 65535,
-                ParameterValue = 2001,
+                ParameterMin = Constants.SERVER_PARAM_MIN_PORT,
+                ParameterMax = Constants.SERVER_PARAM_MAX_PORT,
+                ParameterValue = Root.DEFAULT_PORT,
                 ParameterTooltip = Constants.SERVER_PARAM_PUBLIC_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(publicPort);
@@ -740,7 +740,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "address",
                 ParameterFriendlyName = "A2S Address",
-                ParameterValue = "0.0.0.0",
+                ParameterValue = A2S.DEFAULT_ADDRESS,
                 ParameterTooltip = Constants.SERVER_PARAM_A2S_ADDRESS_TOOLTIP_STR
             };
             serverParameters.Controls.Add(a2sAddress);
@@ -749,9 +749,9 @@ namespace ReforgerServerApp
                 ParameterName = "port",
                 ParameterFriendlyName = "A2S Port",
                 ParameterIncrement = 1,
-                ParameterMin = 1,
-                ParameterMax = 65535,
-                ParameterValue = 17777,
+                ParameterMin = Constants.SERVER_PARAM_MIN_PORT,
+                ParameterMax = Constants.SERVER_PARAM_MAX_PORT,
+                ParameterValue = A2S.DEFAULT_PORT,
                 ParameterTooltip = Constants.SERVER_PARAM_A2S_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(a2sPort);
@@ -774,9 +774,9 @@ namespace ReforgerServerApp
                 ParameterName = "rconPort",
                 ParameterFriendlyName = "Rcon Port",
                 ParameterIncrement = 1,
-                ParameterMin = 1,
-                ParameterMax = 65535,
-                ParameterValue = 19999,
+                ParameterMin = Constants.SERVER_PARAM_MIN_PORT,
+                ParameterMax = Constants.SERVER_PARAM_MAX_PORT,
+                ParameterValue = Rcon.DEFAULT_PORT,
                 ParameterTooltip = Constants.SERVER_PARAM_RCON_PORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(rconPort);
@@ -793,9 +793,9 @@ namespace ReforgerServerApp
                 ParameterFriendlyName = "Rcon Max Clients",
                 ParameterTooltip = Constants.SERVER_PARAM_RCON_MAX_CLIENTS_TOOLTIP_STR,
                 ParameterIncrement = 1,
-                ParameterMin = 1,
-                ParameterMax = 16,
-                ParameterValue = 16
+                ParameterMin = Rcon.MIN_CLIENTS,
+                ParameterMax = Rcon.MAX_CLIENTS,
+                ParameterValue = Rcon.DEFAULT_CLIENTS
             };
             serverParameters.Controls.Add(rconMaxClients);
             ServerParameterSelect rconPermission = new()
@@ -803,8 +803,9 @@ namespace ReforgerServerApp
                 ParameterName = "rconPermission",
                 ParameterFriendlyName = "Rcon Permission",
                 ParameterTooltip = Constants.SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR,
-                ParameterValue = new[]{"admin", "monitor"}
+                ParameterValue = Rcon.PERMISSIONS,
             };
+            rconPermission.ParameterValueSelection(Rcon.DEFAULT_PERMISSION);
             serverParameters.Controls.Add(rconPermission);
             ServerParameterList rconWhitelist = new()
             {
@@ -831,9 +832,9 @@ namespace ReforgerServerApp
                 ParameterName = "playerSaveTime",
                 ParameterFriendlyName = "Player Save Time (secs)",
                 ParameterIncrement = 1,
-                ParameterMin = 1,
-                ParameterMax = 65535,
-                ParameterValue = 120,
+                ParameterMin = Operating.MIN_PLAYER_SAVE_TIME,
+                ParameterMax = Operating.MAX_PLAYER_SAVE_TIME,
+                ParameterValue = Operating.DEFAULT_PLAYER_SAVE_TIME,
                 ParameterTooltip = Constants.SERVER_PARAM_PLAYER_SAVE_TIME_TOOLTIP_STR
             };
             serverParameters.Controls.Add(playerSaveTime);
@@ -842,9 +843,9 @@ namespace ReforgerServerApp
                 ParameterName = "serverMaxViewDistance",
                 ParameterFriendlyName = "Server Max View Distance",
                 ParameterIncrement = 1,
-                ParameterMin = 500,
-                ParameterMax = 10000,
-                ParameterValue = 1600,
+                ParameterMin = GameProperties.MIN_SERVER_VIEW_DISTANCE,
+                ParameterMax = GameProperties.MAX_SERVER_VIEW_DISTANCE,
+                ParameterValue = GameProperties.DEFAULT_SERVER_VIEW_DISTANCE,
                 ParameterTooltip = Constants.SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(serverMaxViewDistance);
@@ -853,9 +854,9 @@ namespace ReforgerServerApp
                 ParameterName = "serverMinGrassDistance",
                 ParameterFriendlyName = "Server Min Grass Distance",
                 ParameterIncrement = 1,
-                ParameterMin = 0,
-                ParameterMax = 150,
-                ParameterValue = 50,
+                ParameterMin = GameProperties.MIN_SERVER_GRASS_DISTANCE,
+                ParameterMax = GameProperties.MAX_SERVER_GRASS_DISTANCE,
+                ParameterValue = GameProperties.DEFAULT_SERVER_GRASS_DISTANCE,
                 ParameterTooltip = Constants.SERVER_PARAM_SERVER_MIN_GRASS_DISTANCE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(serverMinGrassDistance);
@@ -864,9 +865,9 @@ namespace ReforgerServerApp
                 ParameterName = "networkViewDistance",
                 ParameterFriendlyName = "Network View Distance",
                 ParameterIncrement = 1,
-                ParameterMin = 500,
-                ParameterMax = 5000,
-                ParameterValue = 1500,
+                ParameterMin = GameProperties.MIN_NETWORK_VIEW_DISTANCE,
+                ParameterMax = GameProperties.MAX_NETWORK_VIEW_DISTANCE,
+                ParameterValue = GameProperties.DEFAULT_NETWORK_VIEW_DISTANCE,
                 ParameterTooltip = Constants.SERVER_PARAM_NETWORK_VIEW_DISTANCE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(networkViewDistance);
@@ -874,7 +875,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "disableThirdPerson",
                 ParameterFriendlyName = "Disable Third Person",
-                ParameterValue = false,
+                ParameterValue = GameProperties.DEFAULT_DISABLE_THIRD_PERSON,
                 ParameterTooltip = Constants.SERVER_PARAM_DISABLE_THIRD_PERSON_TOOLTIP_STR
             };
             serverParameters.Controls.Add(disableThirdPerson);
@@ -882,7 +883,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "fastValidation",
                 ParameterFriendlyName = "Fast Validation",
-                ParameterValue = true,
+                ParameterValue = GameProperties.DEFAULT_FAST_VALIDATION,
                 ParameterTooltip = Constants.SERVER_PARAM_FAST_VALIDATION_TOOLTIP_STR
             };
             serverParameters.Controls.Add(fastValidation);
@@ -890,7 +891,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "battlEye",
                 ParameterFriendlyName = "BattlEye",
-                ParameterValue = true,
+                ParameterValue = GameProperties.DEFAULT_BATTLE_EYE,
                 ParameterTooltip = Constants.SERVER_PARAM_BATTLEYE_TOOLTIP_STR
             };
             serverParameters.Controls.Add(battlEye);
@@ -898,7 +899,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "lobbyPlayerSynchronise",
                 ParameterFriendlyName = "Lobby Player Synchronise",
-                ParameterValue = true,
+                ParameterValue = Operating.DEFAULT_LOBBY_PLAYER_SYNCHRONISE,
                 ParameterTooltip = Constants.SERVER_PARAM_LOBBY_PLAYER_SYNC_TOOLTIP_STR
             };
             serverParameters.Controls.Add(lobbyPlayerSynchronise);
@@ -906,7 +907,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "VONDisableUI",
                 ParameterFriendlyName = "VON Disable UI",
-                ParameterValue = false,
+                ParameterValue = GameProperties.DEFAULT_VON_DISABLE_UI,
                 ParameterTooltip = Constants.SERVER_PARAM_VON_DISABLE_UI_TOOLTIP_STR
             };
             serverParameters.Controls.Add(vonDisableUI);
@@ -914,7 +915,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "VONDisableDirectSpeechUI",
                 ParameterFriendlyName = "VON Disable Direct Speech UI",
-                ParameterValue = false,
+                ParameterValue = GameProperties.DEFAULT_VON_DISABLE_DIRECT_SPEECH_UI,
                 ParameterTooltip = Constants.SERVER_PARAM_VON_DISABLE_DIRECT_SPEECH_UI_TOOLTIP_STR
             };
             serverParameters.Controls.Add(vonDisableDirectSpeechUI);
@@ -922,7 +923,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "VONCanTransmitCrossFaction",
                 ParameterFriendlyName = "VON Can Transmit Cross Faction",
-                ParameterValue = false,
+                ParameterValue = GameProperties.DEFAULT_VON_CAN_TRANSMIT_CROSS_FACTION,
                 ParameterTooltip = Constants.SERVER_PARAM_VON_CAN_TRANSMIT_ACROSS_FACTION_TOOLTIP_STR
             };
             serverParameters.Controls.Add(vonCanTransmitCrossFaction);
@@ -930,7 +931,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "crossPlatform",
                 ParameterFriendlyName = "Cross Platform",
-                ParameterValue = false,
+                ParameterValue = Game.DEFAULT_CROSS_PLATFORM,
                 ParameterTooltip = Constants.SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR
             };
             serverParameters.Controls.Add(crossPlatform);
@@ -939,9 +940,9 @@ namespace ReforgerServerApp
                 ParameterName = "aiLimit",
                 ParameterFriendlyName = "AI Limit",
                 ParameterIncrement = 1,
-                ParameterMin = -1,
-                ParameterMax = 1000,
-                ParameterValue = -1,
+                ParameterMin = Operating.MIN_AI_LIMIT,
+                ParameterMax = Operating.MAX_AI_LIMIT,
+                ParameterValue = Operating.DEFAULT_AI_LIMIT,
                 ParameterTooltip = Constants.SERVER_PARAM_AI_LIMIT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(aiLimit);
@@ -950,9 +951,9 @@ namespace ReforgerServerApp
                 ParameterName = "slotReservationTimeout",
                 ParameterFriendlyName = "Slot Reservation Timeout (secs)",
                 ParameterIncrement = 1,
-                ParameterMin = 5,
-                ParameterMax = 300,
-                ParameterValue = 60,
+                ParameterMin = Operating.MIN_SLOT_RESERVATION_TIMEOUT,
+                ParameterMax = Operating.MAX_SLOT_RESERVATION_TIMEOUT,
+                ParameterValue = Operating.DEFAULT_SLOT_RESERVATION_TIMEOUT,
                 ParameterTooltip = Constants.SERVER_PARAM_SLOT_RESERVATION_TIMEOUT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(slotReservationTimeout);
@@ -977,7 +978,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "disableServerShutdown",
                 ParameterFriendlyName = "Disable Server Shutdown",
-                ParameterValue = false,
+                ParameterValue = Operating.DEFAULT_DISABLE_SERVER_SHUTDOWN,
                 ParameterTooltip = Constants.SERVER_PARAM_DISABLE_SERVER_SHUTDOWN_TOOLTIP_STR
             };
             serverParameters.Controls.Add(disableServerShutdown);
@@ -985,7 +986,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "disableCrashReporter",
                 ParameterFriendlyName = "Disable Crash Reporter",
-                ParameterValue = false,
+                ParameterValue = Operating.DEFAULT_DISABLE_CRASH_REPORTER,
                 ParameterTooltip = Constants.SERVER_PARAM_DISABLE_CRASH_REPORT_TOOLTIP_STR
             };
             serverParameters.Controls.Add(disableCrashReporter);
@@ -993,7 +994,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "disableAI",
                 ParameterFriendlyName = "Disable AI",
-                ParameterValue = false,
+                ParameterValue = Operating.DEFAULT_DISABLE_AI,
                 ParameterTooltip = Constants.SERVER_PARAM_DISABLE_AI_TOOLTIP_STR
             };
             serverParameters.Controls.Add(disableAI);
