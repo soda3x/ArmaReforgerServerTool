@@ -1139,22 +1139,14 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
-        /// Event Handler for when text is entered or removed in the 
-        /// Search Enabled Mods text box
+        /// Convenience method for clearing filters and removing text 
+        /// from the filter text fields
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e">arguments</param>
-        private void OnSearchEnabledModsTextChanged(object sender, EventArgs e)
+        private void ResetModFilters()
         {
-            string filter = enabledModsSearchTB.Text.ToLower();
-            if (string.IsNullOrEmpty(filter))
-            {
-                m_enabledModsBindingSource.DataSource = ConfigurationManager.GetInstance().GetEnabledMods();
-            }
-            else
-            {
-                m_enabledModsBindingSource.DataSource = FilterModList(filter, ConfigurationManager.GetInstance().GetEnabledMods());
-            }
+            availableMods.DataSource = m_availableModsBindingSource;
+            enabledMods.DataSource = m_enabledModsBindingSource;
+            modsSearchTB.Text = string.Empty;
         }
 
         /// <summary>
@@ -1163,28 +1155,19 @@ namespace ReforgerServerApp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">arguments</param>
-        private void OnSearchAvailableModsTextChanged(object sender, EventArgs e)
+        private void OnSearchModsTextChanged(object sender, EventArgs e)
         {
-            string filter = availableModsSearchTB.Text.ToLower();
+            string filter = modsSearchTB.Text.ToLower();
             if (string.IsNullOrEmpty(filter))
             {
                 m_availableModsBindingSource.DataSource = ConfigurationManager.GetInstance().GetAvailableMods();
-            } else
+                m_enabledModsBindingSource.DataSource = ConfigurationManager.GetInstance().GetEnabledMods();
+            }
+            else
             {
                 m_availableModsBindingSource.DataSource = FilterModList(filter, ConfigurationManager.GetInstance().GetAvailableMods());
+                m_enabledModsBindingSource.DataSource = FilterModList(filter, ConfigurationManager.GetInstance().GetEnabledMods());
             }
-        }
-
-        /// <summary>
-        /// Convenience method for clearing filters and removing text 
-        /// from the filter text fields
-        /// </summary>
-        private void ResetModFilters()
-        {
-            availableMods.DataSource   = m_availableModsBindingSource;
-            enabledMods.DataSource     = m_enabledModsBindingSource;
-            availableModsSearchTB.Text = string.Empty;
-            enabledModsSearchTB.Text   = string.Empty;
         }
     }
 }
