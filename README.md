@@ -17,6 +17,13 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 - [dotNET 6 Runtime](https://dotnet.microsoft.com/en-us/download)
 - Any dependencies for the Arma Reforger Dedicated Server (namely Microsoft Visual C++ Runtime)
 
+### Developer Dependencies
+
+If you are contributing to the project, you will also need the following:
+
+- NSIS (to build the installer)
+- Visual Studio 2022
+
 ## Screenshots
 
 ![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/servertoolscreen.png)
@@ -30,6 +37,12 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 ## Server Parameters
 
 See [here](docs/PARAMETERS.md) for more information on the parameters in the app.
+
+## Building
+
+- Build using Visual Studio 2022 (be sure to make `Release`)
+
+- Run `MakeNSISW` and compile the installer script in `scripts/` to make the installer
 
 ## Discord
 
