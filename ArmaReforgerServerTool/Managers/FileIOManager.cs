@@ -22,7 +22,7 @@ namespace ReforgerServerApp.Managers
     internal class FileIOManager
     {
         private static FileIOManager?   INSTANCE;
-        private static readonly string  m_serverToolPropertiesFile  = "./properties.json";
+        private readonly string         m_serverToolPropertiesFile  = "./properties.json";
         private readonly string         m_serverToolProperties;
         private readonly string         m_legacyModDatabaseFile     = "./mod_database.txt";
         private readonly string         m_modDatabaseFile           = "./mod_database.json";
@@ -74,7 +74,7 @@ namespace ReforgerServerApp.Managers
             return INSTANCE;
         }
         
-        public static string ServerToolPropertiesFile => m_serverToolPropertiesFile;
+        public string GetServerToolPropertiesFile() { return m_serverToolPropertiesFile; }
         public string GetToolProperties() { return m_serverToolProperties; }
         public string GetInstallDirectory() { return m_installDir; }
         public string GetModDatabaseFile() { return m_modDatabaseFile; }

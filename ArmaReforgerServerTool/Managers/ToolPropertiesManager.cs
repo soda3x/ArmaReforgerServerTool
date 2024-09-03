@@ -15,14 +15,12 @@ using ReforgerServerApp.Utils;
 namespace ReforgerServerApp.Managers;
 
 /// <summary>
-/// This class manages the server tool properties
+/// This class manages the application's <c>ToolProperties</c>
 /// </summary>
 internal class ToolPropertiesManager
 {
     private static ToolPropertiesManager?   m_instance;
     private readonly ToolProperties         m_toolProperties;
-    public ToolProperties ToolProperties => m_toolProperties;
-    public List<string> DefaultScenarios => m_toolProperties.defaultScenarios;
 
     private ToolPropertiesManager()
     {
@@ -41,17 +39,19 @@ internal class ToolPropertiesManager
     }
 
     /// <summary>
-    /// This method initialises the ToolPropertiesManager with the default tool properties.
+    /// This method returns the default <c>ToolProperties</c> as Json string.
+    /// The singleton instance is constructed with a default <c>ToolProperties</c>
+    /// if it hasn't already.
     /// </summary>
-    /// <returns>The default tool properties as Json</returns>
+    /// <returns>The default <c>ToolProperties</c> as Json</returns>
     public static string GenerateToolProperties()
     {
-        m_instance = new ToolPropertiesManager(ToolProperties.Default);
-        return m_instance.ToolProperties.AsJsonString();
+        m_instance ??= new ToolPropertiesManager(ToolProperties.Default);
+        return m_instance.GetToolProperties().AsJsonString();
     }
 
     /// <summary>
-    /// This method deserializes the tool properties from file
+    /// This method deserializes the loaded <c>ToolProperties</c>
     /// </summary>
     private static ToolProperties LoadToolProperties()
     {
@@ -60,17 +60,19 @@ internal class ToolPropertiesManager
             string serializedProperties = FileIOManager.GetInstance().GetToolProperties();
             return JsonSerializer.Deserialize<ToolProperties>(serializedProperties)!;
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            string path = Path.GetFullPath(FileIOManager.ServerToolPropertiesFile);
+            string path = Path.GetFullPath(FileIOManager.GetInstance().GetServerToolPropertiesFile());
             Utilities.DisplayErrorMessage(
-                    "ARMA Reforger Server Tool properties is malformed. Please check your formatting is valid JSON and try again.",
+                    "Properties is malformed. Please check your formatting is valid JSON and try again.",
                     "Unable to parse properties. Temporarily loading default settings. " +
                     $"Delete the properties file at {path} and restart the application to permanently revert to default settings."
-                    // TODO: add exception message to logger: #69
             );
 
             return ToolProperties.Default;
         }
     }
+    
+    public List<string> GetDefaultScenarios() { return m_toolProperties.defaultScenarios; }
+    public ToolProperties GetToolProperties() { return m_toolProperties; }
 }
