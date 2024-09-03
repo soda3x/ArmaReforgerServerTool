@@ -67,7 +67,7 @@ namespace ReforgerServerApp
                             m_getScenariosRequested = false;
                             reloadScenariosBtn.Invoke((MethodInvoker) (() => reloadScenariosBtn.Enabled = false));
 
-                            foreach (string scen in ToolPropertiesManager.GetInstance().DefaultScenarios)
+                            foreach (string scen in ToolPropertiesManager.GetInstance().GetDefaultScenarios())
                             {
                                 scenarioList.Invoke((MethodInvoker) (() => scenarioList.Items.Add(scen)));
                             }
