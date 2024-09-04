@@ -111,7 +111,7 @@ namespace ReforgerServerApp
         {
             if (FileIOManager.GetInstance().IsSteamCMDInstalled())
             {
-                steamCmdAlert.Text = $"Using Arma Reforger Server files found at: {FileIOManager.GetInstance().GetInstallDirectory()}";
+                steamCmdAlert.Text = $"Using Arma Reforger Server files found at: \"{FileIOManager.GetInstance().GetInstallDirectory()}\"";
                 downloadSteamCmdBtn.Enabled = false;
                 startServerBtn.Enabled = true;
                 deleteServerFilesBtn.Enabled = true;
