@@ -22,9 +22,11 @@ namespace ReforgerServerApp.Managers
     internal class FileIOManager
     {
         private static FileIOManager?   INSTANCE;
-        private readonly string         m_legacyModDatabaseFile = "./mod_database.txt";
-        private readonly string         m_modDatabaseFile       = "./mod_database.json";
-        private readonly string         m_installDirFile        = "./install_directory.txt";
+        private readonly string         m_serverToolPropertiesFile  = "./properties.json";
+        private readonly string         m_serverToolProperties;
+        private readonly string         m_legacyModDatabaseFile     = "./mod_database.txt";
+        private readonly string         m_modDatabaseFile           = "./mod_database.json";
+        private readonly string         m_installDirFile            = "./install_directory.txt";
         private string                  m_steamCmdFile;
         private string                  m_installDir;
         private FileIOManager()
@@ -53,6 +55,17 @@ namespace ReforgerServerApp.Managers
                 m_installDir = string.Empty;
                 m_steamCmdFile = string.Empty;
             }
+
+            if (File.Exists(m_serverToolPropertiesFile))
+            {
+                using StreamReader sr = File.OpenText(m_serverToolPropertiesFile);
+                m_serverToolProperties = sr.ReadToEnd();
+            }
+            else
+            {
+                m_serverToolProperties = ToolPropertiesManager.GenerateToolProperties();
+                File.WriteAllText(m_serverToolPropertiesFile, m_serverToolProperties);
+            }
         }
 
         public static FileIOManager GetInstance()
@@ -60,7 +73,9 @@ namespace ReforgerServerApp.Managers
             INSTANCE ??= new FileIOManager();
             return INSTANCE;
         }
-
+        
+        public string GetServerToolPropertiesFile() { return m_serverToolPropertiesFile; }
+        public string GetToolProperties() { return m_serverToolProperties; }
         public string GetInstallDirectory() { return m_installDir; }
         public string GetModDatabaseFile() { return m_modDatabaseFile; }
         public string GetSteamCmdFile() { return m_steamCmdFile; }

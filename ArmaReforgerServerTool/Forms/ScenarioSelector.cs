@@ -6,6 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
 
 namespace ReforgerServerApp
@@ -25,34 +26,6 @@ namespace ReforgerServerApp
             m_getScenariosRequested = true;
             m_getScenariosThread = new(new ThreadStart(DoGetScenarios));
             m_getScenariosThread.Start();
-        }
-
-        /// <summary>
-        /// Get List of Stock Scenarios
-        /// </summary>
-        /// <returns>List of strings representing stock scenarios</returns>
-        private static List<string> GetStockScenarios()
-        {
-            List<string> scenarios = new();
-            const string campaignScen        = "{ECC61978EDCC2B5A}Missions/23_Campaign.conf";
-            const string gmEdenScen          = "{59AD59368755F41A}Missions/21_GM_Eden.conf";
-            const string arlandTutScen       = "{94FDA7451242150B}Missions/103_Arland_Tutorial.conf";
-            const string gmArlandScen        = "{2BBBE828037C6F4B}Missions/22_GM_Arland.conf";
-            const string campNthCentralScen  = "{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf";
-            const string campSWCoastScen     = "{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf";
-            const string combatOpsScen       = "{DAA03C6E6099D50F}Missions/24_CombatOps.conf";
-            const string campArlandScen      = "{C41618FD18E9D714}Missions/23_Campaign_Arland.conf";
-            const string combatOpsEveronScen = "{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf";
-            scenarios.Add(campaignScen);
-            scenarios.Add(gmEdenScen);
-            scenarios.Add(arlandTutScen);
-            scenarios.Add(gmArlandScen);
-            scenarios.Add(campNthCentralScen);
-            scenarios.Add(campSWCoastScen);
-            scenarios.Add(combatOpsScen);
-            scenarios.Add(campArlandScen);
-            scenarios.Add(combatOpsEveronScen);
-            return scenarios;
         }
 
         /// <summary>
@@ -94,7 +67,7 @@ namespace ReforgerServerApp
                             m_getScenariosRequested = false;
                             reloadScenariosBtn.Invoke((MethodInvoker) (() => reloadScenariosBtn.Enabled = false));
 
-                            foreach (string scen in GetStockScenarios())
+                            foreach (string scen in ToolPropertiesManager.GetInstance().GetDefaultScenarios())
                             {
                                 scenarioList.Invoke((MethodInvoker) (() => scenarioList.Items.Add(scen)));
                             }
