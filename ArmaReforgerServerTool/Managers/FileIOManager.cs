@@ -7,6 +7,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Serilog;
 using ReforgerServerApp.Utils;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -22,16 +23,12 @@ namespace ReforgerServerApp.Managers
     internal class FileIOManager
     {
         private static FileIOManager?   INSTANCE;
-        private readonly string         m_serverToolPropertiesFile  = "./properties.json";
-        private readonly string         m_serverToolProperties;
-        private readonly string         m_legacyModDatabaseFile     = "./mod_database.txt";
-        private readonly string         m_modDatabaseFile           = "./mod_database.json";
-        private readonly string         m_installDirFile            = "./install_directory.txt";
+        private readonly string         m_legacyModDatabaseFile = "./mod_database.txt";
         private string                  m_steamCmdFile;
         private string                  m_installDir;
         private FileIOManager()
         {
-            bool modDatabaseExists = File.Exists(m_modDatabaseFile);
+            bool modDatabaseExists = File.Exists(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile);
 
             if (!modDatabaseExists && File.Exists(m_legacyModDatabaseFile) && 
                 Utilities.DisplayConfirmationMessage(Constants.MIGRATE_LEGACY_MOD_DB_PROMPT_STR, true))
@@ -44,9 +41,9 @@ namespace ReforgerServerApp.Managers
                 ReadModsDatabase();
             }
 
-            if (File.Exists(m_installDirFile))
+            if (File.Exists(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile))
             {
-                using StreamReader sr = File.OpenText(m_installDirFile);
+                using StreamReader sr = File.OpenText(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile);
                 m_installDir = sr.ReadToEnd();
                 m_steamCmdFile = $"{m_installDir}\\steamcmd\\steamcmd.exe";
             }
@@ -55,17 +52,6 @@ namespace ReforgerServerApp.Managers
                 m_installDir = string.Empty;
                 m_steamCmdFile = string.Empty;
             }
-
-            if (File.Exists(m_serverToolPropertiesFile))
-            {
-                using StreamReader sr = File.OpenText(m_serverToolPropertiesFile);
-                m_serverToolProperties = sr.ReadToEnd();
-            }
-            else
-            {
-                m_serverToolProperties = ToolPropertiesManager.GenerateToolProperties();
-                File.WriteAllText(m_serverToolPropertiesFile, m_serverToolProperties);
-            }
         }
 
         public static FileIOManager GetInstance()
@@ -73,13 +59,9 @@ namespace ReforgerServerApp.Managers
             INSTANCE ??= new FileIOManager();
             return INSTANCE;
         }
-        
-        public string GetServerToolPropertiesFile() { return m_serverToolPropertiesFile; }
-        public string GetToolProperties() { return m_serverToolProperties; }
+
         public string GetInstallDirectory() { return m_installDir; }
-        public string GetModDatabaseFile() { return m_modDatabaseFile; }
         public string GetSteamCmdFile() { return m_steamCmdFile; }
-        public string GetInstallDirFile() { return m_installDirFile; }
         public string GetAbsolutePathToServerFile() { return $"{m_installDir}{Constants.SERVER_JSON_STR}"; }
 
         public bool IsSteamCMDInstalled() { return File.Exists(m_steamCmdFile); }
@@ -96,7 +78,7 @@ namespace ReforgerServerApp.Managers
             combined.AddRange(enabled);
             combined.AddRange(available);
 
-            File.WriteAllText(m_modDatabaseFile, Utilities.GetFormattedJsonString(combined, new JsonUtils.ModConverter()));
+            File.WriteAllText(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile, Utilities.GetFormattedJsonString(combined, new JsonUtils.ModConverter()));
         }
 
         /// <summary>
@@ -106,13 +88,16 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         public void ReadModsDatabase()
         {
-            using StreamReader sr = File.OpenText(m_modDatabaseFile);
+            Log.Information("FileIOManager - Reading mod database...");
+            using StreamReader sr = File.OpenText(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile);
             string json = sr.ReadToEnd().Trim();
             Mod[] loadedMods = JsonSerializer.Deserialize<Mod[]>(json)!;
             foreach (Mod mod in loadedMods)
             {
+                Log.Information("FileIOManager - Loading mod {mod}...", mod.name);
                 if (mod.version == null)
                 {
+                    Log.Information("FileIOManager - No version defined, defaulting to latest");
                     mod.version = "latest";
                 }
                 if (!ConfigurationManager.GetInstance().GetAvailableMods().Contains(mod))
@@ -147,12 +132,14 @@ namespace ReforgerServerApp.Managers
         {
             try
             {
+                Log.Information("FileIOManager - Saving config to {path}", path);
                 ConfigurationManager.GetInstance().CreateConfiguration();
                 File.WriteAllText(path, ConfigurationManager.GetInstance().GetServerConfiguration().AsJsonString());
                 return true;
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Failed to save config to {path}", path);
                 Utilities.DisplayErrorMessage($"An error occurred while trying to write server configuration.", ex.Message);
                 return false;
             }
@@ -183,6 +170,7 @@ namespace ReforgerServerApp.Managers
         /// <returns>True if successful, false otherwise</returns>
         public static bool MigrateLegacyModDatabase(string path)
         {
+            Log.Information("FileIOManager - Migrating legacy mod database...");
             using StreamReader sr   = File.OpenText(path);
             List<string> legacyMods = new(sr.ReadToEnd().Split(Environment.NewLine));
             foreach (string s in legacyMods)
@@ -229,9 +217,10 @@ namespace ReforgerServerApp.Managers
             DialogResult result = fbd.ShowDialog();
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
             {
+                Log.Information("FileIOManager - Downloading SteamCMD to {path}...", fbd.SelectedPath);
                 m_installDir = fbd.SelectedPath;
                 m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
-                File.WriteAllText(m_installDirFile, m_installDir);
+                File.WriteAllText(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile, m_installDir);
             }
 
             using WebClient client = new();
@@ -239,10 +228,13 @@ namespace ReforgerServerApp.Managers
             {
                 if (File.Exists($"{m_installDir}\\steamcmd.zip"))
                 {
+                    Log.Information("FileIOManager - Extracting SteamCMD...");
                     ZipFile.ExtractToDirectory($"{m_installDir}\\steamcmd.zip", $"{m_installDir}\\steamcmd");
                 }
             };
-            client.DownloadFileAsync(new Uri("https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"), $"{m_installDir}\\steamcmd.zip");
+            client.DownloadFileAsync(
+                new Uri($"{ToolPropertiesManager.GetInstance().GetToolProperties().steamCmdDownloadUrl}/steamcmd.zip"),
+                    $"{m_installDir}\\steamcmd.zip");
         }
 
         /// <summary>
@@ -253,6 +245,7 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         public static void CheckForUpdates()
         {
+            Log.Information("FileIOManager - Checking for updates...");
             string latestVersionString;
             WebClient wc = new WebClient();
 
@@ -266,24 +259,26 @@ namespace ReforgerServerApp.Managers
             wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
             try
             {
-                latestVersionString = wc.DownloadString("https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool/main/version.txt");
+                latestVersionString = wc.DownloadString($"{ToolPropertiesManager.GetInstance().GetToolProperties().updateRepositoryUrl}/main/version.txt");
 
                 var checkedVersion = new Version(latestVersionString);
                 var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
                 var result = checkedVersion.CompareTo(currentVersion);
                 if (result > 0)
                 {
+                    Log.Information("FileIOManager - There is a new version of the tool available (current: {currentVer}, new: {newVer}", currentVersion, checkedVersion);
                     DialogResult dr = MessageBox.Show("There is an update available for the Arma Reforger Dedicated Server Tool." +
                         "\r\nWould you like to get the latest version now?\r\n\r\nOur version: " + currentVersion +
                         "\r\nLatest version: " + checkedVersion, "Arma Reforger Dedicated Server Tool - Update available", MessageBoxButtons.YesNo);
                     if (dr == DialogResult.Yes)
                     {
-                        Process.Start("explorer", "https://github.com/soda3x/ArmaReforgerServerTool/releases");
+                        Process.Start("explorer", $"{ToolPropertiesManager.GetInstance().GetToolProperties().updateRepositoryUrl}/releases");
                     }
                 }
             }
             catch (WebException e)
             {
+                Log.Error(e, "FileIOManager - Failed to check for updates");
                 Utilities.DisplayErrorMessage($"Unable to check for updates," +
                     " you may not be using the latest version of the Arma Reforger Dedicated Server Tool.\r\nPlease consider checking your internet connection.", e.Message);
             }
@@ -302,7 +297,7 @@ namespace ReforgerServerApp.Managers
             {
                 Directory.Delete(m_installDir, true);
                 m_installDir = string.Empty;
-                DeleteFile(m_installDirFile);
+                DeleteFile(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile);
                 MessageBox.Show("Server files deleted.", "Warning", MessageBoxButtons.OK);
                 return !Directory.Exists(m_installDir);
             }
@@ -326,7 +321,7 @@ namespace ReforgerServerApp.Managers
                 {
                     m_installDir = fbd.SelectedPath;
                     m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
-                    File.WriteAllText(m_installDirFile, m_installDir);
+                    File.WriteAllText(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile, m_installDir);
                     return true;
                 }
                 else

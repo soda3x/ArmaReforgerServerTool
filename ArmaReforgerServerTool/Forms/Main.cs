@@ -9,6 +9,7 @@
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
 using System.ComponentModel;
+using Serilog;
 
 namespace ReforgerServerApp
 {
@@ -61,7 +62,14 @@ namespace ReforgerServerApp
 
             ConfigurationManager.GetInstance().AlphabetiseModLists();
 
-            FileIOManager.CheckForUpdates();
+            if (ToolPropertiesManager.GetInstance().GetToolProperties().checkForUpdatesOnStartup)
+            {
+                FileIOManager.CheckForUpdates();
+            } else
+            {
+                Log.Information("Main - Skipping update check, checkForUpdatesOnStartup is false in properties.json");
+            }
+            
 
             Mod.GetScenariosForMod("591AF5BDA9F7CE8B");
         }
@@ -1060,7 +1068,13 @@ namespace ReforgerServerApp
             }
             else
             {
-                loadedScenarioLabel.Text = $"Loaded scenario: {e.scenarioId}";
+                if (string.IsNullOrWhiteSpace(e.scenarioId))
+                {
+                    loadedScenarioLabel.Text = "No scenario ID chosen.";
+                } else
+                {
+                    loadedScenarioLabel.Text = e.scenarioId;
+                }
             }
         }
 

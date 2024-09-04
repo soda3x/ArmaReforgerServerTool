@@ -8,10 +8,10 @@
  ******************************************************************************/
 
 using HtmlAgilityPack;
+using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
-using System.Diagnostics;
+using Serilog;
 using System.Text.Json.Serialization;
-using static ReforgerServerApp.Utils.Utilities;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace ReforgerServerApp
@@ -104,7 +104,7 @@ namespace ReforgerServerApp
             List<string> scenarios = new();
             try
             {
-                string fetchUrl               = $"https://reforger.armaplatform.com/workshop/{modId}/scenarios";
+                string fetchUrl               = $"{ToolPropertiesManager.GetInstance().GetToolProperties().armaWorkshopUrl}/{modId}/scenarios";
                 HtmlWeb web                   = new();
                 HtmlDocument doc              = web.Load(fetchUrl);
                 const string className        = "text-start";
@@ -113,12 +113,13 @@ namespace ReforgerServerApp
                 {
                     foreach (HtmlNode field in rawScenIds)
                     {
+                        Log.Debug("Mod - Discovered scenario \"{scenario}\" for Mod \"{mod}\"", field.InnerText, modId);
                         scenarios.Add(field.InnerText);
                     }
                 }
                 else
                 {
-                    Debug.WriteLine("Failed to fetch any scenario ids for this mod. It may not have any.");
+                    Log.Debug("Mod - Failed to fetch any scenario ids for \"{mod}\". It may not have any.", modId);
                 }
             }
             catch (Exception ex)

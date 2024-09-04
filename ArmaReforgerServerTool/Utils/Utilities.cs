@@ -7,6 +7,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Serilog;
 using System;
 using System.ComponentModel;
 using System.Text.Json;
@@ -124,6 +125,7 @@ namespace ReforgerServerApp.Utils
         /// <param name="errMsg">detailed message from the exception, if applicable</param>
         public static void DisplayErrorMessage(string genMsg, string errMsg)
         {
+            Log.Error("An error prompt was displayed: {genMsg} - {errMsg}", genMsg, errMsg);
             MessageBox.Show(
                 $"{genMsg}\r\n\r\n" +
                 $"Detail: {errMsg}\r\n\r\n" +
