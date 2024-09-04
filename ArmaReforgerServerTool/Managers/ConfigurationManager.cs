@@ -8,6 +8,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Serilog;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
 using System.ComponentModel;
@@ -77,6 +78,7 @@ namespace ReforgerServerApp
         {
             try
             {
+                Log.Debug("ConfigurationManager - Populating Server Configuration from {input}", input);
                 m_serverConfig.SetServerConfigurationFromJson(input);
 
                 m_serverParamsDictionary["bindAddress"].ParameterValue   = m_serverConfig.root.bindAddress!;
@@ -89,6 +91,7 @@ namespace ReforgerServerApp
 
                 if (m_serverConfig.root.rcon == null)
                 {
+                    Log.Debug("ConfigurationManager - Rcon fields were absent from config, using defaults");
                     m_serverConfig.root.rcon = Rcon.Default;
                 }
                 
@@ -136,6 +139,7 @@ namespace ReforgerServerApp
 
                 if (disableNavmeshStreaming)
                 {
+                    Log.Debug("ConfigurationManager - disableNavmeshStreaming field was found in the config, enabling it");
                     m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue = m_serverConfig.root.operating.disableNavmeshStreaming!;
                 }
                 m_serverParamsDictionary["toggleDisableNavmeshStreaming"].ParameterValue = disableNavmeshStreaming;
@@ -161,6 +165,7 @@ namespace ReforgerServerApp
             }
             catch (Exception e)
             {
+                Log.Debug(e, "ConfigurationManager - Failed to read config file");
                 Utilities.DisplayErrorMessage($"An error occurred while attempting to load the configuration file.\r\n" +
                 $"It may have been created for an earlier version.\r\n" +
                 $"The configuration has not been loaded.", e.Message);
@@ -172,6 +177,7 @@ namespace ReforgerServerApp
         /// </summary>
         public void CreateConfiguration()
         {
+            Log.Debug("ConfigurationManager - Creating server configuration from GUI controls state...");
             m_serverConfig.root.bindAddress   = (string)m_serverParamsDictionary["bindAddress"].ParameterValue;
             m_serverConfig.root.bindPort      = Convert.ToInt32(m_serverParamsDictionary["bindPort"].ParameterValue);
             m_serverConfig.root.publicAddress = (string)m_serverParamsDictionary["publicAddress"].ParameterValue;
@@ -193,6 +199,7 @@ namespace ReforgerServerApp
 
             if (!GetServerConfiguration().rconEnabled)
             {
+                Log.Debug("ConfigurationManager - Rcon is not enabled, it will not be included in the resultant config file");
                 // Setting rcon to null will stop it from being added as rcon: null in the Json output
                 m_serverConfig.root.rcon = null;
             }
@@ -229,6 +236,7 @@ namespace ReforgerServerApp
 
             if (GetServerConfiguration().toggleDisableNavmeshStreaming)
             {
+                Log.Debug("ConfigurationManager - Disable Navmesh Streaming is enabled");
                 m_serverConfig.root.operating.disableNavmeshStreaming = (string[]) m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
             }
             m_serverConfig.root.operating.disableServerShutdown   = (bool)m_serverParamsDictionary["disableServerShutdown"].ParameterValue;

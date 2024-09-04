@@ -25,7 +25,7 @@ InstallDir $LOCALAPPDATA\ArmaReforgerServerTool
 # Install Section
 Section
 SetOutPath $INSTDIR
-File /r /x *.txt /x *.pdb /x "mod_database.json" "${__FILEDIR__}\..\ArmaReforgerServerTool\bin\Release\net6.0-windows\*.*"
+File /r /x *.txt /x *.pdb /x "mod_database.json" /x "properties.json" "${__FILEDIR__}\..\ArmaReforgerServerTool\bin\Release\net6.0-windows\*.*"
 WriteUninstaller $INSTDIR\uninstall.exe
 CreateShortCut "$SMPROGRAMS\Arma Reforger Dedicated Server Tool.lnk" "$INSTDIR\ReforgerServerApp.exe"
 CreateShortCut "$SMPROGRAMS\Uninstall Arma Reforger Dedicated Server Tool.lnk" "$INSTDIR\uninstall.exe"

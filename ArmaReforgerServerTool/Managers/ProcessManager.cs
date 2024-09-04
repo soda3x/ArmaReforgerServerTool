@@ -11,10 +11,9 @@
 
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
+using Serilog;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Net;
-using System.Text;
 
 namespace ReforgerServerApp.Managers
 {
@@ -86,13 +85,14 @@ namespace ReforgerServerApp.Managers
             {
                 if (!FileIOManager.GetInstance().ResetServerFile())
                 {
-                    // Couldn't verify the initial state of the 'server.json file' so don't bother continuing
+                    Log.Error("ProcessManager - Unable to verify the initial state of 'server.json', server not starting.");
                     return;
                 }
 
                 worker.CancelAsync();
                 try
                 {
+                    Log.Information("ProcessManager - User stopped server.");
                     m_serverProcess.OutputDataReceived -= SteamCmdDataReceived;
                     m_serverProcess.ErrorDataReceived  -= SteamCmdDataReceived;
                     m_serverProcess.CancelOutputRead();
@@ -123,11 +123,13 @@ namespace ReforgerServerApp.Managers
             {
                 if (!FileIOManager.SaveConfigurationToFile(FileIOManager.GetInstance().GetAbsolutePathToServerFile()))
                 {
-                    // We couldn't save the configuration to file, don't continue
+                    Log.Error("ProcessManager - Failed to save server.json to file, server not starting.");
                     return;
                 }
 
                 m_isServerStarted = true;
+
+                Log.Information("ProcessManager - User started server.");
 
                 GuiModelEventArgs guiModel = new()
                 {
@@ -161,7 +163,7 @@ namespace ReforgerServerApp.Managers
             {
                 if (!FileIOManager.GetInstance().ResetServerFile())
                 {
-                    // Couldn't verify the initial state of the 'server.json file' so don't bother continuing
+                    Log.Error("ProcessManager - Unable to verify the initial state of 'server.json', server not starting.");
                     return;
                 }
 
@@ -184,6 +186,7 @@ namespace ReforgerServerApp.Managers
                     m_serverProcess.CancelOutputRead();
                     m_serverProcess.CancelErrorRead();
 
+                    Log.Information("ProcessManager - Automatically stopped server.");
                     steamCmd = new($"{Utilities.GetTimestamp()}: Automatically stopped server.{Environment.NewLine}");
                     OnUpdateSteamCmdLogEvent(steamCmd);
 
@@ -198,7 +201,7 @@ namespace ReforgerServerApp.Managers
 
             if (!FileIOManager.SaveConfigurationToFile(FileIOManager.GetInstance().GetAbsolutePathToServerFile()))
             {
-                // We couldn't save the configuration to file, don't continue
+                Log.Error("ProcessManager - Failed to save server.json to file, server not starting.");
                 return;
             }
 
@@ -214,6 +217,7 @@ namespace ReforgerServerApp.Managers
             OnUpdateGuiControlsEvent(guiModel);
 
             steamCmd = new($"{Utilities.GetTimestamp()}: Automatically started server.{Environment.NewLine}");
+            Log.Information("ProcessManager - Automatically (re)started server.");
             OnUpdateSteamCmdLogEvent(steamCmd);
 
             worker.RunWorkerAsync();
@@ -234,6 +238,7 @@ namespace ReforgerServerApp.Managers
                 if (e.Data.Contains("Unable to Initialize"))
                 {
                     steamCmd = new($"{Utilities.GetTimestamp()}: System stopped server due to an error.{Environment.NewLine}");
+                    Log.Information("ProcessManager - System stopped server due to an error.");
                     OnUpdateSteamCmdLogEvent(steamCmd);
                     m_serverProcess.OutputDataReceived -= SteamCmdDataReceived;
                     m_serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
