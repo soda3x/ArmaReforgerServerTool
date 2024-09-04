@@ -65,11 +65,12 @@ namespace ReforgerServerApp
             if (ToolPropertiesManager.GetInstance().GetToolProperties().checkForUpdatesOnStartup)
             {
                 FileIOManager.CheckForUpdates();
-            } else
+            }
+            else
             {
                 Log.Information("Main - Skipping update check, checkForUpdatesOnStartup is false in properties.json");
             }
-            
+
 
             Mod.GetScenariosForMod("591AF5BDA9F7CE8B");
         }
@@ -473,6 +474,7 @@ namespace ReforgerServerApp
             editMissionHeaderBtn.Enabled = enabled;
             sessionSave.Enabled = enabled;
             loadSessionSave.Enabled = enabled;
+            useExperimentalCheckBox.Enabled = enabled;
 
             // Handle these differently as we don't want them enabled if 'Automatically Restart' isn't enabled
             if (automaticallyRestart.Enabled && automaticallyRestart.Checked)
@@ -1071,7 +1073,8 @@ namespace ReforgerServerApp
                 if (string.IsNullOrWhiteSpace(e.scenarioId))
                 {
                     loadedScenarioLabel.Text = "No scenario ID chosen.";
-                } else
+                }
+                else
                 {
                     loadedScenarioLabel.Text = e.scenarioId;
                 }
@@ -1182,6 +1185,11 @@ namespace ReforgerServerApp
                 m_availableModsBindingSource.DataSource = FilterModList(filter, ConfigurationManager.GetInstance().GetAvailableMods());
                 m_enabledModsBindingSource.DataSource = FilterModList(filter, ConfigurationManager.GetInstance().GetEnabledMods());
             }
+        }
+
+        private void UseExperimentalServerCheckboxChanged(object sender, EventArgs e)
+        {
+            ConfigurationManager.GetInstance().useExperimentalServer = useExperimentalCheckBox.Checked;
         }
     }
 }

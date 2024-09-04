@@ -102,6 +102,7 @@ namespace ReforgerServerApp
             steamCmdLog = new TextBox();
             steamCmdAlert = new Label();
             downloadSteamCmdBtn = new Button();
+            useExperimentalCheckBox = new CheckBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -402,6 +403,7 @@ namespace ReforgerServerApp
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(useExperimentalCheckBox);
             tabPage2.Controls.Add(label30);
             tabPage2.Controls.Add(logLevelComboBox);
             tabPage2.Controls.Add(locateServerFilesBtn);
@@ -917,6 +919,17 @@ namespace ReforgerServerApp
             downloadSteamCmdBtn.UseVisualStyleBackColor = true;
             downloadSteamCmdBtn.Click += DownloadSteamCmdBtnPressed;
             // 
+            // useExperimentalCheckBox
+            // 
+            useExperimentalCheckBox.AutoSize = true;
+            useExperimentalCheckBox.Location = new Point(189, 31);
+            useExperimentalCheckBox.Name = "useExperimentalCheckBox";
+            useExperimentalCheckBox.Size = new Size(152, 19);
+            useExperimentalCheckBox.TabIndex = 31;
+            useExperimentalCheckBox.Text = "Use Experimental Server";
+            useExperimentalCheckBox.UseVisualStyleBackColor = true;
+            useExperimentalCheckBox.CheckedChanged += UseExperimentalServerCheckboxChanged;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1027,5 +1040,6 @@ namespace ReforgerServerApp
         private BoundListBox enabledMods;
         private BoundListBox availableMods;
         private TextBox modsSearchTB;
+        private CheckBox useExperimentalCheckBox;
     }
 }
