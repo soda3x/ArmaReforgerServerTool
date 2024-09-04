@@ -143,6 +143,12 @@ namespace ReforgerServerApp.Managers
                 SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: User started server.{Environment.NewLine}");
                 OnUpdateSteamCmdLogEvent(steamCmd);
 
+                if (ConfigurationManager.GetInstance().useExperimentalServer)
+                {
+                    SteamCmdLogEventArgs exp = new($"{Utilities.GetTimestamp()}: Server is using Experimental Branch. " +
+                        $"It is important to note that your server may not work as intended as the experimental branch frequently contains breaking changes.{Environment.NewLine}");
+                    OnUpdateSteamCmdLogEvent(exp);
+                }
                 worker.RunWorkerAsync();
             }
         }
@@ -268,11 +274,18 @@ namespace ReforgerServerApp.Managers
         /// <param name="e"></param>
         private void SteamCmdUpdateWorkerDoWork(object sender, DoWorkEventArgs e)
         {
+
+            string steamCommand = "+force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit";
+            if (ConfigurationManager.GetInstance().useExperimentalServer)
+            {
+                steamCommand = "+force_install_dir ..\\Arma_Reforger\\experimental +login anonymous anonymous +app_update 1890870 +quit";
+            }
+
             ProcessStartInfo steamCmdStartInfo = new()
             {
                 WindowStyle = ProcessWindowStyle.Hidden,
                 FileName = FileIOManager.GetInstance().GetSteamCmdFile(),
-                Arguments = "+force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit",
+                Arguments = steamCommand,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true
@@ -304,13 +317,21 @@ namespace ReforgerServerApp.Managers
                 };
                 OnUpdateGuiControlsEvent(guiModel);
 
+                string serverWorkingDir = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger";
+                string serverFileName = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger\\ArmaReforgerServer.exe";
+
+                if (ConfigurationManager.GetInstance().useExperimentalServer)
+                {
+                    serverWorkingDir = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger\\experimental";
+                    serverFileName = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger\\experimental\\ArmaReforgerServer.exe";
+                }
 
                 ProcessStartInfo serverStartInfo = new()
                 {
                     WindowStyle = ProcessWindowStyle.Hidden,
                     UseShellExecute = false,
-                    WorkingDirectory = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger",
-                    FileName = $"{FileIOManager.GetInstance().GetInstallDirectory()}\\arma_reforger\\ArmaReforgerServer.exe",
+                    WorkingDirectory = serverWorkingDir,
+                    FileName = serverFileName,
                     Arguments = GetLaunchArguments(),
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,

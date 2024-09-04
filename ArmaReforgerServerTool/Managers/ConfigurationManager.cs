@@ -33,6 +33,8 @@ namespace ReforgerServerApp
         private BindingList<Mod>                             m_availableMods;
         private BindingList<Mod>                             m_enabledMods;
 
+        public bool useExperimentalServer {  get; set; }
+
         public delegate void UpdateScenarioIdFromLoadedConfig(object sender, ScenarioIdEventArgs e);
         public event UpdateScenarioIdFromLoadedConfig UpdateScenarioIdFromLoadedConfigEvent;
 
