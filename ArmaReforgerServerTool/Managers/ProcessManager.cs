@@ -55,6 +55,7 @@ namespace ReforgerServerApp.Managers
             m_steamCmdUpdateProcess        = new();
             m_serverProcess                = new();
             m_timerCancellationTokenSource = new();
+            m_launchArgumentsModel         = new();
         }
 
         public static ProcessManager GetInstance()
@@ -127,9 +128,8 @@ namespace ReforgerServerApp.Managers
                     return;
                 }
 
-                m_isServerStarted = true;
-
                 Log.Information("ProcessManager - User started server.");
+                m_isServerStarted = true;
 
                 GuiModelEventArgs guiModel = new()
                 {
@@ -414,18 +414,21 @@ namespace ReforgerServerApp.Managers
         /// <returns>String representation of Launch Arguments</returns>
         public string GetLaunchArguments()
         {
-            return string.Join(",", m_launchArgumentsModel.config,
-                                    m_launchArgumentsModel.profile,
-                                    m_launchArgumentsModel.logStats,
-                                    m_launchArgumentsModel.maxFPS,
-                                    m_launchArgumentsModel.bindPort,
-                                    m_launchArgumentsModel.nds,
-                                    m_launchArgumentsModel.nwkResolution,
-                                    m_launchArgumentsModel.staggeringBudget,
-                                    m_launchArgumentsModel.streamingBudget,
-                                    m_launchArgumentsModel.streamsDelta,
-                                    m_launchArgumentsModel.loadSessionSave,
-                                    m_launchArgumentsModel.logLevel);
+            string args = string.Join(" ", new[] {
+                                               m_launchArgumentsModel.config,
+                                               m_launchArgumentsModel.profile,
+                                               m_launchArgumentsModel.logStats,
+                                               m_launchArgumentsModel.maxFPS,
+                                               m_launchArgumentsModel.bindPort,
+                                               m_launchArgumentsModel.nds,
+                                               m_launchArgumentsModel.nwkResolution,
+                                               m_launchArgumentsModel.staggeringBudget,
+                                               m_launchArgumentsModel.streamingBudget,
+                                               m_launchArgumentsModel.streamsDelta,
+                                               m_launchArgumentsModel.loadSessionSave,
+                                               m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
+            Log.Information("Launching server with the following launch arguments: \"{args}\"", args);
+            return args;
         }
     }
 }

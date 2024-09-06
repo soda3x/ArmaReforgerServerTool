@@ -334,6 +334,7 @@ namespace ReforgerServerApp
                     interval = TimeSpan.FromDays((int) restartIntervalUpDown.Value);
                     break;
                 }
+                CreateLaunchArguments();
                 ProcessManager.GetInstance().ConfigureAutomaticRestartTask(interval);
             }
 
@@ -346,6 +347,7 @@ namespace ReforgerServerApp
             // User just normally pressed the button
             else if (!automaticallyRestart.Checked && !ProcessManager.GetInstance().IsServerUsingTimer())
             {
+                CreateLaunchArguments();
                 ProcessManager.GetInstance().StartStopServer();
             }
         }
@@ -1090,9 +1092,9 @@ namespace ReforgerServerApp
             // Begin by setting the mandatory parameters
             LaunchArguments args = new()
             {
-                // Config will be placed in <server-files-dir>/server.json
+                // Config will be placed in <server-files-dir>/server.json, wrap in quotes to capture potential spaces in paths
                 config   = new("config", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\server.json\""),
-                // Saves etc. will be placed in <server-files-dir>/saves/
+                // Saves etc. will be placed in <server-files-dir>/saves/, wrap in quotes to capture potential spaces in paths
                 profile  = new("profile", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\saves\""),
                 // Log performance stats every 5 seconds (represented in ms)
                 logStats = new("logStats", $"{Convert.ToString(5000)}"),
