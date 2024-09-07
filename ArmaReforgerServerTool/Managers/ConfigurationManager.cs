@@ -78,6 +78,12 @@ namespace ReforgerServerApp
         /// <param name="input"></param>
         public void PopulateServerConfiguration(string input)
         {
+            // First move mods back to available mods so we don't lose them
+            for (int i = 0; i < m_enabledMods.Count; i++)
+            {
+                MoveMod(m_enabledMods[i], m_enabledMods, m_availableMods);
+            }
+
             try
             {
                 Log.Debug("ConfigurationManager - Populating Server Configuration from {input}", input);
@@ -149,8 +155,6 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["disableServerShutdown"].ParameterValue  = m_serverConfig.root.operating.disableServerShutdown;
                 m_serverParamsDictionary["slotReservationTimeout"].ParameterValue = m_serverConfig.root.operating.slotReservationTimeout;
                 m_serverParamsDictionary["disableAI"].ParameterValue              = m_serverConfig.root.operating.disableAI;
-
-                m_enabledMods.Clear();
 
                 foreach (Mod m in m_serverConfig.root.game.mods)
                 {
@@ -263,6 +267,24 @@ namespace ReforgerServerApp
                 var tempEnabledMods = Utilities.AlphabetiseModList(m_enabledMods);
                 m_enabledMods.Clear();
                 foreach (Mod mod in tempEnabledMods) { m_enabledMods.Add(mod); }
+            }
+        }
+
+        /// <summary>
+        /// Utility method for moving a mod from one list to another
+        /// </summary>
+        /// <param name="m">Mod to move</param>
+        /// <param name="from">List to move mod from</param>
+        /// <param name="to">List to move mod to</param>
+        public static void MoveMod(Mod m, BindingList<Mod> from, BindingList<Mod> to)
+        {
+            if (to.Contains(m))
+            {
+                from.Remove(m);
+            } else
+            {
+                to.Add(m);
+                from.Remove(m);
             }
         }
 
