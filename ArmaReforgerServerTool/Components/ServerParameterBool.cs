@@ -1,4 +1,13 @@
-﻿namespace ReforgerServerApp
+﻿/******************************************************************************
+ * File Name:    ServerParameterBool.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  The ServerParameterBool component represents a graphical
+ *               means to manage boolean server configuration parameters
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+namespace ReforgerServerApp
 {
     public partial class ServerParameterBool : ServerParameter
     {

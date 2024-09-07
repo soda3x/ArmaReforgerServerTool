@@ -1,4 +1,12 @@
-﻿namespace ReforgerServerApp
+﻿/******************************************************************************
+ * File Name:    Constants.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  This file contains all big constants used in the program
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+namespace ReforgerServerApp
 {
     /// <summary>
     /// This class contains constants used throughout the application.
@@ -6,7 +14,15 @@
     /// </summary>
     internal class Constants
     {
+        public static int SERVER_PARAM_MIN_PORT = 1;
+        public static int SERVER_PARAM_MAX_PORT = ushort.MaxValue;
+
+        // TODO String for development
+        public static string TODO_STR = "TODO: This needs to be implemented";
+
         public static string ERROR_MESSAGEBOX_TITLE_STR = "Arma Reforger Dedicated Server Tool - Error";
+        public static string WARN_MESSAGEBOX_TITLE_STR = "Arma Reforger Dedicated Server Tool - Warning";
+        public static string INFO_MESSAGEBOX_TITLE_STR = "Arma Reforger Dedicated Server Tool - Information";
         public static string ENABLE_ALL_MODS_STR = "Enable All Mods";
         public static string DISABLE_ALL_MODS_STR = "Disable All Mods";
         public static string ENABLE_MOD_STR = "Enable Mod";
@@ -44,6 +60,9 @@
         public static string SERVER_FILES_NOT_FOUND_SCENARIO_SELECT_STR = "Arma Reforger server files not found, you will need to install them from the Server Management tab first.";
         public static string SELECT_SCENARIO_STR = "Select a scenario from the list";
 
+        public static string SUPPORTED_PLATFORM_PC   = "PLATFORM_PC";
+        public static string SUPPORTED_PLATFORM_XBOX = "PLATFORM_XBL";
+
         public static string SERVER_PARAM_DISABLE_AI_TOOLTIP_STR = "If enabled, the server will prevent initialization and ticking of AIWorld and its components.\r\n" +
             "Will completely disable AI functionality on the server.";
 
@@ -59,6 +78,9 @@
 
         public static string SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR = "If enabled, the server will disable navmesh streaming on all navmesh components and load the entire navmesh into memory.\r\n" +
             "This setting provides slightly better server performance and reaction times of moving AIs at the cost of higher memory consumption (up to hundreds of MB depending on the terrain).";
+
+        public static string SERVER_PARAM_DISABLE_SPECIFIC_NAVMESH_STREAMING_TOOLTIP_STR = "Used in conjunction with 'Disable Navmesh Streaming'.\r\n" + 
+            "If any navmeshes are specified here, it will disable streaming of listed navmeshes, while streaming all remaining navmeshes.";
 
         public static string SERVER_PARAM_DISABLE_CRASH_REPORT_TOOLTIP_STR = "If enabled, the automatic server-side Crash Report is disabled.";
 
@@ -97,11 +119,16 @@
         public static string SERVER_PARAM_ADMIN_PASSWORD_TOOLTIP_STR = "Defines the server's admin password, allows a server administrator to login and control the server.\r\n" +
             "To access this either open the chat input box by pressing C in the lobby or Enter in-game followed by: #login [the admin password]";
 
+        public static string SERVER_PARAM_ADMINS_TOOLTIP_STR = "List of admins by their identityIds and/or steamIds. These users can use admin commands without using the Admin Password.";
+
         public static string SERVER_PARAM_PASSWORD_TOOLTIP_STR = "Password required to join the server.";
 
         public static string SERVER_PARAM_NAME_TOOLTIP_STR = "Server name (what the Server will be seen as in the Server Browser)";
 
-        public static string SERVER_PARAM_STEAM_QUERY_PORT_TOOLTIP_STR = "Change Steam Query UDP port on which game listens to A2S requests.";
+        public static string SERVER_PARAM_A2S_ADDRESS_TOOLTIP_STR = "IP address to which A2S socket will be bound.\r\n" +
+            "It can be used to restrict A2S queries to a particular network interface. ";
+
+        public static string SERVER_PARAM_A2S_PORT_TOOLTIP_STR = "Change Steam Query UDP port on which game listens to A2S requests.";
 
         public static string SERVER_PARAM_PUBLIC_PORT_TOOLTIP_STR = "UDP port registered in backend. If the server itself has a public IP address, this should be the same value as in bindPort.\r\n" +
             "Otherwise, this is the UDP port that is forwarded to the server.";
@@ -113,5 +140,30 @@
 
         public static string SERVER_PARAM_BIND_ADDRESS_TOOLTIP_STR = "IP address to which the server socket will be bound. In most cases, this should be left empty.\r\n" +
             "It can be used to restrict connections to a particular network interface. When left out or empty, 0.0.0.0 is used, which allows connections through any IP address.";
+
+        public static string SERVER_PARAM_ENABLE_RCON_TOOLTIP_STR = "Enable RCON on your server. You must also specify a password for it successfully start.";
+
+        public static string SERVER_PARAM_RCON_ADDRESS_TOOLTIP_STR = "IP address to which the RCON socket will be bound.\r\n" + 
+            "It can be used to restrict connection to a particular network interface.";
+
+        public static string SERVER_PARAM_RCON_PORT_TOOLTIP_STR = "RCON protocol port on which the game listens.";
+
+        public static string SERVER_PARAM_RCON_PASSWORD_TOOLTIP_STR = "RCON password for RCON clients to login with.\r\n" +
+            "It is required for RCON to start, does not support spaces and must be at least 3 characters long.";
+
+        public static string SERVER_PARAM_RCON_MAX_CLIENTS_TOOLTIP_STR = "The maximum number of clients that can connect to RCON at the same time.";
+
+        public static string SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR = "Permission for all RCON clients:\r\n" +
+            "\tadmin - The admin can perform any command.\r\n" +
+            "\tmonitor - The monitor can only perform commands which do not change the server's state.";
+
+        public static string SERVER_PARAM_RCON_WHITELIST_TOOLTIP_STR = "Specifies the list of commands that can be executed, and no other command is allowed. Should not be used in conjunction with RCON Blacklist.";
+
+        public static string SERVER_PARAM_RCON_BLACKLIST_TOOLTIP_STR = "A list of commands excluded from execution. Should not be used in conjunction with RCON Whitelist.";
+
+        public static string MIGRATE_LEGACY_MOD_DB_PROMPT_STR = "A mod database from a previous version of the Arma Reforger Dedicated Server Tool was found.\r\n\r\n" +
+            "This version of the tool is not compatible with this file type.\r\n\r\n" +
+            "Would you like to migrate this mod database to the new format?\r\n\r\n" +
+            "(If you select Yes, the legacy file will be deleted after the migration is complete, selecting No will create a new Mod Database in the new format)";
     }
 }

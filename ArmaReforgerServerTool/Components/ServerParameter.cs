@@ -1,4 +1,13 @@
-﻿namespace ReforgerServerApp
+﻿/******************************************************************************
+ * File Name:    ServerParameter.cs
+ * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Description:  Represents the base class for the ServerParameter components,
+ *               providing the generalisation for concrete implementations
+ * 
+ * Author:       Bradley Newman
+ ******************************************************************************/
+
+namespace ReforgerServerApp
 
 {
     public partial class ServerParameter : UserControl
