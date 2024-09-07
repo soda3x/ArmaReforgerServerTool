@@ -163,8 +163,13 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AvailableModsSelectedIndexChanged(object sender, EventArgs e)
         {
-            editModBtn.Enabled = availableMods.SelectedItem != null;
-            removeModBtn.Enabled = availableMods.SelectedItem != null;
+            // If the server is running, we don't want to be able to edit / remove mods
+            if (string.IsNullOrWhiteSpace(serverRunningLabel.Text))
+            {
+                editModBtn.Enabled = availableMods.SelectedItem != null;
+                removeModBtn.Enabled = availableMods.SelectedItem != null;
+            }
+           
         }
 
         /// <summary>
@@ -206,11 +211,9 @@ namespace ReforgerServerApp
             {
                 Mod m = (Mod)GetAvailableModsList().SelectedItem;
 
-                if (!ConfigurationManager.GetInstance().GetEnabledMods().Contains(m))
-                {
-                    ConfigurationManager.GetInstance().GetEnabledMods().Add(new(m));
-                }
-                ConfigurationManager.GetInstance().GetAvailableMods().Remove(m);
+                // Move mod from Available Mods -> Enabled Mods
+                ConfigurationManager.MoveMod(m, ConfigurationManager.GetInstance().GetAvailableMods(),
+                                                ConfigurationManager.GetInstance().GetEnabledMods());
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
             ResetModFilters();
@@ -230,11 +233,9 @@ namespace ReforgerServerApp
             {
                 Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
-                if (!ConfigurationManager.GetInstance().GetAvailableMods().Contains(m))
-                {
-                    ConfigurationManager.GetInstance().GetAvailableMods().Add(new(m));
-                }
-                ConfigurationManager.GetInstance().GetEnabledMods().Remove(m);
+                // Move mod from Enabled Mods -> Available Mods
+                ConfigurationManager.MoveMod(m, ConfigurationManager.GetInstance().GetEnabledMods(),
+                                                ConfigurationManager.GetInstance().GetAvailableMods());
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
             ResetModFilters();
@@ -257,6 +258,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void LoadSettingsFromFileBtnPressed(object sender, EventArgs e)
         {
+            ResetModFilters();
             FileIOManager.LoadConfigurationFromFile();
         }
 

@@ -54,17 +54,17 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AddBtnPressed(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(modId.Text) && !string.IsNullOrWhiteSpace(modName.Text))
+            if (!string.IsNullOrWhiteSpace(modId.Text.Trim()) && !string.IsNullOrWhiteSpace(modName.Text.Trim()))
             {
                 Mod mod;
 
-                if (!string.IsNullOrWhiteSpace(modVers.Text))
+                if (!string.IsNullOrWhiteSpace(modVers.Text.Trim()))
                 {
-                    mod = new(modId.Text, modName.Text, modVers.Text);
+                    mod = new(modId.Text.Trim(), modName.Text.Trim());
                 }
                 else
                 {
-                    mod = new(modId.Text, modName.Text);
+                    mod = new(modId.Text.Trim(), modName.Text.Trim());
                 }
                 if (m_isEditMode)
                 {
