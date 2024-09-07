@@ -34,7 +34,7 @@
             // 
             // textInputField
             // 
-            textInputField.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            textInputField.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             textInputField.Location = new Point(12, 12);
             textInputField.Multiline = true;
             textInputField.Name = "textInputField";
@@ -43,7 +43,7 @@
             // 
             // okBtn
             // 
-            okBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            okBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
             okBtn.Location = new Point(537, 408);
             okBtn.Name = "okBtn";
             okBtn.Size = new Size(75, 23);
