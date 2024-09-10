@@ -183,5 +183,48 @@ namespace ReforgerServerApp.Utils
                 return "admin";
             }
         }
+
+        /// <summary>
+        /// Utility method to help create a list of ipAddr:port mappings for UPnP
+        /// </summary>
+        /// <returns>List of pairs of ipAddr:port</returns>
+        public static List<(string ipAddr, int port)> GetPortMappingsFromServerConfig()
+        {
+            List<(string ipAddr, int port)> mappings = new List<(string ipAddr, int port)>();
+
+            // Bind Port
+            if (ConfigurationManager.GetInstance().GetServerConfiguration().root.bindAddress != null)
+            {
+                mappings.Add((ConfigurationManager.GetInstance().GetServerConfiguration().root.bindAddress,
+                              ConfigurationManager.GetInstance().GetServerConfiguration().root.bindPort));
+            }
+
+            // Public Port
+            if (ConfigurationManager.GetInstance().GetServerConfiguration().root.publicAddress != null)
+            {
+                mappings.Add((ConfigurationManager.GetInstance().GetServerConfiguration().root.publicAddress,
+                              ConfigurationManager.GetInstance().GetServerConfiguration().root.publicPort));
+            }
+
+            // A2S Port
+            if (ConfigurationManager.GetInstance().GetServerConfiguration().root.a2s.address != null)
+            {
+                mappings.Add((ConfigurationManager.GetInstance().GetServerConfiguration().root.a2s.address,
+                              ConfigurationManager.GetInstance().GetServerConfiguration().root.a2s.port));
+            }
+
+            // Rcon Port
+            // Rcon is treated a bit differently due to the fact that it can be omitted
+            if (ConfigurationManager.GetInstance().GetServerConfiguration().root.rcon != null)
+            {
+                if (ConfigurationManager.GetInstance().GetServerConfiguration().root.rcon.address != null)
+                {
+                    mappings.Add((ConfigurationManager.GetInstance().GetServerConfiguration().root.rcon.address,
+                                  ConfigurationManager.GetInstance().GetServerConfiguration().root.rcon.port));
+                }
+            }
+
+            return mappings;
+        }
     }
 }

@@ -56,6 +56,8 @@ namespace ReforgerServerApp
             saveSettingsBtn = new Button();
             loadSettingsBtn = new Button();
             tabPage2 = new TabPage();
+            useUpnp = new CheckBox();
+            useExperimentalCheckBox = new CheckBox();
             label30 = new Label();
             logLevelComboBox = new ComboBox();
             locateServerFilesBtn = new Button();
@@ -63,46 +65,12 @@ namespace ReforgerServerApp
             deleteServerFilesBtn = new Button();
             aboutBtn = new Button();
             groupBox4 = new GroupBox();
-            panel1 = new Panel();
-            sessionSave = new TextBox();
-            loadSessionSaveLabel = new Label();
-            loadSessionSave = new CheckBox();
-            limitFPS = new CheckBox();
-            streamsDeltaUpDown = new NumericUpDown();
-            nwkResolutionUpDown = new NumericUpDown();
-            label20 = new Label();
-            nwkResolutionLabel = new Label();
-            restartUnitsComboBox = new ComboBox();
-            staggeringBudget = new CheckBox();
-            streamsDeltaLabel = new Label();
-            nwkResolution = new CheckBox();
-            forcePortCheckBox = new CheckBox();
-            label28 = new Label();
-            restartIntervalUpDown = new NumericUpDown();
-            staggeringBudgetLabel = new Label();
-            streamsDelta = new CheckBox();
-            ndsUpDown = new NumericUpDown();
-            label23 = new Label();
-            staggeringBudgetUpDown = new NumericUpDown();
-            label10 = new Label();
-            fpsLimitUpDown = new NumericUpDown();
-            streamingBudgetUpDown = new NumericUpDown();
-            ndsLabel = new Label();
-            overridePortNumericUpDown = new NumericUpDown();
-            label27 = new Label();
-            label6 = new Label();
-            label21 = new Label();
-            streamingBudgetLabel = new Label();
-            nds = new CheckBox();
-            label22 = new Label();
-            streamingBudget = new CheckBox();
-            automaticallyRestart = new CheckBox();
+            advancedParametersPanel = new FlowLayoutPanel();
             startServerBtn = new Button();
             groupBox3 = new GroupBox();
             steamCmdLog = new TextBox();
             steamCmdAlert = new Label();
             downloadSteamCmdBtn = new Button();
-            useExperimentalCheckBox = new CheckBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -110,15 +78,6 @@ namespace ReforgerServerApp
             ((System.ComponentModel.ISupportInitialize) pictureBox1).BeginInit();
             tabPage2.SuspendLayout();
             groupBox4.SuspendLayout();
-            panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize) streamsDeltaUpDown).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) nwkResolutionUpDown).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) restartIntervalUpDown).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) ndsUpDown).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) staggeringBudgetUpDown).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) fpsLimitUpDown).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) streamingBudgetUpDown).BeginInit();
-            ((System.ComponentModel.ISupportInitialize) overridePortNumericUpDown).BeginInit();
             groupBox3.SuspendLayout();
             SuspendLayout();
             // 
@@ -403,6 +362,7 @@ namespace ReforgerServerApp
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(useUpnp);
             tabPage2.Controls.Add(useExperimentalCheckBox);
             tabPage2.Controls.Add(label30);
             tabPage2.Controls.Add(logLevelComboBox);
@@ -423,12 +383,36 @@ namespace ReforgerServerApp
             tabPage2.Text = "Server Management";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // useUpnp
+            // 
+            useUpnp.AutoSize = true;
+            useUpnp.Checked = true;
+            useUpnp.CheckState = CheckState.Checked;
+            useUpnp.Location = new Point(347, 31);
+            useUpnp.Name = "useUpnp";
+            useUpnp.Size = new Size(77, 19);
+            useUpnp.TabIndex = 32;
+            useUpnp.Text = "Use UPnP";
+            useUpnp.UseVisualStyleBackColor = true;
+            useUpnp.CheckedChanged += OnUseUPnPCheckChanged;
+            // 
+            // useExperimentalCheckBox
+            // 
+            useExperimentalCheckBox.AutoSize = true;
+            useExperimentalCheckBox.Location = new Point(189, 31);
+            useExperimentalCheckBox.Name = "useExperimentalCheckBox";
+            useExperimentalCheckBox.Size = new Size(152, 19);
+            useExperimentalCheckBox.TabIndex = 31;
+            useExperimentalCheckBox.Text = "Use Experimental Server";
+            useExperimentalCheckBox.UseVisualStyleBackColor = true;
+            useExperimentalCheckBox.CheckedChanged += UseExperimentalServerCheckboxChanged;
+            // 
             // label30
             // 
             label30.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
             label30.AutoSize = true;
             label30.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label30.Location = new Point(234, 725);
+            label30.Location = new Point(249, 726);
             label30.Name = "label30";
             label30.Size = new Size(57, 15);
             label30.TabIndex = 30;
@@ -439,7 +423,7 @@ namespace ReforgerServerApp
             logLevelComboBox.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
             logLevelComboBox.FormattingEnabled = true;
             logLevelComboBox.Items.AddRange(new object[] { "normal", "warning", "error", "fatal" });
-            logLevelComboBox.Location = new Point(297, 721);
+            logLevelComboBox.Location = new Point(312, 722);
             logLevelComboBox.Name = "logLevelComboBox";
             logLevelComboBox.Size = new Size(96, 23);
             logLevelComboBox.TabIndex = 30;
@@ -492,379 +476,24 @@ namespace ReforgerServerApp
             // groupBox4
             // 
             groupBox4.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            groupBox4.Controls.Add(panel1);
+            groupBox4.Controls.Add(advancedParametersPanel);
             groupBox4.Location = new Point(6, 57);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(222, 662);
+            groupBox4.Size = new Size(237, 662);
             groupBox4.TabIndex = 4;
             groupBox4.TabStop = false;
             groupBox4.Text = "Advanced";
             // 
-            // panel1
-            // 
-            panel1.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            panel1.AutoScroll = true;
-            panel1.Controls.Add(sessionSave);
-            panel1.Controls.Add(loadSessionSaveLabel);
-            panel1.Controls.Add(loadSessionSave);
-            panel1.Controls.Add(limitFPS);
-            panel1.Controls.Add(streamsDeltaUpDown);
-            panel1.Controls.Add(nwkResolutionUpDown);
-            panel1.Controls.Add(label20);
-            panel1.Controls.Add(nwkResolutionLabel);
-            panel1.Controls.Add(restartUnitsComboBox);
-            panel1.Controls.Add(staggeringBudget);
-            panel1.Controls.Add(streamsDeltaLabel);
-            panel1.Controls.Add(nwkResolution);
-            panel1.Controls.Add(forcePortCheckBox);
-            panel1.Controls.Add(label28);
-            panel1.Controls.Add(restartIntervalUpDown);
-            panel1.Controls.Add(staggeringBudgetLabel);
-            panel1.Controls.Add(streamsDelta);
-            panel1.Controls.Add(ndsUpDown);
-            panel1.Controls.Add(label23);
-            panel1.Controls.Add(staggeringBudgetUpDown);
-            panel1.Controls.Add(label10);
-            panel1.Controls.Add(fpsLimitUpDown);
-            panel1.Controls.Add(streamingBudgetUpDown);
-            panel1.Controls.Add(ndsLabel);
-            panel1.Controls.Add(overridePortNumericUpDown);
-            panel1.Controls.Add(label27);
-            panel1.Controls.Add(label6);
-            panel1.Controls.Add(label21);
-            panel1.Controls.Add(streamingBudgetLabel);
-            panel1.Controls.Add(nds);
-            panel1.Controls.Add(label22);
-            panel1.Controls.Add(streamingBudget);
-            panel1.Controls.Add(automaticallyRestart);
-            panel1.Location = new Point(3, 19);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(216, 640);
-            panel1.TabIndex = 30;
-            // 
-            // sessionSave
-            // 
-            sessionSave.Location = new Point(3, 575);
-            sessionSave.Name = "sessionSave";
-            sessionSave.Size = new Size(199, 23);
-            sessionSave.TabIndex = 33;
-            // 
-            // loadSessionSaveLabel
-            // 
-            loadSessionSaveLabel.AutoSize = true;
-            loadSessionSaveLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            loadSessionSaveLabel.Location = new Point(24, 554);
-            loadSessionSaveLabel.Name = "loadSessionSaveLabel";
-            loadSessionSaveLabel.Size = new Size(104, 15);
-            loadSessionSaveLabel.TabIndex = 31;
-            loadSessionSaveLabel.Text = "Load Session Save";
-            // 
-            // loadSessionSave
-            // 
-            loadSessionSave.AutoSize = true;
-            loadSessionSave.Location = new Point(3, 555);
-            loadSessionSave.Name = "loadSessionSave";
-            loadSessionSave.Size = new Size(15, 14);
-            loadSessionSave.TabIndex = 30;
-            loadSessionSave.UseVisualStyleBackColor = true;
-            loadSessionSave.CheckedChanged += LoadSessionSaveCheckChanged;
-            // 
-            // limitFPS
-            // 
-            limitFPS.AutoSize = true;
-            limitFPS.Location = new Point(3, 4);
-            limitFPS.Name = "limitFPS";
-            limitFPS.Size = new Size(15, 14);
-            limitFPS.TabIndex = 0;
-            limitFPS.UseVisualStyleBackColor = true;
-            limitFPS.CheckedChanged += LimitFPSCheckedChanged;
-            // 
-            // streamsDeltaUpDown
-            // 
-            streamsDeltaUpDown.Location = new Point(3, 522);
-            streamsDeltaUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            streamsDeltaUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            streamsDeltaUpDown.Name = "streamsDeltaUpDown";
-            streamsDeltaUpDown.Size = new Size(199, 23);
-            streamsDeltaUpDown.TabIndex = 29;
-            streamsDeltaUpDown.Value = new decimal(new int[] { 100, 0, 0, 0 });
-            // 
-            // nwkResolutionUpDown
-            // 
-            nwkResolutionUpDown.Location = new Point(3, 319);
-            nwkResolutionUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            nwkResolutionUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
-            nwkResolutionUpDown.Name = "nwkResolutionUpDown";
-            nwkResolutionUpDown.Size = new Size(199, 23);
-            nwkResolutionUpDown.TabIndex = 19;
-            nwkResolutionUpDown.Value = new decimal(new int[] { 500, 0, 0, 0 });
-            // 
-            // label20
-            // 
-            label20.AutoSize = true;
-            label20.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label20.Location = new Point(24, 3);
-            label20.Name = "label20";
-            label20.Size = new Size(119, 15);
-            label20.TabIndex = 1;
-            label20.Text = "Limit Server Max FPS";
-            // 
-            // nwkResolutionLabel
-            // 
-            nwkResolutionLabel.AutoSize = true;
-            nwkResolutionLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            nwkResolutionLabel.Location = new Point(24, 298);
-            nwkResolutionLabel.Name = "nwkResolutionLabel";
-            nwkResolutionLabel.Size = new Size(129, 15);
-            nwkResolutionLabel.TabIndex = 18;
-            nwkResolutionLabel.Text = "Spatial Map Resolution";
-            // 
-            // restartUnitsComboBox
-            // 
-            restartUnitsComboBox.FormattingEnabled = true;
-            restartUnitsComboBox.Items.AddRange(new object[] { "Mins", "Hours", "Days" });
-            restartUnitsComboBox.Location = new Point(142, 96);
-            restartUnitsComboBox.Name = "restartUnitsComboBox";
-            restartUnitsComboBox.Size = new Size(60, 23);
-            restartUnitsComboBox.TabIndex = 8;
-            restartUnitsComboBox.Text = "Mins";
-            // 
-            // staggeringBudget
-            // 
-            staggeringBudget.AutoSize = true;
-            staggeringBudget.Location = new Point(3, 355);
-            staggeringBudget.Name = "staggeringBudget";
-            staggeringBudget.Size = new Size(15, 14);
-            staggeringBudget.TabIndex = 20;
-            staggeringBudget.UseVisualStyleBackColor = true;
-            staggeringBudget.CheckedChanged += StaggeringBudgetCheckChanged;
-            // 
-            // streamsDeltaLabel
-            // 
-            streamsDeltaLabel.AutoSize = true;
-            streamsDeltaLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            streamsDeltaLabel.Location = new Point(24, 501);
-            streamsDeltaLabel.Name = "streamsDeltaLabel";
-            streamsDeltaLabel.Size = new Size(81, 15);
-            streamsDeltaLabel.TabIndex = 28;
-            streamsDeltaLabel.Text = "Streams Delta";
-            // 
-            // nwkResolution
-            // 
-            nwkResolution.AutoSize = true;
-            nwkResolution.Location = new Point(3, 299);
-            nwkResolution.Name = "nwkResolution";
-            nwkResolution.Size = new Size(15, 14);
-            nwkResolution.TabIndex = 17;
-            nwkResolution.UseVisualStyleBackColor = true;
-            nwkResolution.CheckedChanged += NWKCheckChanged;
-            // 
-            // forcePortCheckBox
-            // 
-            forcePortCheckBox.AutoSize = true;
-            forcePortCheckBox.Location = new Point(3, 137);
-            forcePortCheckBox.Name = "forcePortCheckBox";
-            forcePortCheckBox.Size = new Size(15, 14);
-            forcePortCheckBox.TabIndex = 9;
-            forcePortCheckBox.UseVisualStyleBackColor = true;
-            forcePortCheckBox.CheckedChanged += OverridePortCheckChanged;
-            // 
-            // label28
-            // 
-            label28.AutoSize = true;
-            label28.Font = new Font("Segoe UI Semibold", 7F, FontStyle.Bold, GraphicsUnit.Point);
-            label28.Location = new Point(3, 265);
-            label28.Name = "label28";
-            label28.Size = new Size(127, 24);
-            label28.TabIndex = 16;
-            label28.Text = "This is set to '2' by default\r\nif unchecked.\r\n";
-            // 
-            // restartIntervalUpDown
-            // 
-            restartIntervalUpDown.Location = new Point(42, 97);
-            restartIntervalUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            restartIntervalUpDown.Name = "restartIntervalUpDown";
-            restartIntervalUpDown.Size = new Size(94, 23);
-            restartIntervalUpDown.TabIndex = 7;
-            restartIntervalUpDown.Value = new decimal(new int[] { 60, 0, 0, 0 });
-            // 
-            // staggeringBudgetLabel
-            // 
-            staggeringBudgetLabel.AutoSize = true;
-            staggeringBudgetLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            staggeringBudgetLabel.Location = new Point(24, 354);
-            staggeringBudgetLabel.Name = "staggeringBudgetLabel";
-            staggeringBudgetLabel.Size = new Size(106, 15);
-            staggeringBudgetLabel.TabIndex = 21;
-            staggeringBudgetLabel.Text = "Staggering Budget";
-            // 
-            // streamsDelta
-            // 
-            streamsDelta.AutoSize = true;
-            streamsDelta.Location = new Point(3, 502);
-            streamsDelta.Name = "streamsDelta";
-            streamsDelta.Size = new Size(15, 14);
-            streamsDelta.TabIndex = 27;
-            streamsDelta.UseVisualStyleBackColor = true;
-            streamsDelta.CheckedChanged += StreamsDeltaCheckChanged;
-            // 
-            // ndsUpDown
-            // 
-            ndsUpDown.Location = new Point(3, 239);
-            ndsUpDown.Maximum = new decimal(new int[] { 2, 0, 0, 0 });
-            ndsUpDown.Name = "ndsUpDown";
-            ndsUpDown.Size = new Size(199, 23);
-            ndsUpDown.TabIndex = 15;
-            ndsUpDown.Value = new decimal(new int[] { 2, 0, 0, 0 });
-            // 
-            // label23
-            // 
-            label23.AutoSize = true;
-            label23.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label23.Location = new Point(24, 136);
-            label23.Name = "label23";
-            label23.Size = new Size(77, 15);
-            label23.TabIndex = 10;
-            label23.Text = "Override Port";
-            // 
-            // staggeringBudgetUpDown
-            // 
-            staggeringBudgetUpDown.Location = new Point(3, 375);
-            staggeringBudgetUpDown.Maximum = new decimal(new int[] { 10201, 0, 0, 0 });
-            staggeringBudgetUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            staggeringBudgetUpDown.Name = "staggeringBudgetUpDown";
-            staggeringBudgetUpDown.Size = new Size(199, 23);
-            staggeringBudgetUpDown.TabIndex = 22;
-            staggeringBudgetUpDown.Value = new decimal(new int[] { 5000, 0, 0, 0 });
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label10.Location = new Point(1, 100);
-            label10.Name = "label10";
-            label10.Size = new Size(35, 15);
-            label10.TabIndex = 6;
-            label10.Text = "Every";
-            // 
-            // fpsLimitUpDown
-            // 
-            fpsLimitUpDown.Location = new Point(3, 24);
-            fpsLimitUpDown.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
-            fpsLimitUpDown.Name = "fpsLimitUpDown";
-            fpsLimitUpDown.Size = new Size(199, 23);
-            fpsLimitUpDown.TabIndex = 2;
-            fpsLimitUpDown.Value = new decimal(new int[] { 60, 0, 0, 0 });
-            // 
-            // streamingBudgetUpDown
-            // 
-            streamingBudgetUpDown.Location = new Point(3, 470);
-            streamingBudgetUpDown.Maximum = new decimal(new int[] { 10201, 0, 0, 0 });
-            streamingBudgetUpDown.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
-            streamingBudgetUpDown.Name = "streamingBudgetUpDown";
-            streamingBudgetUpDown.Size = new Size(199, 23);
-            streamingBudgetUpDown.TabIndex = 26;
-            streamingBudgetUpDown.Value = new decimal(new int[] { 500, 0, 0, 0 });
-            // 
-            // ndsLabel
-            // 
-            ndsLabel.AutoSize = true;
-            ndsLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            ndsLabel.Location = new Point(24, 218);
-            ndsLabel.Name = "ndsLabel";
-            ndsLabel.Size = new Size(164, 15);
-            ndsLabel.TabIndex = 14;
-            ndsLabel.Text = "Network Dynamic Simulation";
-            // 
-            // overridePortNumericUpDown
-            // 
-            overridePortNumericUpDown.Location = new Point(3, 157);
-            overridePortNumericUpDown.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
-            overridePortNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            overridePortNumericUpDown.Name = "overridePortNumericUpDown";
-            overridePortNumericUpDown.Size = new Size(199, 23);
-            overridePortNumericUpDown.TabIndex = 11;
-            overridePortNumericUpDown.Value = new decimal(new int[] { 2001, 0, 0, 0 });
-            // 
-            // label27
-            // 
-            label27.AutoSize = true;
-            label27.Font = new Font("Segoe UI Semibold", 7F, FontStyle.Bold, GraphicsUnit.Point);
-            label27.Location = new Point(3, 401);
-            label27.Name = "label27";
-            label27.Size = new Size(141, 48);
-            label27.TabIndex = 23;
-            label27.Text = "If not set, uses the \r\nNetwork Dynamic Simulation\r\ndiameter.\r\n\r\n";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label6.Location = new Point(24, 76);
-            label6.Name = "label6";
-            label6.Size = new Size(120, 15);
-            label6.TabIndex = 5;
-            label6.Text = "Automatically Restart";
-            // 
-            // label21
-            // 
-            label21.AutoSize = true;
-            label21.Font = new Font("Segoe UI Semibold", 7F, FontStyle.Bold, GraphicsUnit.Point);
-            label21.Location = new Point(3, 50);
-            label21.Name = "label21";
-            label21.Size = new Size(145, 12);
-            label21.TabIndex = 3;
-            label21.Text = "Recommended at the moment";
-            // 
-            // streamingBudgetLabel
-            // 
-            streamingBudgetLabel.AutoSize = true;
-            streamingBudgetLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            streamingBudgetLabel.Location = new Point(24, 449);
-            streamingBudgetLabel.Name = "streamingBudgetLabel";
-            streamingBudgetLabel.Size = new Size(103, 15);
-            streamingBudgetLabel.TabIndex = 25;
-            streamingBudgetLabel.Text = "Streaming Budget";
-            // 
-            // nds
-            // 
-            nds.AutoSize = true;
-            nds.Location = new Point(3, 219);
-            nds.Name = "nds";
-            nds.Size = new Size(15, 14);
-            nds.TabIndex = 13;
-            nds.UseVisualStyleBackColor = true;
-            nds.CheckedChanged += NDSCheckChanged;
-            // 
-            // label22
-            // 
-            label22.AutoSize = true;
-            label22.Font = new Font("Segoe UI Semibold", 7F, FontStyle.Bold, GraphicsUnit.Point);
-            label22.Location = new Point(3, 183);
-            label22.Name = "label22";
-            label22.Size = new Size(133, 24);
-            label22.TabIndex = 12;
-            label22.Text = "Override the ports specified\r\nin Server Configuration";
-            // 
-            // streamingBudget
-            // 
-            streamingBudget.AutoSize = true;
-            streamingBudget.Location = new Point(3, 450);
-            streamingBudget.Name = "streamingBudget";
-            streamingBudget.Size = new Size(15, 14);
-            streamingBudget.TabIndex = 24;
-            streamingBudget.UseVisualStyleBackColor = true;
-            streamingBudget.CheckedChanged += StreamingBudgetCheckChanged;
-            // 
-            // automaticallyRestart
-            // 
-            automaticallyRestart.AutoSize = true;
-            automaticallyRestart.Location = new Point(3, 77);
-            automaticallyRestart.Name = "automaticallyRestart";
-            automaticallyRestart.Size = new Size(15, 14);
-            automaticallyRestart.TabIndex = 4;
-            automaticallyRestart.UseVisualStyleBackColor = true;
-            automaticallyRestart.CheckedChanged += AutoRestartCheckedChanged;
+            // advancedParametersPanel
+            // 
+            advancedParametersPanel.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            advancedParametersPanel.AutoScroll = true;
+            advancedParametersPanel.FlowDirection = FlowDirection.TopDown;
+            advancedParametersPanel.Location = new Point(6, 22);
+            advancedParametersPanel.Name = "advancedParametersPanel";
+            advancedParametersPanel.Size = new Size(225, 634);
+            advancedParametersPanel.TabIndex = 0;
+            advancedParametersPanel.WrapContents = false;
             // 
             // startServerBtn
             // 
@@ -880,9 +509,9 @@ namespace ReforgerServerApp
             // 
             groupBox3.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox3.Controls.Add(steamCmdLog);
-            groupBox3.Location = new Point(234, 57);
+            groupBox3.Location = new Point(249, 57);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1278, 662);
+            groupBox3.Size = new Size(1263, 662);
             groupBox3.TabIndex = 3;
             groupBox3.TabStop = false;
             groupBox3.Text = "Log";
@@ -895,7 +524,7 @@ namespace ReforgerServerApp
             steamCmdLog.Name = "steamCmdLog";
             steamCmdLog.ReadOnly = true;
             steamCmdLog.ScrollBars = ScrollBars.Vertical;
-            steamCmdLog.Size = new Size(1266, 634);
+            steamCmdLog.Size = new Size(1251, 634);
             steamCmdLog.TabIndex = 1;
             // 
             // steamCmdAlert
@@ -919,17 +548,6 @@ namespace ReforgerServerApp
             downloadSteamCmdBtn.UseVisualStyleBackColor = true;
             downloadSteamCmdBtn.Click += DownloadSteamCmdBtnPressed;
             // 
-            // useExperimentalCheckBox
-            // 
-            useExperimentalCheckBox.AutoSize = true;
-            useExperimentalCheckBox.Location = new Point(189, 31);
-            useExperimentalCheckBox.Name = "useExperimentalCheckBox";
-            useExperimentalCheckBox.Size = new Size(152, 19);
-            useExperimentalCheckBox.TabIndex = 31;
-            useExperimentalCheckBox.Text = "Use Experimental Server";
-            useExperimentalCheckBox.UseVisualStyleBackColor = true;
-            useExperimentalCheckBox.CheckedChanged += UseExperimentalServerCheckboxChanged;
-            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -950,16 +568,6 @@ namespace ReforgerServerApp
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             groupBox4.ResumeLayout(false);
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize) streamsDeltaUpDown).EndInit();
-            ((System.ComponentModel.ISupportInitialize) nwkResolutionUpDown).EndInit();
-            ((System.ComponentModel.ISupportInitialize) restartIntervalUpDown).EndInit();
-            ((System.ComponentModel.ISupportInitialize) ndsUpDown).EndInit();
-            ((System.ComponentModel.ISupportInitialize) staggeringBudgetUpDown).EndInit();
-            ((System.ComponentModel.ISupportInitialize) fpsLimitUpDown).EndInit();
-            ((System.ComponentModel.ISupportInitialize) streamingBudgetUpDown).EndInit();
-            ((System.ComponentModel.ISupportInitialize) overridePortNumericUpDown).EndInit();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             ResumeLayout(false);
@@ -988,58 +596,26 @@ namespace ReforgerServerApp
         private GroupBox groupBox3;
         private Button startServerBtn;
         private GroupBox groupBox4;
-        private NumericUpDown fpsLimitUpDown;
-        private Label label20;
-        private CheckBox limitFPS;
-        private Label label21;
         private Button disableAllModsBtn;
         private Button enableAllModsBtn;
         private Button aboutBtn;
         private Button deleteServerFilesBtn;
         private Label serverRunningLabel;
-        private ComboBox restartUnitsComboBox;
-        private NumericUpDown restartIntervalUpDown;
-        private Label label10;
-        private Label label6;
-        private CheckBox automaticallyRestart;
         private Button clearLogBtn;
-        private Label label22;
-        private NumericUpDown overridePortNumericUpDown;
-        private Label label23;
-        private CheckBox forcePortCheckBox;
         private PictureBox pictureBox1;
         private Button locateServerFilesBtn;
-        private NumericUpDown ndsUpDown;
-        private Label ndsLabel;
-        private CheckBox nds;
-        private Label label28;
-        private NumericUpDown nwkResolutionUpDown;
-        private Label nwkResolutionLabel;
-        private CheckBox nwkResolution;
-        private NumericUpDown staggeringBudgetUpDown;
-        private Label staggeringBudgetLabel;
-        private CheckBox staggeringBudget;
-        private Label label27;
-        private NumericUpDown streamingBudgetUpDown;
-        private Label streamingBudgetLabel;
-        private CheckBox streamingBudget;
-        private NumericUpDown streamsDeltaUpDown;
-        private Label streamsDeltaLabel;
-        private CheckBox streamsDelta;
         private Label label30;
         private ComboBox logLevelComboBox;
-        private Panel panel1;
         private Button scenarioSelectBtn;
         private Label loadedScenarioLabel;
         private Button editMissionHeaderBtn;
-        private TextBox sessionSave;
-        private Label loadSessionSaveLabel;
-        private CheckBox loadSessionSave;
         private FlowLayoutPanel serverParameters;
         private Button editModBtn;
         private BoundListBox enabledMods;
         private BoundListBox availableMods;
         private TextBox modsSearchTB;
         private CheckBox useExperimentalCheckBox;
+        private FlowLayoutPanel advancedParametersPanel;
+        private CheckBox useUpnp;
     }
 }

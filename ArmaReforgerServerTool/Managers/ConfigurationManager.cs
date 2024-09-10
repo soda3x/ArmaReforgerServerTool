@@ -12,6 +12,7 @@ using Serilog;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
 using System.ComponentModel;
+using ReforgerServerApp.Components;
 
 namespace ReforgerServerApp
 { 
@@ -27,11 +28,12 @@ namespace ReforgerServerApp
     /// </summary>
     internal class ConfigurationManager
     {
-        private static ConfigurationManager?                 m_instance;
-        private readonly Dictionary<string, ServerParameter> m_serverParamsDictionary;
-        private ServerConfiguration                          m_serverConfig;
-        private BindingList<Mod>                             m_availableMods;
-        private BindingList<Mod>                             m_enabledMods;
+        private static ConfigurationManager?                         m_instance;
+        private readonly Dictionary<string, ServerParameter>         m_serverParamsDictionary;
+        private readonly Dictionary<string, AdvancedServerParameter> m_advServerParamsDictionary;
+        private ServerConfiguration                                  m_serverConfig;
+        private BindingList<Mod>                                     m_availableMods;
+        private BindingList<Mod>                                     m_enabledMods;
 
         public bool useExperimentalServer {  get; set; }
 
@@ -40,10 +42,11 @@ namespace ReforgerServerApp
 
         private ConfigurationManager()
         {
-            m_serverParamsDictionary = new Dictionary<string, ServerParameter>();
-            m_availableMods          = new BindingList<Mod>();
-            m_enabledMods            = new BindingList<Mod>();
-            m_serverConfig           = new ServerConfiguration();
+            m_serverParamsDictionary    = new Dictionary<string, ServerParameter>();
+            m_advServerParamsDictionary = new Dictionary<string, AdvancedServerParameter>();
+            m_availableMods             = new BindingList<Mod>();
+            m_enabledMods               = new BindingList<Mod>();
+            m_serverConfig              = new ServerConfiguration();
         }
 
         public static ConfigurationManager GetInstance()
@@ -70,6 +73,11 @@ namespace ReforgerServerApp
         public Dictionary<string, ServerParameter> GetServerParametersDictionary()
         {
             return m_serverParamsDictionary;
+        }
+
+        public Dictionary<string, AdvancedServerParameter> GetAdvancedServerParametersDictionary()
+        {
+            return m_advServerParamsDictionary;
         }
 
         /// <summary>
