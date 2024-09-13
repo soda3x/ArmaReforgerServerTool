@@ -26,6 +26,7 @@ namespace ReforgerServerApp.Managers
         private readonly string         m_legacyModDatabaseFile = "./mod_database.txt";
         private string                  m_steamCmdFile;
         private string                  m_installDir;
+        private string lastUsedDirectory;
         private FileIOManager()
         {
             bool modDatabaseExists = File.Exists(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile);
@@ -52,6 +53,7 @@ namespace ReforgerServerApp.Managers
                 m_installDir = string.Empty;
                 m_steamCmdFile = string.Empty;
             }
+            lastUsedDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         }
 
         public static FileIOManager GetInstance()
@@ -113,13 +115,29 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         public static void SaveConfigurationToFile()
         {
+            FileIOManager instance = GetInstance();
             using SaveFileDialog sfd = new();
-            sfd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
+
+            // Use lastUsedDirectory if available
+            if (!string.IsNullOrEmpty(instance.lastUsedDirectory))
+            {
+                sfd.InitialDirectory = instance.lastUsedDirectory;
+            }
+            else
+            {
+                sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            }
+
             sfd.Filter = "JSON (*.json)|*.json";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 ConfigurationManager.GetInstance().CreateConfiguration();
-                SaveConfigurationToFile(sfd.FileName);
+                bool success = SaveConfigurationToFile(sfd.FileName);
+                if (success)
+                {
+                    // Update lastUsedDirectory
+                    instance.lastUsedDirectory = Path.GetDirectoryName(sfd.FileName) ?? instance.lastUsedDirectory;
+                }
             }
         }
 
@@ -150,14 +168,28 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         public static void LoadConfigurationFromFile()
         {
+            FileIOManager instance = GetInstance();
             using OpenFileDialog ofd = new();
-            ofd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
+
+            // Use lastUsedDirectory if available
+            if (!string.IsNullOrEmpty(instance.lastUsedDirectory))
+            {
+                ofd.InitialDirectory = instance.lastUsedDirectory;
+            }
+            else
+            {
+                ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            }
+
             ofd.Filter = "JSON (*.json)|*.json";
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 string filePath = ofd.FileName;
                 using StreamReader sr = File.OpenText(filePath);
                 ConfigurationManager.GetInstance().PopulateServerConfiguration(sr.ReadToEnd());
+
+                // Update lastUsedDirectory
+                instance.lastUsedDirectory = Path.GetDirectoryName(filePath) ?? instance.lastUsedDirectory;
             }
         }
 
