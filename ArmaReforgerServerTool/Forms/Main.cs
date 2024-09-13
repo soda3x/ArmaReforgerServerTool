@@ -10,6 +10,7 @@ using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
 using System.ComponentModel;
 using Serilog;
+using System.Reflection;
 
 namespace ReforgerServerApp
 {
@@ -20,6 +21,9 @@ namespace ReforgerServerApp
         public Main()
         {
             InitializeComponent();
+
+            // Set the window title with the version number
+            this.Text = $"ReforgerServerApp - {GetAppVersion()}";
 
             CreateServerParameterControls();
 
@@ -73,6 +77,20 @@ namespace ReforgerServerApp
 
 
             Mod.GetScenariosForMod("591AF5BDA9F7CE8B");
+        }
+
+        /// <summary>
+        /// Retrieves the application's version number.
+        /// </summary>
+        /// <returns>Formatted version string.</returns>
+        private string GetAppVersion()
+        {
+            // Retrieve the version from the assembly metadata using pattern matching
+            return Assembly.GetExecutingAssembly().GetName().Version switch
+            {
+                { } version => $"v{version.Major}.{version.Minor}.{version.Build}.{version.Revision}",
+                _ => "v0.0.0.0" // Fallback version if Version is null
+            };
         }
 
         /// <summary>
