@@ -1168,6 +1168,7 @@ namespace ReforgerServerApp
             availableMods.DataSource = m_availableModsBindingSource;
             enabledMods.DataSource = m_enabledModsBindingSource;
             modsSearchTB.Text = string.Empty;
+            availableMods.SelectedItem = enabledMods.SelectedItem = null;
         }
 
         /// <summary>
