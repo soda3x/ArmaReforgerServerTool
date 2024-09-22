@@ -169,7 +169,7 @@ namespace ReforgerServerApp
                 editModBtn.Enabled = availableMods.SelectedItem != null;
                 removeModBtn.Enabled = availableMods.SelectedItem != null;
             }
-           
+
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
         {
-            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
+            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod)GetAvailableModsList().SelectedItem);
             FileIOManager.GetInstance().WriteModsDatabase();
         }
 
@@ -207,12 +207,12 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AddToEnabledModsBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod) GetAvailableModsList().SelectedItem != null)
+            Mod[] modsToMove = new Mod[GetAvailableModsList().SelectedItems.Count];
+            GetAvailableModsList().SelectedItems.CopyTo(modsToMove, 0);
+            foreach (Mod mod in modsToMove)
             {
-                Mod m = (Mod)GetAvailableModsList().SelectedItem;
-
                 // Move mod from Available Mods -> Enabled Mods
-                ConfigurationManager.MoveMod(m, ConfigurationManager.GetInstance().GetAvailableMods(),
+                ConfigurationManager.MoveMod(mod, ConfigurationManager.GetInstance().GetAvailableMods(),
                                                 ConfigurationManager.GetInstance().GetEnabledMods());
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
@@ -229,12 +229,12 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemovedFromEnabledModsBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod) GetEnabledModsList().SelectedItem != null)
+            Mod[] modsToMove = new Mod[GetEnabledModsList().SelectedItems.Count];
+            GetEnabledModsList().SelectedItems.CopyTo(modsToMove, 0);
+            foreach (Mod mod in modsToMove)
             {
-                Mod m = (Mod)GetEnabledModsList().SelectedItem;
-
                 // Move mod from Enabled Mods -> Available Mods
-                ConfigurationManager.MoveMod(m, ConfigurationManager.GetInstance().GetEnabledMods(),
+                ConfigurationManager.MoveMod(mod, ConfigurationManager.GetInstance().GetEnabledMods(),
                                                 ConfigurationManager.GetInstance().GetAvailableMods());
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
@@ -326,15 +326,15 @@ namespace ReforgerServerApp
                 TimeSpan interval = TimeSpan.FromHours(1);
                 switch (restartUnitsComboBox.SelectedIndex)
                 {
-                    case (int) ServerRestartIntervalUnit.MINUTES:
-                    interval = TimeSpan.FromMinutes((int) restartIntervalUpDown.Value);
-                    break;
-                    case (int) ServerRestartIntervalUnit.HOURS:
-                    interval = TimeSpan.FromHours((int) restartIntervalUpDown.Value);
-                    break;
-                    case (int) ServerRestartIntervalUnit.DAYS:
-                    interval = TimeSpan.FromDays((int) restartIntervalUpDown.Value);
-                    break;
+                    case (int)ServerRestartIntervalUnit.MINUTES:
+                        interval = TimeSpan.FromMinutes((int)restartIntervalUpDown.Value);
+                        break;
+                    case (int)ServerRestartIntervalUnit.HOURS:
+                        interval = TimeSpan.FromHours((int)restartIntervalUpDown.Value);
+                        break;
+                    case (int)ServerRestartIntervalUnit.DAYS:
+                        interval = TimeSpan.FromDays((int)restartIntervalUpDown.Value);
+                        break;
                 }
                 CreateLaunchArguments();
                 ProcessManager.GetInstance().ConfigureAutomaticRestartTask(interval);
@@ -1095,9 +1095,9 @@ namespace ReforgerServerApp
             LaunchArguments args = new()
             {
                 // Config will be placed in <server-files-dir>/server.json, wrap in quotes to capture potential spaces in paths
-                config   = new("config", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\server.json\""),
+                config = new("config", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\server.json\""),
                 // Saves etc. will be placed in <server-files-dir>/saves/, wrap in quotes to capture potential spaces in paths
-                profile  = new("profile", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\saves\""),
+                profile = new("profile", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\saves\""),
                 // Log performance stats every 5 seconds (represented in ms)
                 logStats = new("logStats", $"{Convert.ToString(5000)}"),
                 logLevel = new("logLevel", $"{logLevelComboBox.Text}")

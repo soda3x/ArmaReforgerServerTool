@@ -14,7 +14,7 @@ using ReforgerServerApp.Utils;
 using System.ComponentModel;
 
 namespace ReforgerServerApp
-{ 
+{
 
     internal class ScenarioIdEventArgs : EventArgs
     {
@@ -27,13 +27,13 @@ namespace ReforgerServerApp
     /// </summary>
     internal class ConfigurationManager
     {
-        private static ConfigurationManager?                 m_instance;
+        private static ConfigurationManager? m_instance;
         private readonly Dictionary<string, ServerParameter> m_serverParamsDictionary;
-        private ServerConfiguration                          m_serverConfig;
-        private BindingList<Mod>                             m_availableMods;
-        private BindingList<Mod>                             m_enabledMods;
+        private ServerConfiguration m_serverConfig;
+        private BindingList<Mod> m_availableMods;
+        private BindingList<Mod> m_enabledMods;
 
-        public bool useExperimentalServer {  get; set; }
+        public bool useExperimentalServer { get; set; }
 
         public delegate void UpdateScenarioIdFromLoadedConfig(object sender, ScenarioIdEventArgs e);
         public event UpdateScenarioIdFromLoadedConfig UpdateScenarioIdFromLoadedConfigEvent;
@@ -41,9 +41,9 @@ namespace ReforgerServerApp
         private ConfigurationManager()
         {
             m_serverParamsDictionary = new Dictionary<string, ServerParameter>();
-            m_availableMods          = new BindingList<Mod>();
-            m_enabledMods            = new BindingList<Mod>();
-            m_serverConfig           = new ServerConfiguration();
+            m_availableMods = new BindingList<Mod>();
+            m_enabledMods = new BindingList<Mod>();
+            m_serverConfig = new ServerConfiguration();
         }
 
         public static ConfigurationManager GetInstance()
@@ -63,7 +63,7 @@ namespace ReforgerServerApp
         }
 
         public BindingList<Mod> GetEnabledMods()
-        { 
+        {
             return m_enabledMods;
         }
 
@@ -89,58 +89,58 @@ namespace ReforgerServerApp
                 Log.Debug("ConfigurationManager - Populating Server Configuration from {input}", input);
                 m_serverConfig.SetServerConfigurationFromJson(input);
 
-                m_serverParamsDictionary["bindAddress"].ParameterValue   = m_serverConfig.root.bindAddress!;
-                m_serverParamsDictionary["bindPort"].ParameterValue      = m_serverConfig.root.bindPort;
+                m_serverParamsDictionary["bindAddress"].ParameterValue = m_serverConfig.root.bindAddress!;
+                m_serverParamsDictionary["bindPort"].ParameterValue = m_serverConfig.root.bindPort;
                 m_serverParamsDictionary["publicAddress"].ParameterValue = m_serverConfig.root.publicAddress!;
-                m_serverParamsDictionary["publicPort"].ParameterValue    = m_serverConfig.root.publicPort;
+                m_serverParamsDictionary["publicPort"].ParameterValue = m_serverConfig.root.publicPort;
 
                 m_serverParamsDictionary["address"].ParameterValue = m_serverConfig.root.a2s.address;
-                m_serverParamsDictionary["port"].ParameterValue    = m_serverConfig.root.a2s.port;
+                m_serverParamsDictionary["port"].ParameterValue = m_serverConfig.root.a2s.port;
 
                 if (m_serverConfig.root.rcon == null)
                 {
                     Log.Debug("ConfigurationManager - Rcon fields were absent from config, using defaults");
                     m_serverConfig.root.rcon = Rcon.Default;
                 }
-                
-                m_serverParamsDictionary["rconAddress"].ParameterValue    = m_serverConfig.root.rcon.address;
-                m_serverParamsDictionary["rconPort"].ParameterValue       = m_serverConfig.root.rcon.port == 0 ? 
+
+                m_serverParamsDictionary["rconAddress"].ParameterValue = m_serverConfig.root.rcon.address;
+                m_serverParamsDictionary["rconPort"].ParameterValue = m_serverConfig.root.rcon.port == 0 ?
                     Rcon.Default.port : m_serverConfig.root.rcon.port;
-                m_serverParamsDictionary["rconPassword"].ParameterValue   = m_serverConfig.root.rcon.password;
-                m_serverParamsDictionary["rconMaxClients"].ParameterValue = m_serverConfig.root.rcon.maxClients == 0 ? 
+                m_serverParamsDictionary["rconPassword"].ParameterValue = m_serverConfig.root.rcon.password;
+                m_serverParamsDictionary["rconMaxClients"].ParameterValue = m_serverConfig.root.rcon.maxClients == 0 ?
                     Rcon.Default.maxClients : m_serverConfig.root.rcon.maxClients;
-                m_serverParamsDictionary["rconWhitelist"].ParameterValue  = m_serverConfig.root.rcon.whitelist;
-                m_serverParamsDictionary["rconBlacklist"].ParameterValue  = m_serverConfig.root.rcon.blacklist;
-                ((ServerParameterSelect) m_serverParamsDictionary["rconPermission"])
+                m_serverParamsDictionary["rconWhitelist"].ParameterValue = m_serverConfig.root.rcon.whitelist;
+                m_serverParamsDictionary["rconBlacklist"].ParameterValue = m_serverConfig.root.rcon.blacklist;
+                ((ServerParameterSelect)m_serverParamsDictionary["rconPermission"])
                     .ParameterValueSelection(Utilities.RconPermissionToString(m_serverConfig.root.rcon.permission));
 
                 m_serverParamsDictionary["passwordAdmin"].ParameterValue = m_serverConfig.root.game.passwordAdmin!;
-                m_serverParamsDictionary["name"].ParameterValue          = m_serverConfig.root.game.name!;
-                m_serverParamsDictionary["password"].ParameterValue      = m_serverConfig.root.game.password!;
-                m_serverParamsDictionary["admins"].ParameterValue        = m_serverConfig.root.game.admins;
+                m_serverParamsDictionary["name"].ParameterValue = m_serverConfig.root.game.name!;
+                m_serverParamsDictionary["password"].ParameterValue = m_serverConfig.root.game.password!;
+                m_serverParamsDictionary["admins"].ParameterValue = m_serverConfig.root.game.admins;
 
                 ScenarioIdEventArgs scenarioId = new(m_serverConfig.root.game.scenarioId);
                 OnUpdateScenarioIdFromLoadedConfig(scenarioId);
 
-                m_serverParamsDictionary["maxPlayers"].ParameterValue    = m_serverConfig.root.game.maxPlayers;
-                m_serverParamsDictionary["visible"].ParameterValue       = m_serverConfig.root.game.visible;
+                m_serverParamsDictionary["maxPlayers"].ParameterValue = m_serverConfig.root.game.maxPlayers;
+                m_serverParamsDictionary["visible"].ParameterValue = m_serverConfig.root.game.visible;
                 m_serverParamsDictionary["crossPlatform"].ParameterValue = m_serverConfig.root.game.crossPlatform;
-                m_serverConfig.root.game.supportedPlatforms              = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
+                m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
 
-                m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue      = m_serverConfig.root.game.gameProperties.serverMaxViewDistance;
-                m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue     = m_serverConfig.root.game.gameProperties.serverMinGrassDistance;
-                m_serverParamsDictionary["networkViewDistance"].ParameterValue        = m_serverConfig.root.game.gameProperties.networkViewDistance;
-                m_serverParamsDictionary["disableThirdPerson"].ParameterValue         = m_serverConfig.root.game.gameProperties.disableThirdPerson;
-                m_serverParamsDictionary["fastValidation"].ParameterValue             = m_serverConfig.root.game.gameProperties.fastValidation;
-                m_serverParamsDictionary["battlEye"].ParameterValue                   = m_serverConfig.root.game.gameProperties.battlEye;
+                m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMaxViewDistance;
+                m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMinGrassDistance;
+                m_serverParamsDictionary["networkViewDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.networkViewDistance;
+                m_serverParamsDictionary["disableThirdPerson"].ParameterValue = m_serverConfig.root.game.gameProperties.disableThirdPerson;
+                m_serverParamsDictionary["fastValidation"].ParameterValue = m_serverConfig.root.game.gameProperties.fastValidation;
+                m_serverParamsDictionary["battlEye"].ParameterValue = m_serverConfig.root.game.gameProperties.battlEye;
                 m_serverParamsDictionary["VONCanTransmitCrossFaction"].ParameterValue = m_serverConfig.root.game.gameProperties.vonCanTransmitCrossFaction;
-                m_serverParamsDictionary["VONDisableUI"].ParameterValue               = m_serverConfig.root.game.gameProperties.vonDisableUI;
-                m_serverParamsDictionary["VONDisableDirectSpeechUI"].ParameterValue   = m_serverConfig.root.game.gameProperties.vonDisableDirectSpeechUI;
+                m_serverParamsDictionary["VONDisableUI"].ParameterValue = m_serverConfig.root.game.gameProperties.vonDisableUI;
+                m_serverParamsDictionary["VONDisableDirectSpeechUI"].ParameterValue = m_serverConfig.root.game.gameProperties.vonDisableDirectSpeechUI;
 
-                m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue  = m_serverConfig.root.operating.lobbyPlayerSynchronise;
-                m_serverParamsDictionary["playerSaveTime"].ParameterValue          = m_serverConfig.root.operating.playerSaveTime;
-                m_serverParamsDictionary["aiLimit"].ParameterValue                 = m_serverConfig.root.operating.aiLimit;
-                m_serverParamsDictionary["disableCrashReporter"].ParameterValue    = m_serverConfig.root.operating.disableCrashReporter;
+                m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue = m_serverConfig.root.operating.lobbyPlayerSynchronise;
+                m_serverParamsDictionary["playerSaveTime"].ParameterValue = m_serverConfig.root.operating.playerSaveTime;
+                m_serverParamsDictionary["aiLimit"].ParameterValue = m_serverConfig.root.operating.aiLimit;
+                m_serverParamsDictionary["disableCrashReporter"].ParameterValue = m_serverConfig.root.operating.disableCrashReporter;
 
                 // If there is either a valid empty list or list with elements loaded in, assume disableNavmeshStreaming is enabled
                 bool disableNavmeshStreaming = m_serverConfig.root.operating.disableNavmeshStreaming != null;
@@ -152,9 +152,9 @@ namespace ReforgerServerApp
                 }
                 m_serverParamsDictionary["toggleDisableNavmeshStreaming"].ParameterValue = disableNavmeshStreaming;
 
-                m_serverParamsDictionary["disableServerShutdown"].ParameterValue  = m_serverConfig.root.operating.disableServerShutdown;
+                m_serverParamsDictionary["disableServerShutdown"].ParameterValue = m_serverConfig.root.operating.disableServerShutdown;
                 m_serverParamsDictionary["slotReservationTimeout"].ParameterValue = m_serverConfig.root.operating.slotReservationTimeout;
-                m_serverParamsDictionary["disableAI"].ParameterValue              = m_serverConfig.root.operating.disableAI;
+                m_serverParamsDictionary["disableAI"].ParameterValue = m_serverConfig.root.operating.disableAI;
 
                 foreach (Mod m in m_serverConfig.root.game.mods)
                 {
@@ -184,24 +184,24 @@ namespace ReforgerServerApp
         public void CreateConfiguration()
         {
             Log.Debug("ConfigurationManager - Creating server configuration from GUI controls state...");
-            m_serverConfig.root.bindAddress   = (string)m_serverParamsDictionary["bindAddress"].ParameterValue;
-            m_serverConfig.root.bindPort      = Convert.ToInt32(m_serverParamsDictionary["bindPort"].ParameterValue);
+            m_serverConfig.root.bindAddress = (string)m_serverParamsDictionary["bindAddress"].ParameterValue;
+            m_serverConfig.root.bindPort = Convert.ToInt32(m_serverParamsDictionary["bindPort"].ParameterValue);
             m_serverConfig.root.publicAddress = (string)m_serverParamsDictionary["publicAddress"].ParameterValue;
-            m_serverConfig.root.publicPort    = Convert.ToInt32(m_serverParamsDictionary["publicPort"].ParameterValue);
+            m_serverConfig.root.publicPort = Convert.ToInt32(m_serverParamsDictionary["publicPort"].ParameterValue);
 
-            m_serverConfig.root.a2s.port    = Convert.ToInt32(m_serverParamsDictionary["port"].ParameterValue);
+            m_serverConfig.root.a2s.port = Convert.ToInt32(m_serverParamsDictionary["port"].ParameterValue);
             m_serverConfig.root.a2s.address = (string)m_serverParamsDictionary["address"].ParameterValue;
 
             // Determine whether Rcon should be included in the server configuration
-            GetServerConfiguration().rconEnabled = (bool) m_serverParamsDictionary["rconEnabled"].ParameterValue;
-            m_serverConfig.root.rcon             = Rcon.Default;
-            m_serverConfig.root.rcon.address     = (string) m_serverParamsDictionary["rconAddress"].ParameterValue;
-            m_serverConfig.root.rcon.port        = Convert.ToInt32(m_serverParamsDictionary["rconPort"].ParameterValue);
-            m_serverConfig.root.rcon.password    = (string) m_serverParamsDictionary["rconPassword"].ParameterValue;
-            m_serverConfig.root.rcon.permission  = Utilities.StringToEnum<RconPermission>((string) m_serverParamsDictionary["rconPermission"].ParameterValue);
-            m_serverConfig.root.rcon.maxClients  = Convert.ToInt32(m_serverParamsDictionary["rconMaxClients"].ParameterValue);
-            m_serverConfig.root.rcon.whitelist   = (string[]) m_serverParamsDictionary["rconWhitelist"].ParameterValue;
-            m_serverConfig.root.rcon.blacklist   = (string[]) m_serverParamsDictionary["rconBlacklist"].ParameterValue;
+            GetServerConfiguration().rconEnabled = (bool)m_serverParamsDictionary["rconEnabled"].ParameterValue;
+            m_serverConfig.root.rcon = Rcon.Default;
+            m_serverConfig.root.rcon.address = (string)m_serverParamsDictionary["rconAddress"].ParameterValue;
+            m_serverConfig.root.rcon.port = Convert.ToInt32(m_serverParamsDictionary["rconPort"].ParameterValue);
+            m_serverConfig.root.rcon.password = (string)m_serverParamsDictionary["rconPassword"].ParameterValue;
+            m_serverConfig.root.rcon.permission = Utilities.StringToEnum<RconPermission>((string)m_serverParamsDictionary["rconPermission"].ParameterValue);
+            m_serverConfig.root.rcon.maxClients = Convert.ToInt32(m_serverParamsDictionary["rconMaxClients"].ParameterValue);
+            m_serverConfig.root.rcon.whitelist = (string[])m_serverParamsDictionary["rconWhitelist"].ParameterValue;
+            m_serverConfig.root.rcon.blacklist = (string[])m_serverParamsDictionary["rconBlacklist"].ParameterValue;
 
             if (!GetServerConfiguration().rconEnabled)
             {
@@ -210,44 +210,44 @@ namespace ReforgerServerApp
                 m_serverConfig.root.rcon = null;
             }
 
-            m_serverConfig.root.game.passwordAdmin      = (string)m_serverParamsDictionary["passwordAdmin"].ParameterValue;
-            m_serverConfig.root.game.name               = (string)m_serverParamsDictionary["name"].ParameterValue;
-            m_serverConfig.root.game.password           = (string)m_serverParamsDictionary["password"].ParameterValue;
-            m_serverConfig.root.game.maxPlayers         = Convert.ToInt32(m_serverParamsDictionary["maxPlayers"].ParameterValue);
-            m_serverConfig.root.game.visible            = (bool)m_serverParamsDictionary["visible"].ParameterValue;
-            m_serverConfig.root.game.crossPlatform      = (bool)m_serverParamsDictionary["crossPlatform"].ParameterValue;
-            m_serverConfig.root.game.mods               = m_enabledMods.ToArray();
+            m_serverConfig.root.game.passwordAdmin = (string)m_serverParamsDictionary["passwordAdmin"].ParameterValue;
+            m_serverConfig.root.game.name = (string)m_serverParamsDictionary["name"].ParameterValue;
+            m_serverConfig.root.game.password = (string)m_serverParamsDictionary["password"].ParameterValue;
+            m_serverConfig.root.game.maxPlayers = Convert.ToInt32(m_serverParamsDictionary["maxPlayers"].ParameterValue);
+            m_serverConfig.root.game.visible = (bool)m_serverParamsDictionary["visible"].ParameterValue;
+            m_serverConfig.root.game.crossPlatform = (bool)m_serverParamsDictionary["crossPlatform"].ParameterValue;
+            m_serverConfig.root.game.mods = m_enabledMods.ToArray();
             m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
-            m_serverConfig.root.game.admins             = (string[]) m_serverParamsDictionary["admins"].ParameterValue;
+            m_serverConfig.root.game.admins = (string[])m_serverParamsDictionary["admins"].ParameterValue;
             // m_serverConfig.root.game.scenarioId - Don't need to set scenarioId as its set directly from the Scenario Selector Form
 
-            m_serverConfig.root.game.gameProperties.serverMaxViewDistance      = Convert.ToInt32(m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue);
-            m_serverConfig.root.game.gameProperties.serverMinGrassDistance     = Convert.ToInt32(m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue);
-            m_serverConfig.root.game.gameProperties.networkViewDistance        = Convert.ToInt32(m_serverParamsDictionary["networkViewDistance"].ParameterValue);
-            m_serverConfig.root.game.gameProperties.disableThirdPerson         = (bool)m_serverParamsDictionary["disableThirdPerson"].ParameterValue;
-            m_serverConfig.root.game.gameProperties.fastValidation             = (bool)m_serverParamsDictionary["fastValidation"].ParameterValue;
-            m_serverConfig.root.game.gameProperties.battlEye                   = (bool)m_serverParamsDictionary["battlEye"].ParameterValue;
-            m_serverConfig.root.game.gameProperties.vonDisableUI               = (bool)m_serverParamsDictionary["VONDisableUI"].ParameterValue;
-            m_serverConfig.root.game.gameProperties.vonDisableDirectSpeechUI   = (bool)m_serverParamsDictionary["VONDisableDirectSpeechUI"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.serverMaxViewDistance = Convert.ToInt32(m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue);
+            m_serverConfig.root.game.gameProperties.serverMinGrassDistance = Convert.ToInt32(m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue);
+            m_serverConfig.root.game.gameProperties.networkViewDistance = Convert.ToInt32(m_serverParamsDictionary["networkViewDistance"].ParameterValue);
+            m_serverConfig.root.game.gameProperties.disableThirdPerson = (bool)m_serverParamsDictionary["disableThirdPerson"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.fastValidation = (bool)m_serverParamsDictionary["fastValidation"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.battlEye = (bool)m_serverParamsDictionary["battlEye"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.vonDisableUI = (bool)m_serverParamsDictionary["VONDisableUI"].ParameterValue;
+            m_serverConfig.root.game.gameProperties.vonDisableDirectSpeechUI = (bool)m_serverParamsDictionary["VONDisableDirectSpeechUI"].ParameterValue;
             m_serverConfig.root.game.gameProperties.vonCanTransmitCrossFaction = (bool)m_serverParamsDictionary["VONCanTransmitCrossFaction"].ParameterValue;
             // m_serverConfig.root.game.gameProperties.missionHeader - Don't need to set missionHeader as its set directly from the Edit Mission Header Form
 
-            m_serverConfig.root.operating.lobbyPlayerSynchronise  = (bool)m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue;
-            m_serverConfig.root.operating.playerSaveTime          = Convert.ToInt32(m_serverParamsDictionary["playerSaveTime"].ParameterValue);
-            m_serverConfig.root.operating.aiLimit                 = Convert.ToInt32(m_serverParamsDictionary["aiLimit"].ParameterValue);
-            m_serverConfig.root.operating.slotReservationTimeout  = Convert.ToInt32(m_serverParamsDictionary["slotReservationTimeout"].ParameterValue);
+            m_serverConfig.root.operating.lobbyPlayerSynchronise = (bool)m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue;
+            m_serverConfig.root.operating.playerSaveTime = Convert.ToInt32(m_serverParamsDictionary["playerSaveTime"].ParameterValue);
+            m_serverConfig.root.operating.aiLimit = Convert.ToInt32(m_serverParamsDictionary["aiLimit"].ParameterValue);
+            m_serverConfig.root.operating.slotReservationTimeout = Convert.ToInt32(m_serverParamsDictionary["slotReservationTimeout"].ParameterValue);
 
             // Determine whether Navmesh streaming is to be disabled
-            GetServerConfiguration().toggleDisableNavmeshStreaming = (bool) m_serverParamsDictionary["toggleDisableNavmeshStreaming"].ParameterValue;
+            GetServerConfiguration().toggleDisableNavmeshStreaming = (bool)m_serverParamsDictionary["toggleDisableNavmeshStreaming"].ParameterValue;
 
             if (GetServerConfiguration().toggleDisableNavmeshStreaming)
             {
                 Log.Debug("ConfigurationManager - Disable Navmesh Streaming is enabled");
-                m_serverConfig.root.operating.disableNavmeshStreaming = (string[]) m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
+                m_serverConfig.root.operating.disableNavmeshStreaming = (string[])m_serverParamsDictionary["disableNavmeshStreaming"].ParameterValue;
             }
-            m_serverConfig.root.operating.disableServerShutdown   = (bool)m_serverParamsDictionary["disableServerShutdown"].ParameterValue;
-            m_serverConfig.root.operating.disableCrashReporter    = (bool)m_serverParamsDictionary["disableCrashReporter"].ParameterValue;
-            m_serverConfig.root.operating.disableAI               = (bool)m_serverParamsDictionary["disableAI"].ParameterValue;
+            m_serverConfig.root.operating.disableServerShutdown = (bool)m_serverParamsDictionary["disableServerShutdown"].ParameterValue;
+            m_serverConfig.root.operating.disableCrashReporter = (bool)m_serverParamsDictionary["disableCrashReporter"].ParameterValue;
+            m_serverConfig.root.operating.disableAI = (bool)m_serverParamsDictionary["disableAI"].ParameterValue;
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace ReforgerServerApp
                 m_availableMods.Clear();
                 foreach (Mod mod in tempAvailableMods) { m_availableMods.Add(mod); }
             }
-            
+
             if (!Utilities.IsSorted(m_enabledMods))
             {
                 var tempEnabledMods = Utilities.AlphabetiseModList(m_enabledMods);
@@ -273,18 +273,30 @@ namespace ReforgerServerApp
         /// <summary>
         /// Utility method for moving a mod from one list to another
         /// </summary>
-        /// <param name="m">Mod to move</param>
+        /// <param name="mod">Mod to move</param>
         /// <param name="from">List to move mod from</param>
         /// <param name="to">List to move mod to</param>
-        public static void MoveMod(Mod m, BindingList<Mod> from, BindingList<Mod> to)
+        public static void MoveMod(Mod mod, BindingList<Mod> from, BindingList<Mod> to)
         {
-            if (to.Contains(m))
+            if (!to.Contains(mod))
             {
-                from.Remove(m);
-            } else
+                to.Add(mod);
+            }
+            from.Remove(mod);
+        }
+
+
+        /// <summary>
+        /// Utility method for moving mods from one list to another
+        /// </summary>
+        /// <param name="mods">Array of mods to move</param>
+        /// <param name="from">List to move mods from</param>
+        /// <param name="to">List to move mods to</param>
+        public static void MoveMod(Mod[] mods, BindingList<Mod> from, BindingList<Mod> to)
+        {
+            foreach (Mod mod in mods)
             {
-                to.Add(m);
-                from.Remove(m);
+                MoveMod(mod, from, to);
             }
         }
 
