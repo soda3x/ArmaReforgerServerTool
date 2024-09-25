@@ -56,7 +56,6 @@ namespace ReforgerServerApp
             saveSettingsBtn = new Button();
             loadSettingsBtn = new Button();
             tabPage2 = new TabPage();
-            useExperimentalCheckBox = new CheckBox();
             label30 = new Label();
             logLevelComboBox = new ComboBox();
             locateServerFilesBtn = new Button();
@@ -103,6 +102,7 @@ namespace ReforgerServerApp
             steamCmdLog = new TextBox();
             steamCmdAlert = new Label();
             downloadSteamCmdBtn = new Button();
+            useExperimentalCheckBox = new CheckBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -127,11 +127,10 @@ namespace ReforgerServerApp
             tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(14, 16);
-            tabControl1.Margin = new Padding(3, 4, 3, 4);
+            tabControl1.Location = new Point(12, 12);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(1744, 1037);
+            tabControl1.Size = new Size(1526, 778);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -158,9 +157,8 @@ namespace ReforgerServerApp
             editModBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             editModBtn.Enabled = false;
             editModBtn.Location = new Point(97, 961);
-            editModBtn.Margin = new Padding(3, 4, 3, 4);
             editModBtn.Name = "editModBtn";
-            editModBtn.Size = new Size(151, 31);
+            editModBtn.Size = new Size(132, 23);
             editModBtn.TabIndex = 51;
             editModBtn.Text = "Edit Selected Mod";
             editModBtn.UseVisualStyleBackColor = true;
