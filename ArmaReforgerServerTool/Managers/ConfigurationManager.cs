@@ -27,11 +27,11 @@ namespace ReforgerServerApp
     /// </summary>
     internal class ConfigurationManager
     {
-        private static ConfigurationManager? m_instance;
+        private static ConfigurationManager?                 m_instance;
         private readonly Dictionary<string, ServerParameter> m_serverParamsDictionary;
-        private ServerConfiguration m_serverConfig;
-        private BindingList<Mod> m_availableMods;
-        private BindingList<Mod> m_enabledMods;
+        private ServerConfiguration                          m_serverConfig;
+        private BindingList<Mod>                             m_availableMods;
+        private BindingList<Mod>                             m_enabledMods;
 
         public bool useExperimentalServer { get; set; }
 
@@ -41,9 +41,9 @@ namespace ReforgerServerApp
         private ConfigurationManager()
         {
             m_serverParamsDictionary = new Dictionary<string, ServerParameter>();
-            m_availableMods = new BindingList<Mod>();
-            m_enabledMods = new BindingList<Mod>();
-            m_serverConfig = new ServerConfiguration();
+            m_availableMods          = new BindingList<Mod>();
+            m_enabledMods            = new BindingList<Mod>();
+            m_serverConfig           = new ServerConfiguration();
         }
 
         public static ConfigurationManager GetInstance()
@@ -89,13 +89,13 @@ namespace ReforgerServerApp
                 Log.Debug("ConfigurationManager - Populating Server Configuration from {input}", input);
                 m_serverConfig.SetServerConfigurationFromJson(input);
 
-                m_serverParamsDictionary["bindAddress"].ParameterValue = m_serverConfig.root.bindAddress!;
-                m_serverParamsDictionary["bindPort"].ParameterValue = m_serverConfig.root.bindPort;
+                m_serverParamsDictionary["bindAddress"].ParameterValue   = m_serverConfig.root.bindAddress!;
+                m_serverParamsDictionary["bindPort"].ParameterValue      = m_serverConfig.root.bindPort;
                 m_serverParamsDictionary["publicAddress"].ParameterValue = m_serverConfig.root.publicAddress!;
-                m_serverParamsDictionary["publicPort"].ParameterValue = m_serverConfig.root.publicPort;
+                m_serverParamsDictionary["publicPort"].ParameterValue    = m_serverConfig.root.publicPort;
 
                 m_serverParamsDictionary["address"].ParameterValue = m_serverConfig.root.a2s.address;
-                m_serverParamsDictionary["port"].ParameterValue = m_serverConfig.root.a2s.port;
+                m_serverParamsDictionary["port"].ParameterValue    = m_serverConfig.root.a2s.port;
 
                 if (m_serverConfig.root.rcon == null)
                 {
@@ -104,28 +104,33 @@ namespace ReforgerServerApp
                 }
 
                 m_serverParamsDictionary["rconAddress"].ParameterValue = m_serverConfig.root.rcon.address;
-                m_serverParamsDictionary["rconPort"].ParameterValue = m_serverConfig.root.rcon.port == 0 ?
-                    Rcon.Default.port : m_serverConfig.root.rcon.port;
-                m_serverParamsDictionary["rconPassword"].ParameterValue = m_serverConfig.root.rcon.password;
-                m_serverParamsDictionary["rconMaxClients"].ParameterValue = m_serverConfig.root.rcon.maxClients == 0 ?
-                    Rcon.Default.maxClients : m_serverConfig.root.rcon.maxClients;
+                m_serverParamsDictionary["rconPort"].ParameterValue    = m_serverConfig.root.rcon.port == 0 
+                    ? Rcon.Default.port 
+                    : m_serverConfig.root.rcon.port;
+
+                m_serverParamsDictionary["rconPassword"].ParameterValue   = m_serverConfig.root.rcon.password;
+                m_serverParamsDictionary["rconMaxClients"].ParameterValue = m_serverConfig.root.rcon.maxClients == 0 
+                    ? Rcon.Default.maxClients
+                    : m_serverConfig.root.rcon.maxClients;
+
                 m_serverParamsDictionary["rconWhitelist"].ParameterValue = m_serverConfig.root.rcon.whitelist;
                 m_serverParamsDictionary["rconBlacklist"].ParameterValue = m_serverConfig.root.rcon.blacklist;
+
                 ((ServerParameterSelect)m_serverParamsDictionary["rconPermission"])
                     .ParameterValueSelection(Utilities.RconPermissionToString(m_serverConfig.root.rcon.permission));
 
                 m_serverParamsDictionary["passwordAdmin"].ParameterValue = m_serverConfig.root.game.passwordAdmin!;
-                m_serverParamsDictionary["name"].ParameterValue = m_serverConfig.root.game.name!;
-                m_serverParamsDictionary["password"].ParameterValue = m_serverConfig.root.game.password!;
-                m_serverParamsDictionary["admins"].ParameterValue = m_serverConfig.root.game.admins;
+                m_serverParamsDictionary["name"].ParameterValue          = m_serverConfig.root.game.name!;
+                m_serverParamsDictionary["password"].ParameterValue      = m_serverConfig.root.game.password!;
+                m_serverParamsDictionary["admins"].ParameterValue        = m_serverConfig.root.game.admins;
 
                 ScenarioIdEventArgs scenarioId = new(m_serverConfig.root.game.scenarioId);
                 OnUpdateScenarioIdFromLoadedConfig(scenarioId);
 
-                m_serverParamsDictionary["maxPlayers"].ParameterValue = m_serverConfig.root.game.maxPlayers;
-                m_serverParamsDictionary["visible"].ParameterValue = m_serverConfig.root.game.visible;
+                m_serverParamsDictionary["maxPlayers"].ParameterValue    = m_serverConfig.root.game.maxPlayers;
+                m_serverParamsDictionary["visible"].ParameterValue       = m_serverConfig.root.game.visible;
                 m_serverParamsDictionary["crossPlatform"].ParameterValue = m_serverConfig.root.game.crossPlatform;
-                m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
+                m_serverConfig.root.game.supportedPlatforms              = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
 
                 m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMaxViewDistance;
                 m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMinGrassDistance;
