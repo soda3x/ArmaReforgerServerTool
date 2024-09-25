@@ -169,7 +169,6 @@ namespace ReforgerServerApp
                 editModBtn.Enabled = availableMods.SelectedItem != null;
                 removeModBtn.Enabled = availableMods.SelectedItem != null;
             }
-
         }
 
         /// <summary>
