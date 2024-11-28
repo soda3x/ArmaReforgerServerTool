@@ -50,6 +50,40 @@ namespace ReforgerServerApp.Utils
         }
 
         /// <summary>
+        /// Moves an item in a list forward or backward.
+        /// </summary>
+        /// <param name="list">The list of items.</param>
+        /// <param name="item">The item to move.</param>
+        /// <param name="moveBackward">Optional, moves forward by default, set to true to move it backward.</param>
+        public static void MoveItem<T>(BindingList<T> list, T item, bool moveBackward = false)
+        {
+            if (list == null)
+            {
+                // List is null, don't do anything
+                return;
+            }
+
+            int index = list.IndexOf(item);
+
+            if (index == -1)
+            {
+                // Item doesn't exist in the list, don't do anything
+                return;
+            }
+
+            int newIndex = moveBackward ? index - 1 : index + 1;
+
+            if (newIndex < 0 || newIndex >= list.Count)
+            {
+                // Can't move outside list bounds, do nothing
+                return;
+            }
+
+            // Swap the items
+            (list[newIndex], list[index]) = (list[index], list[newIndex]);
+        }
+
+        /// <summary>
         /// Return string representation of DateTime.Now
         /// </summary>
         /// <returns></returns>

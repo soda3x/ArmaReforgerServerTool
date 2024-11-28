@@ -269,13 +269,6 @@ namespace ReforgerServerApp
                 m_availableMods.Clear();
                 foreach (Mod mod in tempAvailableMods) { m_availableMods.Add(mod); }
             }
-            
-            if (!Utilities.IsSorted(m_enabledMods))
-            {
-                var tempEnabledMods = Utilities.AlphabetiseModList(m_enabledMods);
-                m_enabledMods.Clear();
-                foreach (Mod mod in tempEnabledMods) { m_enabledMods.Add(mod); }
-            }
         }
 
         /// <summary>

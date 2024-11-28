@@ -11,6 +11,7 @@ using ReforgerServerApp.Models;
 using System.ComponentModel;
 using Serilog;
 using ReforgerServerApp.Components;
+using ReforgerServerApp.Utils;
 
 namespace ReforgerServerApp
 {
@@ -222,6 +223,44 @@ namespace ReforgerServerApp
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
             ResetModFilters();
+        }
+
+        /// <summary>
+        /// Event handler for when the Mod Position Up button is pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MoveEnabledModPositionUpBtnPressed(object sender, EventArgs e)
+        {
+            if ((Mod) GetEnabledModsList().SelectedItem != null)
+            {
+                Mod m = (Mod)GetEnabledModsList().SelectedItem;
+
+                // Set move backward to true as moving position 'up' actually means moving the mod earlier in the list
+                Utilities.MoveItem(ConfigurationManager.GetInstance().GetEnabledMods(), m, true);
+
+                // Re-select the mod so we can do multiple moves in a row if we like
+                GetEnabledModsList().SelectedItem = m;
+            }
+        }
+
+        /// <summary>
+        /// Event handler for when the Mod Position Down button is pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MoveEnabledModPositionDownBtnPressed(object sender, EventArgs e)
+        {
+            if ((Mod) GetEnabledModsList().SelectedItem != null)
+            {
+                Mod m = (Mod)GetEnabledModsList().SelectedItem;
+
+                // Move forward is the default, this will mean moving the mod later in the list
+                Utilities.MoveItem(ConfigurationManager.GetInstance().GetEnabledMods(), m);
+
+                // Re-select the mod so we can do multiple moves in a row if we like
+                GetEnabledModsList().SelectedItem = m;
+            }
         }
 
         /// <summary>
