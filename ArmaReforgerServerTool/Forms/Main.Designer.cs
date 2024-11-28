@@ -188,6 +188,7 @@ namespace ReforgerServerApp
             moveModPosDownBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
             moveModPosDownBtn.IconSize = 16;
             moveModPosDownBtn.Location = new Point(335, 670);
+            moveModPosDownBtn.Margin = new Padding(3, 2, 3, 2);
             moveModPosDownBtn.Name = "moveModPosDownBtn";
             moveModPosDownBtn.Size = new Size(146, 23);
             moveModPosDownBtn.TabIndex = 10;
@@ -202,8 +203,9 @@ namespace ReforgerServerApp
             moveModPosUpBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
             moveModPosUpBtn.IconSize = 16;
             moveModPosUpBtn.Location = new Point(487, 670);
+            moveModPosUpBtn.Margin = new Padding(3, 2, 3, 2);
             moveModPosUpBtn.Name = "moveModPosUpBtn";
-            moveModPosUpBtn.Size = new Size(139, 23);
+            moveModPosUpBtn.Size = new Size(139, 22);
             moveModPosUpBtn.TabIndex = 9;
             moveModPosUpBtn.UseVisualStyleBackColor = true;
             moveModPosUpBtn.Click += MoveEnabledModPositionUpBtnPressed;
@@ -224,7 +226,7 @@ namespace ReforgerServerApp
             disableAllModsBtn.IconColor = Color.Black;
             disableAllModsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
             disableAllModsBtn.IconSize = 16;
-            disableAllModsBtn.Location = new Point(306, 423);
+            disableAllModsBtn.Location = new Point(306, 451);
             disableAllModsBtn.Name = "disableAllModsBtn";
             disableAllModsBtn.Size = new Size(23, 52);
             disableAllModsBtn.TabIndex = 7;
@@ -237,7 +239,7 @@ namespace ReforgerServerApp
             enableAllModsBtn.IconColor = Color.Black;
             enableAllModsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
             enableAllModsBtn.IconSize = 16;
-            enableAllModsBtn.Location = new Point(306, 207);
+            enableAllModsBtn.Location = new Point(306, 240);
             enableAllModsBtn.Name = "enableAllModsBtn";
             enableAllModsBtn.Size = new Size(23, 52);
             enableAllModsBtn.TabIndex = 6;
@@ -268,7 +270,7 @@ namespace ReforgerServerApp
             removeFromEnabledBtn.IconColor = Color.Black;
             removeFromEnabledBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
             removeFromEnabledBtn.IconSize = 16;
-            removeFromEnabledBtn.Location = new Point(306, 351);
+            removeFromEnabledBtn.Location = new Point(306, 380);
             removeFromEnabledBtn.Name = "removeFromEnabledBtn";
             removeFromEnabledBtn.Size = new Size(23, 52);
             removeFromEnabledBtn.TabIndex = 3;
@@ -281,7 +283,7 @@ namespace ReforgerServerApp
             addToEnabledBtn.IconColor = Color.Black;
             addToEnabledBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
             addToEnabledBtn.IconSize = 16;
-            addToEnabledBtn.Location = new Point(306, 277);
+            addToEnabledBtn.Location = new Point(306, 310);
             addToEnabledBtn.Name = "addToEnabledBtn";
             addToEnabledBtn.Size = new Size(23, 52);
             addToEnabledBtn.TabIndex = 2;
@@ -295,6 +297,7 @@ namespace ReforgerServerApp
             enabledMods.ItemHeight = 15;
             enabledMods.Location = new Point(335, 74);
             enabledMods.Name = "enabledMods";
+            enabledMods.SelectionMode = SelectionMode.MultiExtended;
             enabledMods.Size = new Size(291, 589);
             enabledMods.TabIndex = 1;
             // 
@@ -305,6 +308,7 @@ namespace ReforgerServerApp
             availableMods.ItemHeight = 15;
             availableMods.Location = new Point(6, 74);
             availableMods.Name = "availableMods";
+            availableMods.SelectionMode = SelectionMode.MultiExtended;
             availableMods.Size = new Size(294, 619);
             availableMods.TabIndex = 0;
             availableMods.SelectedIndexChanged += AvailableModsSelectedIndexChanged;
@@ -432,7 +436,8 @@ namespace ReforgerServerApp
             useUpnp.AutoSize = true;
             useUpnp.Checked = true;
             useUpnp.CheckState = CheckState.Checked;
-            useUpnp.Location = new Point(347, 31);
+            useUpnp.Location = new Point(352, 31);
+            useUpnp.Margin = new Padding(3, 2, 3, 2);
             useUpnp.Name = "useUpnp";
             useUpnp.Size = new Size(77, 19);
             useUpnp.TabIndex = 32;
@@ -443,7 +448,7 @@ namespace ReforgerServerApp
             // useExperimentalCheckBox
             // 
             useExperimentalCheckBox.AutoSize = true;
-            useExperimentalCheckBox.Location = new Point(189, 31);
+            useExperimentalCheckBox.Location = new Point(194, 31);
             useExperimentalCheckBox.Name = "useExperimentalCheckBox";
             useExperimentalCheckBox.Size = new Size(152, 19);
             useExperimentalCheckBox.TabIndex = 31;
@@ -456,7 +461,7 @@ namespace ReforgerServerApp
             label30.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
             label30.AutoSize = true;
             label30.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label30.Location = new Point(249, 726);
+            label30.Location = new Point(252, 725);
             label30.Name = "label30";
             label30.Size = new Size(57, 15);
             label30.TabIndex = 30;
@@ -467,7 +472,7 @@ namespace ReforgerServerApp
             logLevelComboBox.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
             logLevelComboBox.FormattingEnabled = true;
             logLevelComboBox.Items.AddRange(new object[] { "normal", "warning", "error", "fatal" });
-            logLevelComboBox.Location = new Point(312, 722);
+            logLevelComboBox.Location = new Point(310, 722);
             logLevelComboBox.Name = "logLevelComboBox";
             logLevelComboBox.Size = new Size(96, 23);
             logLevelComboBox.TabIndex = 30;
@@ -476,7 +481,7 @@ namespace ReforgerServerApp
             // locateServerFilesBtn
             // 
             locateServerFilesBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
-            locateServerFilesBtn.Location = new Point(1222, 28);
+            locateServerFilesBtn.Location = new Point(1222, 23);
             locateServerFilesBtn.Name = "locateServerFilesBtn";
             locateServerFilesBtn.Size = new Size(111, 23);
             locateServerFilesBtn.TabIndex = 7;
@@ -498,7 +503,7 @@ namespace ReforgerServerApp
             // deleteServerFilesBtn
             // 
             deleteServerFilesBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
-            deleteServerFilesBtn.Location = new Point(1339, 28);
+            deleteServerFilesBtn.Location = new Point(1339, 23);
             deleteServerFilesBtn.Name = "deleteServerFilesBtn";
             deleteServerFilesBtn.Size = new Size(111, 23);
             deleteServerFilesBtn.TabIndex = 5;
@@ -513,7 +518,7 @@ namespace ReforgerServerApp
             aboutBtn.IconColor = Color.Black;
             aboutBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
             aboutBtn.IconSize = 18;
-            aboutBtn.Location = new Point(1456, 28);
+            aboutBtn.Location = new Point(1456, 23);
             aboutBtn.Name = "aboutBtn";
             aboutBtn.Size = new Size(56, 23);
             aboutBtn.TabIndex = 4;
@@ -524,9 +529,9 @@ namespace ReforgerServerApp
             // 
             groupBox4.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             groupBox4.Controls.Add(advancedParametersPanel);
-            groupBox4.Location = new Point(6, 57);
+            groupBox4.Location = new Point(5, 57);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(237, 662);
+            groupBox4.Size = new Size(242, 688);
             groupBox4.TabIndex = 4;
             groupBox4.TabStop = false;
             groupBox4.Text = "Advanced";
@@ -536,9 +541,10 @@ namespace ReforgerServerApp
             advancedParametersPanel.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             advancedParametersPanel.AutoScroll = true;
             advancedParametersPanel.FlowDirection = FlowDirection.TopDown;
-            advancedParametersPanel.Location = new Point(6, 22);
+            advancedParametersPanel.Location = new Point(5, 16);
+            advancedParametersPanel.Margin = new Padding(3, 2, 3, 2);
             advancedParametersPanel.Name = "advancedParametersPanel";
-            advancedParametersPanel.Size = new Size(225, 634);
+            advancedParametersPanel.Size = new Size(231, 668);
             advancedParametersPanel.TabIndex = 0;
             advancedParametersPanel.WrapContents = false;
             // 
@@ -556,9 +562,9 @@ namespace ReforgerServerApp
             // 
             groupBox3.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox3.Controls.Add(steamCmdLog);
-            groupBox3.Location = new Point(249, 57);
+            groupBox3.Location = new Point(253, 57);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1263, 662);
+            groupBox3.Size = new Size(1259, 659);
             groupBox3.TabIndex = 3;
             groupBox3.TabStop = false;
             groupBox3.Text = "Log";
@@ -571,7 +577,7 @@ namespace ReforgerServerApp
             steamCmdLog.Name = "steamCmdLog";
             steamCmdLog.ReadOnly = true;
             steamCmdLog.ScrollBars = ScrollBars.Vertical;
-            steamCmdLog.Size = new Size(1251, 634);
+            steamCmdLog.Size = new Size(1249, 631);
             steamCmdLog.TabIndex = 1;
             // 
             // steamCmdAlert
@@ -599,10 +605,10 @@ namespace ReforgerServerApp
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1550, 811);
+            ClientSize = new Size(1550, 796);
             Controls.Add(tabControl1);
             Icon = (Icon) resources.GetObject("$this.Icon");
-            MinimumSize = new Size(1440, 814);
+            MinimumSize = new Size(1440, 782);
             Name = "Main";
             Text = "Arma Reforger Dedicated Server Tool";
             tabControl1.ResumeLayout(false);
