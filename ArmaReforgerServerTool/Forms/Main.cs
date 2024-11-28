@@ -153,7 +153,6 @@ namespace ReforgerServerApp
                 editModBtn.Enabled = availableMods.SelectedItem != null;
                 removeModBtn.Enabled = availableMods.SelectedItem != null;
             }
-
         }
 
         /// <summary>
@@ -177,7 +176,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
         {
-            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
+            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod)GetAvailableModsList().SelectedItem);
             FileIOManager.GetInstance().WriteModsDatabase();
         }
 
@@ -191,12 +190,12 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AddToEnabledModsBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod) GetAvailableModsList().SelectedItem != null)
+            Mod[] modsToMove = new Mod[GetAvailableModsList().SelectedItems.Count];
+            GetAvailableModsList().SelectedItems.CopyTo(modsToMove, 0);
+            foreach (Mod mod in modsToMove)
             {
-                Mod m = (Mod)GetAvailableModsList().SelectedItem;
-
                 // Move mod from Available Mods -> Enabled Mods
-                ConfigurationManager.MoveMod(m, ConfigurationManager.GetInstance().GetAvailableMods(),
+                ConfigurationManager.MoveMod(mod, ConfigurationManager.GetInstance().GetAvailableMods(),
                                                 ConfigurationManager.GetInstance().GetEnabledMods());
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
@@ -213,12 +212,12 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemovedFromEnabledModsBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod) GetEnabledModsList().SelectedItem != null)
+            Mod[] modsToMove = new Mod[GetEnabledModsList().SelectedItems.Count];
+            GetEnabledModsList().SelectedItems.CopyTo(modsToMove, 0);
+            foreach (Mod mod in modsToMove)
             {
-                Mod m = (Mod)GetEnabledModsList().SelectedItem;
-
                 // Move mod from Enabled Mods -> Available Mods
-                ConfigurationManager.MoveMod(m, ConfigurationManager.GetInstance().GetEnabledMods(),
+                ConfigurationManager.MoveMod(mod, ConfigurationManager.GetInstance().GetEnabledMods(),
                                                 ConfigurationManager.GetInstance().GetAvailableMods());
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
@@ -240,6 +239,7 @@ namespace ReforgerServerApp
                 Utilities.MoveItem(ConfigurationManager.GetInstance().GetEnabledMods(), m, true);
 
                 // Re-select the mod so we can do multiple moves in a row if we like
+                GetEnabledModsList().SelectedItems.Clear();
                 GetEnabledModsList().SelectedItem = m;
             }
         }
@@ -259,6 +259,7 @@ namespace ReforgerServerApp
                 Utilities.MoveItem(ConfigurationManager.GetInstance().GetEnabledMods(), m);
 
                 // Re-select the mod so we can do multiple moves in a row if we like
+                GetEnabledModsList().SelectedItems.Clear();
                 GetEnabledModsList().SelectedItem = m;
             }
         }
@@ -1148,6 +1149,7 @@ namespace ReforgerServerApp
             availableMods.DataSource = m_availableModsBindingSource;
             enabledMods.DataSource = m_enabledModsBindingSource;
             modsSearchTB.Text = string.Empty;
+            availableMods.SelectedItem = enabledMods.SelectedItem = null;
         }
 
         /// <summary>
