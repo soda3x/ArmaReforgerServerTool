@@ -38,13 +38,15 @@ namespace ReforgerServerApp
             addModBtn = new Button();
             removeModBtn = new Button();
             groupBox2 = new GroupBox();
+            moveModPosDownBtn = new FontAwesome.Sharp.IconButton();
+            moveModPosUpBtn = new FontAwesome.Sharp.IconButton();
             modsSearchTB = new TextBox();
-            disableAllModsBtn = new Button();
-            enableAllModsBtn = new Button();
+            disableAllModsBtn = new FontAwesome.Sharp.IconButton();
+            enableAllModsBtn = new FontAwesome.Sharp.IconButton();
             label16 = new Label();
             label15 = new Label();
-            removeFromEnabledBtn = new Button();
-            addToEnabledBtn = new Button();
+            removeFromEnabledBtn = new FontAwesome.Sharp.IconButton();
+            addToEnabledBtn = new FontAwesome.Sharp.IconButton();
             enabledMods = new BoundListBox();
             availableMods = new BoundListBox();
             groupBox1 = new GroupBox();
@@ -63,7 +65,7 @@ namespace ReforgerServerApp
             locateServerFilesBtn = new Button();
             clearLogBtn = new Button();
             deleteServerFilesBtn = new Button();
-            aboutBtn = new Button();
+            aboutBtn = new FontAwesome.Sharp.IconButton();
             groupBox4 = new GroupBox();
             advancedParametersPanel = new FlowLayoutPanel();
             startServerBtn = new Button();
@@ -159,6 +161,8 @@ namespace ReforgerServerApp
             // groupBox2
             // 
             groupBox2.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            groupBox2.Controls.Add(moveModPosDownBtn);
+            groupBox2.Controls.Add(moveModPosUpBtn);
             groupBox2.Controls.Add(modsSearchTB);
             groupBox2.Controls.Add(disableAllModsBtn);
             groupBox2.Controls.Add(enableAllModsBtn);
@@ -176,6 +180,34 @@ namespace ReforgerServerApp
             groupBox2.TabStop = false;
             groupBox2.Text = "Mods";
             // 
+            // moveModPosDownBtn
+            // 
+            moveModPosDownBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+            moveModPosDownBtn.IconChar = FontAwesome.Sharp.IconChar.ArrowDown;
+            moveModPosDownBtn.IconColor = Color.Black;
+            moveModPosDownBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            moveModPosDownBtn.IconSize = 16;
+            moveModPosDownBtn.Location = new Point(335, 670);
+            moveModPosDownBtn.Name = "moveModPosDownBtn";
+            moveModPosDownBtn.Size = new Size(146, 23);
+            moveModPosDownBtn.TabIndex = 10;
+            moveModPosDownBtn.UseVisualStyleBackColor = true;
+            moveModPosDownBtn.Click += MoveEnabledModPositionDownBtnPressed;
+            // 
+            // moveModPosUpBtn
+            // 
+            moveModPosUpBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+            moveModPosUpBtn.IconChar = FontAwesome.Sharp.IconChar.ArrowUp;
+            moveModPosUpBtn.IconColor = Color.Black;
+            moveModPosUpBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            moveModPosUpBtn.IconSize = 16;
+            moveModPosUpBtn.Location = new Point(487, 670);
+            moveModPosUpBtn.Name = "moveModPosUpBtn";
+            moveModPosUpBtn.Size = new Size(139, 23);
+            moveModPosUpBtn.TabIndex = 9;
+            moveModPosUpBtn.UseVisualStyleBackColor = true;
+            moveModPosUpBtn.Click += MoveEnabledModPositionUpBtnPressed;
+            // 
             // modsSearchTB
             // 
             modsSearchTB.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -188,21 +220,27 @@ namespace ReforgerServerApp
             // 
             // disableAllModsBtn
             // 
+            disableAllModsBtn.IconChar = FontAwesome.Sharp.IconChar.AngleDoubleLeft;
+            disableAllModsBtn.IconColor = Color.Black;
+            disableAllModsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            disableAllModsBtn.IconSize = 16;
             disableAllModsBtn.Location = new Point(306, 423);
             disableAllModsBtn.Name = "disableAllModsBtn";
             disableAllModsBtn.Size = new Size(23, 52);
             disableAllModsBtn.TabIndex = 7;
-            disableAllModsBtn.Text = "<<";
             disableAllModsBtn.UseVisualStyleBackColor = true;
             disableAllModsBtn.Click += DisableAllModsBtnPressed;
             // 
             // enableAllModsBtn
             // 
+            enableAllModsBtn.IconChar = FontAwesome.Sharp.IconChar.AngleDoubleRight;
+            enableAllModsBtn.IconColor = Color.Black;
+            enableAllModsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            enableAllModsBtn.IconSize = 16;
             enableAllModsBtn.Location = new Point(306, 207);
             enableAllModsBtn.Name = "enableAllModsBtn";
             enableAllModsBtn.Size = new Size(23, 52);
             enableAllModsBtn.TabIndex = 6;
-            enableAllModsBtn.Text = ">>";
             enableAllModsBtn.UseVisualStyleBackColor = true;
             enableAllModsBtn.Click += EnableAllModsBtnPressed;
             // 
@@ -226,21 +264,27 @@ namespace ReforgerServerApp
             // 
             // removeFromEnabledBtn
             // 
+            removeFromEnabledBtn.IconChar = FontAwesome.Sharp.IconChar.AngleLeft;
+            removeFromEnabledBtn.IconColor = Color.Black;
+            removeFromEnabledBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            removeFromEnabledBtn.IconSize = 16;
             removeFromEnabledBtn.Location = new Point(306, 351);
             removeFromEnabledBtn.Name = "removeFromEnabledBtn";
             removeFromEnabledBtn.Size = new Size(23, 52);
             removeFromEnabledBtn.TabIndex = 3;
-            removeFromEnabledBtn.Text = "<";
             removeFromEnabledBtn.UseVisualStyleBackColor = true;
             removeFromEnabledBtn.Click += RemovedFromEnabledModsBtnPressed;
             // 
             // addToEnabledBtn
             // 
+            addToEnabledBtn.IconChar = FontAwesome.Sharp.IconChar.AngleRight;
+            addToEnabledBtn.IconColor = Color.Black;
+            addToEnabledBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            addToEnabledBtn.IconSize = 16;
             addToEnabledBtn.Location = new Point(306, 277);
             addToEnabledBtn.Name = "addToEnabledBtn";
             addToEnabledBtn.Size = new Size(23, 52);
             addToEnabledBtn.TabIndex = 2;
-            addToEnabledBtn.Text = ">";
             addToEnabledBtn.UseVisualStyleBackColor = true;
             addToEnabledBtn.Click += AddToEnabledModsBtnPressed;
             // 
@@ -251,7 +295,7 @@ namespace ReforgerServerApp
             enabledMods.ItemHeight = 15;
             enabledMods.Location = new Point(335, 74);
             enabledMods.Name = "enabledMods";
-            enabledMods.Size = new Size(291, 619);
+            enabledMods.Size = new Size(291, 589);
             enabledMods.TabIndex = 1;
             // 
             // availableMods
@@ -465,11 +509,14 @@ namespace ReforgerServerApp
             // aboutBtn
             // 
             aboutBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
+            aboutBtn.IconChar = FontAwesome.Sharp.IconChar.CircleInfo;
+            aboutBtn.IconColor = Color.Black;
+            aboutBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            aboutBtn.IconSize = 18;
             aboutBtn.Location = new Point(1456, 28);
             aboutBtn.Name = "aboutBtn";
             aboutBtn.Size = new Size(56, 23);
             aboutBtn.TabIndex = 4;
-            aboutBtn.Text = "About";
             aboutBtn.UseVisualStyleBackColor = true;
             aboutBtn.Click += AboutBtnPressed;
             // 
@@ -586,8 +633,8 @@ namespace ReforgerServerApp
         private GroupBox groupBox2;
         private Button addModBtn;
         private Button removeModBtn;
-        private Button removeFromEnabledBtn;
-        private Button addToEnabledBtn;
+        private FontAwesome.Sharp.IconButton removeFromEnabledBtn;
+        private FontAwesome.Sharp.IconButton addToEnabledBtn;
         private Label label16;
         private Label label15;
         private Label steamCmdAlert;
@@ -596,9 +643,9 @@ namespace ReforgerServerApp
         private GroupBox groupBox3;
         private Button startServerBtn;
         private GroupBox groupBox4;
-        private Button disableAllModsBtn;
-        private Button enableAllModsBtn;
-        private Button aboutBtn;
+        private FontAwesome.Sharp.IconButton disableAllModsBtn;
+        private FontAwesome.Sharp.IconButton enableAllModsBtn;
+        private FontAwesome.Sharp.IconButton aboutBtn;
         private Button deleteServerFilesBtn;
         private Label serverRunningLabel;
         private Button clearLogBtn;
@@ -617,5 +664,7 @@ namespace ReforgerServerApp
         private CheckBox useExperimentalCheckBox;
         private FlowLayoutPanel advancedParametersPanel;
         private CheckBox useUpnp;
+        private FontAwesome.Sharp.IconButton moveModPosDownBtn;
+        private FontAwesome.Sharp.IconButton moveModPosUpBtn;
     }
 }
