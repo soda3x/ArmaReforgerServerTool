@@ -76,7 +76,7 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public void StartStopServer()
+        public async void StartStopServer()
         {
             BackgroundWorker worker = new();
             worker.WorkerSupportsCancellation = true;
@@ -101,6 +101,15 @@ namespace ReforgerServerApp.Managers
 
                     SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: User stopped server.{Environment.NewLine}");
                     OnUpdateSteamCmdLogEvent(steamCmd);
+
+                    if (NetworkManager.GetInstance().useUPnP)
+                    {
+                        steamCmd = new($"{Utilities.GetTimestamp()}: Removing UPnP port mappings...{Environment.NewLine}");
+                        OnUpdateSteamCmdLogEvent(steamCmd);
+                        await NetworkManager.GetInstance().RemovePortMappings(Utilities.GetPortMappingsFromServerConfig());
+                        steamCmd = new($"{Utilities.GetTimestamp()}: UPnP port mappings removed.{Environment.NewLine}");
+                        OnUpdateSteamCmdLogEvent(steamCmd);
+                    }
 
                     m_serverProcess.Kill();
                     m_isServerStarted = false;
@@ -131,6 +140,7 @@ namespace ReforgerServerApp.Managers
                 Log.Information("ProcessManager - User started server.");
                 m_isServerStarted = true;
 
+
                 GuiModelEventArgs guiModel = new()
                 {
                     startServerText = Constants.STOP_SERVER_STR,
@@ -142,6 +152,15 @@ namespace ReforgerServerApp.Managers
 
                 SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: User started server.{Environment.NewLine}");
                 OnUpdateSteamCmdLogEvent(steamCmd);
+
+                if (NetworkManager.GetInstance().useUPnP)
+                {
+                    steamCmd = new($"{Utilities.GetTimestamp()}: Server is using UPnP, adding UPnP port mappings...{Environment.NewLine}");
+                    OnUpdateSteamCmdLogEvent(steamCmd);
+                    await NetworkManager.GetInstance().ConfigurePortMappings(Utilities.GetPortMappingsFromServerConfig());
+                    steamCmd = new($"{Utilities.GetTimestamp()}: UPnP port mappings added.{Environment.NewLine}");
+                    OnUpdateSteamCmdLogEvent(steamCmd);
+                }
 
                 if (ConfigurationManager.GetInstance().useExperimentalServer)
                 {
@@ -157,7 +176,7 @@ namespace ReforgerServerApp.Managers
         /// This is almost identical to the DoStartStopServerLogic method with the difference being it
         /// automatically restarts the server after stopping it as it's not a toggle.
         /// </summary>
-        private void StartStopServerUsingTimer()
+        private async void StartStopServerUsingTimer()
         {
             BackgroundWorker worker = new();
             worker.WorkerSupportsCancellation = true;
@@ -196,6 +215,15 @@ namespace ReforgerServerApp.Managers
                     steamCmd = new($"{Utilities.GetTimestamp()}: Automatically stopped server.{Environment.NewLine}");
                     OnUpdateSteamCmdLogEvent(steamCmd);
 
+                    if (NetworkManager.GetInstance().useUPnP)
+                    {
+                        steamCmd = new($"{Utilities.GetTimestamp()}: Removing UPnP port mappings...{Environment.NewLine}");
+                        OnUpdateSteamCmdLogEvent(steamCmd);
+                        await NetworkManager.GetInstance().RemovePortMappings(Utilities.GetPortMappingsFromServerConfig());
+                        steamCmd = new($"{Utilities.GetTimestamp()}: UPnP port mappings removed.{Environment.NewLine}");
+                        OnUpdateSteamCmdLogEvent(steamCmd);
+                    }
+
                     m_serverProcess.Kill();
 
                 }
@@ -226,6 +254,15 @@ namespace ReforgerServerApp.Managers
             Log.Information("ProcessManager - Automatically (re)started server.");
             OnUpdateSteamCmdLogEvent(steamCmd);
 
+            if (NetworkManager.GetInstance().useUPnP)
+            {
+                steamCmd = new($"{Utilities.GetTimestamp()}: Server is using UPnP, adding UPnP port mappings...{Environment.NewLine}");
+                OnUpdateSteamCmdLogEvent(steamCmd);
+                await NetworkManager.GetInstance().ConfigurePortMappings(Utilities.GetPortMappingsFromServerConfig());
+                steamCmd = new($"{Utilities.GetTimestamp()}: UPnP port mappings added.{Environment.NewLine}");
+                OnUpdateSteamCmdLogEvent(steamCmd);
+            }
+
             worker.RunWorkerAsync();
         }
 
@@ -241,7 +278,8 @@ namespace ReforgerServerApp.Managers
                 SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: {e.Data}{Environment.NewLine}");
                 OnUpdateSteamCmdLogEvent(steamCmd);
                 // Kill the server if it fails to start correctly.
-                if (e.Data.Contains("Unable to Initialize"))
+                if (e.Data.Contains("Unable to Initialize") ||
+                    e.Data.Contains("Game destroyed"))
                 {
                     steamCmd = new($"{Utilities.GetTimestamp()}: System stopped server due to an error.{Environment.NewLine}");
                     Log.Information("ProcessManager - System stopped server due to an error.");
