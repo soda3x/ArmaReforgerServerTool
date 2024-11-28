@@ -463,6 +463,8 @@ namespace ReforgerServerApp
             editMissionHeaderBtn.Enabled = enabled;
             useExperimentalCheckBox.Enabled = enabled;
             useUpnp.Enabled = enabled;
+            moveModPosUpBtn.Enabled = enabled;
+            moveModPosDownBtn.Enabled = enabled;
         }
 
         /// <summary>
