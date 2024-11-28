@@ -63,6 +63,8 @@ namespace ReforgerServerApp
         public static string SUPPORTED_PLATFORM_PC   = "PLATFORM_PC";
         public static string SUPPORTED_PLATFORM_XBOX = "PLATFORM_XBL";
 
+        public static string USE_UPNP_STR = "Enable this to attempt to open required ports using UPnP.\nIf this is successful, you will not need to port-forward.";
+
         public static string SERVER_PARAM_DISABLE_AI_TOOLTIP_STR = "If enabled, the server will prevent initialization and ticking of AIWorld and its components.\r\n" +
             "Will completely disable AI functionality on the server.";
 

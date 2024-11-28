@@ -42,6 +42,8 @@ namespace ReforgerServerApp
             }
             catch (Exception ex)
             {
+                Utilities.DisplayErrorMessage("Application failed.", $"An uncaught exception occurred.\n\n" +
+                    $"\"{ex.Message}\"");
                 Log.Fatal(ex, "Application failed.");
             }
             finally
