@@ -10,6 +10,8 @@ using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
 using System.ComponentModel;
 using Serilog;
+using ReforgerServerApp.Components;
+using ReforgerServerApp.Utils;
 
 namespace ReforgerServerApp
 {
@@ -22,6 +24,7 @@ namespace ReforgerServerApp
             InitializeComponent();
 
             CreateServerParameterControls();
+            CreateAdvancedServerParameterControls();
 
             serverRunningLabel.Text = string.Empty;
 
@@ -29,23 +32,14 @@ namespace ReforgerServerApp
             ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
             ConfigurationManager.GetInstance().UpdateScenarioIdFromLoadedConfigEvent += HandleUpdateScenarioIdFromLoadedConfigEvent;
 
+            NetworkManager.GetInstance().useUPnP = useUpnp.Checked;
+
             // Create tooltips
             CreateTooltips();
 
             loadedScenarioLabel.Text = "No scenario ID chosen.";
 
             UpdateSteamCmdInstallStatus();
-
-            fpsLimitUpDown.Enabled = false;
-            restartIntervalUpDown.Enabled = false;
-            restartUnitsComboBox.Enabled = false;
-            overridePortNumericUpDown.Enabled = false;
-            ndsUpDown.Enabled = false;
-            nwkResolutionUpDown.Enabled = false;
-            staggeringBudgetUpDown.Enabled = false;
-            streamingBudgetUpDown.Enabled = false;
-            streamsDeltaUpDown.Enabled = false;
-            sessionSave.Enabled = false;
 
 
             m_availableModsBindingSource = new()
@@ -88,18 +82,8 @@ namespace ReforgerServerApp
             enableModToolTip.SetToolTip(addToEnabledBtn, Constants.ENABLE_MOD_STR);
             ToolTip disableModToolTip = new();
             disableModToolTip.SetToolTip(removeFromEnabledBtn, Constants.DISABLE_MOD_STR);
-            ToolTip ndsToolTip = new();
-            ndsToolTip.SetToolTip(ndsLabel, Constants.NDS_TOOLTIP_STR);
-            ToolTip nwkResolutionToolTip = new();
-            nwkResolutionToolTip.SetToolTip(nwkResolutionLabel, Constants.NWK_RESOL_TOOLTIP_STR);
-            ToolTip staggeringBudgetToolTip = new();
-            staggeringBudgetToolTip.SetToolTip(staggeringBudgetLabel, Constants.STAGGER_BDGT_TOOLTIP_STR);
-            ToolTip streamingBudgetToolTip = new();
-            streamingBudgetToolTip.SetToolTip(streamingBudgetLabel, Constants.STREAMING_BDGT_TOOLTIP_STR);
-            ToolTip streamsDeltaToolTip = new();
-            streamsDeltaToolTip.SetToolTip(streamsDeltaLabel, Constants.STREAMS_DELTA_TOOLTIP_STR);
-            ToolTip loadSessionSaveToolTip = new();
-            loadSessionSaveToolTip.SetToolTip(loadSessionSaveLabel, Constants.LOAD_SESSION_SAVE_TOOLTIP_STR);
+            ToolTip useUpnpToolTip = new();
+            useUpnpToolTip.SetToolTip(useUpnp, Constants.USE_UPNP_STR);
         }
 
         /// <summary>
@@ -169,7 +153,6 @@ namespace ReforgerServerApp
                 editModBtn.Enabled = availableMods.SelectedItem != null;
                 removeModBtn.Enabled = availableMods.SelectedItem != null;
             }
-           
         }
 
         /// <summary>
@@ -193,7 +176,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
         {
-            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
+            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod)GetAvailableModsList().SelectedItem);
             FileIOManager.GetInstance().WriteModsDatabase();
         }
 
@@ -207,12 +190,12 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void AddToEnabledModsBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod) GetAvailableModsList().SelectedItem != null)
+            Mod[] modsToMove = new Mod[GetAvailableModsList().SelectedItems.Count];
+            GetAvailableModsList().SelectedItems.CopyTo(modsToMove, 0);
+            foreach (Mod mod in modsToMove)
             {
-                Mod m = (Mod)GetAvailableModsList().SelectedItem;
-
                 // Move mod from Available Mods -> Enabled Mods
-                ConfigurationManager.MoveMod(m, ConfigurationManager.GetInstance().GetAvailableMods(),
+                ConfigurationManager.MoveMod(mod, ConfigurationManager.GetInstance().GetAvailableMods(),
                                                 ConfigurationManager.GetInstance().GetEnabledMods());
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
@@ -229,16 +212,56 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemovedFromEnabledModsBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod) GetEnabledModsList().SelectedItem != null)
+            Mod[] modsToMove = new Mod[GetEnabledModsList().SelectedItems.Count];
+            GetEnabledModsList().SelectedItems.CopyTo(modsToMove, 0);
+            foreach (Mod mod in modsToMove)
             {
-                Mod m = (Mod)GetEnabledModsList().SelectedItem;
-
                 // Move mod from Enabled Mods -> Available Mods
-                ConfigurationManager.MoveMod(m, ConfigurationManager.GetInstance().GetEnabledMods(),
+                ConfigurationManager.MoveMod(mod, ConfigurationManager.GetInstance().GetEnabledMods(),
                                                 ConfigurationManager.GetInstance().GetAvailableMods());
             }
             ConfigurationManager.GetInstance().AlphabetiseModLists();
             ResetModFilters();
+        }
+
+        /// <summary>
+        /// Event handler for when the Mod Position Up button is pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MoveEnabledModPositionUpBtnPressed(object sender, EventArgs e)
+        {
+            if ((Mod) GetEnabledModsList().SelectedItem != null)
+            {
+                Mod m = (Mod)GetEnabledModsList().SelectedItem;
+
+                // Set move backward to true as moving position 'up' actually means moving the mod earlier in the list
+                Utilities.MoveItem(ConfigurationManager.GetInstance().GetEnabledMods(), m, true);
+
+                // Re-select the mod so we can do multiple moves in a row if we like
+                GetEnabledModsList().SelectedItems.Clear();
+                GetEnabledModsList().SelectedItem = m;
+            }
+        }
+
+        /// <summary>
+        /// Event handler for when the Mod Position Down button is pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MoveEnabledModPositionDownBtnPressed(object sender, EventArgs e)
+        {
+            if ((Mod) GetEnabledModsList().SelectedItem != null)
+            {
+                Mod m = (Mod)GetEnabledModsList().SelectedItem;
+
+                // Move forward is the default, this will mean moving the mod later in the list
+                Utilities.MoveItem(ConfigurationManager.GetInstance().GetEnabledMods(), m);
+
+                // Re-select the mod so we can do multiple moves in a row if we like
+                GetEnabledModsList().SelectedItems.Clear();
+                GetEnabledModsList().SelectedItem = m;
+            }
         }
 
         /// <summary>
@@ -276,64 +299,36 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
-        /// Handler for the LimitFPS Checkbox, enables / disables the FPS Limit Numeric Up Down.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LimitFPSCheckedChanged(object sender, EventArgs e)
-        {
-            if (limitFPS.Checked)
-            {
-                fpsLimitUpDown.Enabled = true;
-            }
-            else
-            {
-                fpsLimitUpDown.Enabled = false;
-            }
-        }
-
-        /// <summary>
-        /// Handler for the Auto Restart Checkbox, enables / disables the Interval and Units Numeric Up Down and ComboBoxes
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AutoRestartCheckedChanged(object sender, EventArgs e)
-        {
-            if (automaticallyRestart.Checked)
-            {
-                restartIntervalUpDown.Enabled = true;
-                restartUnitsComboBox.Enabled = true;
-            }
-            else
-            {
-                restartIntervalUpDown.Enabled = false;
-                restartUnitsComboBox.Enabled = false;
-            }
-        }
-
-        /// <summary>
         /// This is the handler for the Start Server Button. This is also used for the automatic server restart functionality.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void StartServerBtnPressed(object sender, EventArgs e)
         {
+            AdvancedServerParameterSchedule? autoRestart =
+                ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestart"] as AdvancedServerParameterSchedule;
+
+            if (autoRestart == null)
+            {
+                Log.Error("Main - Failed to start server due to issues with auto restart logic. Cannot continue.");
+                return;
+            }
             // If we are starting the server for the first time and using the automatic restart functionality, configure the timer
-            if (automaticallyRestart.Checked && !ProcessManager.GetInstance().IsServerUsingTimer())
+            if (autoRestart.Checked() && !ProcessManager.GetInstance().IsServerUsingTimer())
             {
                 // Create a timespan based on which units the user has selected
                 // Use default value of 1 hour restarts so VS stops yelling at us
                 TimeSpan interval = TimeSpan.FromHours(1);
-                switch (restartUnitsComboBox.SelectedIndex)
+                switch (autoRestart.CurrentIndex)
                 {
                     case (int) ServerRestartIntervalUnit.MINUTES:
-                    interval = TimeSpan.FromMinutes((int) restartIntervalUpDown.Value);
+                    interval = TimeSpan.FromMinutes(Convert.ToInt32(autoRestart.ParameterValue));
                     break;
                     case (int) ServerRestartIntervalUnit.HOURS:
-                    interval = TimeSpan.FromHours((int) restartIntervalUpDown.Value);
+                    interval = TimeSpan.FromHours(Convert.ToInt32(autoRestart.ParameterValue));
                     break;
                     case (int) ServerRestartIntervalUnit.DAYS:
-                    interval = TimeSpan.FromDays((int) restartIntervalUpDown.Value);
+                    interval = TimeSpan.FromDays(Convert.ToInt32(autoRestart.ParameterValue));
                     break;
                 }
                 CreateLaunchArguments();
@@ -341,13 +336,13 @@ namespace ReforgerServerApp
             }
 
             // The user is turning the server off manually
-            else if (automaticallyRestart.Checked && ProcessManager.GetInstance().IsServerUsingTimer())
+            else if (autoRestart.Checked() && ProcessManager.GetInstance().IsServerUsingTimer())
             {
                 ProcessManager.GetInstance().CancelAutomaticRestartTask();
             }
 
             // User just normally pressed the button
-            else if (!automaticallyRestart.Checked && !ProcessManager.GetInstance().IsServerUsingTimer())
+            else if (!autoRestart.Checked() && !ProcessManager.GetInstance().IsServerUsingTimer())
             {
                 CreateLaunchArguments();
                 ProcessManager.GetInstance().StartStopServer();
@@ -447,6 +442,12 @@ namespace ReforgerServerApp
                 param.Value.SetFieldEnabled(enabled);
             }
 
+            foreach (KeyValuePair<string, AdvancedServerParameter> param in
+                ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary())
+            {
+                param.Value.SetEnabled(enabled);
+            }
+
             enableAllModsBtn.Enabled = enabled;
             addToEnabledBtn.Enabled = enabled;
             disableAllModsBtn.Enabled = enabled;
@@ -458,39 +459,13 @@ namespace ReforgerServerApp
             editModBtn.Enabled = enabled;
             deleteServerFilesBtn.Enabled = enabled;
             locateServerFilesBtn.Enabled = enabled;
-            limitFPS.Enabled = enabled;
-            fpsLimitUpDown.Enabled = enabled;
-            automaticallyRestart.Enabled = enabled;
-            forcePortCheckBox.Enabled = enabled;
-            overridePortNumericUpDown.Enabled = enabled;
-            nds.Enabled = enabled;
-            ndsUpDown.Enabled = enabled;
-            nwkResolution.Enabled = enabled;
-            nwkResolutionUpDown.Enabled = enabled;
-            staggeringBudget.Enabled = enabled;
-            staggeringBudgetUpDown.Enabled = enabled;
-            streamingBudget.Enabled = enabled;
-            streamingBudgetUpDown.Enabled = enabled;
-            streamsDelta.Enabled = enabled;
-            streamsDeltaUpDown.Enabled = enabled;
             logLevelComboBox.Enabled = enabled;
             scenarioSelectBtn.Enabled = enabled;
             editMissionHeaderBtn.Enabled = enabled;
-            sessionSave.Enabled = enabled;
-            loadSessionSave.Enabled = enabled;
             useExperimentalCheckBox.Enabled = enabled;
-
-            // Handle these differently as we don't want them enabled if 'Automatically Restart' isn't enabled
-            if (automaticallyRestart.Enabled && automaticallyRestart.Checked)
-            {
-                restartIntervalUpDown.Enabled = true;
-                restartUnitsComboBox.Enabled = true;
-            }
-            else
-            {
-                restartIntervalUpDown.Enabled = false;
-                restartUnitsComboBox.Enabled = false;
-            }
+            useUpnp.Enabled = enabled;
+            moveModPosUpBtn.Enabled = enabled;
+            moveModPosDownBtn.Enabled = enabled;
         }
 
         /// <summary>
@@ -501,108 +476,6 @@ namespace ReforgerServerApp
         private void ClearLogBtnPressed(object sender, EventArgs e)
         {
             steamCmdLog.Text = string.Empty;
-        }
-
-        /// <summary>
-        /// Handler for the Override Port Checkbox, enables / disables the Override Port field
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OverridePortCheckChanged(object sender, EventArgs e)
-        {
-            if (forcePortCheckBox.Checked)
-            {
-                overridePortNumericUpDown.Enabled = true;
-            }
-            else
-            {
-                overridePortNumericUpDown.Enabled = false;
-            }
-        }
-
-        /// <summary>
-        /// Handler for the NDS Checkbox, enables / disables the NDS field
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NDSCheckChanged(object sender, EventArgs e)
-        {
-            if (nds.Checked)
-            {
-                ndsUpDown.Enabled = true;
-            }
-            else
-            {
-                ndsUpDown.Enabled = false;
-            }
-        }
-
-        /// <summary>
-        /// Handler for the NWK Resolution Checkbox, enables / disables the NWK Resolution field
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void NWKCheckChanged(object sender, EventArgs e)
-        {
-            if (nwkResolution.Checked)
-            {
-                nwkResolutionUpDown.Enabled = true;
-            }
-            else
-            {
-                nwkResolutionUpDown.Enabled = false;
-            }
-        }
-
-        /// <summary>
-        /// Handler for the Staggering Budget Checkbox, enables / disables the Staggering Budget field
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void StaggeringBudgetCheckChanged(object sender, EventArgs e)
-        {
-            if (staggeringBudget.Checked)
-            {
-                staggeringBudgetUpDown.Enabled = true;
-            }
-            else
-            {
-                staggeringBudgetUpDown.Enabled = false;
-            }
-        }
-
-        /// <summary>
-        /// Handler for the Streaming Budget Checkbox, enables / disables the Streaming Budget field
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void StreamingBudgetCheckChanged(object sender, EventArgs e)
-        {
-            if (streamingBudget.Checked)
-            {
-                streamingBudgetUpDown.Enabled = true;
-            }
-            else
-            {
-                streamingBudgetUpDown.Enabled = false;
-            }
-        }
-
-        /// <summary>
-        /// Handler for the Streams Delta Checkbox, enables / disables the Streams Delta field
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void StreamsDeltaCheckChanged(object sender, EventArgs e)
-        {
-            if (streamsDelta.Checked)
-            {
-                streamsDeltaUpDown.Enabled = true;
-            }
-            else
-            {
-                streamsDeltaUpDown.Enabled = false;
-            }
         }
 
         /// <summary>
@@ -655,7 +528,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void LoadSessionSaveCheckChanged(object sender, EventArgs e)
         {
-            sessionSave.Enabled = loadSessionSave.Checked;
+            //sessionSave.Enabled = loadSessionSave.Checked;
         }
 
         /// <summary>
@@ -1019,6 +892,112 @@ namespace ReforgerServerApp
             }
         }
 
+        void CreateAdvancedServerParameterControls()
+        {
+            AdvancedServerParameterNumeric limitServerMaxFPS = new()
+            {
+                ParameterName = "maxFPS",
+                ParameterFriendlyName = "Limit Server Max FPS",
+                ParameterMin = 60,
+                ParameterMax = 1000,
+                ParameterIncrement = 1,
+                ParameterValue = 60,
+                Description = "Recommended at the moment."
+            };
+            advancedParametersPanel.Controls.Add(limitServerMaxFPS);
+            AdvancedServerParameterSchedule autoRestart = new()
+            {
+                ParameterName = "autoRestart",
+                ParameterFriendlyName = "Automatically Restart",
+                ParameterMin = 60,
+                ParameterMax = 1000,
+                ParameterIncrement = 1,
+                ParameterValue = 60,
+                Description = "Specify whether and when the server should automatically restart.",
+                Items = new [] {"Mins", "Hours", "Days"}
+            };
+            advancedParametersPanel.Controls.Add(autoRestart);
+            AdvancedServerParameterNumeric overridePort = new()
+            {
+                ParameterName = "bindPort",
+                ParameterFriendlyName = "Override Port",
+                ParameterMin = 1,
+                ParameterMax = 65535,
+                ParameterIncrement = 1,
+                ParameterValue = 2001,
+                Description = "Override the ports specified in server configuration."
+            };
+            advancedParametersPanel.Controls.Add(overridePort);
+            AdvancedServerParameterNumeric networkDynamicSim = new()
+            {
+                ParameterName = "nds",
+                ParameterFriendlyName = "Network Dynamic Simulation",
+                ParameterMin = 0,
+                ParameterMax = 2,
+                ParameterIncrement = 1,
+                ParameterValue = 2,
+                Description = "This is set to '2' by default if unchecked."
+            };
+            advancedParametersPanel.Controls.Add(networkDynamicSim);
+            AdvancedServerParameterNumeric spatialMapRes = new()
+            {
+                ParameterName = "nwkResolution",
+                ParameterFriendlyName = "Spatial Map Resolution",
+                ParameterMin = 100,
+                ParameterMax = 1000,
+                ParameterIncrement = 1,
+                ParameterValue = 500,
+                Description = "Defines what resolution Spatial Map cells should be set at in a 100 - 1000m range."
+            };
+            advancedParametersPanel.Controls.Add(spatialMapRes);
+            AdvancedServerParameterNumeric staggeringBudget = new()
+            {
+                ParameterName = "staggeringBudget",
+                ParameterFriendlyName = "Staggering Budget",
+                ParameterMin = 1,
+                ParameterMax = 10201,
+                ParameterIncrement = 1,
+                ParameterValue = 5000,
+                Description = "Defines how many stationary spatial map cells are allowed to be processed in one tick. If not set it uses \"-nds\" diameter."
+            };
+            advancedParametersPanel.Controls.Add(staggeringBudget);
+            AdvancedServerParameterNumeric streamingBudget = new()
+            {
+                ParameterName = "streamingBudget",
+                ParameterFriendlyName = "Streaming Budget",
+                ParameterMin = 100,
+                ParameterMax = 10201,
+                ParameterIncrement = 1,
+                ParameterValue = 500,
+                Description = "Streaming budget is the global streaming budget that is equally distributed between all connections."
+            };
+            advancedParametersPanel.Controls.Add(streamingBudget);
+            AdvancedServerParameterNumeric streamsDelta = new()
+            {
+                ParameterName = "streamsDelta",
+                ParameterFriendlyName = "Streams Delta",
+                ParameterMin = 1,
+                ParameterMax = 1000,
+                ParameterIncrement = 1,
+                ParameterValue= 100,
+                Description = "Streams delta is a tool to limit the amount of streams being opened for a client."
+            };
+            advancedParametersPanel.Controls.Add(streamsDelta);
+            AdvancedServerParameterString loadSessionSave = new()
+            {
+                ParameterName = "loadSessionSave",
+                ParameterFriendlyName = "Load Session Save",
+                Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
+                ParameterPlaceholder = "Using latest save..."
+            };
+            advancedParametersPanel.Controls.Add(loadSessionSave);
+
+            foreach (AdvancedServerParameter param in advancedParametersPanel.Controls)
+            {
+                ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()[param.ParameterName] = param;
+            }
+        }
+
         /// <summary>
         /// Event Handler for the 'UpdateSteamCmdLog' event
         /// This method is called twice if the call came from a non-UI thread
@@ -1103,44 +1082,46 @@ namespace ReforgerServerApp
                 logLevel = new("logLevel", $"{logLevelComboBox.Text}")
             };
 
-            if (limitFPS.Checked)
+            var advParams = ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary();
+
+            if (advParams["maxFPS"].Checked())
             {
-                args.maxFPS = new("maxFPS", Convert.ToString(fpsLimitUpDown.Value));
+                args.maxFPS = new("maxFPS", Convert.ToString(advParams["maxFPS"].ParameterValue));
             }
 
-            if (forcePortCheckBox.Checked)
+            if (advParams["bindPort"].Checked())
             {
-                args.bindPort = new("bindPort", Convert.ToString(overridePortNumericUpDown.Value));
+                args.bindPort = new("bindPort", Convert.ToString(advParams["bindPort"].ParameterValue));
             }
 
-            if (nds.Checked)
+            if (advParams["nds"].Checked())
             {
-                args.nds = new("nds", Convert.ToString(ndsUpDown.Value));
+                args.nds = new("nds", Convert.ToString(advParams["nds"].ParameterValue));
             }
 
-            if (nwkResolution.Checked)
+            if (advParams["nwkResolution"].Checked())
             {
-                args.nwkResolution = new("nwkResolution", Convert.ToString(nwkResolutionUpDown.Value));
+                args.nwkResolution = new("nwkResolution", Convert.ToString(advParams["nwkResolution"].ParameterValue));
             }
 
-            if (staggeringBudget.Checked)
+            if (advParams["staggeringBudget"].Checked())
             {
-                args.staggeringBudget = new("staggeringBudget", Convert.ToString(staggeringBudgetUpDown.Value));
+                args.staggeringBudget = new("staggeringBudget", Convert.ToString(advParams["staggeringBudget"].ParameterValue));
             }
 
-            if (streamingBudget.Checked)
+            if (advParams["streamingBudget"].Checked())
             {
-                args.streamingBudget = new("streamingBudget", Convert.ToString(streamingBudgetUpDown.Value));
+                args.streamingBudget = new("streamingBudget", Convert.ToString(advParams["streamingBudget"].ParameterValue));
             }
 
-            if (streamsDelta.Checked)
+            if (advParams["streamsDelta"].Checked())
             {
-                args.streamsDelta = new("streamsDelta", Convert.ToString(streamsDeltaUpDown.Value));
+                args.streamsDelta = new("streamsDelta", Convert.ToString(advParams["streamsDelta"].ParameterValue));
             }
 
-            if (loadSessionSave.Checked)
+            if (advParams["loadSessionSave"].Checked())
             {
-                args.loadSessionSave = new("loadSessionSave", sessionSave.Text);
+                args.loadSessionSave = new("loadSessionSave", Convert.ToString(advParams["loadSessionSave"].ParameterValue));
             }
 
             ProcessManager.GetInstance().SetLaunchArgumentsModel(args);
@@ -1168,6 +1149,7 @@ namespace ReforgerServerApp
             availableMods.DataSource = m_availableModsBindingSource;
             enabledMods.DataSource = m_enabledModsBindingSource;
             modsSearchTB.Text = string.Empty;
+            availableMods.SelectedItem = enabledMods.SelectedItem = null;
         }
 
         /// <summary>
@@ -1194,6 +1176,11 @@ namespace ReforgerServerApp
         private void UseExperimentalServerCheckboxChanged(object sender, EventArgs e)
         {
             ConfigurationManager.GetInstance().useExperimentalServer = useExperimentalCheckBox.Checked;
+        }
+
+        private void OnUseUPnPCheckChanged(object sender, EventArgs e)
+        {
+            NetworkManager.GetInstance().useUPnP = useUpnp.Checked;
         }
     }
 }
