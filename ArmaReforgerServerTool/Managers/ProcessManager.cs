@@ -278,8 +278,7 @@ namespace ReforgerServerApp.Managers
                 SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: {e.Data}{Environment.NewLine}");
                 OnUpdateSteamCmdLogEvent(steamCmd);
                 // Kill the server if it fails to start correctly.
-                if (e.Data.Contains("Unable to Initialize") ||
-                    e.Data.Contains("Game destroyed"))
+                if (e.Data.Contains("Unable to Initialize"))
                 {
                     steamCmd = new($"{Utilities.GetTimestamp()}: System stopped server due to an error.{Environment.NewLine}");
                     Log.Information("ProcessManager - System stopped server due to an error.");
