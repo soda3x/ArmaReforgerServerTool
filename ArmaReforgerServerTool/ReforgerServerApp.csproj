@@ -7,8 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Company>soda3x</Company>
-    <AssemblyVersion>0.9.1</AssemblyVersion>
-    <FileVersion>0.9.1</FileVersion>
+    <AssemblyVersion>0.9.2</AssemblyVersion>
+    <FileVersion>0.9.2</FileVersion>
     <ApplicationIcon>Resources\arma_icon_white.ico</ApplicationIcon>
     <PublishSingleFile>true</PublishSingleFile>
 	<OutputType>winexe</OutputType>
@@ -28,6 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Components\AdvancedServerParameterTime.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Components\ServerParameterList.cs">
       <SubType>UserControl</SubType>
     </Compile>

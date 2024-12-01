@@ -917,6 +917,16 @@ namespace ReforgerServerApp
                 Items = new [] {"Mins", "Hours", "Days"}
             };
             advancedParametersPanel.Controls.Add(autoRestart);
+            AdvancedServerParameterTime autoRestartTime = new()
+            {
+                ParameterName = "autoRestartDaily",
+                ParameterFriendlyName = "Restart daily at this time",
+                Description = "Specify, in 24 hour time, at what time the server will restart.",
+                ParameterMin = DateTime.Today,
+                ParameterMax = DateTime.Today.AddDays(1).AddMinutes(-1),
+                ParameterValue = DateTime.Today
+            };
+            advancedParametersPanel.Controls.Add(autoRestartTime);
             AdvancedServerParameterNumeric overridePort = new()
             {
                 ParameterName = "bindPort",
