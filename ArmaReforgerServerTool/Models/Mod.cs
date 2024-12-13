@@ -23,30 +23,34 @@ namespace ReforgerServerApp
 
         [JsonConverter(typeof(JsonUtils.ConditionalFieldConverter))]
         public string version { get; set; }
+        public bool required { get; set; }
 
         private const string LATEST_MOD_VER_STR = "latest";
 
         public Mod() { /* Exists only for JSON deserializing */ }
 
-        public Mod(string modId, string modName, string modVersion)
+        public Mod(string modId, string modName, string modVersion, bool required = false)
         {
-            this.modId   = modId;
-            this.name    = modName;
-            this.version = modVersion;
+            this.modId    = modId;
+            this.name     = modName;
+            this.version  = modVersion;
+            this.required = required;
         }
 
-        public Mod(string modId, string modName)
+        public Mod(string modId, string modName, bool required = false)
         {
-            this.modId   = modId;
-            this.name    = modName;
-            this.version = LATEST_MOD_VER_STR;
+            this.modId    = modId;
+            this.name     = modName;
+            this.version  = LATEST_MOD_VER_STR;
+            this.required = required;
         }
 
         public Mod(Mod m)
         {
-            this.modId   = m.modId;
-            this.name    = m.name;
-            this.version = m.version;
+            this.modId    = m.modId;
+            this.name     = m.name;
+            this.version  = m.version;
+            this.required = m.required;
         }
 
         public string GetModID()
@@ -62,6 +66,11 @@ namespace ReforgerServerApp
         public string GetModVersion()
         {
             return version!;
+        }
+
+        public bool IsModRequired()
+        {
+            return required!;
         }
 
         public override string ToString()
