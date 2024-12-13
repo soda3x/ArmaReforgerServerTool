@@ -18,21 +18,30 @@ namespace ReforgerServerApp
         public AddModDialog(Main reforgerApp)
         {
             InitializeComponent();
-            this.Text     = "Arma Reforger Dedicated Server Tool - Add Mod";
+            this.Text = "Arma Reforger Dedicated Server Tool - Add Mod";
             m_reforgerApp = reforgerApp;
+            CreateTooltips();
         }
 
         public AddModDialog(Main reforgerApp, Mod m, int idx)
         {
             InitializeComponent();
-            this.Text     = "Arma Reforger Dedicated Server Tool - Edit Mod";
-            m_reforgerApp = reforgerApp;
-            modId.Text    = m.GetModID();
-            modName.Text  = m.GetModName();
-            modVers.Text  = m.GetModVersion().Equals("latest") ? "" : m.GetModVersion();
-            addBtn.Text   = "Edit";
-            m_isEditMode  = true;
-            m_idx         = idx;
+            this.Text        = "Arma Reforger Dedicated Server Tool - Edit Mod";
+            m_reforgerApp    = reforgerApp;
+            modId.Text       = m.GetModID();
+            modName.Text     = m.GetModName();
+            modVers.Text     = m.GetModVersion().Equals("latest") ? "" : m.GetModVersion();
+            required.Checked = m.IsModRequired();
+            addBtn.Text      = "Edit";
+            m_isEditMode     = true;
+            m_idx            = idx;
+            CreateTooltips();
+        }
+
+        private void CreateTooltips()
+        {
+            ToolTip requiredTooltip = new();
+            requiredTooltip.SetToolTip(requiredLabel, "Setting this will make it so that when this mod cannot be downloaded from the Workshop, the server will not start.");
         }
 
         /// <summary>
@@ -60,12 +69,13 @@ namespace ReforgerServerApp
 
                 if (!string.IsNullOrWhiteSpace(modVers.Text.Trim()))
                 {
-                    mod = new(modId.Text.Trim(), modName.Text.Trim());
+                    mod = new(modId.Text.Trim(), modName.Text.Trim(), required.Checked);
                 }
                 else
                 {
-                    mod = new(modId.Text.Trim(), modName.Text.Trim());
+                    mod = new(modId.Text.Trim(), modName.Text.Trim(), required.Checked);
                 }
+
                 if (m_isEditMode)
                 {
                     ConfigurationManager.GetInstance().GetAvailableMods()[m_idx] = mod;
@@ -74,6 +84,7 @@ namespace ReforgerServerApp
                 {
                     ConfigurationManager.GetInstance().GetAvailableMods().Add(mod);
                 }
+
                 FileIOManager.GetInstance().WriteModsDatabase();
                 ConfigurationManager.GetInstance().AlphabetiseModLists();
                 Close();

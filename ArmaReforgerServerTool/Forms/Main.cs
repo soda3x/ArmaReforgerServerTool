@@ -567,6 +567,13 @@ namespace ReforgerServerApp
                                                     .root.game.admins
             };
             serverParameters.Controls.Add(admins);
+            ServerParameterBool modsRequiredByDefault = new()
+            {
+                ParameterName = "modsRequiredByDefault",
+                ParameterFriendlyName = "Mods Required by Default",
+                ParameterTooltip = Constants.SERVER_PARAM_MODS_REQUIRED_BY_DEFAULT_TOOLTIP_STR
+            };
+            serverParameters.Controls.Add(modsRequiredByDefault);
             ServerParameterNumeric maxPlayers = new()
             {
                 ParameterName = "maxPlayers",
@@ -822,6 +829,22 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR
             };
             serverParameters.Controls.Add(crossPlatform);
+            ServerParameterBool supportedPlatformXbox = new()
+            {
+                ParameterName = "supportedPlatformXbox",
+                ParameterFriendlyName = "Allow Xbox clients",
+                ParameterValue = false,
+                ParameterTooltip = "Allow Xbox players to join the server (Cross Platform must also be enabled)"
+            };
+            serverParameters.Controls.Add(supportedPlatformXbox);
+            ServerParameterBool supportedPlatformPSN = new()
+            {
+                ParameterName = "supportedPlatformPSN",
+                ParameterFriendlyName = "Allow PlayStation clients",
+                ParameterValue = false,
+                ParameterTooltip = "Allow PlayStation players to join the server (Cross Platform must also be enabled)"
+            };
+            serverParameters.Controls.Add(supportedPlatformPSN);
             ServerParameterNumeric aiLimit = new()
             {
                 ParameterName = "aiLimit",
@@ -885,6 +908,14 @@ namespace ReforgerServerApp
                 ParameterTooltip = Constants.SERVER_PARAM_DISABLE_AI_TOOLTIP_STR
             };
             serverParameters.Controls.Add(disableAI);
+            ServerParameterNumeric joinQueueMaxSize = new()
+            {
+                ParameterName = "maxSize",
+                ParameterFriendlyName = "Join Queue Max Size",
+                ParameterValue = JoinQueue.DEFAULT_MAX_SIZE,
+                ParameterTooltip = Constants.SERVER_PARAM_JOIN_QUEUE_MAX_SIZE_TOOLTIP_STR
+            };
+            serverParameters.Controls.Add(joinQueueMaxSize);
 
             foreach (ServerParameter param in serverParameters.Controls)
             {

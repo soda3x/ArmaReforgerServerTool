@@ -62,6 +62,7 @@ namespace ReforgerServerApp
 
         public static string SUPPORTED_PLATFORM_PC   = "PLATFORM_PC";
         public static string SUPPORTED_PLATFORM_XBOX = "PLATFORM_XBL";
+        public static string SUPPORTED_PLATFORM_PSN  = "PLATFORM_PSN";
 
         public static string USE_UPNP_STR = "Enable this to attempt to open required ports using UPnP.\nIf this is successful, you will not need to port-forward.";
 
@@ -112,7 +113,18 @@ namespace ReforgerServerApp
 
         public static string SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_TOOLTIP_STR = "Maximum view distance enforced by the server.";
 
-        public static string SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR = "If enabled, Xbox clients will be able to connect to the server";
+        public static string SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR = "If enabled, Xbox and PlayStation clients will be able to connect to the server.\r\n" + 
+            "Valid combinations are:\r\n" +
+            "\tPC only\r\n" +
+            "\tPC + Xbox + PlayStation\r\n" +
+            "\tPC + Xbox\r\n" +
+            "Note that you cannot run a Vanilla Server unless it is set to PC only or allows all platforms to connect.\r\n" +
+            "Note that PlayStation currently does not support modded servers.\r\n" +
+            "The following combinations are invalid:\r\n" +
+            "\tPC + PlayStation\r\n" +
+            "\tXbox + PlayStation\r\n" +
+            "\tXbox only\r\n" +
+            "\tPlayStation only";
 
         public static string SERVER_PARAM_VISIBLE_TOOLTIP_STR = "Set the visibility of the server in the Server Browser.";
 
@@ -162,6 +174,10 @@ namespace ReforgerServerApp
         public static string SERVER_PARAM_RCON_WHITELIST_TOOLTIP_STR = "Specifies the list of commands that can be executed, and no other command is allowed. Should not be used in conjunction with RCON Blacklist.";
 
         public static string SERVER_PARAM_RCON_BLACKLIST_TOOLTIP_STR = "A list of commands excluded from execution. Should not be used in conjunction with RCON Whitelist.";
+
+        public static string SERVER_PARAM_JOIN_QUEUE_MAX_SIZE_TOOLTIP_STR = "Sets the maximum number of players that can queue to join the server.";
+
+        public static string SERVER_PARAM_MODS_REQUIRED_BY_DEFAULT_TOOLTIP_STR = "Overrides default value for 'required' for all mods.";
 
         public static string MIGRATE_LEGACY_MOD_DB_PROMPT_STR = "A mod database from a previous version of the Arma Reforger Dedicated Server Tool was found.\r\n\r\n" +
             "This version of the tool is not compatible with this file type.\r\n\r\n" +
