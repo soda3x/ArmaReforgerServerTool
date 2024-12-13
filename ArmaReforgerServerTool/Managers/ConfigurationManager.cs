@@ -135,14 +135,16 @@ namespace ReforgerServerApp
                 ScenarioIdEventArgs scenarioId = new(m_serverConfig.root.game.scenarioId);
                 OnUpdateScenarioIdFromLoadedConfig(scenarioId);
 
-                m_serverParamsDictionary["maxPlayers"].ParameterValue    = m_serverConfig.root.game.maxPlayers;
-                m_serverParamsDictionary["visible"].ParameterValue       = m_serverConfig.root.game.visible;
-                m_serverParamsDictionary["crossPlatform"].ParameterValue = m_serverConfig.root.game.crossPlatform;
-                m_serverConfig.root.game.supportedPlatforms              = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
+                m_serverParamsDictionary["maxPlayers"].ParameterValue            = m_serverConfig.root.game.maxPlayers;
+                m_serverParamsDictionary["visible"].ParameterValue               = m_serverConfig.root.game.visible;
+                m_serverParamsDictionary["modsRequiredByDefault"].ParameterValue = m_serverConfig.root.game.modsRequiredByDefault;
+                m_serverParamsDictionary["crossPlatform"].ParameterValue         = m_serverConfig.root.game.crossPlatform;
+                m_serverParamsDictionary["supportedPlatformXbox"].ParameterValue = m_serverConfig.root.game.supportedPlatforms.Contains(Constants.SUPPORTED_PLATFORM_XBOX);
+                m_serverParamsDictionary["supportedPlatformPSN"].ParameterValue  = m_serverConfig.root.game.supportedPlatforms.Contains(Constants.SUPPORTED_PLATFORM_PSN);
 
-                m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMaxViewDistance;
+                m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue  = m_serverConfig.root.game.gameProperties.serverMaxViewDistance;
                 m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMinGrassDistance;
-                m_serverParamsDictionary["networkViewDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.networkViewDistance;
+                m_serverParamsDictionary["networkViewDistance"].ParameterValue    = m_serverConfig.root.game.gameProperties.networkViewDistance;
 
                 m_serverParamsDictionary["disableThirdPerson"].ParameterValue = m_serverConfig.root.game.gameProperties.disableThirdPerson;
                 m_serverParamsDictionary["fastValidation"].ParameterValue     = m_serverConfig.root.game.gameProperties.fastValidation;
@@ -156,7 +158,7 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["playerSaveTime"].ParameterValue         = m_serverConfig.root.operating.playerSaveTime;
                 m_serverParamsDictionary["aiLimit"].ParameterValue                = m_serverConfig.root.operating.aiLimit;
                 m_serverParamsDictionary["disableCrashReporter"].ParameterValue   = m_serverConfig.root.operating.disableCrashReporter;
-
+                
                 // If there is either a valid empty list or list with elements loaded in, assume disableNavmeshStreaming is enabled
                 bool disableNavmeshStreaming = m_serverConfig.root.operating.disableNavmeshStreaming != null;
 
@@ -170,6 +172,8 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["disableServerShutdown"].ParameterValue  = m_serverConfig.root.operating.disableServerShutdown;
                 m_serverParamsDictionary["slotReservationTimeout"].ParameterValue = m_serverConfig.root.operating.slotReservationTimeout;
                 m_serverParamsDictionary["disableAI"].ParameterValue              = m_serverConfig.root.operating.disableAI;
+
+                m_serverParamsDictionary["maxSize"].ParameterValue = m_serverConfig.root.operating.joinQueue.maxSize;
 
                 foreach (Mod m in m_serverConfig.root.game.mods)
                 {
@@ -225,14 +229,19 @@ namespace ReforgerServerApp
                 m_serverConfig.root.rcon = null;
             }
 
-            m_serverConfig.root.game.passwordAdmin      = (string) m_serverParamsDictionary["passwordAdmin"].ParameterValue;
-            m_serverConfig.root.game.name               = (string) m_serverParamsDictionary["name"].ParameterValue;
-            m_serverConfig.root.game.password           = (string) m_serverParamsDictionary["password"].ParameterValue;
-            m_serverConfig.root.game.maxPlayers         = Convert.ToInt32(m_serverParamsDictionary["maxPlayers"].ParameterValue);
-            m_serverConfig.root.game.visible            = (bool) m_serverParamsDictionary["visible"].ParameterValue;
-            m_serverConfig.root.game.crossPlatform      = (bool) m_serverParamsDictionary["crossPlatform"].ParameterValue;
-            m_serverConfig.root.game.mods               = m_enabledMods.ToArray();
-            m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
+            m_serverConfig.root.game.passwordAdmin         = (string) m_serverParamsDictionary["passwordAdmin"].ParameterValue;
+            m_serverConfig.root.game.name                  = (string) m_serverParamsDictionary["name"].ParameterValue;
+            m_serverConfig.root.game.password              = (string) m_serverParamsDictionary["password"].ParameterValue;
+            m_serverConfig.root.game.maxPlayers            = Convert.ToInt32(m_serverParamsDictionary["maxPlayers"].ParameterValue);
+            m_serverConfig.root.game.visible               = (bool) m_serverParamsDictionary["visible"].ParameterValue;
+            m_serverConfig.root.game.crossPlatform         = (bool) m_serverParamsDictionary["crossPlatform"].ParameterValue;
+            m_serverConfig.root.game.mods                  = m_enabledMods.ToArray();
+            m_serverConfig.root.game.modsRequiredByDefault = (bool) m_serverParamsDictionary["modsRequiredByDefault"].ParameterValue;
+
+            m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform,
+                                                           (bool) m_serverParamsDictionary["supportedPlatformXbox"].ParameterValue,
+                                                           (bool) m_serverParamsDictionary["supportedPlatformPSN"].ParameterValue);
+
             m_serverConfig.root.game.admins             = (string[]) m_serverParamsDictionary["admins"].ParameterValue;
             // m_serverConfig.root.game.scenarioId - Don't need to set scenarioId as its set directly from the Scenario Selector Form
 
@@ -262,7 +271,9 @@ namespace ReforgerServerApp
             }
             m_serverConfig.root.operating.disableServerShutdown = (bool) m_serverParamsDictionary["disableServerShutdown"].ParameterValue;
             m_serverConfig.root.operating.disableCrashReporter  = (bool) m_serverParamsDictionary["disableCrashReporter"].ParameterValue;
-            m_serverConfig.root.operating.disableAI             = (bool)m_serverParamsDictionary["disableAI"].ParameterValue;
+            m_serverConfig.root.operating.disableAI             = (bool) m_serverParamsDictionary["disableAI"].ParameterValue;
+
+            m_serverConfig.root.operating.joinQueue.maxSize = Convert.ToInt32(m_serverParamsDictionary["maxSize"].ParameterValue);
         }
 
         /// <summary>

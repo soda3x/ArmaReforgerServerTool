@@ -135,21 +135,31 @@ namespace ReforgerServerApp.Utils
         }
 
         /// <summary>
-        /// Set supported platforms, seeing as its invalid to only host Xbox servers,
-        /// if crossplay is enabled, its safe to assume PC and XBL are supported platforms
+        /// Set supported platforms. There are multiple combinations of valid and invalid so we need to
+        /// construct the supported platforms list based on which platforms are allowed to connect.
         /// </summary>
         /// <param name="crossplayEnabled"></param>
+        /// <param name="xboxAllowed"></param>
+        /// <param name="psnAllowed"></param>
         /// <returns>Supported Platforms based on whether crossplay is enabled</returns>
-        public static string[] GetSupportedPlatforms(bool crossplayEnabled)
+        public static string[] GetSupportedPlatforms(bool crossplayEnabled, bool xboxAllowed, bool psnAllowed)
         {
+            List<string> supportedPlatforms = new() { Constants.SUPPORTED_PLATFORM_PC };
             if (crossplayEnabled)
             {
-                return new string[] { Constants.SUPPORTED_PLATFORM_PC, Constants.SUPPORTED_PLATFORM_XBOX };
+                Log.Debug("Crossplay is enabled");
+                if (xboxAllowed)
+                {
+                    Log.Debug("Adding Xbox to supported platforms");
+                    supportedPlatforms.Add(Constants.SUPPORTED_PLATFORM_XBOX);
+                }
+                if (psnAllowed)
+                {
+                    Log.Debug("Adding PlayStation to supported platforms");
+                    supportedPlatforms.Add(Constants.SUPPORTED_PLATFORM_PSN);
+                }
             }
-            else
-            {
-                return new string[] { Constants.SUPPORTED_PLATFORM_PC };
-            }
+            return supportedPlatforms.ToArray();
         }
 
         /// <summary>
