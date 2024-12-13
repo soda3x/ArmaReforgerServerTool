@@ -131,11 +131,12 @@ namespace ReforgerServerApp
     /// </summary>
     public class Game
     {
-        public static readonly int MIN_PLAYERS               = 1;
-        public static readonly int MAX_PLAYERS               = 256;
-        public static readonly int DEFAULT_PLAYERS           = 64;
-        public static readonly bool DEFAULT_VISIBLE          = true;
-        public static readonly bool DEFAULT_CROSS_PLATFORM   = false;
+        public static readonly int MIN_PLAYERS                       = 1;
+        public static readonly int MAX_PLAYERS                       = 256;
+        public static readonly int DEFAULT_PLAYERS                   = 64;
+        public static readonly bool DEFAULT_VISIBLE                  = true;
+        public static readonly bool DEFAULT_CROSS_PLATFORM           = false;
+        public static readonly bool DEFAULT_MODS_REQUIRED_BY_DEFAULT = false;
 
         public string name { get; set; }
         public string password { get; set; }
@@ -148,10 +149,12 @@ namespace ReforgerServerApp
         public string[] supportedPlatforms { get; set; }
         public GameProperties gameProperties { get; set; }
         public Mod[] mods { get; set; }
+        public bool modsRequiredByDefault { get; set; }
 
         public Game(string name, string password, string passwordAdmin, string[] admins, 
             string scenarioId, int maxPlayers, bool visible, bool crossPlatform, 
-            string[] supportedPlatforms, GameProperties gameProperties, Mod[] mods) 
+            string[] supportedPlatforms, GameProperties gameProperties, Mod[] mods, 
+            bool modsRequiredByDefault) 
         {
             this.name = name;
             this.password = password;
@@ -164,6 +167,7 @@ namespace ReforgerServerApp
             this.supportedPlatforms = supportedPlatforms;
             this.gameProperties = gameProperties;
             this.mods = mods;
+            this.modsRequiredByDefault = modsRequiredByDefault;
         }
 
         public static Game Default => new(
@@ -177,7 +181,8 @@ namespace ReforgerServerApp
             DEFAULT_CROSS_PLATFORM,
             Array.Empty<string>(),
             GameProperties.Default,
-            Array.Empty<Mod>()
+            Array.Empty<Mod>(),
+            DEFAULT_MODS_REQUIRED_BY_DEFAULT
         );
     }
 
@@ -274,9 +279,10 @@ namespace ReforgerServerApp
         public bool disableServerShutdown { get; set; }
         public bool disableCrashReporter { get; set; }
         public bool disableAI { get; set; }
+        public JoinQueue joinQueue { get; set; }
 
         public Operating(bool lobbyPlayerSynchronise, int playerSaveTime, int aiLimit, int slotReservationTimeout,
-            string[] disableNavmeshStreaming, bool disableServerShutdown, bool disableCrashReporter, bool disableAI)
+            string[] disableNavmeshStreaming, bool disableServerShutdown, bool disableCrashReporter, bool disableAI, JoinQueue joinQueue)
         {
             this.lobbyPlayerSynchronise = lobbyPlayerSynchronise;
             this.playerSaveTime = playerSaveTime;
@@ -286,6 +292,7 @@ namespace ReforgerServerApp
             this.disableServerShutdown = disableServerShutdown;
             this.disableCrashReporter = disableCrashReporter;
             this.disableAI = disableAI;
+            this.joinQueue = joinQueue;
         }
 
         public static Operating Default => new(
@@ -296,8 +303,25 @@ namespace ReforgerServerApp
             Array.Empty<string>(),
             DEFAULT_DISABLE_SERVER_SHUTDOWN,
             DEFAULT_DISABLE_CRASH_REPORTER,
-            DEFAULT_DISABLE_AI
+            DEFAULT_DISABLE_AI,
+            JoinQueue.Default
         );
+    }
+
+    public class JoinQueue
+    {
+        public static readonly int DEFAULT_MAX_SIZE = 0;
+        public static readonly int MIN_MAX_SIZE     = 0;
+        public static readonly int MAX_MAX_SIZE     = 50;
+
+        public int maxSize { get; set; }
+
+        public JoinQueue(int maxSize)
+        {
+            this.maxSize = maxSize;
+        }
+
+        public static JoinQueue Default => new(DEFAULT_MAX_SIZE);
     }
 
     public class ServerConfiguration
