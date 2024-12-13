@@ -36,7 +36,8 @@
             cancelBtn = new Button();
             label3 = new Label();
             modVers = new TextBox();
-            label4 = new Label();
+            requiredLabel = new Label();
+            required = new CheckBox();
             SuspendLayout();
             // 
             // modName
@@ -51,7 +52,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label1.Location = new Point(8, 10);
+            label1.Location = new Point(8, 14);
             label1.Name = "label1";
             label1.Size = new Size(92, 21);
             label1.TabIndex = 1;
@@ -61,7 +62,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(8, 39);
+            label2.Location = new Point(8, 43);
             label2.Name = "label2";
             label2.Size = new Size(65, 21);
             label2.TabIndex = 3;
@@ -77,7 +78,7 @@
             // 
             // addBtn
             // 
-            addBtn.Location = new Point(397, 106);
+            addBtn.Location = new Point(400, 109);
             addBtn.Name = "addBtn";
             addBtn.Size = new Size(75, 23);
             addBtn.TabIndex = 4;
@@ -87,7 +88,7 @@
             // 
             // cancelBtn
             // 
-            cancelBtn.Location = new Point(316, 106);
+            cancelBtn.Location = new Point(319, 109);
             cancelBtn.Name = "cancelBtn";
             cancelBtn.Size = new Size(75, 23);
             cancelBtn.TabIndex = 3;
@@ -99,7 +100,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            label3.Location = new Point(8, 68);
+            label3.Location = new Point(8, 72);
             label3.Name = "label3";
             label3.Size = new Size(103, 21);
             label3.TabIndex = 9;
@@ -110,18 +111,28 @@
             modVers.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
             modVers.Location = new Point(117, 70);
             modVers.Name = "modVers";
-            modVers.Size = new Size(355, 23);
+            modVers.PlaceholderText = "Latest";
+            modVers.Size = new Size(150, 23);
             modVers.TabIndex = 2;
             // 
-            // label4
+            // requiredLabel
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
-            label4.Location = new Point(117, 96);
-            label4.Name = "label4";
-            label4.Size = new Size(133, 13);
-            label4.TabIndex = 10;
-            label4.Text = "Leave blank to use latest";
+            requiredLabel.AutoSize = true;
+            requiredLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            requiredLabel.Location = new Point(273, 72);
+            requiredLabel.Name = "requiredLabel";
+            requiredLabel.Size = new Size(77, 21);
+            requiredLabel.TabIndex = 11;
+            requiredLabel.Text = "Required";
+            // 
+            // required
+            // 
+            required.AutoSize = true;
+            required.Location = new Point(457, 78);
+            required.Name = "required";
+            required.Size = new Size(15, 14);
+            required.TabIndex = 12;
+            required.UseVisualStyleBackColor = true;
             // 
             // AddModDialog
             // 
@@ -129,7 +140,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(484, 141);
             ControlBox = false;
-            Controls.Add(label4);
+            Controls.Add(required);
+            Controls.Add(requiredLabel);
             Controls.Add(label3);
             Controls.Add(modVers);
             Controls.Add(cancelBtn);
@@ -157,6 +169,7 @@
         private Button cancelBtn;
         private Label label3;
         private TextBox modVers;
-        private Label label4;
+        private Label requiredLabel;
+        private CheckBox required;
     }
 }

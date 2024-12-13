@@ -95,6 +95,9 @@ namespace ReforgerServerApp.Utils
                             case nameof(mod.version):
                             mod.version = reader.GetString();
                             break;
+                            case nameof(mod.required):
+                            mod.required = reader.GetBoolean();
+                            break;
                         }
                     }
                 }
@@ -116,6 +119,8 @@ namespace ReforgerServerApp.Utils
                 {
                     writer.WriteString(nameof(value.version), value.version);
                 }
+
+                writer.WriteBoolean(nameof(value.required), value.required);
                 writer.WriteEndObject();
             }
         }
@@ -272,6 +277,9 @@ namespace ReforgerServerApp.Utils
                         case nameof(Operating.disableAI):
                         oper.disableAI = reader.GetBoolean();
                         break;
+                        case nameof(Operating.joinQueue):
+                        oper.joinQueue = JsonSerializer.Deserialize<JoinQueue>(ref reader, options);
+                        break;
                         default:
                         reader.Skip();
                         break;
@@ -303,6 +311,13 @@ namespace ReforgerServerApp.Utils
                 writer.WriteBoolean(nameof(Operating.disableServerShutdown), value.disableServerShutdown);
                 writer.WriteBoolean(nameof(Operating.disableCrashReporter), value.disableCrashReporter);
                 writer.WriteBoolean(nameof(Operating.disableAI), value.disableAI);
+
+                if (value.joinQueue != null)
+                {
+                    writer.WritePropertyName(nameof(Operating.joinQueue));
+                    JsonSerializer.Serialize(writer, value.joinQueue, options);
+                }
+
                 writer.WriteEndObject();
             }
         }
