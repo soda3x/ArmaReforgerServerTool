@@ -197,11 +197,11 @@ namespace ReforgerServerApp.Utils
             {
                 if (ConfigurationManager.GetInstance().GetServerConfiguration().rconEnabled)
                 {
-                    writer.WritePropertyName("rcon");
                     writer.WriteStartObject();
                     writer.WriteString(nameof(Rcon.address), value.address);
                     writer.WriteNumber(nameof(Rcon.port), value.port);
                     writer.WriteString(nameof(Rcon.password), value.password);
+                    writer.WriteString(nameof(Rcon.permission), Utilities.RconPermissionToString(value.permission));
                     writer.WritePropertyName(nameof(Rcon.blacklist));
                     writer.WriteStartArray();
                     foreach (string item in value.blacklist)
