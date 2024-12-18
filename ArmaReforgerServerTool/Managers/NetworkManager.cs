@@ -8,8 +8,10 @@
  ******************************************************************************/
 
 using Open.Nat;
+using ReforgerServerApp.Utils;
 using Serilog;
 using System.Net;
+using System.Net.Sockets;
 
 namespace ReforgerServerApp.Managers
 {
@@ -46,32 +48,48 @@ namespace ReforgerServerApp.Managers
                 return;
             }
 
-            var discoverer = new NatDiscoverer();
-            var device     = await discoverer.DiscoverDeviceAsync();
-
-            foreach (var mapping in mappings)
+            try
             {
-                string ipAddr   = mapping.ipAddress;
-                int port        = mapping.port;
+                var discoverer = new NatDiscoverer();
+                var device     = await discoverer.DiscoverDeviceAsync();
 
-                // Convert string IP address to IPAddress type
-                if (IPAddress.TryParse(ipAddr, out IPAddress ip))
+                foreach (var mapping in mappings)
                 {
-                    // Create port mapping for the specified IP address
-                    var natMapping = new Mapping(Protocol.Tcp, ip, port, port, INFINITE_LIFETIME, $"Mapping for {ipAddr}:{port}");
-                    try
+                    string ipAddr   = mapping.ipAddress;
+                    int port        = mapping.port;
+
+                    // Convert string IP address to IPAddress type
+                    if (IPAddress.TryParse(ipAddr, out IPAddress ip))
                     {
-                        await device.CreatePortMapAsync(natMapping);
-                        Log.Information("NetworkManager - Opened UPnP port mapping {ipAddr}:{port}", ipAddr, port);
+                        // Create port mapping for the specified IP address
+                        var natMapping = new Mapping(Protocol.Tcp, ip, port, port, INFINITE_LIFETIME, $"Mapping for {ipAddr}:{port}");
+                        try
+                        {
+                            await device.CreatePortMapAsync(natMapping);
+                            Log.Information("NetworkManager - Opened UPnP port mapping {ipAddr}:{port}", ipAddr, port);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("NetworkManager - Failed to map {ipAddr}:{port} - {ex}", ipAddr, port, ex.Message);
+                        }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        Log.Error("NetworkManager - Failed to map {ipAddr}:{port} - {ex}", ipAddr, port, ex.Message);
+                        Log.Error("NetworkManager - Failed to convert {ipAddr} to IP Address. UPnP will not be configured for port {port}", ipAddr, port);
                     }
                 }
-                else
+            }
+            catch (Exception ex)
+            {
+                Log.Error("NetworkManager - Failed to configure UPnP: {msg}", ex.Message);
+                if (ex.GetType() == typeof(NatDeviceNotFoundException))
                 {
-                    Log.Error("NetworkManager - Failed to convert {ipAddr} to IP Address. UPnP will not be configured for port {port}", ipAddr, port);
+                    Utilities.DisplayErrorMessage("Failed to start server with UPnP", "No UPnP NAT device was found. UPnP is not supported on your system.");
+                }
+
+                if (ex.GetType() == typeof(SocketException))
+                {
+                    Utilities.DisplayErrorMessage("Failed to start server with UPnP", "Failed to start the server with UPnP. You may need to turn it off.");
                 }
             }
         }
