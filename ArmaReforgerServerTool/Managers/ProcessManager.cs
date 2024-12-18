@@ -153,6 +153,9 @@ namespace ReforgerServerApp.Managers
                 SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: User started server.{Environment.NewLine}");
                 OnUpdateSteamCmdLogEvent(steamCmd);
 
+                SteamCmdLogEventArgs dling = new($"{Utilities.GetTimestamp()}: Downloading / updating Arma Reforger dedicated server files. Please be patient...{Environment.NewLine}");
+                OnUpdateSteamCmdLogEvent(dling);
+
                 if (NetworkManager.GetInstance().useUPnP)
                 {
                     steamCmd = new($"{Utilities.GetTimestamp()}: Server is using UPnP, adding UPnP port mappings...{Environment.NewLine}");
@@ -254,6 +257,9 @@ namespace ReforgerServerApp.Managers
             Log.Information("ProcessManager - Automatically (re)started server.");
             OnUpdateSteamCmdLogEvent(steamCmd);
 
+            SteamCmdLogEventArgs dling = new($"{Utilities.GetTimestamp()}: Downloading / updating Arma Reforger dedicated server files. Please be patient...{Environment.NewLine}");
+            OnUpdateSteamCmdLogEvent(dling);
+
             if (NetworkManager.GetInstance().useUPnP)
             {
                 steamCmd = new($"{Utilities.GetTimestamp()}: Server is using UPnP, adding UPnP port mappings...{Environment.NewLine}");
@@ -345,6 +351,9 @@ namespace ReforgerServerApp.Managers
 
             if (m_steamCmdUpdateProcess.HasExited)
             {
+                m_steamCmdUpdateProcess.OutputDataReceived -= SteamCmdDataReceived;
+                m_steamCmdUpdateProcess.ErrorDataReceived -= SteamCmdDataReceived;
+
                 GuiModelEventArgs guiModel = new()
                 {
                     startServerText = Constants.STOP_SERVER_STR,
@@ -380,6 +389,9 @@ namespace ReforgerServerApp.Managers
                     EnableRaisingEvents = true,
                     StartInfo = serverStartInfo
                 };
+
+                SteamCmdLogEventArgs starting = new($"{Utilities.GetTimestamp()}: Download / update complete. Starting the dedicated server...{Environment.NewLine}");
+                OnUpdateSteamCmdLogEvent(starting);
 
                 m_serverProcess.OutputDataReceived += SteamCmdDataReceived;
                 m_serverProcess.ErrorDataReceived += SteamCmdDataReceived;
