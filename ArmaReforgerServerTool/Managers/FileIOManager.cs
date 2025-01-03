@@ -30,7 +30,7 @@ namespace ReforgerServerApp.Managers
         {
             bool modDatabaseExists = File.Exists(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile);
 
-            if (!modDatabaseExists && File.Exists(m_legacyModDatabaseFile) && 
+            if (!modDatabaseExists && File.Exists(m_legacyModDatabaseFile) &&
                 Utilities.DisplayConfirmationMessage(Constants.MIGRATE_LEGACY_MOD_DB_PROMPT_STR, true))
             {
                 MigrateLegacyModDatabase(m_legacyModDatabaseFile);
@@ -78,7 +78,10 @@ namespace ReforgerServerApp.Managers
             combined.AddRange(enabled);
             combined.AddRange(available);
 
-            File.WriteAllText(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile, Utilities.GetFormattedJsonString(combined, new JsonUtils.ModConverter()));
+            File.WriteAllText(
+                ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile,
+                Utilities.GetFormattedJsonString(combined, new JsonUtils.ModConverter())
+            );
         }
 
         /// <summary>
@@ -290,15 +293,20 @@ namespace ReforgerServerApp.Managers
         /// <returns>True if deleted successfully, false otherwise</returns>
         public bool DeleteServerFiles()
         {
-            DialogResult result = MessageBox.Show("You are about to delete SteamCMD and all Arma Reforger server files," +
-                " are you sure you would like to do this?", "Warning", MessageBoxButtons.YesNo);
+            string msg = 
+                "You are about to delete SteamCMD and all Arma Reforger server files" + Environment.NewLine +
+                "ALL files will be deleted in the path:" + Environment.NewLine +
+                m_installDir + Environment.NewLine +
+                "Do you want to continue?";
+
+            DialogResult result = MessageBox.Show(msg, "Delete Server Files", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
             if (result == DialogResult.Yes)
             {
                 Directory.Delete(m_installDir, true);
                 m_installDir = string.Empty;
                 DeleteFile(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile);
-                MessageBox.Show("Server files deleted.", "Warning", MessageBoxButtons.OK);
+                MessageBox.Show("Server files deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return !Directory.Exists(m_installDir);
             }
 
@@ -353,7 +361,7 @@ namespace ReforgerServerApp.Managers
         {
             try
             {
-                if (File.Exists (path))
+                if (File.Exists(path))
                 {
                     File.Delete(path);
                 }
