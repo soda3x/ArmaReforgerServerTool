@@ -929,7 +929,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "maxFPS",
                 ParameterFriendlyName = "Limit Server Max FPS",
-                ParameterMin = 60,
+                ParameterMin = 1,
                 ParameterMax = 1000,
                 ParameterIncrement = 1,
                 ParameterValue = 60,
