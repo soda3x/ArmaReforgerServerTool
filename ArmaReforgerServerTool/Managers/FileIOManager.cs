@@ -276,7 +276,8 @@ namespace ReforgerServerApp.Managers
                         "\r\nLatest version: " + checkedVersion, "Arma Reforger Dedicated Server Tool - Update available", MessageBoxButtons.YesNo);
                     if (dr == DialogResult.Yes)
                     {
-                        Process.Start("explorer", $"{ToolPropertiesManager.GetInstance().GetToolProperties().updateRepositoryUrl}/releases");
+                        Process.Start("explorer", $"{ToolPropertiesManager.GetInstance().GetToolProperties().releaseRepositoryUrl}");
+                        Environment.Exit(0);
                     }
                 }
             }
