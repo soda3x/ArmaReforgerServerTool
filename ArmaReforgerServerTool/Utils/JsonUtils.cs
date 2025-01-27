@@ -395,8 +395,23 @@ namespace ReforgerServerApp.Utils
 
             public override void Write(Utf8JsonWriter writer, ToolProperties value, JsonSerializerOptions options)
             {
-                // Do not need to override the Write method.
-                JsonSerializer.Serialize(writer, value, options);
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("defaultScenarios");
+                JsonSerializer.Serialize(writer, value.defaultScenarios, options);
+
+                writer.WriteString("modDatabaseFile", value.modDatabaseFile);
+                writer.WriteString("installDirectoryFile", value.installDirectoryFile);
+                writer.WriteString("updateRepositoryUrl", value.updateRepositoryUrl);
+                writer.WriteString("releaseRepositoryUrl", value.releaseRepositoryUrl);
+                writer.WriteString("bugReportUrl", value.bugReportUrl);
+                writer.WriteBoolean("checkForUpdatesOnStartup", value.checkForUpdatesOnStartup);
+                writer.WriteString("steamCmdDownloadUrl", value.steamCmdDownloadUrl);
+                writer.WriteString("armaWorkshopUrl", value.armaWorkshopUrl);
+                writer.WriteString("logFile", value.logFile);
+                writer.WriteString("minimumLogLevel", value.minimumLogLevel);
+
+                writer.WriteEndObject();
             }
         }
     }
