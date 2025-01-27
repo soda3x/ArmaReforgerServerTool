@@ -10,12 +10,15 @@
 using Serilog;
 using Serilog.Events;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using static ReforgerServerApp.Utils.JsonUtils;
 
 namespace ReforgerServerApp.Models
 {
     /// <summary>
     /// This class represents the structure of the properties file containing the application settings.
     /// </summary>
+    [JsonConverter(typeof(ToolProperitesConverter))]
     internal class ToolProperties
     {
         private static readonly List<string> DEFAULT_SCENARIOS = new List<string>
@@ -42,17 +45,17 @@ namespace ReforgerServerApp.Models
         private static readonly string DEFAULT_LOG_FILE                     = "logs/ardst.log";
         private static readonly string DEFAULT_MINIMUM_LOG_LEVEL            = "Debug";
 
-        public List<string> defaultScenarios { get; }
-        public string modDatabaseFile { get; }
-        public string installDirectoryFile { get; }
-        public string updateRepositoryUrl { get; }
-        public string releaseRepositoryUrl { get; }
-        public string bugReportUrl { get; }
-        public bool checkForUpdatesOnStartup { get; }
-        public string steamCmdDownloadUrl { get; }
-        public string armaWorkshopUrl { get; }
-        public string logFile { get; }
-        public string minimumLogLevel { get; }
+        public List<string> defaultScenarios { get; set; }
+        public string modDatabaseFile { get; set; }
+        public string installDirectoryFile { get; set; }
+        public string updateRepositoryUrl { get; set; }
+        public string releaseRepositoryUrl { get; set; }
+        public string bugReportUrl { get; set; }
+        public bool checkForUpdatesOnStartup { get; set; }
+        public string steamCmdDownloadUrl { get; set; }
+        public string armaWorkshopUrl { get; set; }
+        public string logFile { get; set; }
+        public string minimumLogLevel { get; set; }
 
         /// <summary>
         /// Constructs an instance of the Tool Properties model
