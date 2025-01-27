@@ -105,10 +105,17 @@ namespace ReforgerServerApp
                 m_serverParamsDictionary["address"].ParameterValue = m_serverConfig.root.a2s.address;
                 m_serverParamsDictionary["port"].ParameterValue    = m_serverConfig.root.a2s.port;
 
+
+
                 if (m_serverConfig.root.rcon == null)
                 {
                     Log.Debug("ConfigurationManager - Rcon fields were absent from config, using defaults");
                     m_serverConfig.root.rcon = Rcon.Default;
+                    m_serverParamsDictionary["rconEnabled"].ParameterValue = false;
+                }
+                else
+                {
+                    m_serverParamsDictionary["rconEnabled"].ParameterValue = true;
                 }
 
                 m_serverParamsDictionary["rconAddress"].ParameterValue = m_serverConfig.root.rcon.address;
