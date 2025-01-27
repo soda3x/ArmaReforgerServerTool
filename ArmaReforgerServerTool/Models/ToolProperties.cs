@@ -33,7 +33,8 @@ namespace ReforgerServerApp.Models
 
         private static readonly string DEFAULT_MOD_DATABASE_FILE            = "./mod_database.json";
         private static readonly string DEFAULT_INSTALL_DIR_FILE             = "./install_directory.txt";
-        private static readonly string DEFAULT_UPDATE_REPOSITORY            = "https://github.com/soda3x/ArmaReforgerServerTool/releases/latest";
+        private static readonly string DEFAULT_UPDATE_REPOSITORY            = "https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool";
+        private static readonly string DEFAULT_RELEASES_REPOSITORY          = "https://github.com/soda3x/ArmaReforgerServerTool/releases/latest";
         private static readonly string DEFAULT_BUG_REPORT_REPOSITORY        = "https://github.com/soda3x/ArmaReforgerServerTool/issues";
         private static readonly bool   DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP = true;
         private static readonly string DEFAULT_STEAMCMD_DOWNLOAD_URL        = "https://steamcdn-a.akamaihd.net/client/installer";
@@ -45,6 +46,7 @@ namespace ReforgerServerApp.Models
         public string modDatabaseFile { get; }
         public string installDirectoryFile { get; }
         public string updateRepositoryUrl { get; }
+        public string releaseRepositoryUrl { get; }
         public string bugReportUrl { get; }
         public bool checkForUpdatesOnStartup { get; }
         public string steamCmdDownloadUrl { get; }
@@ -59,6 +61,7 @@ namespace ReforgerServerApp.Models
         /// <param name="modDatabaseFile"></param>
         /// <param name="installDirectoryFile"></param>
         /// <param name="updateRepositoryUrl"></param>
+        /// <param name="releaseRepositoryUrl"></param>
         /// <param name="bugReportUrl"></param>
         /// <param name="checkForUpdatesOnStartup"></param>
         /// <param name="steamCmdDownloadUrl"></param>
@@ -66,13 +69,14 @@ namespace ReforgerServerApp.Models
         /// <param name="logFile"></param>
         /// <param name="minimumLogLevel"></param>
         public ToolProperties(List<string> defaultScenarios, string modDatabaseFile, string installDirectoryFile,
-            string updateRepositoryUrl, string bugReportUrl, bool checkForUpdatesOnStartup,
+            string updateRepositoryUrl, string releaseRepositoryUrl, string bugReportUrl, bool checkForUpdatesOnStartup,
             string steamCmdDownloadUrl, string armaWorkshopUrl, string logFile, string minimumLogLevel)
         {
             this.defaultScenarios = defaultScenarios;
             this.modDatabaseFile = modDatabaseFile;
             this.installDirectoryFile = installDirectoryFile;
             this.updateRepositoryUrl = updateRepositoryUrl;
+            this.releaseRepositoryUrl = releaseRepositoryUrl;
             this.bugReportUrl = bugReportUrl;
             this.checkForUpdatesOnStartup = checkForUpdatesOnStartup;
             this.steamCmdDownloadUrl = steamCmdDownloadUrl;
@@ -83,7 +87,7 @@ namespace ReforgerServerApp.Models
 
 
         public static ToolProperties Default => new(DEFAULT_SCENARIOS, DEFAULT_MOD_DATABASE_FILE, DEFAULT_INSTALL_DIR_FILE,
-            DEFAULT_UPDATE_REPOSITORY, DEFAULT_BUG_REPORT_REPOSITORY, DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP,
+            DEFAULT_UPDATE_REPOSITORY, DEFAULT_RELEASES_REPOSITORY, DEFAULT_BUG_REPORT_REPOSITORY, DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP,
             DEFAULT_STEAMCMD_DOWNLOAD_URL, DEFAULT_ARMA_WORKSHOP_URL, DEFAULT_LOG_FILE, DEFAULT_MINIMUM_LOG_LEVEL);
 
         /// <summary>
