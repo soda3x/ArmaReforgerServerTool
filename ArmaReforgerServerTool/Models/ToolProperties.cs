@@ -33,7 +33,7 @@ namespace ReforgerServerApp.Models
 
         private static readonly string DEFAULT_MOD_DATABASE_FILE            = "./mod_database.json";
         private static readonly string DEFAULT_INSTALL_DIR_FILE             = "./install_directory.txt";
-        private static readonly string DEFAULT_UPDATE_REPOSITORY            = "https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool";
+        private static readonly string DEFAULT_UPDATE_REPOSITORY            = "https://github.com/soda3x/ArmaReforgerServerTool/releases/latest";
         private static readonly string DEFAULT_BUG_REPORT_REPOSITORY        = "https://github.com/soda3x/ArmaReforgerServerTool/issues";
         private static readonly bool   DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP = true;
         private static readonly string DEFAULT_STEAMCMD_DOWNLOAD_URL        = "https://steamcdn-a.akamaihd.net/client/installer";
