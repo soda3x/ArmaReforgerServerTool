@@ -65,6 +65,7 @@ namespace ReforgerServerApp
                 Log.Information("Main - Skipping update check, checkForUpdatesOnStartup is false in properties.json");
             }
 
+            FileIOManager.CheckForVCRedist();
 
             Mod.GetScenariosForMod("591AF5BDA9F7CE8B");
         }
