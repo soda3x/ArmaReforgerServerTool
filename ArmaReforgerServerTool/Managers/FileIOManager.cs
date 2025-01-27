@@ -14,6 +14,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
+using Microsoft.Win32;
 
 namespace ReforgerServerApp.Managers
 {
@@ -116,7 +117,7 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         public static void SaveConfigurationToFile()
         {
-            using SaveFileDialog sfd = new();
+            using System.Windows.Forms.SaveFileDialog sfd = new();
             sfd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
             sfd.Filter = "JSON (*.json)|*.json";
             if (sfd.ShowDialog() == DialogResult.OK)
@@ -153,7 +154,7 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         public static void LoadConfigurationFromFile()
         {
-            using OpenFileDialog ofd = new();
+            using System.Windows.Forms.OpenFileDialog ofd = new();
             ofd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
             ofd.Filter = "JSON (*.json)|*.json";
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -284,6 +285,39 @@ namespace ReforgerServerApp.Managers
                 Log.Error(e, "FileIOManager - Failed to check for updates");
                 Utilities.DisplayErrorMessage($"Unable to check for updates," +
                     " you may not be using the latest version of the Arma Reforger Dedicated Server Tool.\r\nPlease consider checking your internet connection.", e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Check if Visual C++ Runtime is installed (required for the Arma Reforger server), 
+        /// if not, displays a prompt to install it or closes the application
+        /// </summary>
+        public static void CheckForVCRedist()
+        {
+            bool installed = false;
+
+            string registryKey = @"SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\X64";
+
+            using RegistryKey key = Registry.LocalMachine.OpenSubKey(registryKey);
+
+            if (key != null)
+            {
+                object value = key.GetValue("Installed");
+                installed = value != null && (int) value == 1;
+            }
+
+            if (!installed)
+            {
+                Log.Information("FileIOManager - Visual C++ Runtime was not found on your system. Arma Reforger Dedicated Server requires it to function");
+                DialogResult dr = MessageBox.Show("Visual C++ Runtime was not found and is required for the server to start." +
+                        "\r\nWould you like to install it?" +
+                        "\r\n\r\nSelecting Yes will close the application and open your browser. Selecting No will simply close the application.", 
+                            "Arma Reforger Dedicated Server Tool - Visual C++ Runtime not found", MessageBoxButtons.YesNo);
+                if (dr == DialogResult.Yes)
+                {
+                    Process.Start("explorer", "https://aka.ms/vs/17/release/vc_redist.x64.exe");
+                }
+                Environment.Exit(0);
             }
         }
 
