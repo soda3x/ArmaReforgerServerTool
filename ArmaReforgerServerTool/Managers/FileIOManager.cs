@@ -14,6 +14,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
+using Microsoft.Win32;
 
 namespace ReforgerServerApp.Managers
 {
@@ -30,7 +31,7 @@ namespace ReforgerServerApp.Managers
         {
             bool modDatabaseExists = File.Exists(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile);
 
-            if (!modDatabaseExists && File.Exists(m_legacyModDatabaseFile) && 
+            if (!modDatabaseExists && File.Exists(m_legacyModDatabaseFile) &&
                 Utilities.DisplayConfirmationMessage(Constants.MIGRATE_LEGACY_MOD_DB_PROMPT_STR, true))
             {
                 MigrateLegacyModDatabase(m_legacyModDatabaseFile);
@@ -78,7 +79,10 @@ namespace ReforgerServerApp.Managers
             combined.AddRange(enabled);
             combined.AddRange(available);
 
-            File.WriteAllText(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile, Utilities.GetFormattedJsonString(combined, new JsonUtils.ModConverter()));
+            File.WriteAllText(
+                ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile,
+                Utilities.GetFormattedJsonString(combined, new JsonUtils.ModConverter())
+            );
         }
 
         /// <summary>
@@ -113,7 +117,7 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         public static void SaveConfigurationToFile()
         {
-            using SaveFileDialog sfd = new();
+            using System.Windows.Forms.SaveFileDialog sfd = new();
             sfd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
             sfd.Filter = "JSON (*.json)|*.json";
             if (sfd.ShowDialog() == DialogResult.OK)
@@ -150,7 +154,7 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         public static void LoadConfigurationFromFile()
         {
-            using OpenFileDialog ofd = new();
+            using System.Windows.Forms.OpenFileDialog ofd = new();
             ofd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
             ofd.Filter = "JSON (*.json)|*.json";
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -272,7 +276,8 @@ namespace ReforgerServerApp.Managers
                         "\r\nLatest version: " + checkedVersion, "Arma Reforger Dedicated Server Tool - Update available", MessageBoxButtons.YesNo);
                     if (dr == DialogResult.Yes)
                     {
-                        Process.Start("explorer", $"{ToolPropertiesManager.GetInstance().GetToolProperties().updateRepositoryUrl}/releases");
+                        Process.Start("explorer", $"{ToolPropertiesManager.GetInstance().GetToolProperties().releaseRepositoryUrl}");
+                        Environment.Exit(0);
                     }
                 }
             }
@@ -285,20 +290,58 @@ namespace ReforgerServerApp.Managers
         }
 
         /// <summary>
+        /// Check if Visual C++ Runtime is installed (required for the Arma Reforger server), 
+        /// if not, displays a prompt to install it or closes the application
+        /// </summary>
+        public static void CheckForVCRedist()
+        {
+            bool installed = false;
+
+            string registryKey = @"SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\X64";
+
+            using RegistryKey key = Registry.LocalMachine.OpenSubKey(registryKey);
+
+            if (key != null)
+            {
+                object value = key.GetValue("Installed");
+                installed = value != null && (int) value == 1;
+            }
+
+            if (!installed)
+            {
+                Log.Information("FileIOManager - Visual C++ Runtime was not found on your system. Arma Reforger Dedicated Server requires it to function");
+                DialogResult dr = MessageBox.Show("Visual C++ Runtime was not found and is required for the server to start." +
+                        "\r\nWould you like to install it?" +
+                        "\r\n\r\nSelecting Yes will close the application and open your browser. Selecting No will simply close the application.", 
+                            "Arma Reforger Dedicated Server Tool - Visual C++ Runtime not found", MessageBoxButtons.YesNo);
+                if (dr == DialogResult.Yes)
+                {
+                    Process.Start("explorer", "https://aka.ms/vs/17/release/vc_redist.x64.exe");
+                }
+                Environment.Exit(0);
+            }
+        }
+
+        /// <summary>
         /// Delete Server Files
         /// </summary>
         /// <returns>True if deleted successfully, false otherwise</returns>
         public bool DeleteServerFiles()
         {
-            DialogResult result = MessageBox.Show("You are about to delete SteamCMD and all Arma Reforger server files," +
-                " are you sure you would like to do this?", "Warning", MessageBoxButtons.YesNo);
+            string msg = 
+                "You are about to delete SteamCMD and all Arma Reforger server files" + Environment.NewLine +
+                "ALL files will be deleted in the path:" + Environment.NewLine +
+                m_installDir + Environment.NewLine +
+                "Do you want to continue?";
+
+            DialogResult result = MessageBox.Show(msg, "Delete Server Files", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
             if (result == DialogResult.Yes)
             {
                 Directory.Delete(m_installDir, true);
                 m_installDir = string.Empty;
                 DeleteFile(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile);
-                MessageBox.Show("Server files deleted.", "Warning", MessageBoxButtons.OK);
+                MessageBox.Show("Server files deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return !Directory.Exists(m_installDir);
             }
 
@@ -353,7 +396,7 @@ namespace ReforgerServerApp.Managers
         {
             try
             {
-                if (File.Exists (path))
+                if (File.Exists(path))
                 {
                     File.Delete(path);
                 }

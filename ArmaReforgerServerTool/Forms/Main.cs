@@ -65,6 +65,7 @@ namespace ReforgerServerApp
                 Log.Information("Main - Skipping update check, checkForUpdatesOnStartup is false in properties.json");
             }
 
+            FileIOManager.CheckForVCRedist();
 
             Mod.GetScenariosForMod("591AF5BDA9F7CE8B");
         }
@@ -929,7 +930,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "maxFPS",
                 ParameterFriendlyName = "Limit Server Max FPS",
-                ParameterMin = 60,
+                ParameterMin = 1,
                 ParameterMax = 1000,
                 ParameterIncrement = 1,
                 ParameterValue = 60,
