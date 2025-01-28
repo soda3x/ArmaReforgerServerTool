@@ -112,6 +112,18 @@ namespace ReforgerServerApp.Managers
             ConfigurationManager.GetInstance().AlphabetiseModLists();
         }
 
+        public static void SaveModsListToFile()
+        {
+            using System.Windows.Forms.SaveFileDialog sfd = new();
+            sfd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
+            sfd.Filter = "JSON (*.json)|*.json";
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                ConfigurationManager.GetInstance().CreateConfiguration();
+                File.WriteAllText(sfd.FileName, ConfigurationManager.GetInstance().GetServerConfiguration().ModsAsJsonString());
+            }
+        }
+
         /// <summary>
         /// Save Configuration to JSON file
         /// </summary>
