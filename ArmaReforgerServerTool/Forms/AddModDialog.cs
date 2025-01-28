@@ -69,7 +69,7 @@ namespace ReforgerServerApp
 
                 if (!string.IsNullOrWhiteSpace(modVers.Text.Trim()))
                 {
-                    mod = new(modId.Text.Trim(), modName.Text.Trim(), required.Checked);
+                    mod = new(modId.Text.Trim(), modName.Text.Trim(), modVers.Text.Trim(), required.Checked);
                 }
                 else
                 {

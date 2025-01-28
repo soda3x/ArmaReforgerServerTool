@@ -38,6 +38,7 @@ namespace ReforgerServerApp
             addModBtn = new Button();
             removeModBtn = new Button();
             groupBox2 = new GroupBox();
+            exportModsBtn = new FontAwesome.Sharp.IconButton();
             moveModPosDownBtn = new FontAwesome.Sharp.IconButton();
             moveModPosUpBtn = new FontAwesome.Sharp.IconButton();
             modsSearchTB = new TextBox();
@@ -161,6 +162,7 @@ namespace ReforgerServerApp
             // groupBox2
             // 
             groupBox2.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            groupBox2.Controls.Add(exportModsBtn);
             groupBox2.Controls.Add(moveModPosDownBtn);
             groupBox2.Controls.Add(moveModPosUpBtn);
             groupBox2.Controls.Add(modsSearchTB);
@@ -180,6 +182,21 @@ namespace ReforgerServerApp
             groupBox2.TabStop = false;
             groupBox2.Text = "Mods";
             // 
+            // exportModsBtn
+            // 
+            exportModsBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+            exportModsBtn.IconChar = FontAwesome.Sharp.IconChar.FileExport;
+            exportModsBtn.IconColor = Color.Black;
+            exportModsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+            exportModsBtn.IconSize = 16;
+            exportModsBtn.Location = new Point(557, 671);
+            exportModsBtn.Margin = new Padding(3, 2, 3, 2);
+            exportModsBtn.Name = "exportModsBtn";
+            exportModsBtn.Size = new Size(69, 22);
+            exportModsBtn.TabIndex = 11;
+            exportModsBtn.UseVisualStyleBackColor = true;
+            exportModsBtn.Click += ExportModsListBtnPressed;
+            // 
             // moveModPosDownBtn
             // 
             moveModPosDownBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
@@ -190,7 +207,7 @@ namespace ReforgerServerApp
             moveModPosDownBtn.Location = new Point(335, 670);
             moveModPosDownBtn.Margin = new Padding(3, 2, 3, 2);
             moveModPosDownBtn.Name = "moveModPosDownBtn";
-            moveModPosDownBtn.Size = new Size(146, 23);
+            moveModPosDownBtn.Size = new Size(105, 23);
             moveModPosDownBtn.TabIndex = 10;
             moveModPosDownBtn.UseVisualStyleBackColor = true;
             moveModPosDownBtn.Click += MoveEnabledModPositionDownBtnPressed;
@@ -202,10 +219,10 @@ namespace ReforgerServerApp
             moveModPosUpBtn.IconColor = Color.Black;
             moveModPosUpBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
             moveModPosUpBtn.IconSize = 16;
-            moveModPosUpBtn.Location = new Point(487, 670);
+            moveModPosUpBtn.Location = new Point(446, 671);
             moveModPosUpBtn.Margin = new Padding(3, 2, 3, 2);
             moveModPosUpBtn.Name = "moveModPosUpBtn";
-            moveModPosUpBtn.Size = new Size(139, 22);
+            moveModPosUpBtn.Size = new Size(105, 22);
             moveModPosUpBtn.TabIndex = 9;
             moveModPosUpBtn.UseVisualStyleBackColor = true;
             moveModPosUpBtn.Click += MoveEnabledModPositionUpBtnPressed;
@@ -672,5 +689,6 @@ namespace ReforgerServerApp
         private CheckBox useUpnp;
         private FontAwesome.Sharp.IconButton moveModPosDownBtn;
         private FontAwesome.Sharp.IconButton moveModPosUpBtn;
+        private FontAwesome.Sharp.IconButton exportModsBtn;
     }
 }
