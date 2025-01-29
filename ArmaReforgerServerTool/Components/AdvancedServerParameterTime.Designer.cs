@@ -1,6 +1,6 @@
 ﻿namespace ReforgerServerApp.Components
 {
-    partial class AdvancedServerParameterNumeric
+    partial class AdvancedServerParameterTime
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,8 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            parameterValue = new NumericUpDown();
-            ((System.ComponentModel.ISupportInitialize) parameterValue).BeginInit();
+            parameterValue = new DateTimePicker();
             SuspendLayout();
             // 
             // parameterValue
@@ -38,22 +37,23 @@
             parameterValue.Name = "parameterValue";
             parameterValue.Size = new Size(191, 23);
             parameterValue.TabIndex = 2;
-            parameterValue.ValueChanged += OnValueChanged;
+            parameterValue.Format = DateTimePickerFormat.Custom;
+            parameterValue.CustomFormat = "HH:mm";
+            parameterValue.ShowUpDown = true;
             // 
-            // AdvancedServerParameterNumeric
+            // AdvancedServerParameterTime
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(parameterValue);
-            Name = "AdvancedServerParameterNumeric";
+            Name = "AdvancedServerParameterTime";
             Controls.SetChildIndex(parameterValue, 0);
-            ((System.ComponentModel.ISupportInitialize) parameterValue).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private NumericUpDown parameterValue;
+        private DateTimePicker parameterValue;
     }
 }

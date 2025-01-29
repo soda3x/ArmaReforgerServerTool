@@ -8,6 +8,8 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using static System.Windows.Forms.DataFormats;
+
 namespace ReforgerServerApp.Components
 {
     public partial class AdvancedServerParameterNumeric : AdvancedServerParameter
@@ -43,6 +45,18 @@ namespace ReforgerServerApp.Components
             set => parameterValue.Increment = value;
         }
 
+        private int m_parameterPadding;
+        public int ParameterPadding
+        {
+            get => m_parameterPadding;
+            set
+            {
+                m_parameterPadding = value;
+                string format = $"D{ParameterPadding}";
+                parameterValue.Text = Convert.ToInt32(parameterValue.Value).ToString(format);
+            }
+        }
+
         public override void OnCheckChanged(object sender, EventArgs e)
         {
             if (CheckBox.Enabled)
@@ -53,6 +67,12 @@ namespace ReforgerServerApp.Components
             {
                 SetFieldEnabled(false);
             }
+        }
+
+        private void OnValueChanged(object sender, EventArgs e)
+        {
+            string format = $"D{ParameterPadding}";
+            parameterValue.Text = Convert.ToInt32(parameterValue.Value).ToString(format);
         }
     }
 }
