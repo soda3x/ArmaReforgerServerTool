@@ -184,5 +184,6 @@ namespace ReforgerServerApp
             "Would you like to migrate this mod database to the new format?\r\n\r\n" +
             "(If you select Yes, the legacy file will be deleted after the migration is complete, selecting No will create a new Mod Database in the new format)";
         public static string EXPORT_MODS_STR = "Export mod list to file";
+        public static string STOCK_MOD_ID = "591AF5BDA9F7CE8B";
     }
 }
