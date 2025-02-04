@@ -76,7 +76,7 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public async void StartStopServer()
+        public async void StartStopServer(bool triggeredByAutoRestart = false)
         {
             BackgroundWorker worker = new();
             worker.WorkerSupportsCancellation = true;
@@ -100,6 +100,10 @@ namespace ReforgerServerApp.Managers
                     m_serverProcess.CancelErrorRead();
 
                     SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: User stopped server.{Environment.NewLine}");
+                    if (triggeredByAutoRestart)
+                    {
+                        steamCmd = new($"{Utilities.GetTimestamp()}: Automatically stopped server.{Environment.NewLine}");
+                    }
                     OnUpdateSteamCmdLogEvent(steamCmd);
 
                     if (NetworkManager.GetInstance().useUPnP)
@@ -151,6 +155,12 @@ namespace ReforgerServerApp.Managers
                 OnUpdateGuiControlsEvent(guiModel);
 
                 SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: User started server.{Environment.NewLine}");
+
+                if (triggeredByAutoRestart)
+                {
+                    steamCmd = new($"{Utilities.GetTimestamp()}: Automatically restarted server.{Environment.NewLine}");
+                }
+                
                 OnUpdateSteamCmdLogEvent(steamCmd);
 
                 SteamCmdLogEventArgs dling = new($"{Utilities.GetTimestamp()}: Downloading / updating Arma Reforger dedicated server files. Please be patient...{Environment.NewLine}");
@@ -305,6 +315,26 @@ namespace ReforgerServerApp.Managers
                         startServerBtnEnabled = true
                     };
                     OnUpdateGuiControlsEvent(guiModel);
+                }
+
+                // If server crashes, if the user has enabled auto restart on crash then attempt to restart it
+                if (e.Data.Contains("Game destroyed"))
+                {
+                    if (ConfigurationManager.GetInstance().autoRestartOnCrash)
+                    {
+                        steamCmd = new($"{Utilities.GetTimestamp()}: Game destroyed detected. System attempting to restart server...{Environment.NewLine}");
+                        OnUpdateSteamCmdLogEvent(steamCmd);
+                        Log.Information("ProcessManager - Game destroyed detected. Attempting to restart server...");
+
+                        // Stop the server (1st toggle)
+                        StartStopServer(true);
+
+                        Task.Delay(ToolPropertiesManager.GetInstance().GetToolProperties().autoRestartTime_ms).ContinueWith(_ =>
+                        {
+                            Log.Information("ProcessManager - Restarting server now...");
+                            StartStopServer(true); // Start the server (2nd toggle)
+                        });
+                    }
                 }
             }
         }
@@ -469,6 +499,9 @@ namespace ReforgerServerApp.Managers
                                                m_launchArgumentsModel.logStats,
                                                m_launchArgumentsModel.maxFPS,
                                                m_launchArgumentsModel.bindPort,
+                                               m_launchArgumentsModel.autoReload,
+                                               m_launchArgumentsModel.noBackend,
+                                               m_launchArgumentsModel.rplTimeoutMs,
                                                m_launchArgumentsModel.nds,
                                                m_launchArgumentsModel.nwkResolution,
                                                m_launchArgumentsModel.staggeringBudget,

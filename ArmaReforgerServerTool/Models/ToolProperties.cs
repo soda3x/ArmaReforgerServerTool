@@ -44,6 +44,7 @@ namespace ReforgerServerApp.Models
         private static readonly string DEFAULT_ARMA_WORKSHOP_URL            = "https://reforger.armaplatform.com/workshop";
         private static readonly string DEFAULT_LOG_FILE                     = "logs/ardst.log";
         private static readonly string DEFAULT_MINIMUM_LOG_LEVEL            = "Debug";
+        private static readonly int    DEFAULT_AUTO_RESTART_TIME_MS         = 2000;
 
         public List<string> defaultScenarios { get; set; }
         public string modDatabaseFile { get; set; }
@@ -56,6 +57,7 @@ namespace ReforgerServerApp.Models
         public string armaWorkshopUrl { get; set; }
         public string logFile { get; set; }
         public string minimumLogLevel { get; set; }
+        public int autoRestartTime_ms { get; set; }
 
         /// <summary>
         /// Constructs an instance of the Tool Properties model
@@ -71,9 +73,10 @@ namespace ReforgerServerApp.Models
         /// <param name="armaWorkshopUrl"></param>
         /// <param name="logFile"></param>
         /// <param name="minimumLogLevel"></param>
+        /// <param name="autoRestartTime_ms"></param>
         public ToolProperties(List<string> defaultScenarios, string modDatabaseFile, string installDirectoryFile,
             string updateRepositoryUrl, string releaseRepositoryUrl, string bugReportUrl, bool checkForUpdatesOnStartup,
-            string steamCmdDownloadUrl, string armaWorkshopUrl, string logFile, string minimumLogLevel)
+            string steamCmdDownloadUrl, string armaWorkshopUrl, string logFile, string minimumLogLevel, int autoRestartTime_ms)
         {
             this.defaultScenarios = defaultScenarios;
             this.modDatabaseFile = modDatabaseFile;
@@ -86,12 +89,13 @@ namespace ReforgerServerApp.Models
             this.armaWorkshopUrl = armaWorkshopUrl;
             this.logFile = logFile;
             this.minimumLogLevel = minimumLogLevel;
+            this.autoRestartTime_ms = autoRestartTime_ms;
         }
 
 
         public static ToolProperties Default => new(DEFAULT_SCENARIOS, DEFAULT_MOD_DATABASE_FILE, DEFAULT_INSTALL_DIR_FILE,
             DEFAULT_UPDATE_REPOSITORY, DEFAULT_RELEASES_REPOSITORY, DEFAULT_BUG_REPORT_REPOSITORY, DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP,
-            DEFAULT_STEAMCMD_DOWNLOAD_URL, DEFAULT_ARMA_WORKSHOP_URL, DEFAULT_LOG_FILE, DEFAULT_MINIMUM_LOG_LEVEL);
+            DEFAULT_STEAMCMD_DOWNLOAD_URL, DEFAULT_ARMA_WORKSHOP_URL, DEFAULT_LOG_FILE, DEFAULT_MINIMUM_LOG_LEVEL, DEFAULT_AUTO_RESTART_TIME_MS);
 
         /// <summary>
         /// Display <c>ToolProperties</c> in readable Json format.

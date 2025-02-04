@@ -12,7 +12,6 @@ using System.ComponentModel;
 using Serilog;
 using ReforgerServerApp.Components;
 using ReforgerServerApp.Utils;
-using System.Windows.Forms.VisualStyles;
 
 namespace ReforgerServerApp
 {
@@ -67,8 +66,6 @@ namespace ReforgerServerApp
             }
 
             FileIOManager.CheckForVCRedist();
-
-            Mod.GetScenariosForMod("591AF5BDA9F7CE8B");
         }
 
         /// <summary>
@@ -103,7 +100,6 @@ namespace ReforgerServerApp
                 downloadSteamCmdBtn.Enabled = false;
                 startServerBtn.Enabled = true;
                 deleteServerFilesBtn.Enabled = true;
-
             }
             else
             {
@@ -540,17 +536,6 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
-        /// Handler for the Load Session Save Checkbox, enables / disables the Load Session Save field
-        /// and enables / disables the Load Session Save functionality
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LoadSessionSaveCheckChanged(object sender, EventArgs e)
-        {
-            //sessionSave.Enabled = loadSessionSave.Checked;
-        }
-
-        /// <summary>
         /// Populate Config Managers Server Parameter UI controls to easily retrieve values and send them to the model
         /// </summary>
         private void CreateServerParameterControls()
@@ -980,6 +965,14 @@ namespace ReforgerServerApp
             };
             autoRestartTime.CheckBox.CheckedChanged += AutoRestartTimeCheckChanged;
             advancedParametersPanel.Controls.Add(autoRestartTime);
+            AdvancedServerParameterBool autoRestartOnCrash = new()
+            {
+                ParameterName = "autoRestartOnCrash",
+                ParameterFriendlyName = "Restart on Game Destroyed",
+                Description = "The tool will monitor the server for crashes and attempt to restart it automatically."
+            };
+            autoRestartOnCrash.CheckBox.CheckedChanged += AutoRestartOnCrashCheckChanged;
+            advancedParametersPanel.Controls.Add(autoRestartOnCrash);
             AdvancedServerParameterNumeric autoReload = new()
             {
                 ParameterName = "autoreload",
@@ -995,7 +988,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "nobackend",
                 ParameterFriendlyName = "No Backend",
-                Description = "Enable this to disable the connection to the master server. Clients will only be able to connect via 'Direct Connect'."
+                Description = "Enable this to disable the connection to the Arma Reforger backend. Clients will only be able to connect via 'Direct Connect'."
             };
             advancedParametersPanel.Controls.Add(noBackend);
             AdvancedServerParameterNumeric overridePort = new()
@@ -1088,6 +1081,12 @@ namespace ReforgerServerApp
             {
                 ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()[param.ParameterName] = param;
             }
+        }
+
+        private void AutoRestartOnCrashCheckChanged(object? sender, EventArgs e)
+        {
+            ConfigurationManager.GetInstance().autoRestartOnCrash = 
+                ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartOnCrash"].Checked();
         }
 
         private void AutoRestartCheckChanged(object? sender, EventArgs e)
