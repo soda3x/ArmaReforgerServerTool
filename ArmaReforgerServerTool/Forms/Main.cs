@@ -1228,7 +1228,15 @@ namespace ReforgerServerApp
 
             if (advParams["loadSessionSave"].Checked())
             {
-                args.loadSessionSave = new("loadSessionSave", Convert.ToString(advParams["loadSessionSave"].ParameterValue));
+                // As no parameter is also valid, check if there is a value
+                string loadSessionSaveVal = Convert.ToString(advParams["loadSessionSave"].ParameterValue);
+                if (String.IsNullOrWhiteSpace(loadSessionSaveVal))
+                {
+                    args.loadSessionSave = new("loadSessionSave");
+                } else
+                {
+                    args.loadSessionSave = new("loadSessionSave", loadSessionSaveVal);
+                }
             }
 
             if (advParams["autoreload"].Checked())
