@@ -12,6 +12,7 @@ using System.ComponentModel;
 using Serilog;
 using ReforgerServerApp.Components;
 using ReforgerServerApp.Utils;
+using System.Windows.Forms.VisualStyles;
 
 namespace ReforgerServerApp
 {
@@ -951,8 +952,9 @@ namespace ReforgerServerApp
                 ParameterMax = 1000,
                 ParameterIncrement = 1,
                 ParameterValue = 60,
-                Description = "Recommended at the moment."
+                Description = "Limits your server to the specified target FPS. Recommended."
             };
+            limitServerMaxFPS.CheckBox.Checked = true; // Checked by default
             advancedParametersPanel.Controls.Add(limitServerMaxFPS);
             AdvancedServerParameterSchedule autoRestart = new()
             {
@@ -978,6 +980,24 @@ namespace ReforgerServerApp
             };
             autoRestartTime.CheckBox.CheckedChanged += AutoRestartTimeCheckChanged;
             advancedParametersPanel.Controls.Add(autoRestartTime);
+            AdvancedServerParameterNumeric autoReload = new()
+            {
+                ParameterName = "autoreload",
+                ParameterFriendlyName = "Auto Reload Scenario",
+                Description = "Automatically reload the scenario when finished after the specified time (in seconds) has elapsed.",
+                ParameterMin = 1,
+                ParameterMax = int.MaxValue,
+                ParameterIncrement = 1,
+                ParameterValue = 10
+            };
+            advancedParametersPanel.Controls.Add(autoReload);
+            AdvancedServerParameterBool noBackend = new()
+            {
+                ParameterName = "nobackend",
+                ParameterFriendlyName = "No Backend",
+                Description = "Enable this to disable the connection to the master server. Clients will only be able to connect via 'Direct Connect'."
+            };
+            advancedParametersPanel.Controls.Add(noBackend);
             AdvancedServerParameterNumeric overridePort = new()
             {
                 ParameterName = "bindPort",
@@ -1044,6 +1064,17 @@ namespace ReforgerServerApp
                 Description = "Streams delta is a tool to limit the amount of streams being opened for a client."
             };
             advancedParametersPanel.Controls.Add(streamsDelta);
+            AdvancedServerParameterNumeric rplTimeoutMs = new()
+            {
+                ParameterName = "rpl-timeout-ms",
+                ParameterFriendlyName = "RPL Timeout",
+                ParameterMin = 1,
+                ParameterMax = int.MaxValue,
+                ParameterIncrement = 1,
+                ParameterValue= 10000,
+                Description = "Sets the server's timeout value, in milliseconds."
+            };
+            advancedParametersPanel.Controls.Add(rplTimeoutMs);
             AdvancedServerParameterString loadSessionSave = new()
             {
                 ParameterName = "loadSessionSave",
@@ -1199,6 +1230,21 @@ namespace ReforgerServerApp
             if (advParams["loadSessionSave"].Checked())
             {
                 args.loadSessionSave = new("loadSessionSave", Convert.ToString(advParams["loadSessionSave"].ParameterValue));
+            }
+
+            if (advParams["autoreload"].Checked())
+            {
+                args.autoReload = new("autoreload", Convert.ToString(advParams["autoreload"].ParameterValue));
+            }
+
+            if (advParams["rpl-timeout-ms"].Checked())
+            {
+                args.rplTimeoutMs = new("rpl-timeout-ms", Convert.ToString(advParams["rpl-timeout-ms"].ParameterValue));
+            }
+
+            if (advParams["nobackend"].Checked())
+            {
+                args.noBackend = new("nobackend");
             }
 
             ProcessManager.GetInstance().SetLaunchArgumentsModel(args);

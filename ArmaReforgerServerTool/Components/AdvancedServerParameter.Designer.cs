@@ -72,6 +72,6 @@
         #endregion
 
         private CheckBox parameterEnabled;
-        private Label description;
+        protected Label description;
     }
 }
