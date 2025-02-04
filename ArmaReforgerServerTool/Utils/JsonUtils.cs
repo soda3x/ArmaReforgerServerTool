@@ -10,7 +10,6 @@
 
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using System.Diagnostics;
 using ReforgerServerApp.Models;
 
 namespace ReforgerServerApp.Utils
@@ -385,6 +384,9 @@ namespace ReforgerServerApp.Utils
                             case "minimumLogLevel":
                             props.minimumLogLevel = reader.GetString();
                             break;
+                            case "autoRestartTime_ms":
+                            props.autoRestartTime_ms = reader.GetInt32();
+                            break;
                             default:
                             throw new JsonException($"Unexpected property: {propertyName}");
                         }
@@ -410,6 +412,7 @@ namespace ReforgerServerApp.Utils
                 writer.WriteString("armaWorkshopUrl", value.armaWorkshopUrl);
                 writer.WriteString("logFile", value.logFile);
                 writer.WriteString("minimumLogLevel", value.minimumLogLevel);
+                writer.WriteNumber("autoRestartTime_ms", value.autoRestartTime_ms);
 
                 writer.WriteEndObject();
             }

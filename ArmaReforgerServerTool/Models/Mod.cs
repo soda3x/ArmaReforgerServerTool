@@ -111,29 +111,32 @@ namespace ReforgerServerApp
         public static List<string> GetScenariosForMod(string modId)
         {
             List<string> scenarios = new();
-            try
+            if (!modId.Equals(Constants.STOCK_MOD_ID))
             {
-                string fetchUrl               = $"{ToolPropertiesManager.GetInstance().GetToolProperties().armaWorkshopUrl}/{modId}/scenarios";
-                HtmlWeb web                   = new();
-                HtmlDocument doc              = web.Load(fetchUrl);
-                const string className        = "text-start";
-                HtmlNodeCollection rawScenIds = doc.DocumentNode.SelectNodes($"//*[contains(@class,'{className}')]");
-                if (rawScenIds != null)
+                try
                 {
-                    foreach (HtmlNode field in rawScenIds)
+                    string fetchUrl               = $"{ToolPropertiesManager.GetInstance().GetToolProperties().armaWorkshopUrl}/{modId}/scenarios";
+                    HtmlWeb web                   = new();
+                    HtmlDocument doc              = web.Load(fetchUrl);
+                    const string className        = "text-start";
+                    HtmlNodeCollection rawScenIds = doc.DocumentNode.SelectNodes($"//*[contains(@class,'{className}')]");
+                    if (rawScenIds != null)
                     {
-                        Log.Debug("Mod - Discovered scenario \"{scenario}\" for Mod \"{mod}\"", field.InnerText, modId);
-                        scenarios.Add(field.InnerText);
+                        foreach (HtmlNode field in rawScenIds)
+                        {
+                            Log.Debug("Mod - Discovered scenario \"{scenario}\" for Mod \"{mod}\"", field.InnerText, modId);
+                            scenarios.Add(field.InnerText);
+                        }
+                    }
+                    else
+                    {
+                        Log.Debug("Mod - Failed to fetch any scenario ids for \"{mod}\". It may not have any.", modId);
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Log.Debug("Mod - Failed to fetch any scenario ids for \"{mod}\". It may not have any.", modId);
+                    Utilities.DisplayErrorMessage("Unable to fetch Scenario IDs from Arma Reforger Workshop, please check your internet connection.", ex.Message);
                 }
-            }
-            catch (Exception ex)
-            {
-                Utilities.DisplayErrorMessage("Unable to fetch Scenario IDs from Arma Reforger Workshop, please check your internet connection.", ex.Message);
             }
             return scenarios;
         }
