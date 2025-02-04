@@ -35,6 +35,8 @@ namespace ReforgerServerApp
         private BindingList<Mod>                                     m_availableMods;
         private BindingList<Mod>                                     m_enabledMods;
 
+        public bool autoRestartOnCrash { get; set; }
+
         public bool useExperimentalServer { get; set; }
 
         public delegate void UpdateScenarioIdFromLoadedConfig(object sender, ScenarioIdEventArgs e);
@@ -224,7 +226,18 @@ namespace ReforgerServerApp
             m_serverConfig.root.rcon.address     = (string) m_serverParamsDictionary["rconAddress"].ParameterValue;
             m_serverConfig.root.rcon.port        = Convert.ToInt32(m_serverParamsDictionary["rconPort"].ParameterValue);
             m_serverConfig.root.rcon.password    = (string) m_serverParamsDictionary["rconPassword"].ParameterValue;
-            m_serverConfig.root.rcon.permission  = Utilities.StringToEnum<RconPermission>((string)m_serverParamsDictionary["rconPermission"].ParameterValue);
+
+            if (m_serverParamsDictionary["rconPermission"].InvokeRequired)
+            {
+                m_serverParamsDictionary["rconPermission"].Invoke(new Action(() =>
+                {
+                    m_serverConfig.root.rcon.permission = Utilities.StringToEnum<RconPermission>((string) m_serverParamsDictionary["rconPermission"].ParameterValue);
+                }));
+            } else
+            {
+                m_serverConfig.root.rcon.permission = Utilities.StringToEnum<RconPermission>((string) m_serverParamsDictionary["rconPermission"].ParameterValue);
+            }
+
             m_serverConfig.root.rcon.maxClients  = Convert.ToInt32(m_serverParamsDictionary["rconMaxClients"].ParameterValue);
             m_serverConfig.root.rcon.whitelist   = (string[]) m_serverParamsDictionary["rconWhitelist"].ParameterValue;
             m_serverConfig.root.rcon.blacklist   = (string[]) m_serverParamsDictionary["rconBlacklist"].ParameterValue;

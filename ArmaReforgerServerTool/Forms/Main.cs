@@ -66,8 +66,6 @@ namespace ReforgerServerApp
             }
 
             FileIOManager.CheckForVCRedist();
-
-            Mod.GetScenariosForMod("591AF5BDA9F7CE8B");
         }
 
         /// <summary>
@@ -102,7 +100,6 @@ namespace ReforgerServerApp
                 downloadSteamCmdBtn.Enabled = false;
                 startServerBtn.Enabled = true;
                 deleteServerFilesBtn.Enabled = true;
-
             }
             else
             {
@@ -539,17 +536,6 @@ namespace ReforgerServerApp
         }
 
         /// <summary>
-        /// Handler for the Load Session Save Checkbox, enables / disables the Load Session Save field
-        /// and enables / disables the Load Session Save functionality
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LoadSessionSaveCheckChanged(object sender, EventArgs e)
-        {
-            //sessionSave.Enabled = loadSessionSave.Checked;
-        }
-
-        /// <summary>
         /// Populate Config Managers Server Parameter UI controls to easily retrieve values and send them to the model
         /// </summary>
         private void CreateServerParameterControls()
@@ -951,8 +937,9 @@ namespace ReforgerServerApp
                 ParameterMax = 1000,
                 ParameterIncrement = 1,
                 ParameterValue = 60,
-                Description = "Recommended at the moment."
+                Description = "Limits your server to the specified target FPS. Recommended."
             };
+            limitServerMaxFPS.CheckBox.Checked = true; // Checked by default
             advancedParametersPanel.Controls.Add(limitServerMaxFPS);
             AdvancedServerParameterSchedule autoRestart = new()
             {
@@ -978,6 +965,32 @@ namespace ReforgerServerApp
             };
             autoRestartTime.CheckBox.CheckedChanged += AutoRestartTimeCheckChanged;
             advancedParametersPanel.Controls.Add(autoRestartTime);
+            AdvancedServerParameterBool autoRestartOnCrash = new()
+            {
+                ParameterName = "autoRestartOnCrash",
+                ParameterFriendlyName = "Restart on Game Destroyed",
+                Description = "The tool will monitor the server for crashes and attempt to restart it automatically."
+            };
+            autoRestartOnCrash.CheckBox.CheckedChanged += AutoRestartOnCrashCheckChanged;
+            advancedParametersPanel.Controls.Add(autoRestartOnCrash);
+            AdvancedServerParameterNumeric autoReload = new()
+            {
+                ParameterName = "autoreload",
+                ParameterFriendlyName = "Auto Reload Scenario",
+                Description = "Automatically reload the scenario when finished after the specified time (in seconds) has elapsed.",
+                ParameterMin = 1,
+                ParameterMax = int.MaxValue,
+                ParameterIncrement = 1,
+                ParameterValue = 10
+            };
+            advancedParametersPanel.Controls.Add(autoReload);
+            AdvancedServerParameterBool noBackend = new()
+            {
+                ParameterName = "nobackend",
+                ParameterFriendlyName = "No Backend",
+                Description = "Enable this to disable the connection to the Arma Reforger backend. Clients will only be able to connect via 'Direct Connect'."
+            };
+            advancedParametersPanel.Controls.Add(noBackend);
             AdvancedServerParameterNumeric overridePort = new()
             {
                 ParameterName = "bindPort",
@@ -1044,6 +1057,17 @@ namespace ReforgerServerApp
                 Description = "Streams delta is a tool to limit the amount of streams being opened for a client."
             };
             advancedParametersPanel.Controls.Add(streamsDelta);
+            AdvancedServerParameterNumeric rplTimeoutMs = new()
+            {
+                ParameterName = "rpl-timeout-ms",
+                ParameterFriendlyName = "RPL Timeout",
+                ParameterMin = 1,
+                ParameterMax = int.MaxValue,
+                ParameterIncrement = 1,
+                ParameterValue= 10000,
+                Description = "Sets the server's timeout value, in milliseconds."
+            };
+            advancedParametersPanel.Controls.Add(rplTimeoutMs);
             AdvancedServerParameterString loadSessionSave = new()
             {
                 ParameterName = "loadSessionSave",
@@ -1057,6 +1081,12 @@ namespace ReforgerServerApp
             {
                 ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()[param.ParameterName] = param;
             }
+        }
+
+        private void AutoRestartOnCrashCheckChanged(object? sender, EventArgs e)
+        {
+            ConfigurationManager.GetInstance().autoRestartOnCrash = 
+                ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartOnCrash"].Checked();
         }
 
         private void AutoRestartCheckChanged(object? sender, EventArgs e)
@@ -1199,6 +1229,21 @@ namespace ReforgerServerApp
             if (advParams["loadSessionSave"].Checked())
             {
                 args.loadSessionSave = new("loadSessionSave", Convert.ToString(advParams["loadSessionSave"].ParameterValue));
+            }
+
+            if (advParams["autoreload"].Checked())
+            {
+                args.autoReload = new("autoreload", Convert.ToString(advParams["autoreload"].ParameterValue));
+            }
+
+            if (advParams["rpl-timeout-ms"].Checked())
+            {
+                args.rplTimeoutMs = new("rpl-timeout-ms", Convert.ToString(advParams["rpl-timeout-ms"].ParameterValue));
+            }
+
+            if (advParams["nobackend"].Checked())
+            {
+                args.noBackend = new("nobackend");
             }
 
             ProcessManager.GetInstance().SetLaunchArgumentsModel(args);
