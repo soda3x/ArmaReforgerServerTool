@@ -986,7 +986,7 @@ namespace ReforgerServerApp
             advancedParametersPanel.Controls.Add(autoReload);
             AdvancedServerParameterBool noBackend = new()
             {
-                ParameterName = "nobackend",
+                ParameterName = "noBackend",
                 ParameterFriendlyName = "No Backend",
                 Description = "Enable this to disable the connection to the Arma Reforger backend. Clients will only be able to connect via 'Direct Connect'."
             };
@@ -1249,9 +1249,9 @@ namespace ReforgerServerApp
                 args.rplTimeoutMs = new("rpl-timeout-ms", Convert.ToString(advParams["rpl-timeout-ms"].ParameterValue));
             }
 
-            if (advParams["nobackend"].Checked())
+            if (advParams["noBackend"].Checked())
             {
-                args.noBackend = new("nobackend");
+                args.noBackend = new("noBackend");
             }
 
             ProcessManager.GetInstance().SetLaunchArgumentsModel(args);
