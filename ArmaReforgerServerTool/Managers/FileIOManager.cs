@@ -226,7 +226,7 @@ namespace ReforgerServerApp.Managers
         /// <summary>
         /// Download Steam CMD
         /// </summary>
-        public void DownloadSteamCMD()
+        public async Task DownloadSteamCMD()
         {
             string path = string.Empty;
             using FolderBrowserDialog fbd = new();
@@ -239,18 +239,39 @@ namespace ReforgerServerApp.Managers
                 File.WriteAllText(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile, m_installDir);
             }
 
-            using WebClient client = new();
-            client.DownloadFileCompleted += (s, e) =>
+            string steamCmdUrl = $"{ToolPropertiesManager.GetInstance().GetToolProperties().steamCmdDownloadUrl}/steamcmd.zip";
+            string zipFilePath = Path.Combine(m_installDir, "steamcmd.zip");
+            string extractPath = Path.Combine(m_installDir, "steamcmd");
+
+            try
             {
-                if (File.Exists($"{m_installDir}\\steamcmd.zip"))
+                using HttpClient client = new();
+                Log.Debug("FileIOManager - Downloading SteamCMD...");
+                byte[] fileBytes = await client.GetByteArrayAsync(steamCmdUrl);
+                await File.WriteAllBytesAsync(zipFilePath, fileBytes);
+
+                if (File.Exists(zipFilePath))
                 {
-                    Log.Information("FileIOManager - Extracting SteamCMD...");
-                    ZipFile.ExtractToDirectory($"{m_installDir}\\steamcmd.zip", $"{m_installDir}\\steamcmd");
+                    Log.Debug("FileIOManager - Extracting SteamCMD...");
+                    ZipFile.ExtractToDirectory(zipFilePath, extractPath);
+                    DeleteFile(zipFilePath);
                 }
-            };
-            client.DownloadFileAsync(
-                new Uri($"{ToolPropertiesManager.GetInstance().GetToolProperties().steamCmdDownloadUrl}/steamcmd.zip"),
-                    $"{m_installDir}\\steamcmd.zip");
+                return;
+            }
+            catch (Exception ex)
+            {
+                Utilities.DisplayErrorMessage("Failed to download or extract SteamCMD.", $"Failed to download or extract SteamCMD: {ex.Message}");
+                Log.Error($"FileIOManager - Failed to download or extract SteamCMD: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Install the NoBackendScenarioLoader mod into the addons directory
+        /// </summary>
+        public void InstallNoBackendScenarioLoader()
+        {
+            ZipFile.ExtractToDirectory("Resources\\NoBackendScenarioLoader_6324F7124A9768FB.zip",
+                $"{m_installDir}\\addons", true);
         }
 
         /// <summary>
@@ -259,45 +280,54 @@ namespace ReforgerServerApp.Managers
         /// If there is no internet connection, or this simply fails, 
         /// warn the user that we couldn't successfully check for updates.
         /// </summary>
-        public static void CheckForUpdates()
+        public static async Task CheckForUpdates()
         {
             Log.Information("FileIOManager - Checking for updates...");
             string latestVersionString;
-            WebClient wc = new WebClient();
 
-            // Add headers to impersonate a web browser. Some web sites 
-            // will not respond correctly without these headers
-            wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12");
-            wc.Headers.Add("Accept", "*/*");
-            wc.Headers.Add("Accept-Language", "en-gb,en;q=0.5");
-            wc.Headers.Add("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
-            // Disable caching to avoid retrieval of an old version number
-            wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.NoCacheNoStore);
+            using HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-GB; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12");
+            client.DefaultRequestHeaders.Add("Accept", "*/*");
+            client.DefaultRequestHeaders.Add("Accept-Language", "en-gb,en;q=0.5");
+            client.DefaultRequestHeaders.Add("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.7");
+
             try
             {
-                latestVersionString = wc.DownloadString($"{ToolPropertiesManager.GetInstance().GetToolProperties().updateRepositoryUrl}/main/version.txt");
+                string updateUrl = $"{ToolPropertiesManager.GetInstance().GetToolProperties().updateRepositoryUrl}/main/version.txt";
+                latestVersionString = await client.GetStringAsync(updateUrl);
 
-                var checkedVersion = new Version(latestVersionString);
+                var checkedVersion = new Version(latestVersionString.Trim());
                 var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
                 var result = checkedVersion.CompareTo(currentVersion);
+
                 if (result > 0)
                 {
                     Log.Information("FileIOManager - There is a new version of the tool available (current: {currentVer}, new: {newVer}", currentVersion, checkedVersion);
-                    DialogResult dr = MessageBox.Show("There is an update available for the Arma Reforger Dedicated Server Tool." +
-                        "\r\nWould you like to get the latest version now?\r\n\r\nOur version: " + currentVersion +
-                        "\r\nLatest version: " + checkedVersion, "Arma Reforger Dedicated Server Tool - Update available", MessageBoxButtons.YesNo);
-                    if (dr == DialogResult.Yes)
-                    {
-                        Process.Start("explorer", $"{ToolPropertiesManager.GetInstance().GetToolProperties().releaseRepositoryUrl}");
-                        Environment.Exit(0);
-                    }
+                    DialogResult dr = MessageBox.Show(
+                    $"There is an update available for the Arma Reforger Dedicated Server Tool.\r\n" +
+                    $"Would you like to get the latest version now?\r\n\r\n" +
+                    $"Our version: {currentVersion}\r\nLatest version: {checkedVersion}",
+                    "Arma Reforger Dedicated Server Tool - Update available",
+                    MessageBoxButtons.YesNo);
+
+                        if (dr == DialogResult.Yes)
+                        {
+                            Process.Start(new ProcessStartInfo
+                            {
+                                FileName = ToolPropertiesManager.GetInstance().GetToolProperties().releaseRepositoryUrl,
+                                UseShellExecute = true
+                            });
+                            Environment.Exit(0);
+                        }
                 }
             }
-            catch (WebException e)
+            catch (HttpRequestException e)
             {
                 Log.Error(e, "FileIOManager - Failed to check for updates");
-                Utilities.DisplayErrorMessage($"Unable to check for updates," +
-                    " you may not be using the latest version of the Arma Reforger Dedicated Server Tool.\r\nPlease consider checking your internet connection.", e.Message);
+                Utilities.DisplayErrorMessage(
+                    "Unable to check for updates, you may not be using the latest version of the Arma Reforger Dedicated Server Tool.\r\n" +
+                    "Please consider checking your internet connection.",
+                    e.Message);
             }
         }
 

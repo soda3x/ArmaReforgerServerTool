@@ -58,7 +58,7 @@ namespace ReforgerServerApp
 
             if (ToolPropertiesManager.GetInstance().GetToolProperties().checkForUpdatesOnStartup)
             {
-                FileIOManager.CheckForUpdates();
+                _ = FileIOManager.CheckForUpdates();
             }
             else
             {
@@ -94,19 +94,26 @@ namespace ReforgerServerApp
         /// </summary>
         private void UpdateSteamCmdInstallStatus()
         {
-            if (FileIOManager.GetInstance().IsSteamCMDInstalled())
+            if (steamCmdAlert.InvokeRequired)
             {
-                steamCmdAlert.Text = $"Using Arma Reforger Server files found at: \"{FileIOManager.GetInstance().GetInstallDirectory()}\"";
-                downloadSteamCmdBtn.Enabled = false;
-                startServerBtn.Enabled = true;
-                deleteServerFilesBtn.Enabled = true;
+                steamCmdAlert.Invoke(new Action(() => UpdateSteamCmdInstallStatus()));
             }
             else
             {
-                steamCmdAlert.Text = "SteamCMD and the Arma Server files were not detected, please Download before continuing.";
-                startServerBtn.Enabled = false;
-                downloadSteamCmdBtn.Enabled = true;
-                deleteServerFilesBtn.Enabled = false;
+                if (FileIOManager.GetInstance().IsSteamCMDInstalled())
+                {
+                    steamCmdAlert.Text = $"Using Arma Reforger Server files found at: \"{FileIOManager.GetInstance().GetInstallDirectory()}\"";
+                    downloadSteamCmdBtn.Enabled = false;
+                    startServerBtn.Enabled = true;
+                    deleteServerFilesBtn.Enabled = true;
+                }
+                else
+                {
+                    steamCmdAlert.Text = "SteamCMD and the Arma Server files were not detected, please Download before continuing.";
+                    startServerBtn.Enabled = false;
+                    downloadSteamCmdBtn.Enabled = true;
+                    deleteServerFilesBtn.Enabled = false;
+                }
             }
         }
 
@@ -294,8 +301,12 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void DownloadSteamCmdBtnPressed(object sender, EventArgs e)
         {
-            FileIOManager.GetInstance().DownloadSteamCMD();
-            UpdateSteamCmdInstallStatus();
+            Task steamCmdTask = FileIOManager.GetInstance().DownloadSteamCMD();
+            steamCmdTask.ContinueWith(t =>
+            {
+                UpdateSteamCmdInstallStatus();
+            });
+            FileIOManager.GetInstance().InstallNoBackendScenarioLoader();
         }
 
         /// <summary>
@@ -443,6 +454,7 @@ namespace ReforgerServerApp
             {
                 UpdateSteamCmdInstallStatus();
             }
+            FileIOManager.GetInstance().InstallNoBackendScenarioLoader();
         }
 
         /// <summary>
@@ -991,6 +1003,7 @@ namespace ReforgerServerApp
                 Description = "Enable this to disable the connection to the Arma Reforger backend. Clients will only be able to connect via 'Direct Connect'."
             };
             advancedParametersPanel.Controls.Add(noBackend);
+            noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
             AdvancedServerParameterNumeric overridePort = new()
             {
                 ParameterName = "bindPort",
@@ -1083,9 +1096,39 @@ namespace ReforgerServerApp
             }
         }
 
+        private void NoBackendCheckChanged(object? sender, EventArgs e)
+        {
+            ConfigurationManager.GetInstance().noBackend =
+                ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["noBackend"].Checked();
+
+            if (ConfigurationManager.GetInstance().noBackend)
+            {
+                bool enableNoBackend = Utilities.DisplayConfirmationMessage("Setting your server to use No Backend means it will not be visible in the server browser.\r\n" +
+                    "Mods not already downloaded will not work as they will not be fetched from the Workshop.\r\n" +
+                    "Clients will only be able to connect via 'Direct Connect', and it is their responsibility to acquire required mods.\r\n\r\n" +
+                    "Enabling this will disable most other advanced parameters. Continue?", true);
+
+                if (enableNoBackend)
+                {
+                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoreload"].CheckBox.Checked = false;
+                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["nds"].CheckBox.Checked = false;
+                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["nwkResolution"].CheckBox.Checked = false;
+                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["staggeringBudget"].CheckBox.Checked = false;
+                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["streamingBudget"].CheckBox.Checked = false;
+                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["streamsDelta"].CheckBox.Checked = false;
+                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["rpl-timeout-ms"].CheckBox.Checked = false;
+                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["loadSessionSave"].CheckBox.Checked = false;
+                }
+                else
+                {
+                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["noBackend"].CheckBox.Checked = false;
+                }
+            }
+        }
+
         private void AutoRestartOnCrashCheckChanged(object? sender, EventArgs e)
         {
-            ConfigurationManager.GetInstance().autoRestartOnCrash = 
+            ConfigurationManager.GetInstance().autoRestartOnCrash =
                 ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartOnCrash"].Checked();
         }
 
@@ -1184,6 +1227,8 @@ namespace ReforgerServerApp
                 config   = new("config", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\server.json\""),
                 // Saves etc. will be placed in <server-files-dir>/saves/, wrap in quotes to capture potential spaces in paths
                 profile  = new("profile", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\saves\""),
+                // Addons will be placed in <server-files-dir>/addons/, wrap in quotes to capture potentional spaces in paths
+                addonsDir = new("addonsDir", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\addons\""),
                 // Log performance stats every 5 seconds (represented in ms)
                 logStats = new("logStats", $"{Convert.ToString(5000)}"),
                 logLevel = new("logLevel", $"{logLevelComboBox.Text}")
@@ -1233,7 +1278,8 @@ namespace ReforgerServerApp
                 if (String.IsNullOrWhiteSpace(loadSessionSaveVal))
                 {
                     args.loadSessionSave = new("loadSessionSave");
-                } else
+                }
+                else
                 {
                     args.loadSessionSave = new("loadSessionSave", loadSessionSaveVal);
                 }
@@ -1247,11 +1293,6 @@ namespace ReforgerServerApp
             if (advParams["rpl-timeout-ms"].Checked())
             {
                 args.rplTimeoutMs = new("rpl-timeout-ms", Convert.ToString(advParams["rpl-timeout-ms"].ParameterValue));
-            }
-
-            if (advParams["noBackend"].Checked())
-            {
-                args.noBackend = new("noBackend");
             }
 
             ProcessManager.GetInstance().SetLaunchArgumentsModel(args);

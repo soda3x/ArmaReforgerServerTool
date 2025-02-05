@@ -17,7 +17,7 @@ using System.Diagnostics;
 
 namespace ReforgerServerApp.Managers
 {
-    public enum ServerRestartIntervalUnit {  MINUTES, HOURS, DAYS }
+    public enum ServerRestartIntervalUnit { MINUTES, HOURS, DAYS }
 
     internal class SteamCmdLogEventArgs : EventArgs
     {
@@ -52,10 +52,10 @@ namespace ReforgerServerApp.Managers
 
         private ProcessManager()
         {
-            m_steamCmdUpdateProcess        = new();
-            m_serverProcess                = new();
+            m_steamCmdUpdateProcess = new();
+            m_serverProcess = new();
             m_timerCancellationTokenSource = new();
-            m_launchArgumentsModel         = new();
+            m_launchArgumentsModel = new();
         }
 
         public static ProcessManager GetInstance()
@@ -67,7 +67,7 @@ namespace ReforgerServerApp.Managers
         public bool IsServerStarted() { return m_isServerStarted; }
         public bool IsServerUsingTimer() { return m_isServerUsingTimer; }
         public LaunchArguments GetLaunchArgumentsModel() { return m_launchArgumentsModel; }
-        public void SetLaunchArgumentsModel(LaunchArguments la) {  m_launchArgumentsModel = la; }
+        public void SetLaunchArgumentsModel(LaunchArguments la) { m_launchArgumentsModel = la; }
 
         /// <summary>
         /// This method controls the logic for Starting and Stopping the Server.
@@ -95,7 +95,7 @@ namespace ReforgerServerApp.Managers
                 {
                     Log.Information("ProcessManager - User stopped server.");
                     m_serverProcess.OutputDataReceived -= SteamCmdDataReceived;
-                    m_serverProcess.ErrorDataReceived  -= SteamCmdDataReceived;
+                    m_serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
                     m_serverProcess.CancelOutputRead();
                     m_serverProcess.CancelErrorRead();
 
@@ -160,7 +160,7 @@ namespace ReforgerServerApp.Managers
                 {
                     steamCmd = new($"{Utilities.GetTimestamp()}: Automatically restarted server.{Environment.NewLine}");
                 }
-                
+
                 OnUpdateSteamCmdLogEvent(steamCmd);
 
                 SteamCmdLogEventArgs dling = new($"{Utilities.GetTimestamp()}: Downloading / updating Arma Reforger dedicated server files. Please be patient...{Environment.NewLine}");
@@ -377,7 +377,7 @@ namespace ReforgerServerApp.Managers
             m_steamCmdUpdateProcess.BeginOutputReadLine();
             m_steamCmdUpdateProcess.BeginErrorReadLine();
             m_steamCmdUpdateProcess.WaitForExit();
-            
+
 
             if (m_steamCmdUpdateProcess.HasExited)
             {
@@ -494,21 +494,38 @@ namespace ReforgerServerApp.Managers
         public string GetLaunchArguments()
         {
             string args = string.Join(" ", new[] {
-                                               m_launchArgumentsModel.config,
                                                m_launchArgumentsModel.profile,
+                                               m_launchArgumentsModel.addonsDir,
                                                m_launchArgumentsModel.logStats,
                                                m_launchArgumentsModel.maxFPS,
                                                m_launchArgumentsModel.bindPort,
+                                               m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
+
+            if (!ConfigurationManager.GetInstance().noBackend)
+            {
+                // Concatenate the current args with the advanced parameters, if applicable
+                args = string.Join(" ", args, string.Join(" ", new[] {
+                                               m_launchArgumentsModel.config,
                                                m_launchArgumentsModel.autoReload,
-                                               m_launchArgumentsModel.noBackend,
                                                m_launchArgumentsModel.rplTimeoutMs,
                                                m_launchArgumentsModel.nds,
                                                m_launchArgumentsModel.nwkResolution,
                                                m_launchArgumentsModel.staggeringBudget,
                                                m_launchArgumentsModel.streamingBudget,
                                                m_launchArgumentsModel.streamsDelta,
-                                               m_launchArgumentsModel.loadSessionSave,
-                                               m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
+                                               m_launchArgumentsModel.loadSessionSave}.Where(arg => arg != null)));
+            }
+            else
+            {
+                // We are running the server with No Backend, use the no backend launch arguments
+                args = string.Join(" ", new[] { args, ConfigurationManager.CreateNoBackendLaunchArguments() });
+
+                // Because Bind Port can be specified as an 'override', ensure that that takes precedence
+                if (m_launchArgumentsModel.bindPort == null)
+                {
+                    args = string.Join(" ", new[] { args, $"-bindPort {ConfigurationManager.GetInstance().GetServerConfiguration().root.bindPort}" });
+                }
+            }
             Log.Information("Launching server with the following launch arguments: \"{args}\"", args);
             return args;
         }
