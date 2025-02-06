@@ -13,6 +13,8 @@ using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
 using System.ComponentModel;
 using ReforgerServerApp.Components;
+using System.Text;
+using System.Collections;
 
 namespace ReforgerServerApp
 {
@@ -36,8 +38,8 @@ namespace ReforgerServerApp
         private BindingList<Mod>                                     m_enabledMods;
 
         public bool autoRestartOnCrash { get; set; }
-
         public bool useExperimentalServer { get; set; }
+        public bool noBackend { get; set; }
 
         public delegate void UpdateScenarioIdFromLoadedConfig(object sender, ScenarioIdEventArgs e);
         public event UpdateScenarioIdFromLoadedConfig UpdateScenarioIdFromLoadedConfigEvent;
@@ -294,6 +296,44 @@ namespace ReforgerServerApp
             m_serverConfig.root.operating.disableAI             = (bool) m_serverParamsDictionary["disableAI"].ParameterValue;
 
             m_serverConfig.root.operating.joinQueue.maxSize = Convert.ToInt32(m_serverParamsDictionary["maxSize"].ParameterValue);
+        }
+
+        /// <returns>Mod IDs of Mods in the server configuration as a List</returns>
+        private static string[] GetModIDsAsList()
+        {
+            List<string> modIds = new();
+            foreach (Mod m in GetInstance().GetServerConfiguration().root.game.mods)
+            {
+                modIds.Add(m.modId);
+            }
+            return modIds.ToArray();
+        }
+
+        /// <summary>
+        /// Create Launch Arguments for when launching the server without the Backend
+        /// </summary>
+        /// <returns>String containing all required launch arguments to start the server wihtout
+        /// the backend connection</returns>
+        public static string CreateNoBackendLaunchArguments()
+        {
+            string mods = Constants.NO_BACKEND_SCENARIO_LOADER_MOD_ID;
+            if (GetModIDsAsList().Length > 0)
+            {
+                string temp = string.Join(",", GetModIDsAsList());
+                mods = string.Join(",", new string [] { mods, temp });
+            }
+            StringBuilder sb = new();
+            List<string> launchArgs = new()
+            {
+                $"-adminPassword \"{GetInstance().GetServerConfiguration().root.game.passwordAdmin}\"",
+                $"-addons {mods}",
+                $"-server worlds/NoBackendScenarioLoader.ent",
+                $"-scenarioId {GetInstance().GetServerConfiguration().root.game.scenarioId}",
+                $"-bindIP {GetInstance().GetServerConfiguration().root.bindAddress}",
+                $"-publicAddress {GetInstance().GetServerConfiguration().root.publicAddress}"
+            };
+            sb.AppendJoin(" ", launchArgs);
+            return sb.ToString();
         }
 
         /// <summary>

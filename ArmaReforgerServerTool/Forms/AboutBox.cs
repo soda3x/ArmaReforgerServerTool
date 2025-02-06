@@ -18,7 +18,8 @@ namespace ReforgerServerApp
             InitializeComponent();
             StringBuilder sb = new();
             sb.AppendLine("Arma Reforger Dedicated Server Tool by soda3x");
-            sb.AppendLine($"Version {Assembly.GetExecutingAssembly().GetName().Version}{Environment.NewLine}");
+            sb.AppendLine($"Version {Assembly.GetExecutingAssembly().GetName().Version}");
+            sb.AppendLine("\r\n\"No Backend Scenario Loader\" mod provided by ceo_of_bacon");
             aboutText.Text = sb.ToString();
         }
 
