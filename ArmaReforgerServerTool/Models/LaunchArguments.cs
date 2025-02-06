@@ -81,6 +81,7 @@ namespace ReforgerServerApp.Models
     {
         public LaunchArgument config;
         public LaunchArgument profile;
+        public LaunchArgument addonsDir;
         public LaunchArgument logStats;
         public LaunchArgument maxFPS;
         public LaunchArgument bindPort;
@@ -93,6 +94,5 @@ namespace ReforgerServerApp.Models
         public LaunchArgument logLevel;
         public LaunchArgument autoReload;
         public LaunchArgument rplTimeoutMs;
-        public LaunchArgument noBackend;
     }
 }
