@@ -329,7 +329,8 @@ namespace ReforgerServerApp
                 $"-addons {mods}",
                 $"-server worlds/NoBackendScenarioLoader.ent",
                 $"-scenarioId {GetInstance().GetServerConfiguration().root.game.scenarioId}",
-                $"-bindIP {GetInstance().GetServerConfiguration().root.bindAddress}"
+                $"-bindIP {GetInstance().GetServerConfiguration().root.bindAddress}",
+                $"-publicAddress {GetInstance().GetServerConfiguration().root.publicAddress}"
             };
             sb.AppendJoin(" ", launchArgs);
             return sb.ToString();

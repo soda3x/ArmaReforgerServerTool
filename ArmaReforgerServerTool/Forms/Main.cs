@@ -1000,7 +1000,7 @@ namespace ReforgerServerApp
             {
                 ParameterName = "noBackend",
                 ParameterFriendlyName = "No Backend",
-                Description = "Enable this to disable the connection to the Arma Reforger backend. Clients will only be able to connect via 'Direct Connect'."
+                Description = "Enable this to host the server without using the Arma Reforger backend."
             };
             advancedParametersPanel.Controls.Add(noBackend);
             noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
@@ -1105,21 +1105,11 @@ namespace ReforgerServerApp
             {
                 bool enableNoBackend = Utilities.DisplayConfirmationMessage("Setting your server to use No Backend means it will not be visible in the server browser.\r\n" +
                     "Mods not already downloaded will not work as they will not be fetched from the Workshop.\r\n" +
-                    "Clients will only be able to connect via 'Direct Connect', and it is their responsibility to acquire required mods.\r\n\r\n" +
-                    "Enabling this will disable most other advanced parameters. Continue?", true);
+                    "You must provide a valid Public Address in the Server Configuration section. It cannot be empty.\r\n" +
+                    "Clients will only be able to connect via the '-client' launch argument, and it is their responsibility to acquire required mods.\r\n\r\n" +
+                    "Continue?", true);
 
-                if (enableNoBackend)
-                {
-                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoreload"].CheckBox.Checked = false;
-                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["nds"].CheckBox.Checked = false;
-                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["nwkResolution"].CheckBox.Checked = false;
-                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["staggeringBudget"].CheckBox.Checked = false;
-                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["streamingBudget"].CheckBox.Checked = false;
-                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["streamsDelta"].CheckBox.Checked = false;
-                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["rpl-timeout-ms"].CheckBox.Checked = false;
-                    ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["loadSessionSave"].CheckBox.Checked = false;
-                }
-                else
+                if (!enableNoBackend)
                 {
                     ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["noBackend"].CheckBox.Checked = false;
                 }
