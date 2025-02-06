@@ -28,62 +28,59 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.aboutText = new System.Windows.Forms.Label();
-            this.okBtn = new System.Windows.Forms.Button();
-            this.reportBtn = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            aboutText = new Label();
+            okBtn = new Button();
+            reportBtn = new Button();
+            SuspendLayout();
             // 
             // aboutText
             // 
-            this.aboutText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.aboutText.AutoSize = true;
-            this.aboutText.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.aboutText.Location = new System.Drawing.Point(12, 9);
-            this.aboutText.Name = "aboutText";
-            this.aboutText.Size = new System.Drawing.Size(74, 17);
-            this.aboutText.TabIndex = 0;
-            this.aboutText.Text = "About text";
+            aboutText.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            aboutText.AutoSize = true;
+            aboutText.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            aboutText.Location = new Point(12, 9);
+            aboutText.Name = "aboutText";
+            aboutText.Size = new Size(74, 17);
+            aboutText.TabIndex = 0;
+            aboutText.Text = "About text";
             // 
             // okBtn
             // 
-            this.okBtn.Location = new System.Drawing.Point(317, 67);
-            this.okBtn.Name = "okBtn";
-            this.okBtn.Size = new System.Drawing.Size(75, 23);
-            this.okBtn.TabIndex = 1;
-            this.okBtn.Text = "OK";
-            this.okBtn.UseVisualStyleBackColor = true;
-            this.okBtn.Click += new System.EventHandler(this.OKBtnPressed);
+            okBtn.Location = new Point(347, 106);
+            okBtn.Name = "okBtn";
+            okBtn.Size = new Size(75, 23);
+            okBtn.TabIndex = 1;
+            okBtn.Text = "OK";
+            okBtn.UseVisualStyleBackColor = true;
+            okBtn.Click += OKBtnPressed;
             // 
             // reportBtn
             // 
-            this.reportBtn.Location = new System.Drawing.Point(12, 67);
-            this.reportBtn.Name = "reportBtn";
-            this.reportBtn.Size = new System.Drawing.Size(113, 23);
-            this.reportBtn.TabIndex = 2;
-            this.reportBtn.Text = "Report an Issue...";
-            this.reportBtn.UseVisualStyleBackColor = true;
-            this.reportBtn.Click += new System.EventHandler(this.ReportBtnPressed);
+            reportBtn.Location = new Point(12, 106);
+            reportBtn.Name = "reportBtn";
+            reportBtn.Size = new Size(113, 23);
+            reportBtn.TabIndex = 2;
+            reportBtn.Text = "Report an Issue...";
+            reportBtn.UseVisualStyleBackColor = true;
+            reportBtn.Click += ReportBtnPressed;
             // 
             // AboutBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(404, 101);
-            this.Controls.Add(this.reportBtn);
-            this.Controls.Add(this.okBtn);
-            this.Controls.Add(this.aboutText);
-            this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(420, 140);
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(420, 140);
-            this.Name = "AboutBox";
-            this.ShowIcon = false;
-            this.Text = "Arma Reforger Dedicated Server Tool - About";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(434, 141);
+            Controls.Add(reportBtn);
+            Controls.Add(okBtn);
+            Controls.Add(aboutText);
+            MaximizeBox = false;
+            MaximumSize = new Size(450, 180);
+            MinimizeBox = false;
+            MinimumSize = new Size(450, 180);
+            Name = "AboutBox";
+            ShowIcon = false;
+            Text = "Arma Reforger Dedicated Server Tool - About";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
