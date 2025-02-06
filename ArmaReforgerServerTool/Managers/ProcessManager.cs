@@ -499,13 +499,6 @@ namespace ReforgerServerApp.Managers
                                                m_launchArgumentsModel.logStats,
                                                m_launchArgumentsModel.maxFPS,
                                                m_launchArgumentsModel.bindPort,
-                                               m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
-
-            if (!ConfigurationManager.GetInstance().noBackend)
-            {
-                // Concatenate the current args with the advanced parameters, if applicable
-                args = string.Join(" ", args, string.Join(" ", new[] {
-                                               m_launchArgumentsModel.config,
                                                m_launchArgumentsModel.autoReload,
                                                m_launchArgumentsModel.rplTimeoutMs,
                                                m_launchArgumentsModel.nds,
@@ -513,7 +506,13 @@ namespace ReforgerServerApp.Managers
                                                m_launchArgumentsModel.staggeringBudget,
                                                m_launchArgumentsModel.streamingBudget,
                                                m_launchArgumentsModel.streamsDelta,
-                                               m_launchArgumentsModel.loadSessionSave}.Where(arg => arg != null)));
+                                               m_launchArgumentsModel.loadSessionSave,
+                                               m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
+
+            if (!ConfigurationManager.GetInstance().noBackend)
+            {
+                // Concatenate the current args with the advanced parameters, if applicable
+                args = string.Join(" ", args, string.Join(" ", new[] { m_launchArgumentsModel.config }.Where(arg => arg != null)));
             }
             else
             {
