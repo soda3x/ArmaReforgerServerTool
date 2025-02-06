@@ -185,5 +185,6 @@ namespace ReforgerServerApp
             "(If you select Yes, the legacy file will be deleted after the migration is complete, selecting No will create a new Mod Database in the new format)";
         public static string EXPORT_MODS_STR = "Export mod list to file";
         public static string STOCK_MOD_ID = "591AF5BDA9F7CE8B";
+        public static string NO_BACKEND_SCENARIO_LOADER_MOD_ID = "6324F7124A9768FB";
     }
 }
