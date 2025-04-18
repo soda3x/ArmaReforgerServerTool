@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    Constants.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This file contains all big constants used in the program
@@ -60,9 +60,9 @@ namespace ReforgerServerApp
         public static string SERVER_FILES_NOT_FOUND_SCENARIO_SELECT_STR = "Arma Reforger server files not found, you will need to install them from the Server Management tab first.";
         public static string SELECT_SCENARIO_STR = "Select a scenario from the list";
 
-        public static string SUPPORTED_PLATFORM_PC   = "PLATFORM_PC";
+        public static string SUPPORTED_PLATFORM_PC = "PLATFORM_PC";
         public static string SUPPORTED_PLATFORM_XBOX = "PLATFORM_XBL";
-        public static string SUPPORTED_PLATFORM_PSN  = "PLATFORM_PSN";
+        public static string SUPPORTED_PLATFORM_PSN = "PLATFORM_PSN";
 
         public static string USE_UPNP_STR = "Enable this to attempt to open required ports using UPnP.\nIf this is successful, you will not need to port-forward.";
 
@@ -82,7 +82,7 @@ namespace ReforgerServerApp
         public static string SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR = "If enabled, the server will disable navmesh streaming on all navmesh components and load the entire navmesh into memory.\r\n" +
             "This setting provides slightly better server performance and reaction times of moving AIs at the cost of higher memory consumption (up to hundreds of MB depending on the terrain).";
 
-        public static string SERVER_PARAM_DISABLE_SPECIFIC_NAVMESH_STREAMING_TOOLTIP_STR = "Used in conjunction with 'Disable Navmesh Streaming'.\r\n" + 
+        public static string SERVER_PARAM_DISABLE_SPECIFIC_NAVMESH_STREAMING_TOOLTIP_STR = "Used in conjunction with 'Disable Navmesh Streaming'.\r\n" +
             "If any navmeshes are specified here, it will disable streaming of listed navmeshes, while streaming all remaining navmeshes.";
 
         public static string SERVER_PARAM_DISABLE_CRASH_REPORT_TOOLTIP_STR = "If enabled, the automatic server-side Crash Report is disabled.";
@@ -113,7 +113,7 @@ namespace ReforgerServerApp
 
         public static string SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_TOOLTIP_STR = "Maximum view distance enforced by the server.";
 
-        public static string SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR = "If enabled, Xbox and PlayStation clients will be able to connect to the server.\r\n" + 
+        public static string SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR = "If enabled, Xbox and PlayStation clients will be able to connect to the server.\r\n" +
             "Valid combinations are:\r\n" +
             "\tPC only\r\n" +
             "\tPC + Xbox + PlayStation\r\n" +
@@ -157,7 +157,7 @@ namespace ReforgerServerApp
 
         public static string SERVER_PARAM_ENABLE_RCON_TOOLTIP_STR = "Enable RCON on your server. You must also specify a password for it successfully start.";
 
-        public static string SERVER_PARAM_RCON_ADDRESS_TOOLTIP_STR = "IP address to which the RCON socket will be bound.\r\n" + 
+        public static string SERVER_PARAM_RCON_ADDRESS_TOOLTIP_STR = "IP address to which the RCON socket will be bound.\r\n" +
             "It can be used to restrict connection to a particular network interface.";
 
         public static string SERVER_PARAM_RCON_PORT_TOOLTIP_STR = "RCON protocol port on which the game listens.";

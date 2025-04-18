@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    FileIOManager.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This file contains the singleton FileIOManager class
@@ -23,10 +23,10 @@ namespace ReforgerServerApp.Managers
     /// </summary>
     internal class FileIOManager
     {
-        private static FileIOManager?   INSTANCE;
-        private readonly string         m_legacyModDatabaseFile = "./mod_database.txt";
-        private string                  m_steamCmdFile;
-        private string                  m_installDir;
+        private static FileIOManager? INSTANCE;
+        private readonly string m_legacyModDatabaseFile = "./mod_database.txt";
+        private string m_steamCmdFile;
+        private string m_installDir;
         private FileIOManager()
         {
             bool modDatabaseExists = File.Exists(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile);
@@ -72,8 +72,8 @@ namespace ReforgerServerApp.Managers
         /// </summary>
         public void WriteModsDatabase()
         {
-            var enabled        = ConfigurationManager.GetInstance().GetEnabledMods();
-            var available      = ConfigurationManager.GetInstance().GetAvailableMods();
+            var enabled = ConfigurationManager.GetInstance().GetEnabledMods();
+            var available = ConfigurationManager.GetInstance().GetAvailableMods();
             List<Mod> combined = new();
 
             combined.AddRange(enabled);
@@ -187,7 +187,7 @@ namespace ReforgerServerApp.Managers
         public static bool MigrateLegacyModDatabase(string path)
         {
             Log.Information("FileIOManager - Migrating legacy mod database...");
-            using StreamReader sr   = File.OpenText(path);
+            using StreamReader sr = File.OpenText(path);
             List<string> legacyMods = new(sr.ReadToEnd().Split(Environment.NewLine));
             foreach (string s in legacyMods)
             {
@@ -207,7 +207,8 @@ namespace ReforgerServerApp.Managers
                         ConfigurationManager.GetInstance()
                                             .GetAvailableMods()
                                             .Add(new Mod(splitMod[0].Trim(), splitMod[1].Trim(), splitMod[2].Trim()));
-                    } else
+                    }
+                    else
                     {
                         ConfigurationManager.GetInstance()
                                             .GetAvailableMods()
@@ -310,15 +311,15 @@ namespace ReforgerServerApp.Managers
                     "Arma Reforger Dedicated Server Tool - Update available",
                     MessageBoxButtons.YesNo);
 
-                        if (dr == DialogResult.Yes)
+                    if (dr == DialogResult.Yes)
+                    {
+                        Process.Start(new ProcessStartInfo
                         {
-                            Process.Start(new ProcessStartInfo
-                            {
-                                FileName = ToolPropertiesManager.GetInstance().GetToolProperties().releaseRepositoryUrl,
-                                UseShellExecute = true
-                            });
-                            Environment.Exit(0);
-                        }
+                            FileName = ToolPropertiesManager.GetInstance().GetToolProperties().releaseRepositoryUrl,
+                            UseShellExecute = true
+                        });
+                        Environment.Exit(0);
+                    }
                 }
             }
             catch (HttpRequestException e)
@@ -346,7 +347,7 @@ namespace ReforgerServerApp.Managers
             if (key != null)
             {
                 object value = key.GetValue("Installed");
-                installed = value != null && (int) value == 1;
+                installed = value != null && (int)value == 1;
             }
 
             if (!installed)
@@ -354,7 +355,7 @@ namespace ReforgerServerApp.Managers
                 Log.Information("FileIOManager - Visual C++ Runtime was not found on your system. Arma Reforger Dedicated Server requires it to function");
                 DialogResult dr = MessageBox.Show("Visual C++ Runtime was not found and is required for the server to start." +
                         "\r\nWould you like to install it?" +
-                        "\r\n\r\nSelecting Yes will close the application and open your browser. Selecting No will simply close the application.", 
+                        "\r\n\r\nSelecting Yes will close the application and open your browser. Selecting No will simply close the application.",
                             "Arma Reforger Dedicated Server Tool - Visual C++ Runtime not found", MessageBoxButtons.YesNo);
                 if (dr == DialogResult.Yes)
                 {
@@ -370,7 +371,7 @@ namespace ReforgerServerApp.Managers
         /// <returns>True if deleted successfully, false otherwise</returns>
         public bool DeleteServerFiles()
         {
-            string msg = 
+            string msg =
                 "You are about to delete SteamCMD and all Arma Reforger server files" + Environment.NewLine +
                 "ALL files will be deleted in the path:" + Environment.NewLine +
                 m_installDir + Environment.NewLine +

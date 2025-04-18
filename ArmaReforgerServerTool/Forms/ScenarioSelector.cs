@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ScenarioSelector.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This is the Scenario Selector Form
@@ -13,10 +13,10 @@ namespace ReforgerServerApp
 {
     public partial class ScenarioSelector : Form
     {
-        private readonly Main    m_parentForm;
-        private readonly Thread  m_getScenariosThread;
-        private bool             m_getScenariosThreadRunning = true;
-        private bool             m_getScenariosRequested     = false;
+        private readonly Main m_parentForm;
+        private readonly Thread m_getScenariosThread;
+        private bool m_getScenariosThreadRunning = true;
+        private bool m_getScenariosRequested = false;
 
         public ScenarioSelector(Main parent)
         {
@@ -43,7 +43,7 @@ namespace ReforgerServerApp
 
                 foreach (string scenId in scenarios)
                 {
-                    scenarioList.Invoke((MethodInvoker) (() => scenarioList.Items.Add(scenId)));
+                    scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scenId)));
                 }
             }
 
@@ -63,13 +63,13 @@ namespace ReforgerServerApp
                     {
                         if (reloadScenariosBtn.IsHandleCreated)
                         {
-                            currentlySelectedLbl.Invoke((MethodInvoker) (() => currentlySelectedLbl.Text = "Fetching scenarios from the workshop..."));
+                            currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = "Fetching scenarios from the workshop..."));
                             m_getScenariosRequested = false;
-                            reloadScenariosBtn.Invoke((MethodInvoker) (() => reloadScenariosBtn.Enabled = false));
+                            reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = false));
 
                             foreach (string scen in ToolPropertiesManager.GetInstance().GetDefaultScenarios())
                             {
-                                scenarioList.Invoke((MethodInvoker) (() => scenarioList.Items.Add(scen)));
+                                scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scen)));
                             }
 
                             GetScenarios();
@@ -77,8 +77,8 @@ namespace ReforgerServerApp
                             // In the case where the window is closed while we were getting scenarios (common), recheck the handle
                             if (reloadScenariosBtn.IsHandleCreated)
                             {
-                                reloadScenariosBtn.Invoke((MethodInvoker) (() => reloadScenariosBtn.Enabled = true));
-                                currentlySelectedLbl.Invoke((MethodInvoker) (() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
+                                reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = true));
+                                currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
                             }
                         }
                     }

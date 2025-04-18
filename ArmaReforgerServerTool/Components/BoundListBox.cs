@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    BoundListBox.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  The BoundListBox component is an extension of the ListBox

@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    AdvancedServerParameterSchedule.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  The AdvancedServerParameterSchedule component represents a 
@@ -20,8 +20,8 @@ namespace ReforgerServerApp.Components
             SetFieldEnabled(Checked());
         }
 
-        public override object ParameterValue 
-        { 
+        public override object ParameterValue
+        {
             get => parameterValue.Value;
             set => parameterValue.Value = Convert.ToInt32(value);
         }
@@ -70,7 +70,7 @@ namespace ReforgerServerApp.Components
                 timeUnit.Items.Clear();
                 timeUnit.Items.AddRange(value);
                 timeUnit.SelectedIndex = 0;
-            } 
+            }
         }
 
         public override void OnCheckChanged(object sender, EventArgs e)
@@ -78,7 +78,8 @@ namespace ReforgerServerApp.Components
             if (CheckBox.Enabled)
             {
                 SetFieldEnabled(Checked());
-            } else
+            }
+            else
             {
                 SetFieldEnabled(false);
             }

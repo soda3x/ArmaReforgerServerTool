@@ -183,7 +183,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
         {
-            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
+            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod)GetAvailableModsList().SelectedItem);
             FileIOManager.GetInstance().WriteModsDatabase();
         }
 
@@ -238,7 +238,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void MoveEnabledModPositionUpBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod) GetEnabledModsList().SelectedItem != null)
+            if ((Mod)GetEnabledModsList().SelectedItem != null)
             {
                 Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
@@ -258,7 +258,7 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void MoveEnabledModPositionDownBtnPressed(object sender, EventArgs e)
         {
-            if ((Mod) GetEnabledModsList().SelectedItem != null)
+            if ((Mod)GetEnabledModsList().SelectedItem != null)
             {
                 Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
@@ -339,22 +339,22 @@ namespace ReforgerServerApp
                 {
                     switch (autoRestart.CurrentIndex)
                     {
-                        case (int) ServerRestartIntervalUnit.MINUTES:
-                        interval = TimeSpan.FromMinutes(Convert.ToInt32(autoRestart.ParameterValue));
-                        break;
-                        case (int) ServerRestartIntervalUnit.HOURS:
-                        interval = TimeSpan.FromHours(Convert.ToInt32(autoRestart.ParameterValue));
-                        break;
-                        case (int) ServerRestartIntervalUnit.DAYS:
-                        interval = TimeSpan.FromDays(Convert.ToInt32(autoRestart.ParameterValue));
-                        break;
+                        case (int)ServerRestartIntervalUnit.MINUTES:
+                            interval = TimeSpan.FromMinutes(Convert.ToInt32(autoRestart.ParameterValue));
+                            break;
+                        case (int)ServerRestartIntervalUnit.HOURS:
+                            interval = TimeSpan.FromHours(Convert.ToInt32(autoRestart.ParameterValue));
+                            break;
+                        case (int)ServerRestartIntervalUnit.DAYS:
+                            interval = TimeSpan.FromDays(Convert.ToInt32(autoRestart.ParameterValue));
+                            break;
                     }
                 }
 
                 if (autoRestartDaily.Checked())
                 {
                     // Get the time to restart as a relative time wrt now
-                    interval = (DateTime) autoRestartDaily.ParameterValue - DateTime.Now;
+                    interval = (DateTime)autoRestartDaily.ParameterValue - DateTime.Now;
                 }
 
                 CreateLaunchArguments();
@@ -962,7 +962,7 @@ namespace ReforgerServerApp
                 ParameterIncrement = 1,
                 ParameterValue = 60,
                 Description = "Specify whether and when the server should automatically restart.",
-                Items = new [] {"Mins", "Hours", "Days"}
+                Items = new[] { "Mins", "Hours", "Days" }
             };
             autoRestart.CheckBox.CheckedChanged += AutoRestartCheckChanged;
             advancedParametersPanel.Controls.Add(autoRestart);
@@ -1066,7 +1066,7 @@ namespace ReforgerServerApp
                 ParameterMin = 1,
                 ParameterMax = 1000,
                 ParameterIncrement = 1,
-                ParameterValue= 100,
+                ParameterValue = 100,
                 Description = "Streams delta is a tool to limit the amount of streams being opened for a client."
             };
             advancedParametersPanel.Controls.Add(streamsDelta);
@@ -1077,7 +1077,7 @@ namespace ReforgerServerApp
                 ParameterMin = 1,
                 ParameterMax = int.MaxValue,
                 ParameterIncrement = 1,
-                ParameterValue= 10000,
+                ParameterValue = 10000,
                 Description = "Sets the server's timeout value, in milliseconds."
             };
             advancedParametersPanel.Controls.Add(rplTimeoutMs);
@@ -1214,9 +1214,9 @@ namespace ReforgerServerApp
             LaunchArguments args = new()
             {
                 // Config will be placed in <server-files-dir>/server.json, wrap in quotes to capture potential spaces in paths
-                config   = new("config", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\server.json\""),
+                config = new("config", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\server.json\""),
                 // Saves etc. will be placed in <server-files-dir>/saves/, wrap in quotes to capture potential spaces in paths
-                profile  = new("profile", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\saves\""),
+                profile = new("profile", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\saves\""),
                 // Addons will be placed in <server-files-dir>/addons/, wrap in quotes to capture potentional spaces in paths
                 addonsDir = new("addonsDir", $"\"{FileIOManager.GetInstance().GetInstallDirectory()}\\addons\""),
                 // Log performance stats every 5 seconds (represented in ms)

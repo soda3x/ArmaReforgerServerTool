@@ -27,7 +27,8 @@ namespace ReforgerServerApp
                              .WriteTo.Console()
                              .WriteTo.File(ToolPropertiesManager.GetInstance().GetToolProperties().logFile, rollingInterval: RollingInterval.Day)
                              .CreateLogger();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Utilities.DisplayErrorMessage("Failed to configure logger.", $"Logger configuration failed which prevented the program from launching.\n{ex.Message}");
                 Application.Exit(); // We cannot continue, exit gracefully

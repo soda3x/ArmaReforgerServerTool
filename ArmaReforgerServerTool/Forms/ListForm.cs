@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ListForm.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This is a generic form for managing lists graphically

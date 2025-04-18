@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    AboutBox.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This is the AboutBox Form

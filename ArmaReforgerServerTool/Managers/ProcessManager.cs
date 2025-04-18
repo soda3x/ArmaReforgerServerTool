@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ProcessManager.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This file contains the singleton ProcessManager class
@@ -28,21 +28,21 @@ namespace ReforgerServerApp.Managers
     internal class GuiModelEventArgs : EventArgs
     {
         public string startServerText;
-        public bool   enableServerFields;
+        public bool enableServerFields;
         public string serverRunningLabelText;
-        public bool   startServerBtnEnabled;
+        public bool startServerBtnEnabled;
         public GuiModelEventArgs() { }
     }
 
     internal class ProcessManager
     {
-        private static ProcessManager?           m_instance;
-        private bool                             m_isServerStarted;
-        private bool                             m_isServerUsingTimer;
-        private Process                          m_steamCmdUpdateProcess;
-        private Process                          m_serverProcess;
+        private static ProcessManager? m_instance;
+        private bool m_isServerStarted;
+        private bool m_isServerUsingTimer;
+        private Process m_steamCmdUpdateProcess;
+        private Process m_serverProcess;
         private readonly CancellationTokenSource m_timerCancellationTokenSource;
-        private LaunchArguments                  m_launchArgumentsModel;
+        private LaunchArguments m_launchArgumentsModel;
 
         public delegate void UpdateSteamCmdLogEventHandler(object sender, SteamCmdLogEventArgs e);
         public event UpdateSteamCmdLogEventHandler UpdateSteamCmdLogEvent;
