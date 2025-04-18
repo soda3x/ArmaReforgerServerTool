@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ServerParameterBool.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  The ServerParameterBool component represents a graphical

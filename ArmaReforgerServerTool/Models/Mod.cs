@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    Mod.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This file contains the Mod class, a model representing the
@@ -18,7 +18,7 @@ namespace ReforgerServerApp
 {
     public class Mod
     {
-        public string modId {get; set;}
+        public string modId { get; set; }
         public string name { get; set; }
 
         [JsonConverter(typeof(JsonUtils.ConditionalFieldConverter))]
@@ -31,25 +31,25 @@ namespace ReforgerServerApp
 
         public Mod(string modId, string modName, string modVersion, bool required = false)
         {
-            this.modId    = modId;
-            this.name     = modName;
-            this.version  = modVersion;
+            this.modId = modId;
+            this.name = modName;
+            this.version = modVersion;
             this.required = required;
         }
 
         public Mod(string modId, string modName, bool required = false)
         {
-            this.modId    = modId;
-            this.name     = modName;
-            this.version  = LATEST_MOD_VER_STR;
+            this.modId = modId;
+            this.name = modName;
+            this.version = LATEST_MOD_VER_STR;
             this.required = required;
         }
 
         public Mod(Mod m)
         {
-            this.modId    = m.modId;
-            this.name     = m.name;
-            this.version  = m.version;
+            this.modId = m.modId;
+            this.name = m.name;
+            this.version = m.version;
             this.required = m.required;
         }
 
@@ -90,14 +90,14 @@ namespace ReforgerServerApp
             }
             if (obj.GetType() == typeof(Mod))
             {
-                Mod other    = (Mod) obj;
+                Mod other = (Mod)obj;
                 bool modSame = name!.Equals(other.name);
-                modSame     &= modId!.Equals(other.modId);
+                modSame &= modId!.Equals(other.modId);
                 if (version != null)
                 {
                     modSame &= version!.Equals(other.version);
                 }
-                
+
                 return modSame;
             }
             return false;
@@ -115,10 +115,10 @@ namespace ReforgerServerApp
             {
                 try
                 {
-                    string fetchUrl               = $"{ToolPropertiesManager.GetInstance().GetToolProperties().armaWorkshopUrl}/{modId}/scenarios";
-                    HtmlWeb web                   = new();
-                    HtmlDocument doc              = web.Load(fetchUrl);
-                    const string className        = "text-start";
+                    string fetchUrl = $"{ToolPropertiesManager.GetInstance().GetToolProperties().armaWorkshopUrl}/{modId}/scenarios";
+                    HtmlWeb web = new();
+                    HtmlDocument doc = web.Load(fetchUrl);
+                    const string className = "text-start";
                     HtmlNodeCollection rawScenIds = doc.DocumentNode.SelectNodes($"//*[contains(@class,'{className}')]");
                     if (rawScenIds != null)
                     {

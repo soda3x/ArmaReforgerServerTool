@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ServerParameterString.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  The ServerParameterString component represents a graphical
@@ -20,7 +20,7 @@ namespace ReforgerServerApp
         public override object ParameterValue
         {
             get => parameterValue.Text;
-            set => parameterValue.Text = (string) value;
+            set => parameterValue.Text = (string)value;
         }
     }
 }

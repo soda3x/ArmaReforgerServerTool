@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    AddModDialog.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This is the Add Mod Dialog Form
@@ -14,7 +14,7 @@ namespace ReforgerServerApp
     {
         private readonly Main m_reforgerApp;
         private readonly bool m_isEditMode = false;
-        private readonly int  m_idx        = -1;
+        private readonly int m_idx = -1;
         public AddModDialog(Main reforgerApp)
         {
             InitializeComponent();
@@ -26,15 +26,15 @@ namespace ReforgerServerApp
         public AddModDialog(Main reforgerApp, Mod m, int idx)
         {
             InitializeComponent();
-            this.Text        = "Arma Reforger Dedicated Server Tool - Edit Mod";
-            m_reforgerApp    = reforgerApp;
-            modId.Text       = m.GetModID();
-            modName.Text     = m.GetModName();
-            modVers.Text     = m.GetModVersion().Equals("latest") ? "" : m.GetModVersion();
+            this.Text = "Arma Reforger Dedicated Server Tool - Edit Mod";
+            m_reforgerApp = reforgerApp;
+            modId.Text = m.GetModID();
+            modName.Text = m.GetModName();
+            modVers.Text = m.GetModVersion().Equals("latest") ? "" : m.GetModVersion();
             required.Checked = m.IsModRequired();
-            addBtn.Text      = "Edit";
-            m_isEditMode     = true;
-            m_idx            = idx;
+            addBtn.Text = "Edit";
+            m_isEditMode = true;
+            m_idx = idx;
             CreateTooltips();
         }
 

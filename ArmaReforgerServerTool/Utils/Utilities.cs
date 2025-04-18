@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    Utilities.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  Static class containing utility methods for 
@@ -207,7 +207,7 @@ namespace ReforgerServerApp.Utils
             {
                 throw new ArgumentException($"'{parameterValue.ToUpper()}' is not a valid value for enum '{typeof(T).Name}'");
             }
-            return (T) Enum.Parse(typeof(T), parameterValue.ToUpper());
+            return (T)Enum.Parse(typeof(T), parameterValue.ToUpper());
         }
 
         /// <summary>
@@ -220,11 +220,11 @@ namespace ReforgerServerApp.Utils
             switch (permission)
             {
                 case RconPermission.ADMIN:
-                return "admin";
+                    return "admin";
                 case RconPermission.MONITOR:
-                return "monitor";
+                    return "monitor";
                 default:
-                return "admin";
+                    return "admin";
             }
         }
 

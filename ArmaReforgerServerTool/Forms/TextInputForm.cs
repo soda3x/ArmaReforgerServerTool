@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    TextInputForm.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This is a generic form for entering lots of text, either

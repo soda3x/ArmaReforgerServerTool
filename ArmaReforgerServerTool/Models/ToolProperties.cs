@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ToolProperties.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This file contains the ToolProperties class, a model
@@ -34,17 +34,17 @@ namespace ReforgerServerApp.Models
             "{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf"
         };
 
-        private static readonly string DEFAULT_MOD_DATABASE_FILE            = "./mod_database.json";
-        private static readonly string DEFAULT_INSTALL_DIR_FILE             = "./install_directory.txt";
-        private static readonly string DEFAULT_UPDATE_REPOSITORY            = "https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool";
-        private static readonly string DEFAULT_RELEASES_REPOSITORY          = "https://github.com/soda3x/ArmaReforgerServerTool/releases/latest";
-        private static readonly string DEFAULT_BUG_REPORT_REPOSITORY        = "https://github.com/soda3x/ArmaReforgerServerTool/issues";
-        private static readonly bool   DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP = true;
-        private static readonly string DEFAULT_STEAMCMD_DOWNLOAD_URL        = "https://steamcdn-a.akamaihd.net/client/installer";
-        private static readonly string DEFAULT_ARMA_WORKSHOP_URL            = "https://reforger.armaplatform.com/workshop";
-        private static readonly string DEFAULT_LOG_FILE                     = "logs/ardst.log";
-        private static readonly string DEFAULT_MINIMUM_LOG_LEVEL            = "Debug";
-        private static readonly int    DEFAULT_AUTO_RESTART_TIME_MS         = 2000;
+        private static readonly string DEFAULT_MOD_DATABASE_FILE = "./mod_database.json";
+        private static readonly string DEFAULT_INSTALL_DIR_FILE = "./install_directory.txt";
+        private static readonly string DEFAULT_UPDATE_REPOSITORY = "https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool";
+        private static readonly string DEFAULT_RELEASES_REPOSITORY = "https://github.com/soda3x/ArmaReforgerServerTool/releases/latest";
+        private static readonly string DEFAULT_BUG_REPORT_REPOSITORY = "https://github.com/soda3x/ArmaReforgerServerTool/issues";
+        private static readonly bool DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP = true;
+        private static readonly string DEFAULT_STEAMCMD_DOWNLOAD_URL = "https://steamcdn-a.akamaihd.net/client/installer";
+        private static readonly string DEFAULT_ARMA_WORKSHOP_URL = "https://reforger.armaplatform.com/workshop";
+        private static readonly string DEFAULT_LOG_FILE = "logs/ardst.log";
+        private static readonly string DEFAULT_MINIMUM_LOG_LEVEL = "Debug";
+        private static readonly int DEFAULT_AUTO_RESTART_TIME_MS = 2000;
 
         public List<string> defaultScenarios { get; set; }
         public string modDatabaseFile { get; set; }
@@ -117,21 +117,21 @@ namespace ReforgerServerApp.Models
             switch (levelStr)
             {
                 case "Verbose":
-                lc.MinimumLevel.Is(LogEventLevel.Verbose);
-                break;
+                    lc.MinimumLevel.Is(LogEventLevel.Verbose);
+                    break;
                 case "Information":
-                lc.MinimumLevel.Is(LogEventLevel.Information);
-                break;
+                    lc.MinimumLevel.Is(LogEventLevel.Information);
+                    break;
                 case "Error":
-                lc.MinimumLevel.Is(LogEventLevel.Error);
-                break;
+                    lc.MinimumLevel.Is(LogEventLevel.Error);
+                    break;
                 case "Fatal":
-                lc.MinimumLevel.Is(LogEventLevel.Fatal);
-                break;
+                    lc.MinimumLevel.Is(LogEventLevel.Fatal);
+                    break;
                 case null:
                 default:
-                lc.MinimumLevel.Is(LogEventLevel.Debug);
-                break;
+                    lc.MinimumLevel.Is(LogEventLevel.Debug);
+                    break;
             }
             return lc;
         }

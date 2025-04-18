@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    AdvancedServerParameterBool.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  The AdvancedServerParameterBool component represents a 
@@ -20,7 +20,7 @@ namespace ReforgerServerApp.Components
         public override object ParameterValue
         {
             get => CheckBox.Checked;
-            set => CheckBox.Checked = (bool) value;
+            set => CheckBox.Checked = (bool)value;
         }
 
         override

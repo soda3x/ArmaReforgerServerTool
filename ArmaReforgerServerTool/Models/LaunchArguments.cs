@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    LaunchArguments.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This file contains the LaunchArgument class, a model 

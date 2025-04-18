@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    AdvancedServerParameter.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  Represents the base class for the AdvancedServerParameter 

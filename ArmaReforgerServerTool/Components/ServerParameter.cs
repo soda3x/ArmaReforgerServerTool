@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ServerParameter.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  Represents the base class for the ServerParameter components,

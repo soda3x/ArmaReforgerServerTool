@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ToolPropertiesManager.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This file contains the singleton ToolPropertiesManager class
@@ -20,9 +20,9 @@ namespace ReforgerServerApp.Managers;
 /// </summary>
 internal class ToolPropertiesManager
 {
-    private static ToolPropertiesManager?   m_instance;
-    private readonly ToolProperties         m_toolProperties;
-    private readonly string                 m_toolPropertiesFile = "./properties.json";
+    private static ToolPropertiesManager? m_instance;
+    private readonly ToolProperties m_toolProperties;
+    private readonly string m_toolPropertiesFile = "./properties.json";
 
     /// <summary>
     /// Constructs a ToolPropertiesManager object. Intended to only be used within the singleton <c>GetInstance()</c> method.
@@ -66,7 +66,7 @@ internal class ToolPropertiesManager
         m_instance ??= new ToolPropertiesManager();
         return m_instance;
     }
-    
+
     public List<string> GetDefaultScenarios() { return m_toolProperties.defaultScenarios; }
     public ToolProperties GetToolProperties() { return m_toolProperties; }
 }

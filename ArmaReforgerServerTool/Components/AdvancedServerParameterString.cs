@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    AdvancedServerParameterString.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  The AdvancedServerParameterString component represents a 
@@ -22,7 +22,7 @@ namespace ReforgerServerApp.Components
         public override object ParameterValue
         {
             get => parameterValue.Text;
-            set => parameterValue.Text = (string) value;
+            set => parameterValue.Text = (string)value;
         }
 
         public string ParameterPlaceholder
@@ -36,11 +36,12 @@ namespace ReforgerServerApp.Components
             if (CheckBox.Enabled)
             {
                 SetFieldEnabled(Checked());
-            } else
+            }
+            else
             {
                 SetFieldEnabled(false);
             }
-            
+
         }
     }
 }

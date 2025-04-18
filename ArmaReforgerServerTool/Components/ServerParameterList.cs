@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ServerParameterSelect.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  The ServerParameterSelect component represents a graphical
@@ -23,7 +23,7 @@ namespace ReforgerServerApp
         public override object ParameterValue
         {
             get => ParameterList;
-            set => ParameterList = (string[]) value;
+            set => ParameterList = (string[])value;
         }
 
         private void OnButtonPressed(object sender, EventArgs e)
@@ -33,6 +33,6 @@ namespace ReforgerServerApp
             ParameterList = lf.GetItems();
         }
 
-        
+
     }
 }

@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ServerParameterNumeric.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  The ServerParameterNumeric component represents a graphical
@@ -21,7 +21,7 @@ namespace ReforgerServerApp
         public override object ParameterValue
         {
             get => parameterValue.Value;
-            set => parameterValue.Value = (Int32) value;
+            set => parameterValue.Value = (Int32)value;
         }
 
         public decimal ParameterMin

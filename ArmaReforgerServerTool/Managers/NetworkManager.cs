@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    NetworkManager.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  This file contains the singleton NetworkManager class
@@ -51,12 +51,12 @@ namespace ReforgerServerApp.Managers
             try
             {
                 var discoverer = new NatDiscoverer();
-                var device     = await discoverer.DiscoverDeviceAsync();
+                var device = await discoverer.DiscoverDeviceAsync();
 
                 foreach (var mapping in mappings)
                 {
-                    string ipAddr   = mapping.ipAddress;
-                    int port        = mapping.port;
+                    string ipAddr = mapping.ipAddress;
+                    int port = mapping.port;
 
                     // Convert string IP address to IPAddress type
                     if (IPAddress.TryParse(ipAddr, out IPAddress ip))
@@ -109,14 +109,14 @@ namespace ReforgerServerApp.Managers
             try
             {
                 var discoverer = new NatDiscoverer();
-                var device     = await discoverer.DiscoverDeviceAsync();
+                var device = await discoverer.DiscoverDeviceAsync();
 
                 Console.WriteLine("Device found: " + device);
 
                 foreach (var mapping in mappings)
                 {
                     string ipAddr = mapping.ipAddress;
-                    int port      = mapping.port;
+                    int port = mapping.port;
 
                     // Convert string IP address to IPAddress type
                     if (IPAddress.TryParse(ipAddr, out IPAddress ip))

@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    JsonUtils.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  Static class containing utility methods for 
@@ -48,7 +48,7 @@ namespace ReforgerServerApp.Utils
                 try
                 {
                     var enumString = reader.GetString();
-                    return enumString == null ? throw new JsonException() : (T) Enum.Parse(typeof(T), enumString, true);
+                    return enumString == null ? throw new JsonException() : (T)Enum.Parse(typeof(T), enumString, true);
                 }
                 catch (Exception ex)
                 {
@@ -87,17 +87,17 @@ namespace ReforgerServerApp.Utils
                         switch (propertyName)
                         {
                             case nameof(mod.modId):
-                            mod.modId = reader.GetString();
-                            break;
+                                mod.modId = reader.GetString();
+                                break;
                             case nameof(mod.name):
-                            mod.name = reader.GetString();
-                            break;
+                                mod.name = reader.GetString();
+                                break;
                             case nameof(mod.version):
-                            mod.version = reader.GetString();
-                            break;
+                                mod.version = reader.GetString();
+                                break;
                             case nameof(mod.required):
-                            mod.required = reader.GetBoolean();
-                            break;
+                                mod.required = reader.GetBoolean();
+                                break;
                         }
                     }
                 }
@@ -138,13 +138,13 @@ namespace ReforgerServerApp.Utils
                     throw new JsonException("Expected StartObject token.");
                 }
 
-                string address     = null;
-                int port           = 0;
-                string password    = null;
-                string permission  = null;
+                string address = null;
+                int port = 0;
+                string password = null;
+                string permission = null;
                 string[] blacklist = null;
                 string[] whitelist = null;
-                int maxClients     = 0;
+                int maxClients = 0;
 
                 while (reader.Read())
                 {
@@ -164,29 +164,29 @@ namespace ReforgerServerApp.Utils
                     switch (propertyName)
                     {
                         case nameof(Rcon.address):
-                        address = reader.GetString();
-                        break;
+                            address = reader.GetString();
+                            break;
                         case nameof(Rcon.port):
-                        port = reader.GetInt16();
-                        break;
+                            port = reader.GetInt16();
+                            break;
                         case nameof(Rcon.password):
-                        password = reader.GetString();
-                        break;
+                            password = reader.GetString();
+                            break;
                         case nameof(Rcon.permission):
-                        permission = reader.GetString();
-                        break;
+                            permission = reader.GetString();
+                            break;
                         case nameof(Rcon.blacklist):
-                        blacklist = JsonSerializer.Deserialize<string[]>(ref reader, options);
-                        break;
+                            blacklist = JsonSerializer.Deserialize<string[]>(ref reader, options);
+                            break;
                         case nameof(Rcon.whitelist):
-                        whitelist = JsonSerializer.Deserialize<string[]>(ref reader, options);
-                        break;
+                            whitelist = JsonSerializer.Deserialize<string[]>(ref reader, options);
+                            break;
                         case nameof(Rcon.maxClients):
-                        maxClients = reader.GetInt16();
-                        break;
+                            maxClients = reader.GetInt16();
+                            break;
                         default:
-                        reader.Skip();
-                        break;
+                            reader.Skip();
+                            break;
                     }
                 }
                 return new Rcon(address, port, password, Utilities.StringToEnum<RconPermission>(permission),
@@ -254,35 +254,35 @@ namespace ReforgerServerApp.Utils
                     switch (propertyName)
                     {
                         case nameof(Operating.lobbyPlayerSynchronise):
-                        oper.lobbyPlayerSynchronise = reader.GetBoolean();
-                        break;
+                            oper.lobbyPlayerSynchronise = reader.GetBoolean();
+                            break;
                         case nameof(Operating.playerSaveTime):
-                        oper.playerSaveTime = reader.GetInt32();
-                        break;
+                            oper.playerSaveTime = reader.GetInt32();
+                            break;
                         case nameof(Operating.aiLimit):
-                        oper.aiLimit = reader.GetInt32();
-                        break;
+                            oper.aiLimit = reader.GetInt32();
+                            break;
                         case nameof(Operating.slotReservationTimeout):
-                        oper.slotReservationTimeout = reader.GetInt32();
-                        break;
+                            oper.slotReservationTimeout = reader.GetInt32();
+                            break;
                         case nameof(Operating.disableNavmeshStreaming):
-                        oper.disableNavmeshStreaming = JsonSerializer.Deserialize<string[]>(ref reader, options);
-                        break;
+                            oper.disableNavmeshStreaming = JsonSerializer.Deserialize<string[]>(ref reader, options);
+                            break;
                         case nameof(Operating.disableServerShutdown):
-                        oper.disableServerShutdown = reader.GetBoolean();
-                        break;
+                            oper.disableServerShutdown = reader.GetBoolean();
+                            break;
                         case nameof(Operating.disableCrashReporter):
-                        oper.disableCrashReporter = reader.GetBoolean();
-                        break;
+                            oper.disableCrashReporter = reader.GetBoolean();
+                            break;
                         case nameof(Operating.disableAI):
-                        oper.disableAI = reader.GetBoolean();
-                        break;
+                            oper.disableAI = reader.GetBoolean();
+                            break;
                         case nameof(Operating.joinQueue):
-                        oper.joinQueue = JsonSerializer.Deserialize<JoinQueue>(ref reader, options);
-                        break;
+                            oper.joinQueue = JsonSerializer.Deserialize<JoinQueue>(ref reader, options);
+                            break;
                         default:
-                        reader.Skip();
-                        break;
+                            reader.Skip();
+                            break;
                     }
                 }
                 return oper;
@@ -352,43 +352,43 @@ namespace ReforgerServerApp.Utils
                         switch (propertyName)
                         {
                             case "defaultScenarios":
-                            props.defaultScenarios = JsonSerializer.Deserialize<string[]>(ref reader, options)!.ToList();
-                            break;
+                                props.defaultScenarios = JsonSerializer.Deserialize<string[]>(ref reader, options)!.ToList();
+                                break;
                             case "modDatabaseFile":
-                            props.modDatabaseFile = reader.GetString();
-                            break;
+                                props.modDatabaseFile = reader.GetString();
+                                break;
                             case "installDirectoryFile":
-                            props.installDirectoryFile = reader.GetString();
-                            break;
+                                props.installDirectoryFile = reader.GetString();
+                                break;
                             case "updateRepositoryUrl":
-                            props.updateRepositoryUrl = reader.GetString();
-                            break;
+                                props.updateRepositoryUrl = reader.GetString();
+                                break;
                             case "releaseRepositoryUrl":
-                            props.releaseRepositoryUrl = reader.GetString();
-                            break;
+                                props.releaseRepositoryUrl = reader.GetString();
+                                break;
                             case "bugReportUrl":
-                            props.bugReportUrl = reader.GetString();
-                            break;
+                                props.bugReportUrl = reader.GetString();
+                                break;
                             case "checkForUpdatesOnStartup":
-                            props.checkForUpdatesOnStartup = reader.GetBoolean();
-                            break;
+                                props.checkForUpdatesOnStartup = reader.GetBoolean();
+                                break;
                             case "steamCmdDownloadUrl":
-                            props.steamCmdDownloadUrl = reader.GetString();
-                            break;
+                                props.steamCmdDownloadUrl = reader.GetString();
+                                break;
                             case "armaWorkshopUrl":
-                            props.armaWorkshopUrl = reader.GetString();
-                            break;
+                                props.armaWorkshopUrl = reader.GetString();
+                                break;
                             case "logFile":
-                            props.logFile = reader.GetString();
-                            break;
+                                props.logFile = reader.GetString();
+                                break;
                             case "minimumLogLevel":
-                            props.minimumLogLevel = reader.GetString();
-                            break;
+                                props.minimumLogLevel = reader.GetString();
+                                break;
                             case "autoRestartTime_ms":
-                            props.autoRestartTime_ms = reader.GetInt32();
-                            break;
+                                props.autoRestartTime_ms = reader.GetInt32();
+                                break;
                             default:
-                            throw new JsonException($"Unexpected property: {propertyName}");
+                                throw new JsonException($"Unexpected property: {propertyName}");
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    AdvancedServerParameterTime.cs
  * Project:      Arma Reforger Dedicated Server Tool for Windows
  * Description:  The AdvancedServerParameterTime component represents a 
