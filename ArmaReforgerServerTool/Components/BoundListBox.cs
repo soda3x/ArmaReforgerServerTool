@@ -14,12 +14,12 @@
 
 namespace ReforgerServerApp.Components
 {
-    internal class BoundListBox : ListBox
+  internal class BoundListBox : ListBox
+  {
+    public new void RefreshItems()
     {
-        public new void RefreshItems()
-        {
-            SelectedIndex = -1;
-            base.RefreshItems();
-        }
+      SelectedIndex = -1;
+      base.RefreshItems();
     }
+  }
 }
