@@ -11,9 +11,9 @@ using ReforgerServerApp.WinForms.Models;
 using ReforgerServerApp.WinForms.Utils;
 using Serilog;
 
-namespace ReforgerServerApp.WinForms.WinForms
+namespace ReforgerServerApp.WinForms
 {
-    internal static class Program
+    internal static class ReforgerServerAppWinForms
     {
         /// <summary>
         ///  The main entry point for the application.

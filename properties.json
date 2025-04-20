@@ -1,0 +1,24 @@
+{
+  "defaultScenarios": [
+    "{ECC61978EDCC2B5A}Missions/23_Campaign.conf",
+    "{59AD59368755F41A}Missions/21_GM_Eden.conf",
+    "{94FDA7451242150B}Missions/103_Arland_Tutorial.conf",
+    "{2BBBE828037C6F4B}Missions/22_GM_Arland.conf",
+    "{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf",
+    "{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf",
+    "{DAA03C6E6099D50F}Missions/24_CombatOps.conf",
+    "{C41618FD18E9D714}Missions/23_Campaign_Arland.conf",
+    "{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf"
+  ],
+  "modDatabaseFile": "./mod_database.json",
+  "installDirectoryFile": "./install_directory.txt",
+  "updateRepositoryUrl": "https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool",
+  "releaseRepositoryUrl": "https://github.com/soda3x/ArmaReforgerServerTool/releases/latest",
+  "bugReportUrl": "https://github.com/soda3x/ArmaReforgerServerTool/issues",
+  "checkForUpdatesOnStartup": true,
+  "steamCmdDownloadUrl": "https://steamcdn-a.akamaihd.net/client/installer",
+  "armaWorkshopUrl": "https://reforger.armaplatform.com/workshop",
+  "logFile": "logs/ardst.log",
+  "minimumLogLevel": "Debug",
+  "autoRestartTime_ms": 2000
+}
