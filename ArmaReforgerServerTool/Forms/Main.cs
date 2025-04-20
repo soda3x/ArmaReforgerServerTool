@@ -6,14 +6,14 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using ReforgerServerApp.Managers;
-using ReforgerServerApp.Models;
+using ReforgerServerApp.WinForms.Managers;
+using ReforgerServerApp.WinForms.Models;
 using System.ComponentModel;
 using Serilog;
-using ReforgerServerApp.Components;
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Components;
+using ReforgerServerApp.WinForms.Utils;
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
     public partial class Main : Form
     {

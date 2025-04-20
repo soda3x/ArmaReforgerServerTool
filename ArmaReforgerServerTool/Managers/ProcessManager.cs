@@ -9,13 +9,13 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using ReforgerServerApp.Models;
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Models;
+using ReforgerServerApp.WinForms.Utils;
 using Serilog;
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace ReforgerServerApp.Managers
+namespace ReforgerServerApp.WinForms.Managers
 {
     public enum ServerRestartIntervalUnit { MINUTES, HOURS, DAYS }
 

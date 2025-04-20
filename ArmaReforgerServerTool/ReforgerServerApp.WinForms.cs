@@ -6,12 +6,12 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using ReforgerServerApp.Managers;
-using ReforgerServerApp.Models;
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Managers;
+using ReforgerServerApp.WinForms.Models;
+using ReforgerServerApp.WinForms.Utils;
 using Serilog;
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms.WinForms
 {
     internal static class Program
     {

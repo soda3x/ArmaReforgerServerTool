@@ -11,9 +11,9 @@ using Serilog;
 using Serilog.Events;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using static ReforgerServerApp.Utils.JsonUtils;
+using static ReforgerServerApp.WinForms.Utils.JsonUtils;
 
-namespace ReforgerServerApp.Models
+namespace ReforgerServerApp.WinForms.Models
 {
     /// <summary>
     /// This class represents the structure of the properties file containing the application settings.

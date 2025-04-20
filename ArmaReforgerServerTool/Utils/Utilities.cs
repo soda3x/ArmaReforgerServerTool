@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ReforgerServerApp.Utils
+namespace ReforgerServerApp.WinForms.Utils
 {
     /// <summary>
     /// Static class containing utility methods for performing various simple tasks

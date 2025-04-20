@@ -8,7 +8,7 @@
  ******************************************************************************/
 
 using Serilog;
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Utils;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
@@ -16,7 +16,7 @@ using System.Reflection;
 using System.Text.Json;
 using Microsoft.Win32;
 
-namespace ReforgerServerApp.Managers
+namespace ReforgerServerApp.WinForms.Managers
 {
     /// <summary>
     /// Manager of all things Files and IO

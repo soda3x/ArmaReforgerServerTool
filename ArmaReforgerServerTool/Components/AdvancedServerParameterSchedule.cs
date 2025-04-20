@@ -9,7 +9,7 @@
 
 using Serilog;
 
-namespace ReforgerServerApp.Components
+namespace ReforgerServerApp.WinForms.Components
 {
     public partial class AdvancedServerParameterSchedule : AdvancedServerParameter
     {

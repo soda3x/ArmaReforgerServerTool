@@ -9,7 +9,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-namespace ReforgerServerApp.Models
+namespace ReforgerServerApp.WinForms.Models
 {
     public class LaunchArgument
     {

@@ -6,7 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
     public partial class ListForm : Form
     {

@@ -1,6 +1,6 @@
-﻿using ReforgerServerApp.Components;
+﻿using ReforgerServerApp.WinForms.Components;
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
     partial class ListForm
     {

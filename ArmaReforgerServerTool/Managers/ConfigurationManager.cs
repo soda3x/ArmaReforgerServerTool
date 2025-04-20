@@ -9,14 +9,14 @@
  ******************************************************************************/
 
 using Serilog;
-using ReforgerServerApp.Managers;
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Managers;
+using ReforgerServerApp.WinForms.Utils;
 using System.ComponentModel;
-using ReforgerServerApp.Components;
+using ReforgerServerApp.WinForms.Components;
 using System.Text;
 using System.Collections;
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
 
     internal class ScenarioIdEventArgs : EventArgs

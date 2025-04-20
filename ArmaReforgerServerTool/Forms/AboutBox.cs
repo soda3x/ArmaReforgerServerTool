@@ -9,7 +9,7 @@
 using System.Reflection;
 using System.Text;
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
     public partial class AboutBox : Form
     {

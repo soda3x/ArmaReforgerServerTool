@@ -8,7 +8,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-namespace ReforgerServerApp.Components
+namespace ReforgerServerApp.WinForms.Components
 {
     public partial class AdvancedServerParameterString : AdvancedServerParameter
     {

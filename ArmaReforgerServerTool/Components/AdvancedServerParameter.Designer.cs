@@ -1,4 +1,4 @@
-﻿namespace ReforgerServerApp.Components
+﻿namespace ReforgerServerApp.WinForms.Components
 {
     partial class AdvancedServerParameter
     {

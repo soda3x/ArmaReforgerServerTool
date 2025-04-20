@@ -6,9 +6,9 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using ReforgerServerApp.Managers;
+using ReforgerServerApp.WinForms.Managers;
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
     public partial class AddModDialog : Form
     {

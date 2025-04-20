@@ -12,7 +12,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-namespace ReforgerServerApp.Components
+namespace ReforgerServerApp.WinForms.Components
 {
     internal class BoundListBox : ListBox
     {

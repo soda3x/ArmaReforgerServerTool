@@ -6,7 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
     /// <summary>
     /// This class contains constants used throughout the application.

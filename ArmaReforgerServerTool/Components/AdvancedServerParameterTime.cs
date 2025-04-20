@@ -10,7 +10,7 @@
 
 using static System.Windows.Forms.DataFormats;
 
-namespace ReforgerServerApp.Components
+namespace ReforgerServerApp.WinForms.Components
 {
     public partial class AdvancedServerParameterTime : AdvancedServerParameter
     {

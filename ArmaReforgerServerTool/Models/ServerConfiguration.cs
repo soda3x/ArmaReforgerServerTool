@@ -7,11 +7,11 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Utils;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
     /// <summary>
     /// Enum representing the permissions for RCon clients

@@ -1,4 +1,4 @@
-﻿namespace ReforgerServerApp
+﻿namespace ReforgerServerApp.WinForms
 {
     partial class AddModDialog
     {

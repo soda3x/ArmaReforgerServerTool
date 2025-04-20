@@ -8,12 +8,12 @@
  ******************************************************************************/
 
 using Open.Nat;
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Utils;
 using Serilog;
 using System.Net;
 using System.Net.Sockets;
 
-namespace ReforgerServerApp.Managers
+namespace ReforgerServerApp.WinForms.Managers
 {
     /// <summary>
     /// This class manages the application's Networking related logic

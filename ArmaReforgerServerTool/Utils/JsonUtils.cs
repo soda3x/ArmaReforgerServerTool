@@ -10,9 +10,9 @@
 
 using System.Text.Json.Serialization;
 using System.Text.Json;
-using ReforgerServerApp.Models;
+using ReforgerServerApp.WinForms.Models;
 
-namespace ReforgerServerApp.Utils
+namespace ReforgerServerApp.WinForms.Utils
 {
     /// <summary>
     /// Static class containing utility methods for performing various JSON(de)serialisation tasks, 

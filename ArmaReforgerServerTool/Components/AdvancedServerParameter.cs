@@ -9,7 +9,7 @@
  ******************************************************************************/
 
 
-namespace ReforgerServerApp.Components
+namespace ReforgerServerApp.WinForms.Components
 {
     public partial class AdvancedServerParameter : UserControl
     {

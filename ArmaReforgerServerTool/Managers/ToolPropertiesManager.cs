@@ -10,10 +10,10 @@
 
 using System.Text.Json;
 using Serilog;
-using ReforgerServerApp.Models;
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Models;
+using ReforgerServerApp.WinForms.Utils;
 
-namespace ReforgerServerApp.Managers;
+namespace ReforgerServerApp.WinForms.Managers;
 
 /// <summary>
 /// This class manages the application's <c>ToolProperties</c>

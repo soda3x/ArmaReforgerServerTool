@@ -8,13 +8,13 @@
  ******************************************************************************/
 
 using HtmlAgilityPack;
-using ReforgerServerApp.Managers;
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Managers;
+using ReforgerServerApp.WinForms.Utils;
 using Serilog;
 using System.Text.Json.Serialization;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
     public class Mod
     {

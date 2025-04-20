@@ -6,10 +6,10 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using ReforgerServerApp.Managers;
-using ReforgerServerApp.Utils;
+using ReforgerServerApp.WinForms.Managers;
+using ReforgerServerApp.WinForms.Utils;
 
-namespace ReforgerServerApp
+namespace ReforgerServerApp.WinForms
 {
     public partial class ScenarioSelector : Form
     {
