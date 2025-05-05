@@ -85,6 +85,8 @@ namespace ReforgerServerApp
       useUpnpToolTip.SetToolTip(useUpnp, Constants.USE_UPNP_STR);
       ToolTip exportModsToolTip = new();
       exportModsToolTip.SetToolTip(exportModsBtn, Constants.EXPORT_MODS_STR);
+      ToolTip importModsToolTip = new();
+      exportModsToolTip.SetToolTip(importModsBtn, Constants.IMPORT_MODS_STR);
     }
 
     /// <summary>
