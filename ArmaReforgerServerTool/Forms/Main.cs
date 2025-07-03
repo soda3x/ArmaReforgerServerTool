@@ -1350,5 +1350,10 @@ namespace ReforgerServerApp
     {
       FileIOManager.SaveModsListToFile();
     }
+
+    private void ImportModsListBtnPressed(object sender, EventArgs e)
+    {
+      FileIOManager.LoadModsListFromFile();
+    }
   }
 }

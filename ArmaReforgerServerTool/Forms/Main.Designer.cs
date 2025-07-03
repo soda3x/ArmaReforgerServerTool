@@ -227,6 +227,7 @@ namespace ReforgerServerApp
       importModsBtn.Size = new Size(66, 29);
       importModsBtn.TabIndex = 12;
       importModsBtn.UseVisualStyleBackColor = true;
+      importModsBtn.Click += ImportModsListBtnPressed;
       // 
       // tableLayoutPanel1
       // 
