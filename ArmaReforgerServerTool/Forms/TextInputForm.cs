@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    TextInputForm.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This is a generic form for entering lots of text, either
  *               formatted or not
  * 
@@ -15,7 +15,7 @@ namespace ReforgerServerApp
     public TextInputForm(string windowTitle)
     {
       InitializeComponent();
-      this.Text = $"Arma Reforger Dedicated Server Tool - {windowTitle}";
+      this.Text = $"Longbow - {windowTitle}";
       textInputField.Text = ConfigurationManager.GetInstance().GetServerConfiguration().MissionHeaderAsJsonString();
     }
 

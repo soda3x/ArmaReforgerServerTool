@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ProcessManager.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This file contains the singleton ProcessManager class
  *               responsible for the management, launching and handling of
  *               threaded operations and spawned processes such as SteamCMD

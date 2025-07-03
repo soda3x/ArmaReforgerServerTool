@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    AddModDialog.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This is the Add Mod Dialog Form
  * 
  * Author:       Bradley Newman
@@ -18,7 +18,7 @@ namespace ReforgerServerApp
     public AddModDialog(Main reforgerApp)
     {
       InitializeComponent();
-      this.Text = "Arma Reforger Dedicated Server Tool - Add Mod";
+      this.Text = "Longbow - Add Mod";
       m_reforgerApp = reforgerApp;
       CreateTooltips();
     }
@@ -26,7 +26,7 @@ namespace ReforgerServerApp
     public AddModDialog(Main reforgerApp, Mod m, int idx)
     {
       InitializeComponent();
-      this.Text = "Arma Reforger Dedicated Server Tool - Edit Mod";
+      this.Text = "Longbow - Edit Mod";
       m_reforgerApp = reforgerApp;
       modId.Text = m.GetModID();
       modName.Text = m.GetModName();

@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    AdvancedServerParameterBool.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The AdvancedServerParameterBool component represents a 
  *               graphical means to manage switch style server launch 
  *               arguments

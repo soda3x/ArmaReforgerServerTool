@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/logo.png" />
+  <img src="https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/longbow_logo_full.png" />
 </p>
 
 ## Features

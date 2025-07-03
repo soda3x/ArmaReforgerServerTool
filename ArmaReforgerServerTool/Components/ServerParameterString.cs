@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ServerParameterString.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The ServerParameterString component represents a graphical
  *               means to manage string server configuration parameters
  * 

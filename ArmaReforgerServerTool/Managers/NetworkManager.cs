@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    NetworkManager.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This file contains the singleton NetworkManager class
  *               responsible for networking specific operations.
  * 

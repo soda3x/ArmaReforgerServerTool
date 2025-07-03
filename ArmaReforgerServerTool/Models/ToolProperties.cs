@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ToolProperties.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This file contains the ToolProperties class, a model
  *               representing the server tool properties file
  * 

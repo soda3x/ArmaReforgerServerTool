@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ServerParameterBool.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The ServerParameterBool component represents a graphical
  *               means to manage boolean server configuration parameters
  * 

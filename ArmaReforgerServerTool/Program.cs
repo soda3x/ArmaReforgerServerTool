@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    Program.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  Entry point for the application
  * 
  * Author:       Bradley Newman
@@ -37,7 +37,7 @@ namespace ReforgerServerApp
 
       try
       {
-        Log.Information("Arma Reforger Dedicated Server Tool starting...");
+        Log.Information("Longbow starting...");
         ApplicationConfiguration.Initialize();
         Application.Run(new Main());
       }
