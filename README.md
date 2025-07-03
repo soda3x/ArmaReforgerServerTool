@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/longbow_logo_full.png" />
+  <img src="https://github.com/soda3x/ArmaReforgerServerTool/raw/rebrand/docs/longbow_logo_full.png" />
 </p>
 
 ## Features
@@ -7,9 +7,9 @@
 Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool!
 
 - Load and Save server configuration files
-- Automatically schedule your server to restart (minutes / hours / days interval) or at a specified time of day
+- Automatically schedule your server to restart at a specified time of day
 - Powerful mod management with the ability to import mods from saved configurations
-- Export mod lists to share with your mates!
+- Import and Export mod lists to share with your mates!
 - Easily select the desired scenario you want to play
 - Automatically fetches Scenario IDs for your mods from the Arma Workshop
 - Monitors your server and automatically restarts it if it crashes
