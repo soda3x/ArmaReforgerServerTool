@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    FileIOManager.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This file contains the singleton FileIOManager class
  *               responsible for all I/O operations on files
  * 
@@ -305,10 +305,10 @@ namespace ReforgerServerApp.Managers
         {
           Log.Information("FileIOManager - There is a new version of the tool available (current: {currentVer}, new: {newVer}", currentVersion, checkedVersion);
           DialogResult dr = MessageBox.Show(
-          $"There is an update available for the Arma Reforger Dedicated Server Tool.\r\n" +
+          $"There is an update available for the Longbow.\r\n" +
           $"Would you like to get the latest version now?\r\n\r\n" +
           $"Our version: {currentVersion}\r\nLatest version: {checkedVersion}",
-          "Arma Reforger Dedicated Server Tool - Update available",
+          "Longbow - Update available",
           MessageBoxButtons.YesNo);
 
           if (dr == DialogResult.Yes)
@@ -326,7 +326,7 @@ namespace ReforgerServerApp.Managers
       {
         Log.Error(e, "FileIOManager - Failed to check for updates");
         Utilities.DisplayErrorMessage(
-            "Unable to check for updates, you may not be using the latest version of the Arma Reforger Dedicated Server Tool.\r\n" +
+            "Unable to check for updates, you may not be using the latest version of the Longbow.\r\n" +
             "Please consider checking your internet connection.",
             e.Message);
       }
@@ -356,7 +356,7 @@ namespace ReforgerServerApp.Managers
         DialogResult dr = MessageBox.Show("Visual C++ Runtime was not found and is required for the server to start." +
                 "\r\nWould you like to install it?" +
                 "\r\n\r\nSelecting Yes will close the application and open your browser. Selecting No will simply close the application.",
-                    "Arma Reforger Dedicated Server Tool - Visual C++ Runtime not found", MessageBoxButtons.YesNo);
+                    "Longbow - Visual C++ Runtime not found", MessageBoxButtons.YesNo);
         if (dr == DialogResult.Yes)
         {
           Process.Start("explorer", "https://aka.ms/vs/17/release/vc_redist.x64.exe");

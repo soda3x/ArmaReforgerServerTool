@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    AdvancedServerParameterSchedule.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The AdvancedServerParameterSchedule component represents a 
  *               graphical means to manage time intervals
  * 

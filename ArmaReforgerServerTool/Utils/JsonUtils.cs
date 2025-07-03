@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    JsonUtils.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  Static class containing utility methods for 
  *               performing various JSON (de)serialisation tasks,
  *               including the housing of specific converters

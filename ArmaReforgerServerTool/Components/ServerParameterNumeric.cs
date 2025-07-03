@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ServerParameterNumeric.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The ServerParameterNumeric component represents a graphical
  *               means to manage numeric server configuration parameters
  * 

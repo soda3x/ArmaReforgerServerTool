@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    AdvancedServerParameterString.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The AdvancedServerParameterString component represents a 
  *               graphical means to manage string server launch 
  *               arguments

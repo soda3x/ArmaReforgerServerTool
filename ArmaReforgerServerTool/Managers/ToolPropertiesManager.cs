@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ToolPropertiesManager.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This file contains the singleton ToolPropertiesManager class
  *               responsible for the retrieval and management of the server 
  *               tool properties.

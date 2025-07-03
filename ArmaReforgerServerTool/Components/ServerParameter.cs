@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ServerParameter.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  Represents the base class for the ServerParameter components,
  *               providing the generalisation for concrete implementations
  * 

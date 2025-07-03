@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ConfigurationManager.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This file contains the singleton ConfigurationManager class
  *               in charge of manipulating and representing the server's 
  *               configuration
