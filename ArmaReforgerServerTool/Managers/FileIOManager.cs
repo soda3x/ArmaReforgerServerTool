@@ -139,22 +139,23 @@ namespace ReforgerServerApp.Managers
         string filePath = ofd.FileName;
         using StreamReader sr = File.OpenText(filePath);
         string modsJsonString = sr.ReadToEnd();
-        if (modsJsonString != null)
+        if (modsJsonString == null)
         {
-          JsonSerializerOptions options = new();
-          options.Converters.Add(new JsonUtils.ModConverter());
-          try
+          return;
+        }
+        JsonSerializerOptions options = new();
+        options.Converters.Add(new JsonUtils.ModConverter());
+        try
+        {
+          List<Mod> modsToImport = JsonSerializer.Deserialize<List<Mod>>(modsJsonString, options);
+          if (modsToImport != null && modsToImport.Count > 0)
           {
-            List<Mod> modsToImport = JsonSerializer.Deserialize<List<Mod>>(modsJsonString, options);
-            if (modsToImport != null && modsToImport.Count > 0)
-            {
-              ConfigurationManager.GetInstance().ImportModsList(modsToImport);
-            }
+            ConfigurationManager.GetInstance().ImportModsList(modsToImport);
           }
-          catch (JsonException je)
-          {
-            Utilities.DisplayErrorMessage("Failed to import mods list", $"Failed to import mods list, the mods list may be malformed.\r\n\r\n{je.Message}");
-          }
+        }
+        catch (JsonException je)
+        {
+          Utilities.DisplayErrorMessage("Failed to import mods list", $"Failed to import mods list, the mods list may be malformed.\r\n\r\n{je.Message}");
         }
       }
     }
