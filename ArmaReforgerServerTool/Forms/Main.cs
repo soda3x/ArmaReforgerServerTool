@@ -845,22 +845,6 @@ namespace ReforgerServerApp
         ParameterTooltip = Constants.SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR
       };
       serverParameters.Controls.Add(crossPlatform);
-      ServerParameterBool supportedPlatformXbox = new()
-      {
-        ParameterName = "supportedPlatformXbox",
-        ParameterFriendlyName = "Allow Xbox clients",
-        ParameterValue = false,
-        ParameterTooltip = "Allow Xbox players to join the server (Cross Platform must also be enabled)"
-      };
-      serverParameters.Controls.Add(supportedPlatformXbox);
-      ServerParameterBool supportedPlatformPSN = new()
-      {
-        ParameterName = "supportedPlatformPSN",
-        ParameterFriendlyName = "Allow PlayStation clients",
-        ParameterValue = false,
-        ParameterTooltip = "Allow PlayStation players to join the server (Cross Platform must also be enabled)"
-      };
-      serverParameters.Controls.Add(supportedPlatformPSN);
       ServerParameterNumeric aiLimit = new()
       {
         ParameterName = "aiLimit",
@@ -1004,6 +988,13 @@ namespace ReforgerServerApp
       };
       advancedParametersPanel.Controls.Add(noBackend);
       noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
+      AdvancedServerParameterBool autoShutdown = new()
+      {
+        ParameterName = "autoShutdown",
+        ParameterFriendlyName = "Auto Shutdown",
+        Description = Constants.TODO_STR
+      };
+      advancedParametersPanel.Controls.Add(autoShutdown);
       AdvancedServerParameterNumeric overridePort = new()
       {
         ParameterName = "bindPort",
