@@ -135,14 +135,11 @@ namespace ReforgerServerApp.Utils
     }
 
     /// <summary>
-    /// Set supported platforms. There are multiple combinations of valid and invalid so we need to
-    /// construct the supported platforms list based on which platforms are allowed to connect.
+    /// Set supported platforms.
     /// </summary>
     /// <param name="crossplayEnabled"></param>
-    /// <param name="xboxAllowed"></param>
-    /// <param name="psnAllowed"></param>
     /// <returns>Supported Platforms based on whether crossplay is enabled</returns>
-    public static string[] GetSupportedPlatforms(bool crossplayEnabled, bool xboxAllowed, bool psnAllowed)
+    public static string[] GetSupportedPlatforms(bool crossplayEnabled)
     {
       List<string> supportedPlatforms = new() { Constants.SUPPORTED_PLATFORM_PC };
       if (crossplayEnabled)
@@ -263,6 +260,15 @@ namespace ReforgerServerApp.Utils
       }
 
       return mappings;
+    }
+
+    /// <returns>
+    /// Return the lowest of either Number of CPUs or 16
+    /// </returns>
+    public static int GetNumberAvailableThreads()
+    {
+      const int maxNumThreads = 16;
+      return Environment.ProcessorCount > maxNumThreads ? maxNumThreads : Environment.ProcessorCount;
     }
   }
 }
