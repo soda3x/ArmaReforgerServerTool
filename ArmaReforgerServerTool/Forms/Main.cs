@@ -183,8 +183,28 @@ namespace ReforgerServerApp
         /// <param name="e"></param>
         private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
         {
-            ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
-            FileIOManager.GetInstance().WriteModsDatabase();
+            var list = GetAvailableModsList();                 // <- if you want remove from Enabled, modify here GetEnableModsList()
+            if (list.SelectedItems.Count == 0) return;
+
+           
+            Mod[] modsToRemove = new Mod[list.SelectedItems.Count];
+            list.SelectedItems.CopyTo(modsToRemove, 0);
+
+            list.BeginUpdate(); // evita flicker UI
+            try
+            {
+                var available = ConfigurationManager.GetInstance().GetAvailableMods(); 
+                foreach (Mod mod in modsToRemove)
+                    available.Remove(mod);
+            }
+            finally
+            {
+                list.EndUpdate();
+            }
+
+            FileIOManager.GetInstance().WriteModsDatabase();   // one time, outside loop loop
+            ConfigurationManager.GetInstance().AlphabetiseModLists();
+            list.ClearSelected(); 
         }
 
         /// <summary>
