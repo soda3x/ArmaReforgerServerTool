@@ -166,7 +166,7 @@ namespace ReforgerServerApp
     }
 
     /// <summary>
-    /// Remove the selected mod(s) from the Available Mods ListBox when the "Remove Mod" button is pressed.
+    /// Remove the selected mod(s) from the Available Mods ListBox when the "Remove Mod" button is pressed, support multi-selection.
     /// </summary>
     private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
     {
@@ -189,7 +189,7 @@ namespace ReforgerServerApp
         list.EndUpdate();
       }
 
-      FileIOManager.GetInstance().WriteModsDatabase();   // salva una sola volta
+      FileIOManager.GetInstance().WriteModsDatabase(); 
       ConfigurationManager.GetInstance().AlphabetiseModLists();
       list.ClearSelected();
     }
@@ -1295,7 +1295,7 @@ namespace ReforgerServerApp
     /// <summary>
     /// Move selected Enabled Mods to the top (supports multi-select, preserves original order)
     /// </summary>
-    private void iconButton2_Click(object sender, EventArgs e)
+    private void MoveEnabledModPositionOnTopBtnPressed(object sender, EventArgs e)
     {
       var listCtrl = GetEnabledModsList();
       if (listCtrl == null || listCtrl.SelectedItems.Count == 0) return;
@@ -1303,14 +1303,14 @@ namespace ReforgerServerApp
       var enabled = ConfigurationManager.GetInstance().GetEnabledMods();
       if (enabled == null) return;
 
-      // indici in ordine crescente
+      // index in crescent order
       var indices = listCtrl.SelectedIndices.Cast<int>().OrderBy(i => i).ToList();
       var mods = indices.Select(idx => (Mod)listCtrl.Items[idx]).ToList();
 
       listCtrl.BeginUpdate();
       try
       {
-        // inserisci in testa iterando al contrario per mantenere l'ordine originale
+        // insert on top using reverse iteration
         for (int k = mods.Count - 1; k >= 0; k--)
         {
           var mod = mods[k];
@@ -1327,12 +1327,12 @@ namespace ReforgerServerApp
         listCtrl.EndUpdate();
       }
 
-      // Reseleziona gli elementi spostati in testa
+      // Reselect elements moved
       listCtrl.SelectedItems.Clear();
       foreach (var mod in mods)
         listCtrl.SelectedItem = mod;
 
-      // opzionale: scroll in alto
+      // optional: auto scroll top
       // ((ListBox)listCtrl).TopIndex = 0;
     }
   }
