@@ -150,8 +150,6 @@ namespace ReforgerServerApp
         m_serverParamsDictionary["visible"].ParameterValue = m_serverConfig.root.game.visible;
         m_serverParamsDictionary["modsRequiredByDefault"].ParameterValue = m_serverConfig.root.game.modsRequiredByDefault;
         m_serverParamsDictionary["crossPlatform"].ParameterValue = m_serverConfig.root.game.crossPlatform;
-        m_serverParamsDictionary["supportedPlatformXbox"].ParameterValue = m_serverConfig.root.game.supportedPlatforms.Contains(Constants.SUPPORTED_PLATFORM_XBOX);
-        m_serverParamsDictionary["supportedPlatformPSN"].ParameterValue = m_serverConfig.root.game.supportedPlatforms.Contains(Constants.SUPPORTED_PLATFORM_PSN);
 
         m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMaxViewDistance;
         m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMinGrassDistance;
@@ -261,9 +259,7 @@ namespace ReforgerServerApp
       m_serverConfig.root.game.mods = m_enabledMods.ToArray();
       m_serverConfig.root.game.modsRequiredByDefault = (bool)m_serverParamsDictionary["modsRequiredByDefault"].ParameterValue;
 
-      m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform,
-                                                     (bool)m_serverParamsDictionary["supportedPlatformXbox"].ParameterValue,
-                                                     (bool)m_serverParamsDictionary["supportedPlatformPSN"].ParameterValue);
+      m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
 
       m_serverConfig.root.game.admins = (string[])m_serverParamsDictionary["admins"].ParameterValue;
       // m_serverConfig.root.game.scenarioId - Don't need to set scenarioId as its set directly from the Scenario Selector Form
@@ -297,6 +293,27 @@ namespace ReforgerServerApp
       m_serverConfig.root.operating.disableAI = (bool)m_serverParamsDictionary["disableAI"].ParameterValue;
 
       m_serverConfig.root.operating.joinQueue.maxSize = Convert.ToInt32(m_serverParamsDictionary["maxSize"].ParameterValue);
+    }
+
+    public void ImportModsList(List<Mod> modsToImport)
+    {
+      // First move mods back to available mods so we don't lose them
+      for (int i = 0; i < m_enabledMods.Count; i++)
+      {
+        MoveMod(m_enabledMods[i], m_enabledMods, m_availableMods);
+      }
+
+      foreach(Mod mod in modsToImport)
+      {
+        if (m_availableMods.Contains(mod))
+        {
+          MoveMod(mod, m_availableMods, m_enabledMods);
+        } else
+        {
+          m_enabledMods.Add(mod);
+        }
+      }
+      AlphabetiseModLists();
     }
 
     /// <returns>Mod IDs of Mods in the server configuration as a List</returns>

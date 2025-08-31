@@ -113,18 +113,7 @@ namespace ReforgerServerApp
 
     public static string SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_TOOLTIP_STR = "Maximum view distance enforced by the server.";
 
-    public static string SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR = "If enabled, Xbox and PlayStation clients will be able to connect to the server.\r\n" +
-        "Valid combinations are:\r\n" +
-        "\tPC only\r\n" +
-        "\tPC + Xbox + PlayStation\r\n" +
-        "\tPC + Xbox\r\n" +
-        "Note that you cannot run a Vanilla Server unless it is set to PC only or allows all platforms to connect.\r\n" +
-        "Note that PlayStation currently does not support modded servers.\r\n" +
-        "The following combinations are invalid:\r\n" +
-        "\tPC + PlayStation\r\n" +
-        "\tXbox + PlayStation\r\n" +
-        "\tXbox only\r\n" +
-        "\tPlayStation only";
+    public static string SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR = "If enabled, Xbox and PlayStation clients will be able to connect to the server.";
 
     public static string SERVER_PARAM_VISIBLE_TOOLTIP_STR = "Set the visibility of the server in the Server Browser.";
 
@@ -184,6 +173,7 @@ namespace ReforgerServerApp
         "Would you like to migrate this mod database to the new format?\r\n\r\n" +
         "(If you select Yes, the legacy file will be deleted after the migration is complete, selecting No will create a new Mod Database in the new format)";
     public static string EXPORT_MODS_STR = "Export mod list to file";
+    public static string IMPORT_MODS_STR = "Import mod list from file";
     public static string STOCK_MOD_ID = "591AF5BDA9F7CE8B";
     public static string NO_BACKEND_SCENARIO_LOADER_MOD_ID = "6324F7124A9768FB";
   }

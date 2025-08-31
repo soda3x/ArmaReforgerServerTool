@@ -25,13 +25,24 @@ namespace ReforgerServerApp.Models
         {
             "{ECC61978EDCC2B5A}Missions/23_Campaign.conf",
             "{59AD59368755F41A}Missions/21_GM_Eden.conf",
-            "{94FDA7451242150B}Missions/103_Arland_Tutorial.conf",
+            "{002AF7323E0129AF}Missions/Tutorial.conf",
             "{2BBBE828037C6F4B}Missions/22_GM_Arland.conf",
             "{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf",
             "{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf",
+            "{94992A3D7CE4FF8A}Missions/23_Campaign_Western.conf",
+            "{FDE33AFE2ED7875B}Missions/23_Campaign_Montignac.conf",
             "{DAA03C6E6099D50F}Missions/24_CombatOps.conf",
             "{C41618FD18E9D714}Missions/23_Campaign_Arland.conf",
-            "{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf"
+            "{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf",
+            "{3F2E005F43DBD2F8}Missions/CAH_Briars_Coast.conf",
+            "{F1A1BEA67132113E}Missions/CAH_Castle.conf",
+            "{589945FB9FA7B97D}Missions/CAH_Concrete_Plant.conf",
+            "{9405201CBD22A30C}Missions/CAH_Factory.conf",
+            "{1CD06B409C6FAE56}Missions/CAH_Forest.conf",
+            "{7C491B1FCC0FF0E1}Missions/CAH_LeMoule.conf",
+            "{6EA2E454519E5869}Missions/CAH_Military_Base.conf",
+            "{2B4183DF23E88249}Missions/CAH_Morton.conf",
+            "{C47A1A6245A13B26}Missions/SP01_ReginaV2.conf"
         };
 
     private static readonly string DEFAULT_MOD_DATABASE_FILE = "./mod_database.json";
@@ -42,7 +53,7 @@ namespace ReforgerServerApp.Models
     private static readonly bool DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP = true;
     private static readonly string DEFAULT_STEAMCMD_DOWNLOAD_URL = "https://steamcdn-a.akamaihd.net/client/installer";
     private static readonly string DEFAULT_ARMA_WORKSHOP_URL = "https://reforger.armaplatform.com/workshop";
-    private static readonly string DEFAULT_LOG_FILE = "logs/ardst.log";
+    private static readonly string DEFAULT_LOG_FILE = "logs/longbow.log";
     private static readonly string DEFAULT_MINIMUM_LOG_LEVEL = "Debug";
     private static readonly int DEFAULT_AUTO_RESTART_TIME_MS = 2000;
 
