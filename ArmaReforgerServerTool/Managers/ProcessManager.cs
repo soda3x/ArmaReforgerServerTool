@@ -507,6 +507,8 @@ namespace ReforgerServerApp.Managers
                                                m_launchArgumentsModel.streamingBudget,
                                                m_launchArgumentsModel.streamsDelta,
                                                m_launchArgumentsModel.loadSessionSave,
+                                               m_launchArgumentsModel.freezeCheck,
+                                               m_launchArgumentsModel.freezeCheckMode,
                                                m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
 
       if (!ConfigurationManager.GetInstance().noBackend)
