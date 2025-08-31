@@ -318,59 +318,29 @@ namespace ReforgerServerApp
     /// <param name="e"></param>
     private void StartServerBtnPressed(object sender, EventArgs e)
     {
-      AdvancedServerParameterSchedule? autoRestart =
-          ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestart"] as AdvancedServerParameterSchedule;
-
       AdvancedServerParameterTime? autoRestartDaily =
           ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"] as AdvancedServerParameterTime;
 
-      if (autoRestart == null || autoRestartDaily == null)
+      if (autoRestartDaily == null)
       {
         Log.Error("Main - Failed to start server due to issues with auto restart logic. Cannot continue.");
         return;
       }
       // If we are starting the server for the first time and using the automatic restart functionality, configure the timer
-      if ((autoRestart.Checked() || autoRestartDaily.Checked()) && !ProcessManager.GetInstance().IsServerUsingTimer())
+      if (autoRestartDaily.Checked() && !ProcessManager.GetInstance().IsServerUsingTimer())
       {
-
-        // Create a timespan based on which units the user has selected
-        // Use default value of 1 hour restarts so VS stops yelling at us
-        TimeSpan interval = TimeSpan.FromHours(1);
-
-        if (autoRestart.Checked())
-        {
-          switch (autoRestart.CurrentIndex)
-          {
-            case (int)ServerRestartIntervalUnit.MINUTES:
-              interval = TimeSpan.FromMinutes(Convert.ToInt32(autoRestart.ParameterValue));
-              break;
-            case (int)ServerRestartIntervalUnit.HOURS:
-              interval = TimeSpan.FromHours(Convert.ToInt32(autoRestart.ParameterValue));
-              break;
-            case (int)ServerRestartIntervalUnit.DAYS:
-              interval = TimeSpan.FromDays(Convert.ToInt32(autoRestart.ParameterValue));
-              break;
-          }
-        }
-
-        if (autoRestartDaily.Checked())
-        {
-          // Get the time to restart as a relative time wrt now
-          interval = (DateTime)autoRestartDaily.ParameterValue - DateTime.Now;
-        }
-
         CreateLaunchArguments();
-        ProcessManager.GetInstance().ConfigureAutomaticRestartTask(interval);
+        ProcessManager.GetInstance().ConfigureAutomaticRestartTask();
       }
 
       // The user is turning the server off manually
-      else if ((autoRestart.Checked() || autoRestartDaily.Checked()) && ProcessManager.GetInstance().IsServerUsingTimer())
+      else if (autoRestartDaily.Checked() && ProcessManager.GetInstance().IsServerUsingTimer())
       {
         ProcessManager.GetInstance().CancelAutomaticRestartTask();
       }
 
       // User just normally pressed the button
-      else if (!autoRestart.Checked() && !autoRestartDaily.Checked() && !ProcessManager.GetInstance().IsServerUsingTimer())
+      else if (!autoRestartDaily.Checked() && !ProcessManager.GetInstance().IsServerUsingTimer())
       {
         CreateLaunchArguments();
         ProcessManager.GetInstance().StartStopServer();
@@ -955,29 +925,15 @@ namespace ReforgerServerApp
       };
       limitServerMaxFPS.CheckBox.Checked = true; // Checked by default
       advancedParametersPanel.Controls.Add(limitServerMaxFPS);
-      AdvancedServerParameterSchedule autoRestart = new()
-      {
-        ParameterName = "autoRestart",
-        ParameterFriendlyName = "Automatically Restart",
-        ParameterMin = 1,
-        ParameterMax = 2000,
-        ParameterIncrement = 1,
-        ParameterValue = 60,
-        Description = "Specify whether and when the server should automatically restart.",
-        Items = new[] { "Mins", "Hours", "Days" }
-      };
-      autoRestart.CheckBox.CheckedChanged += AutoRestartCheckChanged;
-      advancedParametersPanel.Controls.Add(autoRestart);
       AdvancedServerParameterTime autoRestartTime = new()
       {
         ParameterName = "autoRestartDaily",
-        ParameterFriendlyName = "Restart daily at this time",
-        Description = "Specify, in 24 hour time, at what time the server will restart.",
+        ParameterFriendlyName = "Auto Restart",
+        Description = "Specify, in 24 hour time, at what time the server will restart every day.",
         ParameterMin = DateTime.Today,
         ParameterMax = DateTime.Today.AddDays(1).AddMinutes(-1),
         ParameterValue = DateTime.Today
       };
-      autoRestartTime.CheckBox.CheckedChanged += AutoRestartTimeCheckChanged;
       advancedParametersPanel.Controls.Add(autoRestartTime);
       AdvancedServerParameterBool autoRestartOnCrash = new()
       {
@@ -1122,22 +1078,6 @@ namespace ReforgerServerApp
     {
       ConfigurationManager.GetInstance().autoRestartOnCrash =
           ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartOnCrash"].Checked();
-    }
-
-    private void AutoRestartCheckChanged(object? sender, EventArgs e)
-    {
-      if (ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestart"].Checked())
-      {
-        ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"].CheckBox.Checked = false;
-      }
-    }
-
-    private void AutoRestartTimeCheckChanged(object? sender, EventArgs e)
-    {
-      if (ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"].Checked())
-      {
-        ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestart"].CheckBox.Checked = false;
-      }
     }
 
     /// <summary>
