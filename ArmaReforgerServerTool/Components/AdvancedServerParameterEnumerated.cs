@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    AdvancedServerParameterEnumerated.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The AdvancedServerParameterEnumerated component represents a 
  *               graphical means to manage enumerated server launch 
  *               arguments
