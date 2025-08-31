@@ -15,6 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\FreezeCheckMode.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Resources\arma_icon_white.ico" />
   </ItemGroup>
 
@@ -29,6 +33,9 @@
 
   <ItemGroup>
     <Compile Update="Components\AdvancedServerParameterBool.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Components\AdvancedServerParameterEnumerated.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Components\AdvancedServerParameterTime.cs">
