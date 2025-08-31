@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    AdvancedServerParameterTime.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The AdvancedServerParameterTime component represents a 
  *               graphical means to manage numeric server launch 
  *               arguments

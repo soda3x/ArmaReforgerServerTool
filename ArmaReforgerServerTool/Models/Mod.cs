@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    Mod.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This file contains the Mod class, a model representing the
  *               Mod structure in the Arma Reforger server configuration
  * 

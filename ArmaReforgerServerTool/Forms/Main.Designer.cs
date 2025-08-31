@@ -731,7 +731,7 @@ namespace ReforgerServerApp
       Icon = (Icon) resources.GetObject("$this.Icon");
       MinimumSize = new Size(1440, 782);
       Name = "Main";
-      Text = "Arma Reforger Dedicated Server Tool";
+      Text = "Longbow: Arma Reforger Dedicated Server Tool";
       tabControl1.ResumeLayout(false);
       tabPage1.ResumeLayout(false);
       tabPage1.PerformLayout();

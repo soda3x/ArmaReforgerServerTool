@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    LaunchArguments.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This file contains the LaunchArgument class, a model 
  *               representing a launch argument for the Arma Reforger Server,
  *               it also holds a structure containing all known Launch 

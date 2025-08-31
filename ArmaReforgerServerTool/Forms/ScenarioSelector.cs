@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ScenarioSelector.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This is the Scenario Selector Form
  * 
  * Author:       Bradley Newman

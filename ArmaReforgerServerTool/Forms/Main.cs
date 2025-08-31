@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    Main.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This is the Main Form
  * 
  * Author:       Bradley Newman

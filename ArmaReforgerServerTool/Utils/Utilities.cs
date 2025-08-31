@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    Utilities.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  Static class containing utility methods for 
  *               performing various simple tasks
  * 

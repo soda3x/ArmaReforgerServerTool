@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ServerConfiguration.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This file contains the ServerConfiguration class, which is
  *               a model representing the Arma Reforger server configuration
  * 
