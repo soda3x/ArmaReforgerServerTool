@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ListForm.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This is a generic form for managing lists graphically
  * 
  * Author:       Bradley Newman
@@ -14,7 +14,7 @@ namespace ReforgerServerApp
     public ListForm(string windowTitle, string[] items)
     {
       InitializeComponent();
-      this.Text = $"Arma Reforger Dedicated Server Tool - {windowTitle}";
+      this.Text = $"Longbow - {windowTitle}";
       m_items = new List<string>(items);
       itemListView.DataSource = m_items;
     }

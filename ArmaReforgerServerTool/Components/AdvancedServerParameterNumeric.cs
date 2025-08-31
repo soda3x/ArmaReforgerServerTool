@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    AdvancedServerParameterNumeric.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The AdvancedServerParameterNumeric component represents a 
  *               graphical means to manage numeric server launch 
  *               arguments

@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    BoundListBox.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The BoundListBox component is an extension of the ListBox
  *               component with the addition of automatically refreshing its
  *               contents upon updates to the List Box's underlying data

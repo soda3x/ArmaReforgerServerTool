@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    ServerParameterSelect.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The ServerParameterSelect component represents a graphical
  *               means to manage choices
  * 

@@ -1,6 +1,6 @@
 /******************************************************************************
  * File Name:    AboutBox.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  This is the AboutBox Form
  * 
  * Author:       Bradley Newman
@@ -17,9 +17,10 @@ namespace ReforgerServerApp
     {
       InitializeComponent();
       StringBuilder sb = new();
-      sb.AppendLine("Arma Reforger Dedicated Server Tool by soda3x");
+      sb.AppendLine("Longbow by soda3x");
       sb.AppendLine($"Version {Assembly.GetExecutingAssembly().GetName().Version}");
       sb.AppendLine("\r\n\"No Backend Scenario Loader\" mod provided by ceo_of_bacon");
+      sb.AppendLine("See full list of contributors on GitHub");
       aboutText.Text = sb.ToString();
     }
 
