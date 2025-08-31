@@ -519,6 +519,18 @@ namespace ReforgerServerApp.Managers
                                                m_launchArgumentsModel.loadSessionSave,
                                                m_launchArgumentsModel.freezeCheck,
                                                m_launchArgumentsModel.freezeCheckMode,
+                                               m_launchArgumentsModel.addonsRepair,
+                                               m_launchArgumentsModel.autoShutdown,
+                                               m_launchArgumentsModel.logVoting,
+                                               m_launchArgumentsModel.aiPartialSim,
+                                               m_launchArgumentsModel.createDB,
+                                               m_launchArgumentsModel.debugger,
+                                               m_launchArgumentsModel.debuggerPort,
+                                               m_launchArgumentsModel.disableShadersBuild,
+                                               m_launchArgumentsModel.generateShaders,
+                                               m_launchArgumentsModel.rplEncodeAsLongJobs,
+                                               m_launchArgumentsModel.jobSysShortWorkerCount,
+                                               m_launchArgumentsModel.jobSysLongWorkerCount,
                                                m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
 
       if (!ConfigurationManager.GetInstance().noBackend)
