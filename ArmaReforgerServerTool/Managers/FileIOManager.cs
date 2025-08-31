@@ -125,6 +125,42 @@ namespace ReforgerServerApp.Managers
     }
 
     /// <summary>
+    /// Load Mods List JSON from file and populate enabled mods list.
+    /// Mods currently in the enabled mods list will be moved back to available mods first to ensure they're not lost.
+    /// If a mod in the mod list is already in the available mods list, it will be moved from there so no duplicates exist.
+    /// </summary>
+    public static void LoadModsListFromFile()
+    {
+      using System.Windows.Forms.OpenFileDialog ofd = new();
+      ofd.InitialDirectory = Environment.SpecialFolder.UserProfile.ToString();
+      ofd.Filter = "JSON (*.json)|*.json";
+      if (ofd.ShowDialog() == DialogResult.OK)
+      {
+        string filePath = ofd.FileName;
+        using StreamReader sr = File.OpenText(filePath);
+        string modsJsonString = sr.ReadToEnd();
+        if (modsJsonString == null)
+        {
+          return;
+        }
+        JsonSerializerOptions options = new();
+        options.Converters.Add(new JsonUtils.ModConverter());
+        try
+        {
+          List<Mod> modsToImport = JsonSerializer.Deserialize<List<Mod>>(modsJsonString, options);
+          if (modsToImport != null && modsToImport.Count > 0)
+          {
+            ConfigurationManager.GetInstance().ImportModsList(modsToImport);
+          }
+        }
+        catch (JsonException je)
+        {
+          Utilities.DisplayErrorMessage("Failed to import mods list", $"Failed to import mods list, the mods list may be malformed.\r\n\r\n{je.Message}");
+        }
+      }
+    }
+
+    /// <summary>
     /// Save Configuration to JSON file
     /// </summary>
     public static void SaveConfigurationToFile()
@@ -347,7 +383,7 @@ namespace ReforgerServerApp.Managers
       if (key != null)
       {
         object value = key.GetValue("Installed");
-        installed = value != null && (int)value == 1;
+        installed = value != null && (int) value == 1;
       }
 
       if (!installed)
