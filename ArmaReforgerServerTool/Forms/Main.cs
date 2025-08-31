@@ -85,6 +85,8 @@ namespace ReforgerServerApp
       useUpnpToolTip.SetToolTip(useUpnp, Constants.USE_UPNP_STR);
       ToolTip exportModsToolTip = new();
       exportModsToolTip.SetToolTip(exportModsBtn, Constants.EXPORT_MODS_STR);
+      ToolTip importModsToolTip = new();
+      exportModsToolTip.SetToolTip(importModsBtn, Constants.IMPORT_MODS_STR);
     }
 
     /// <summary>
@@ -316,59 +318,29 @@ namespace ReforgerServerApp
     /// <param name="e"></param>
     private void StartServerBtnPressed(object sender, EventArgs e)
     {
-      AdvancedServerParameterSchedule? autoRestart =
-          ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestart"] as AdvancedServerParameterSchedule;
-
       AdvancedServerParameterTime? autoRestartDaily =
           ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"] as AdvancedServerParameterTime;
 
-      if (autoRestart == null || autoRestartDaily == null)
+      if (autoRestartDaily == null)
       {
         Log.Error("Main - Failed to start server due to issues with auto restart logic. Cannot continue.");
         return;
       }
       // If we are starting the server for the first time and using the automatic restart functionality, configure the timer
-      if ((autoRestart.Checked() || autoRestartDaily.Checked()) && !ProcessManager.GetInstance().IsServerUsingTimer())
+      if (autoRestartDaily.Checked() && !ProcessManager.GetInstance().IsServerUsingTimer())
       {
-
-        // Create a timespan based on which units the user has selected
-        // Use default value of 1 hour restarts so VS stops yelling at us
-        TimeSpan interval = TimeSpan.FromHours(1);
-
-        if (autoRestart.Checked())
-        {
-          switch (autoRestart.CurrentIndex)
-          {
-            case (int)ServerRestartIntervalUnit.MINUTES:
-              interval = TimeSpan.FromMinutes(Convert.ToInt32(autoRestart.ParameterValue));
-              break;
-            case (int)ServerRestartIntervalUnit.HOURS:
-              interval = TimeSpan.FromHours(Convert.ToInt32(autoRestart.ParameterValue));
-              break;
-            case (int)ServerRestartIntervalUnit.DAYS:
-              interval = TimeSpan.FromDays(Convert.ToInt32(autoRestart.ParameterValue));
-              break;
-          }
-        }
-
-        if (autoRestartDaily.Checked())
-        {
-          // Get the time to restart as a relative time wrt now
-          interval = (DateTime)autoRestartDaily.ParameterValue - DateTime.Now;
-        }
-
         CreateLaunchArguments();
-        ProcessManager.GetInstance().ConfigureAutomaticRestartTask(interval);
+        ProcessManager.GetInstance().ConfigureAutomaticRestartTask();
       }
 
       // The user is turning the server off manually
-      else if ((autoRestart.Checked() || autoRestartDaily.Checked()) && ProcessManager.GetInstance().IsServerUsingTimer())
+      else if (autoRestartDaily.Checked() && ProcessManager.GetInstance().IsServerUsingTimer())
       {
         ProcessManager.GetInstance().CancelAutomaticRestartTask();
       }
 
       // User just normally pressed the button
-      else if (!autoRestart.Checked() && !autoRestartDaily.Checked() && !ProcessManager.GetInstance().IsServerUsingTimer())
+      else if (!autoRestartDaily.Checked() && !ProcessManager.GetInstance().IsServerUsingTimer())
       {
         CreateLaunchArguments();
         ProcessManager.GetInstance().StartStopServer();
@@ -845,22 +817,6 @@ namespace ReforgerServerApp
         ParameterTooltip = Constants.SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR
       };
       serverParameters.Controls.Add(crossPlatform);
-      ServerParameterBool supportedPlatformXbox = new()
-      {
-        ParameterName = "supportedPlatformXbox",
-        ParameterFriendlyName = "Allow Xbox clients",
-        ParameterValue = false,
-        ParameterTooltip = "Allow Xbox players to join the server (Cross Platform must also be enabled)"
-      };
-      serverParameters.Controls.Add(supportedPlatformXbox);
-      ServerParameterBool supportedPlatformPSN = new()
-      {
-        ParameterName = "supportedPlatformPSN",
-        ParameterFriendlyName = "Allow PlayStation clients",
-        ParameterValue = false,
-        ParameterTooltip = "Allow PlayStation players to join the server (Cross Platform must also be enabled)"
-      };
-      serverParameters.Controls.Add(supportedPlatformPSN);
       ServerParameterNumeric aiLimit = new()
       {
         ParameterName = "aiLimit",
@@ -953,30 +909,32 @@ namespace ReforgerServerApp
       };
       limitServerMaxFPS.CheckBox.Checked = true; // Checked by default
       advancedParametersPanel.Controls.Add(limitServerMaxFPS);
-      AdvancedServerParameterSchedule autoRestart = new()
-      {
-        ParameterName = "autoRestart",
-        ParameterFriendlyName = "Automatically Restart",
-        ParameterMin = 1,
-        ParameterMax = 2000,
-        ParameterIncrement = 1,
-        ParameterValue = 60,
-        Description = "Specify whether and when the server should automatically restart.",
-        Items = new[] { "Mins", "Hours", "Days" }
-      };
-      autoRestart.CheckBox.CheckedChanged += AutoRestartCheckChanged;
-      advancedParametersPanel.Controls.Add(autoRestart);
       AdvancedServerParameterTime autoRestartTime = new()
       {
         ParameterName = "autoRestartDaily",
-        ParameterFriendlyName = "Restart daily at this time",
-        Description = "Specify, in 24 hour time, at what time the server will restart.",
+        ParameterFriendlyName = "Auto Restart",
+        Description = "Specify, in 24 hour time, at what time the server will restart every day.",
         ParameterMin = DateTime.Today,
         ParameterMax = DateTime.Today.AddDays(1).AddMinutes(-1),
         ParameterValue = DateTime.Today
       };
-      autoRestartTime.CheckBox.CheckedChanged += AutoRestartTimeCheckChanged;
       advancedParametersPanel.Controls.Add(autoRestartTime);
+      AdvancedServerParameterString loadSessionSave = new()
+      {
+        ParameterName = "loadSessionSave",
+        ParameterFriendlyName = "Load Session Save",
+        Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
+        ParameterPlaceholder = "Using latest save..."
+      };
+      advancedParametersPanel.Controls.Add(loadSessionSave);
+      AdvancedServerParameterBool addonsRepair = new()
+      {
+        ParameterName = "addonsRepair",
+        ParameterFriendlyName = "Verify and Repair Addons",
+        Description ="Verifies the integrity of all installed addons. If any corrupted addons are found, they will be repaired automatically."
+      };
+      addonsRepair.CheckBox.Checked = true; // Checked by default
+      advancedParametersPanel.Controls.Add(addonsRepair);
       AdvancedServerParameterBool autoRestartOnCrash = new()
       {
         ParameterName = "autoRestartOnCrash",
@@ -1004,6 +962,20 @@ namespace ReforgerServerApp
       };
       advancedParametersPanel.Controls.Add(noBackend);
       noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
+      AdvancedServerParameterBool autoShutdown = new()
+      {
+        ParameterName = "autoShutdown",
+        ParameterFriendlyName = "Auto Shutdown",
+        Description = "Ensures the correct server shutdown process, use with \"Auto Reload\"."
+      };
+      advancedParametersPanel.Controls.Add(autoShutdown);
+      AdvancedServerParameterBool logVoting = new()
+      {
+        ParameterName = "logVoting",
+        ParameterFriendlyName = "Log Voting",
+        Description = "Adds logging info to the voting system with information about who created, voted, and against whom the vote was created."
+      };
+      advancedParametersPanel.Controls.Add(logVoting);      
       AdvancedServerParameterNumeric overridePort = new()
       {
         ParameterName = "bindPort",
@@ -1081,14 +1053,100 @@ namespace ReforgerServerApp
         Description = "Sets the server's timeout value, in milliseconds."
       };
       advancedParametersPanel.Controls.Add(rplTimeoutMs);
-      AdvancedServerParameterString loadSessionSave = new()
+      AdvancedServerParameterBool aiPartialSim = new()
       {
-        ParameterName = "loadSessionSave",
-        ParameterFriendlyName = "Load Session Save",
-        Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
-        ParameterPlaceholder = "Using latest save..."
+        ParameterName = "aiPartialSim",
+        ParameterFriendlyName = "AI Partial Sim",
+        Description = "Sets in how many batches all simulable AIs will divided and processed."
       };
+      advancedParametersPanel.Controls.Add(aiPartialSim);
+      AdvancedServerParameterBool createDB = new()
+      {
+        ParameterName = "createDB",
+        ParameterFriendlyName = "Force Recreate Database",
+        Description = "Forces database file's regeneration. Useful after file directories changes, when some resources were moved elsewhere."
+      };
+      advancedParametersPanel.Controls.Add(createDB);
+      AdvancedServerParameterString debugger = new()
+      {
+        ParameterName = "debugger",
+        ParameterFriendlyName = "Debugger Address",
+        ParameterPlaceholder = "127.0.0.1",
+        Description = "Sets the script debugger to a specific address."
+      };
+      advancedParametersPanel.Controls.Add(debugger);
+      AdvancedServerParameterNumeric debuggerPort = new()
+      {
+        ParameterName = "debuggerPort",
+        ParameterFriendlyName = "Debugger Port",
+        ParameterIncrement = 1,
+        ParameterMin = 1,
+        ParameterMax = 65535,
+        ParameterValue = 1000,
+        Description = "Sets the script debugger to a specific port. "
+      };
+      advancedParametersPanel.Controls.Add(debuggerPort);
+      AdvancedServerParameterBool disableShadersBuild = new()
+      {
+        ParameterName = "disableShadersBuild",
+        ParameterFriendlyName = "Disable Shaders Generation",
+        Description = "Disables shaders generation."
+      };
+      advancedParametersPanel.Controls.Add(disableShadersBuild);
+      AdvancedServerParameterBool generateShaders = new()
+      {
+        ParameterName = "generateShaders",
+        ParameterFriendlyName = "Force Generate Shaders",
+        Description = "Forces shaders generation."
+      };
+      advancedParametersPanel.Controls.Add(generateShaders);
+      AdvancedServerParameterBool rplEncodeAsLongJobs = new()
+      {
+        ParameterName = "rplEncodeAsLongJobs",
+        ParameterFriendlyName = "RPL Encode as Long Jobs",
+        Description = "Makes replication use long encoding jobs instead of short ones."
+      };
+      advancedParametersPanel.Controls.Add(rplEncodeAsLongJobs);
+      AdvancedServerParameterNumeric jobsysShortWorkerCount = new()
+      {
+        ParameterName = "jobsysShortWorkerCount",
+        ParameterFriendlyName = "Short Worker Count",
+        Description = "Sets the number of threads working on short jobs (jobs that must finish in one update loop).",
+        ParameterMin = 1,
+        ParameterMax = Utilities.GetNumberAvailableThreads(),
+        ParameterValue = Utilities.GetNumberAvailableThreads(),
+      };
+      advancedParametersPanel.Controls.Add(jobsysShortWorkerCount);
+      AdvancedServerParameterNumeric jobsysLongWorkerCount = new()
+      {
+        ParameterName = "jobsysLongWorkerCount",
+        ParameterFriendlyName = "Long Worker Count",
+        Description = "Sets the number of threads working on long jobs (jobs that can span multiple iterations of update loop).",
+        ParameterMin = 1,
+        ParameterMax = Utilities.GetNumberAvailableThreads(),
+        ParameterValue = Utilities.GetNumberAvailableThreads() / 2
+      };
+      advancedParametersPanel.Controls.Add(jobsysLongWorkerCount);
       advancedParametersPanel.Controls.Add(loadSessionSave);
+      AdvancedServerParameterNumeric freezeCheck = new()
+      {
+        ParameterName = "freezeCheck",
+        ParameterFriendlyName = "Freeze Check",
+        Description = "Overrides time in seconds to forcefully crash on application freeze or completely disable detection.",
+        ParameterIncrement = 1,
+        ParameterMin = 0,
+        ParameterMax = 600,
+        ParameterValue = 300
+      };
+      advancedParametersPanel.Controls.Add(freezeCheck);
+      AdvancedServerParameterEnumerated freezeCheckMode = new()
+      {
+        ParameterName = "freezeCheckMode",
+        ParameterFriendlyName = "Freeze Check Mode",
+        Description = "Overrides behavior which should happen when freeze is detected.",
+        ParameterAvailableValues = new List<string>() {"crash", "minidump", "kill"}
+      };
+      advancedParametersPanel.Controls.Add(freezeCheckMode);
 
       foreach (AdvancedServerParameter param in advancedParametersPanel.Controls)
       {
@@ -1120,22 +1178,6 @@ namespace ReforgerServerApp
     {
       ConfigurationManager.GetInstance().autoRestartOnCrash =
           ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartOnCrash"].Checked();
-    }
-
-    private void AutoRestartCheckChanged(object? sender, EventArgs e)
-    {
-      if (ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestart"].Checked())
-      {
-        ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"].CheckBox.Checked = false;
-      }
-    }
-
-    private void AutoRestartTimeCheckChanged(object? sender, EventArgs e)
-    {
-      if (ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"].Checked())
-      {
-        ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestart"].CheckBox.Checked = false;
-      }
     }
 
     /// <summary>
@@ -1285,6 +1327,76 @@ namespace ReforgerServerApp
         args.rplTimeoutMs = new("rpl-timeout-ms", Convert.ToString(advParams["rpl-timeout-ms"].ParameterValue));
       }
 
+      if (advParams["freezeCheck"].Checked())
+      {
+        args.freezeCheck = new("freezeCheck", Convert.ToString(advParams["freezeCheck"].ParameterValue));
+      }
+
+      if (advParams["freezeCheckMode"].Checked())
+      {
+        args.freezeCheckMode = new("freezeCheckMode", ((AdvancedServerParameterEnumerated) advParams["freezeCheckMode"]).SelectedItem);
+      }
+
+      if (advParams["addonsRepair"].Checked())
+      {
+        args.addonsRepair = new("addonsRepair");
+      }
+
+      if (advParams["autoShutdown"].Checked())
+      {
+        args.autoShutdown = new("autoShutdown");
+      }
+
+      if (advParams["logVoting"].Checked())
+      {
+        args.logVoting = new("logVoting");
+      }
+
+      if (advParams["aiPartialSim"].Checked())
+      {
+        args.aiPartialSim = new("aiPartialSim");
+      }
+
+      if (advParams["createDB"].Checked())
+      {
+        args.createDB = new("createDB");
+      }
+
+      if (advParams["debugger"].Checked())
+      {
+        args.debugger = new("debugger", Convert.ToString(advParams["debugger"].ParameterValue));
+      }
+
+      if (advParams["debuggerPort"].Checked())
+      {
+        args.debuggerPort = new("debuggerPort", Convert.ToString(advParams["debuggerPort"].ParameterValue));
+      }
+
+      if (advParams["disableShadersBuild"].Checked())
+      {
+        args.disableShadersBuild = new("disableShadersBuild");
+      }
+
+      if (advParams["generateShaders"].Checked())
+      {
+        args.generateShaders = new("generateShaders");
+      }
+
+      if (advParams["rplEncodeAsLongJobs"].Checked())
+      {
+        args.rplEncodeAsLongJobs = new("rplEncodeAsLongJobs");
+      }
+
+      if (advParams["jobsysShortWorkerCount"].Checked())
+      {
+        args.jobSysShortWorkerCount = new("jobsysShortWorkerCount", Convert.ToString(advParams["jobsysShortWorkerCount"].ParameterValue));
+      }
+
+      if (advParams["jobsysLongWorkerCount"].Checked())
+      {
+        args.jobSysLongWorkerCount = new("jobsysLongWorkerCount", Convert.ToString(advParams["jobsysLongWorkerCount"].ParameterValue));
+      }
+
       ProcessManager.GetInstance().SetLaunchArgumentsModel(args);
     }
 
@@ -1347,6 +1459,11 @@ namespace ReforgerServerApp
     private void ExportModsListBtnPressed(object sender, EventArgs e)
     {
       FileIOManager.SaveModsListToFile();
+    }
+
+    private void ImportModsListBtnPressed(object sender, EventArgs e)
+    {
+      FileIOManager.LoadModsListFromFile();
     }
   }
 }

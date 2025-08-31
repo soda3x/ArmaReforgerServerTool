@@ -94,5 +94,19 @@ namespace ReforgerServerApp.Models
     public LaunchArgument logLevel;
     public LaunchArgument autoReload;
     public LaunchArgument rplTimeoutMs;
+    public LaunchArgument freezeCheck;
+    public LaunchArgument freezeCheckMode;
+    public LaunchArgument addonsRepair;
+    public LaunchArgument autoShutdown;
+    public LaunchArgument logVoting;
+    public LaunchArgument aiPartialSim;
+    public LaunchArgument createDB;
+    public LaunchArgument debugger;
+    public LaunchArgument debuggerPort;
+    public LaunchArgument disableShadersBuild;
+    public LaunchArgument generateShaders;
+    public LaunchArgument rplEncodeAsLongJobs;
+    public LaunchArgument jobSysShortWorkerCount;
+    public LaunchArgument jobSysLongWorkerCount;
   }
 }

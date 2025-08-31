@@ -1,4 +1,4 @@
-﻿using ReforgerServerApp.Components;
+using ReforgerServerApp.Components;
 
 namespace ReforgerServerApp
 {
@@ -33,14 +33,17 @@ namespace ReforgerServerApp
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
       tabControl1 = new TabControl();
       tabPage1 = new TabPage();
-      editModBtn = new Button();
       serverRunningLabel = new Label();
-      addModBtn = new Button();
-      removeModBtn = new Button();
       groupBox2 = new GroupBox();
-      exportModsBtn = new FontAwesome.Sharp.IconButton();
+      tableLayoutPanel2 = new TableLayoutPanel();
       moveModPosDownBtn = new FontAwesome.Sharp.IconButton();
+      exportModsBtn = new FontAwesome.Sharp.IconButton();
       moveModPosUpBtn = new FontAwesome.Sharp.IconButton();
+      importModsBtn = new FontAwesome.Sharp.IconButton();
+      tableLayoutPanel1 = new TableLayoutPanel();
+      addModBtn = new FontAwesome.Sharp.IconButton();
+      editModBtn = new FontAwesome.Sharp.IconButton();
+      removeModBtn = new FontAwesome.Sharp.IconButton();
       modsSearchTB = new TextBox();
       disableAllModsBtn = new FontAwesome.Sharp.IconButton();
       enableAllModsBtn = new FontAwesome.Sharp.IconButton();
@@ -52,31 +55,33 @@ namespace ReforgerServerApp
       availableMods = new BoundListBox();
       groupBox1 = new GroupBox();
       serverParameters = new FlowLayoutPanel();
-      editMissionHeaderBtn = new Button();
+      editMissionHeaderBtn = new FontAwesome.Sharp.IconButton();
       loadedScenarioLabel = new Label();
-      scenarioSelectBtn = new Button();
+      scenarioSelectBtn = new FontAwesome.Sharp.IconButton();
       pictureBox1 = new PictureBox();
-      saveSettingsBtn = new Button();
-      loadSettingsBtn = new Button();
+      saveSettingsBtn = new FontAwesome.Sharp.IconButton();
+      loadSettingsBtn = new FontAwesome.Sharp.IconButton();
       tabPage2 = new TabPage();
       useUpnp = new CheckBox();
       useExperimentalCheckBox = new CheckBox();
       label30 = new Label();
       logLevelComboBox = new ComboBox();
-      locateServerFilesBtn = new Button();
-      clearLogBtn = new Button();
-      deleteServerFilesBtn = new Button();
+      locateServerFilesBtn = new FontAwesome.Sharp.IconButton();
+      clearLogBtn = new FontAwesome.Sharp.IconButton();
+      deleteServerFilesBtn = new FontAwesome.Sharp.IconButton();
       aboutBtn = new FontAwesome.Sharp.IconButton();
       groupBox4 = new GroupBox();
       advancedParametersPanel = new FlowLayoutPanel();
-      startServerBtn = new Button();
+      startServerBtn = new FontAwesome.Sharp.IconButton();
       groupBox3 = new GroupBox();
       steamCmdLog = new TextBox();
       steamCmdAlert = new Label();
-      downloadSteamCmdBtn = new Button();
+      downloadSteamCmdBtn = new FontAwesome.Sharp.IconButton();
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
       groupBox2.SuspendLayout();
+      tableLayoutPanel2.SuspendLayout();
+      tableLayoutPanel1.SuspendLayout();
       groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize) pictureBox1).BeginInit();
       tabPage2.SuspendLayout();
@@ -97,10 +102,7 @@ namespace ReforgerServerApp
       // 
       // tabPage1
       // 
-      tabPage1.Controls.Add(editModBtn);
       tabPage1.Controls.Add(serverRunningLabel);
-      tabPage1.Controls.Add(addModBtn);
-      tabPage1.Controls.Add(removeModBtn);
       tabPage1.Controls.Add(groupBox2);
       tabPage1.Controls.Add(groupBox1);
       tabPage1.Controls.Add(saveSettingsBtn);
@@ -113,58 +115,22 @@ namespace ReforgerServerApp
       tabPage1.Text = "Server Configuration";
       tabPage1.UseVisualStyleBackColor = true;
       // 
-      // editModBtn
-      // 
-      editModBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
-      editModBtn.Enabled = false;
-      editModBtn.Location = new Point(85, 721);
-      editModBtn.Name = "editModBtn";
-      editModBtn.Size = new Size(132, 23);
-      editModBtn.TabIndex = 51;
-      editModBtn.Text = "Edit Selected Mod";
-      editModBtn.UseVisualStyleBackColor = true;
-      editModBtn.Click += EditModBtnPressed;
-      // 
       // serverRunningLabel
       // 
       serverRunningLabel.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
       serverRunningLabel.AutoSize = true;
       serverRunningLabel.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
-      serverRunningLabel.Location = new Point(504, 723);
+      serverRunningLabel.Location = new Point(648, 723);
       serverRunningLabel.Name = "serverRunningLabel";
       serverRunningLabel.Size = new Size(128, 17);
       serverRunningLabel.TabIndex = 50;
       serverRunningLabel.Text = "serverRunningLabel";
       // 
-      // addModBtn
-      // 
-      addModBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
-      addModBtn.Location = new Point(6, 721);
-      addModBtn.Name = "addModBtn";
-      addModBtn.Size = new Size(73, 23);
-      addModBtn.TabIndex = 49;
-      addModBtn.Text = "Add Mod";
-      addModBtn.UseVisualStyleBackColor = true;
-      addModBtn.Click += AddModBtnPressed;
-      // 
-      // removeModBtn
-      // 
-      removeModBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
-      removeModBtn.Enabled = false;
-      removeModBtn.Location = new Point(223, 721);
-      removeModBtn.Name = "removeModBtn";
-      removeModBtn.Size = new Size(146, 23);
-      removeModBtn.TabIndex = 48;
-      removeModBtn.Text = "Remove Selected Mod";
-      removeModBtn.UseVisualStyleBackColor = true;
-      removeModBtn.Click += RemoveSelectedModBtnPressed;
-      // 
       // groupBox2
       // 
       groupBox2.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-      groupBox2.Controls.Add(exportModsBtn);
-      groupBox2.Controls.Add(moveModPosDownBtn);
-      groupBox2.Controls.Add(moveModPosUpBtn);
+      groupBox2.Controls.Add(tableLayoutPanel2);
+      groupBox2.Controls.Add(tableLayoutPanel1);
       groupBox2.Controls.Add(modsSearchTB);
       groupBox2.Controls.Add(disableAllModsBtn);
       groupBox2.Controls.Add(enableAllModsBtn);
@@ -177,55 +143,154 @@ namespace ReforgerServerApp
       groupBox2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
       groupBox2.Location = new Point(6, 6);
       groupBox2.Name = "groupBox2";
-      groupBox2.Size = new Size(636, 709);
+      groupBox2.Size = new Size(636, 738);
       groupBox2.TabIndex = 47;
       groupBox2.TabStop = false;
       groupBox2.Text = "Mods";
       // 
-      // exportModsBtn
+      // tableLayoutPanel2
       // 
-      exportModsBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
-      exportModsBtn.IconChar = FontAwesome.Sharp.IconChar.FileExport;
-      exportModsBtn.IconColor = Color.Black;
-      exportModsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
-      exportModsBtn.IconSize = 16;
-      exportModsBtn.Location = new Point(557, 671);
-      exportModsBtn.Margin = new Padding(3, 2, 3, 2);
-      exportModsBtn.Name = "exportModsBtn";
-      exportModsBtn.Size = new Size(69, 22);
-      exportModsBtn.TabIndex = 11;
-      exportModsBtn.UseVisualStyleBackColor = true;
-      exportModsBtn.Click += ExportModsListBtnPressed;
+      tableLayoutPanel2.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      tableLayoutPanel2.ColumnCount = 4;
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 72F));
+      tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 74F));
+      tableLayoutPanel2.Controls.Add(moveModPosDownBtn, 0, 0);
+      tableLayoutPanel2.Controls.Add(exportModsBtn, 3, 0);
+      tableLayoutPanel2.Controls.Add(moveModPosUpBtn, 1, 0);
+      tableLayoutPanel2.Controls.Add(importModsBtn, 2, 0);
+      tableLayoutPanel2.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
+      tableLayoutPanel2.Location = new Point(335, 701);
+      tableLayoutPanel2.Margin = new Padding(0);
+      tableLayoutPanel2.Name = "tableLayoutPanel2";
+      tableLayoutPanel2.RowCount = 1;
+      tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+      tableLayoutPanel2.Size = new Size(291, 33);
+      tableLayoutPanel2.TabIndex = 54;
       // 
       // moveModPosDownBtn
       // 
-      moveModPosDownBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      moveModPosDownBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       moveModPosDownBtn.IconChar = FontAwesome.Sharp.IconChar.ArrowDown;
       moveModPosDownBtn.IconColor = Color.Black;
       moveModPosDownBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       moveModPosDownBtn.IconSize = 16;
-      moveModPosDownBtn.Location = new Point(335, 670);
+      moveModPosDownBtn.Location = new Point(3, 2);
       moveModPosDownBtn.Margin = new Padding(3, 2, 3, 2);
       moveModPosDownBtn.Name = "moveModPosDownBtn";
-      moveModPosDownBtn.Size = new Size(105, 23);
+      moveModPosDownBtn.Size = new Size(66, 29);
       moveModPosDownBtn.TabIndex = 10;
       moveModPosDownBtn.UseVisualStyleBackColor = true;
       moveModPosDownBtn.Click += MoveEnabledModPositionDownBtnPressed;
       // 
+      // exportModsBtn
+      // 
+      exportModsBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      exportModsBtn.IconChar = FontAwesome.Sharp.IconChar.FileExport;
+      exportModsBtn.IconColor = Color.Black;
+      exportModsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      exportModsBtn.IconSize = 16;
+      exportModsBtn.Location = new Point(219, 2);
+      exportModsBtn.Margin = new Padding(3, 2, 3, 2);
+      exportModsBtn.Name = "exportModsBtn";
+      exportModsBtn.Size = new Size(69, 29);
+      exportModsBtn.TabIndex = 11;
+      exportModsBtn.UseVisualStyleBackColor = true;
+      exportModsBtn.Click += ExportModsListBtnPressed;
+      // 
       // moveModPosUpBtn
       // 
-      moveModPosUpBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      moveModPosUpBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       moveModPosUpBtn.IconChar = FontAwesome.Sharp.IconChar.ArrowUp;
       moveModPosUpBtn.IconColor = Color.Black;
       moveModPosUpBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       moveModPosUpBtn.IconSize = 16;
-      moveModPosUpBtn.Location = new Point(446, 671);
+      moveModPosUpBtn.Location = new Point(75, 2);
       moveModPosUpBtn.Margin = new Padding(3, 2, 3, 2);
       moveModPosUpBtn.Name = "moveModPosUpBtn";
-      moveModPosUpBtn.Size = new Size(105, 22);
+      moveModPosUpBtn.Size = new Size(66, 29);
       moveModPosUpBtn.TabIndex = 9;
       moveModPosUpBtn.UseVisualStyleBackColor = true;
       moveModPosUpBtn.Click += MoveEnabledModPositionUpBtnPressed;
+      // 
+      // importModsBtn
+      // 
+      importModsBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      importModsBtn.IconChar = FontAwesome.Sharp.IconChar.FileImport;
+      importModsBtn.IconColor = Color.Black;
+      importModsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      importModsBtn.IconSize = 16;
+      importModsBtn.Location = new Point(147, 2);
+      importModsBtn.Margin = new Padding(3, 2, 3, 2);
+      importModsBtn.Name = "importModsBtn";
+      importModsBtn.Size = new Size(66, 29);
+      importModsBtn.TabIndex = 12;
+      importModsBtn.UseVisualStyleBackColor = true;
+      importModsBtn.Click += ImportModsListBtnPressed;
+      // 
+      // tableLayoutPanel1
+      // 
+      tableLayoutPanel1.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      tableLayoutPanel1.ColumnCount = 3;
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 97F));
+      tableLayoutPanel1.Controls.Add(addModBtn, 0, 0);
+      tableLayoutPanel1.Controls.Add(editModBtn, 1, 0);
+      tableLayoutPanel1.Controls.Add(removeModBtn, 2, 0);
+      tableLayoutPanel1.GrowStyle = TableLayoutPanelGrowStyle.FixedSize;
+      tableLayoutPanel1.Location = new Point(6, 701);
+      tableLayoutPanel1.Margin = new Padding(0);
+      tableLayoutPanel1.Name = "tableLayoutPanel1";
+      tableLayoutPanel1.RowCount = 1;
+      tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 52.63158F));
+      tableLayoutPanel1.Size = new Size(294, 33);
+      tableLayoutPanel1.TabIndex = 53;
+      // 
+      // addModBtn
+      // 
+      addModBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      addModBtn.IconChar = FontAwesome.Sharp.IconChar.Plus;
+      addModBtn.IconColor = Color.Black;
+      addModBtn.IconFont = FontAwesome.Sharp.IconFont.Solid;
+      addModBtn.IconSize = 16;
+      addModBtn.Location = new Point(3, 3);
+      addModBtn.Name = "addModBtn";
+      addModBtn.Size = new Size(92, 27);
+      addModBtn.TabIndex = 49;
+      addModBtn.UseVisualStyleBackColor = true;
+      addModBtn.Click += AddModBtnPressed;
+      // 
+      // editModBtn
+      // 
+      editModBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      editModBtn.Enabled = false;
+      editModBtn.IconChar = FontAwesome.Sharp.IconChar.Pen;
+      editModBtn.IconColor = Color.Black;
+      editModBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      editModBtn.IconSize = 16;
+      editModBtn.Location = new Point(101, 3);
+      editModBtn.Name = "editModBtn";
+      editModBtn.Size = new Size(92, 27);
+      editModBtn.TabIndex = 51;
+      editModBtn.UseVisualStyleBackColor = true;
+      editModBtn.Click += EditModBtnPressed;
+      // 
+      // removeModBtn
+      // 
+      removeModBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      removeModBtn.Enabled = false;
+      removeModBtn.IconChar = FontAwesome.Sharp.IconChar.Minus;
+      removeModBtn.IconColor = Color.Black;
+      removeModBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      removeModBtn.IconSize = 16;
+      removeModBtn.Location = new Point(199, 3);
+      removeModBtn.Name = "removeModBtn";
+      removeModBtn.Size = new Size(92, 27);
+      removeModBtn.TabIndex = 48;
+      removeModBtn.UseVisualStyleBackColor = true;
+      removeModBtn.Click += RemoveSelectedModBtnPressed;
       // 
       // modsSearchTB
       // 
@@ -315,7 +380,7 @@ namespace ReforgerServerApp
       enabledMods.Location = new Point(335, 74);
       enabledMods.Name = "enabledMods";
       enabledMods.SelectionMode = SelectionMode.MultiExtended;
-      enabledMods.Size = new Size(291, 589);
+      enabledMods.Size = new Size(291, 619);
       enabledMods.TabIndex = 1;
       // 
       // availableMods
@@ -360,11 +425,17 @@ namespace ReforgerServerApp
       // editMissionHeaderBtn
       // 
       editMissionHeaderBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
-      editMissionHeaderBtn.Location = new Point(189, 650);
+      editMissionHeaderBtn.IconChar = FontAwesome.Sharp.IconChar.Header;
+      editMissionHeaderBtn.IconColor = Color.Black;
+      editMissionHeaderBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      editMissionHeaderBtn.IconSize = 16;
+      editMissionHeaderBtn.ImageAlign = ContentAlignment.MiddleLeft;
+      editMissionHeaderBtn.Location = new Point(134, 650);
       editMissionHeaderBtn.Name = "editMissionHeaderBtn";
-      editMissionHeaderBtn.Size = new Size(177, 23);
+      editMissionHeaderBtn.Size = new Size(122, 23);
       editMissionHeaderBtn.TabIndex = 85;
-      editMissionHeaderBtn.Text = "Edit Mission Header";
+      editMissionHeaderBtn.Text = "Mission Header";
+      editMissionHeaderBtn.TextAlign = ContentAlignment.MiddleRight;
       editMissionHeaderBtn.UseVisualStyleBackColor = true;
       editMissionHeaderBtn.Click += EditMissionHeaderBtnClicked;
       // 
@@ -383,11 +454,17 @@ namespace ReforgerServerApp
       // scenarioSelectBtn
       // 
       scenarioSelectBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      scenarioSelectBtn.IconChar = FontAwesome.Sharp.IconChar.Map;
+      scenarioSelectBtn.IconColor = Color.Black;
+      scenarioSelectBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      scenarioSelectBtn.IconSize = 24;
+      scenarioSelectBtn.ImageAlign = ContentAlignment.MiddleLeft;
       scenarioSelectBtn.Location = new Point(6, 650);
       scenarioSelectBtn.Name = "scenarioSelectBtn";
-      scenarioSelectBtn.Size = new Size(177, 23);
+      scenarioSelectBtn.Size = new Size(122, 23);
       scenarioSelectBtn.TabIndex = 82;
-      scenarioSelectBtn.Text = "Select a Scenario";
+      scenarioSelectBtn.Text = "Select Scenario";
+      scenarioSelectBtn.TextAlign = ContentAlignment.MiddleRight;
       scenarioSelectBtn.UseVisualStyleBackColor = true;
       scenarioSelectBtn.Click += ScenarioSelectBtnClicked;
       // 
@@ -406,22 +483,34 @@ namespace ReforgerServerApp
       // saveSettingsBtn
       // 
       saveSettingsBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-      saveSettingsBtn.Location = new Point(1352, 721);
+      saveSettingsBtn.IconChar = FontAwesome.Sharp.IconChar.Download;
+      saveSettingsBtn.IconColor = Color.Black;
+      saveSettingsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      saveSettingsBtn.IconSize = 16;
+      saveSettingsBtn.ImageAlign = ContentAlignment.MiddleLeft;
+      saveSettingsBtn.Location = new Point(1409, 721);
       saveSettingsBtn.Name = "saveSettingsBtn";
-      saveSettingsBtn.Size = new Size(153, 23);
+      saveSettingsBtn.Size = new Size(96, 23);
       saveSettingsBtn.TabIndex = 2;
-      saveSettingsBtn.Text = "Save Settings to File";
+      saveSettingsBtn.Text = "Save Config";
+      saveSettingsBtn.TextAlign = ContentAlignment.MiddleRight;
       saveSettingsBtn.UseVisualStyleBackColor = true;
       saveSettingsBtn.Click += SaveSettingsToFileBtnPressed;
       // 
       // loadSettingsBtn
       // 
       loadSettingsBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-      loadSettingsBtn.Location = new Point(1193, 721);
+      loadSettingsBtn.IconChar = FontAwesome.Sharp.IconChar.Upload;
+      loadSettingsBtn.IconColor = Color.Black;
+      loadSettingsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      loadSettingsBtn.IconSize = 16;
+      loadSettingsBtn.ImageAlign = ContentAlignment.MiddleLeft;
+      loadSettingsBtn.Location = new Point(1307, 721);
       loadSettingsBtn.Name = "loadSettingsBtn";
-      loadSettingsBtn.Size = new Size(153, 23);
+      loadSettingsBtn.Size = new Size(96, 23);
       loadSettingsBtn.TabIndex = 1;
-      loadSettingsBtn.Text = "Load Settings from File";
+      loadSettingsBtn.Text = "Load Config";
+      loadSettingsBtn.TextAlign = ContentAlignment.MiddleRight;
       loadSettingsBtn.UseVisualStyleBackColor = true;
       loadSettingsBtn.Click += LoadSettingsFromFileBtnPressed;
       // 
@@ -498,6 +587,9 @@ namespace ReforgerServerApp
       // locateServerFilesBtn
       // 
       locateServerFilesBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
+      locateServerFilesBtn.IconChar = FontAwesome.Sharp.IconChar.None;
+      locateServerFilesBtn.IconColor = Color.Black;
+      locateServerFilesBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       locateServerFilesBtn.Location = new Point(1222, 23);
       locateServerFilesBtn.Name = "locateServerFilesBtn";
       locateServerFilesBtn.Size = new Size(111, 23);
@@ -509,6 +601,9 @@ namespace ReforgerServerApp
       // clearLogBtn
       // 
       clearLogBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
+      clearLogBtn.IconChar = FontAwesome.Sharp.IconChar.None;
+      clearLogBtn.IconColor = Color.Black;
+      clearLogBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       clearLogBtn.Location = new Point(1446, 722);
       clearLogBtn.Name = "clearLogBtn";
       clearLogBtn.Size = new Size(66, 23);
@@ -520,6 +615,9 @@ namespace ReforgerServerApp
       // deleteServerFilesBtn
       // 
       deleteServerFilesBtn.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
+      deleteServerFilesBtn.IconChar = FontAwesome.Sharp.IconChar.None;
+      deleteServerFilesBtn.IconColor = Color.Black;
+      deleteServerFilesBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       deleteServerFilesBtn.Location = new Point(1339, 23);
       deleteServerFilesBtn.Name = "deleteServerFilesBtn";
       deleteServerFilesBtn.Size = new Size(111, 23);
@@ -567,6 +665,9 @@ namespace ReforgerServerApp
       // 
       // startServerBtn
       // 
+      startServerBtn.IconChar = FontAwesome.Sharp.IconChar.None;
+      startServerBtn.IconColor = Color.Black;
+      startServerBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       startServerBtn.Location = new Point(93, 28);
       startServerBtn.Name = "startServerBtn";
       startServerBtn.Size = new Size(87, 23);
@@ -610,6 +711,9 @@ namespace ReforgerServerApp
       // 
       // downloadSteamCmdBtn
       // 
+      downloadSteamCmdBtn.IconChar = FontAwesome.Sharp.IconChar.None;
+      downloadSteamCmdBtn.IconColor = Color.Black;
+      downloadSteamCmdBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       downloadSteamCmdBtn.Location = new Point(6, 28);
       downloadSteamCmdBtn.Name = "downloadSteamCmdBtn";
       downloadSteamCmdBtn.Size = new Size(81, 23);
@@ -627,12 +731,14 @@ namespace ReforgerServerApp
       Icon = (Icon) resources.GetObject("$this.Icon");
       MinimumSize = new Size(1440, 782);
       Name = "Main";
-      Text = "Longbow - Dedicated Server Tool for Arma Reforger";
+      Text = "Arma Reforger Dedicated Server Tool";
       tabControl1.ResumeLayout(false);
       tabPage1.ResumeLayout(false);
       tabPage1.PerformLayout();
       groupBox2.ResumeLayout(false);
       groupBox2.PerformLayout();
+      tableLayoutPanel2.ResumeLayout(false);
+      tableLayoutPanel1.ResumeLayout(false);
       groupBox1.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize) pictureBox1).EndInit();
       tabPage2.ResumeLayout(false);
@@ -648,39 +754,39 @@ namespace ReforgerServerApp
     private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;
-        private Button saveSettingsBtn;
-        private Button loadSettingsBtn;
+        private FontAwesome.Sharp.IconButton saveSettingsBtn;
+        private FontAwesome.Sharp.IconButton loadSettingsBtn;
         private Label regionLabel;
         private ComboBox region;
         private GroupBox groupBox1;
         private GroupBox groupBox2;
-        private Button addModBtn;
-        private Button removeModBtn;
+        private FontAwesome.Sharp.IconButton addModBtn;
+        private FontAwesome.Sharp.IconButton removeModBtn;
         private FontAwesome.Sharp.IconButton removeFromEnabledBtn;
         private FontAwesome.Sharp.IconButton addToEnabledBtn;
         private Label label16;
         private Label label15;
         private Label steamCmdAlert;
         private TextBox steamCmdLog;
-        private Button downloadSteamCmdBtn;
+        private FontAwesome.Sharp.IconButton downloadSteamCmdBtn;
         private GroupBox groupBox3;
-        private Button startServerBtn;
+        private FontAwesome.Sharp.IconButton startServerBtn;
         private GroupBox groupBox4;
         private FontAwesome.Sharp.IconButton disableAllModsBtn;
         private FontAwesome.Sharp.IconButton enableAllModsBtn;
         private FontAwesome.Sharp.IconButton aboutBtn;
-        private Button deleteServerFilesBtn;
+        private FontAwesome.Sharp.IconButton deleteServerFilesBtn;
         private Label serverRunningLabel;
-        private Button clearLogBtn;
+        private FontAwesome.Sharp.IconButton clearLogBtn;
         private PictureBox pictureBox1;
-        private Button locateServerFilesBtn;
+        private FontAwesome.Sharp.IconButton locateServerFilesBtn;
         private Label label30;
         private ComboBox logLevelComboBox;
-        private Button scenarioSelectBtn;
+        private FontAwesome.Sharp.IconButton scenarioSelectBtn;
         private Label loadedScenarioLabel;
-        private Button editMissionHeaderBtn;
+        private FontAwesome.Sharp.IconButton editMissionHeaderBtn;
         private FlowLayoutPanel serverParameters;
-        private Button editModBtn;
+        private FontAwesome.Sharp.IconButton editModBtn;
         private BoundListBox enabledMods;
         private BoundListBox availableMods;
         private TextBox modsSearchTB;
@@ -690,5 +796,8 @@ namespace ReforgerServerApp
         private FontAwesome.Sharp.IconButton moveModPosDownBtn;
         private FontAwesome.Sharp.IconButton moveModPosUpBtn;
         private FontAwesome.Sharp.IconButton exportModsBtn;
-    }
+        private FontAwesome.Sharp.IconButton importModsBtn;
+    private TableLayoutPanel tableLayoutPanel1;
+    private TableLayoutPanel tableLayoutPanel2;
+  }
 }
