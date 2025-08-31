@@ -1047,6 +1047,25 @@ namespace ReforgerServerApp
         ParameterPlaceholder = "Using latest save..."
       };
       advancedParametersPanel.Controls.Add(loadSessionSave);
+      AdvancedServerParameterNumeric freezeCheck = new()
+      {
+        ParameterName = "freezeCheck",
+        ParameterFriendlyName = "Freeze Check",
+        Description = "Overrides time in seconds to forcefully crash on application freeze or completely disable detection.",
+        ParameterIncrement = 1,
+        ParameterMin = 0,
+        ParameterMax = 600,
+        ParameterValue = 300
+      };
+      advancedParametersPanel.Controls.Add(freezeCheck);
+      AdvancedServerParameterEnumerated freezeCheckMode = new()
+      {
+        ParameterName = "freezeCheckMode",
+        ParameterFriendlyName = "Freeze Check Mode",
+        Description = "Overrides behavior which should happen when freeze is detected.",
+        ParameterAvailableValues = new List<string>() {"crash", "minidump", "kill"}
+      };
+      advancedParametersPanel.Controls.Add(freezeCheckMode);
 
       foreach (AdvancedServerParameter param in advancedParametersPanel.Controls)
       {
@@ -1225,6 +1244,16 @@ namespace ReforgerServerApp
       if (advParams["rpl-timeout-ms"].Checked())
       {
         args.rplTimeoutMs = new("rpl-timeout-ms", Convert.ToString(advParams["rpl-timeout-ms"].ParameterValue));
+      }
+
+      if (advParams["freezeCheck"].Checked())
+      {
+        args.freezeCheck = new("freezeCheck", Convert.ToString(advParams["freezeCheck"].ParameterValue));
+      }
+
+      if (advParams["freezeCheckMode"].Checked())
+      {
+        args.freezeCheckMode = new("freezeCheckMode", ((AdvancedServerParameterEnumerated) advParams["freezeCheckMode"]).SelectedItem);
       }
 
       ProcessManager.GetInstance().SetLaunchArgumentsModel(args);

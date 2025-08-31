@@ -94,5 +94,7 @@ namespace ReforgerServerApp.Models
     public LaunchArgument logLevel;
     public LaunchArgument autoReload;
     public LaunchArgument rplTimeoutMs;
+    public LaunchArgument freezeCheck;
+    public LaunchArgument freezeCheckMode;
   }
 }
