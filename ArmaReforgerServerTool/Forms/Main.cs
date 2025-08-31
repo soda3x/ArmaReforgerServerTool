@@ -1337,6 +1337,66 @@ namespace ReforgerServerApp
         args.freezeCheckMode = new("freezeCheckMode", ((AdvancedServerParameterEnumerated) advParams["freezeCheckMode"]).SelectedItem);
       }
 
+      if (advParams["addonsRepair"].Checked())
+      {
+        args.addonsRepair = new("addonsRepair");
+      }
+
+      if (advParams["autoShutdown"].Checked())
+      {
+        args.autoShutdown = new("autoShutdown");
+      }
+
+      if (advParams["logVoting"].Checked())
+      {
+        args.logVoting = new("logVoting");
+      }
+
+      if (advParams["aiPartialSim"].Checked())
+      {
+        args.aiPartialSim = new("aiPartialSim");
+      }
+
+      if (advParams["createDB"].Checked())
+      {
+        args.createDB = new("createDB");
+      }
+
+      if (advParams["debugger"].Checked())
+      {
+        args.debugger = new("debugger", Convert.ToString(advParams["debugger"].ParameterValue));
+      }
+
+      if (advParams["debuggerPort"].Checked())
+      {
+        args.debuggerPort = new("debuggerPort", Convert.ToString(advParams["debuggerPort"].ParameterValue));
+      }
+
+      if (advParams["disableShadersBuild"].Checked())
+      {
+        args.disableShadersBuild = new("disableShadersBuild");
+      }
+
+      if (advParams["generateShaders"].Checked())
+      {
+        args.generateShaders = new("generateShaders");
+      }
+
+      if (advParams["rplEncodeAsLongJobs"].Checked())
+      {
+        args.rplEncodeAsLongJobs = new("rplEncodeAsLongJobs");
+      }
+
+      if (advParams["jobsysShortWorkerCount"].Checked())
+      {
+        args.jobSysShortWorkerCount = new("jobsysShortWorkerCount", Convert.ToString(advParams["jobsysShortWorkerCount"].ParameterValue));
+      }
+
+      if (advParams["jobsysLongWorkerCount"].Checked())
+      {
+        args.jobSysLongWorkerCount = new("jobsysLongWorkerCount", Convert.ToString(advParams["jobsysLongWorkerCount"].ParameterValue));
+      }
+
       ProcessManager.GetInstance().SetLaunchArgumentsModel(args);
     }
 
