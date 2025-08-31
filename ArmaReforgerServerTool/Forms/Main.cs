@@ -817,22 +817,6 @@ namespace ReforgerServerApp
         ParameterTooltip = Constants.SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR
       };
       serverParameters.Controls.Add(crossPlatform);
-      ServerParameterBool supportedPlatformXbox = new()
-      {
-        ParameterName = "supportedPlatformXbox",
-        ParameterFriendlyName = "Allow Xbox clients",
-        ParameterValue = false,
-        ParameterTooltip = "Allow Xbox players to join the server (Cross Platform must also be enabled)"
-      };
-      serverParameters.Controls.Add(supportedPlatformXbox);
-      ServerParameterBool supportedPlatformPSN = new()
-      {
-        ParameterName = "supportedPlatformPSN",
-        ParameterFriendlyName = "Allow PlayStation clients",
-        ParameterValue = false,
-        ParameterTooltip = "Allow PlayStation players to join the server (Cross Platform must also be enabled)"
-      };
-      serverParameters.Controls.Add(supportedPlatformPSN);
       ServerParameterNumeric aiLimit = new()
       {
         ParameterName = "aiLimit",
@@ -935,6 +919,22 @@ namespace ReforgerServerApp
         ParameterValue = DateTime.Today
       };
       advancedParametersPanel.Controls.Add(autoRestartTime);
+      AdvancedServerParameterString loadSessionSave = new()
+      {
+        ParameterName = "loadSessionSave",
+        ParameterFriendlyName = "Load Session Save",
+        Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
+        ParameterPlaceholder = "Using latest save..."
+      };
+      advancedParametersPanel.Controls.Add(loadSessionSave);
+      AdvancedServerParameterBool addonsRepair = new()
+      {
+        ParameterName = "addonsRepair",
+        ParameterFriendlyName = "Verify and Repair Addons",
+        Description ="Verifies the integrity of all installed addons. If any corrupted addons are found, they will be repaired automatically."
+      };
+      addonsRepair.CheckBox.Checked = true; // Checked by default
+      advancedParametersPanel.Controls.Add(addonsRepair);
       AdvancedServerParameterBool autoRestartOnCrash = new()
       {
         ParameterName = "autoRestartOnCrash",
@@ -962,6 +962,20 @@ namespace ReforgerServerApp
       };
       advancedParametersPanel.Controls.Add(noBackend);
       noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
+      AdvancedServerParameterBool autoShutdown = new()
+      {
+        ParameterName = "autoShutdown",
+        ParameterFriendlyName = "Auto Shutdown",
+        Description = "Ensures the correct server shutdown process, use with \"Auto Reload\"."
+      };
+      advancedParametersPanel.Controls.Add(autoShutdown);
+      AdvancedServerParameterBool logVoting = new()
+      {
+        ParameterName = "logVoting",
+        ParameterFriendlyName = "Log Voting",
+        Description = "Adds logging info to the voting system with information about who created, voted, and against whom the vote was created."
+      };
+      advancedParametersPanel.Controls.Add(logVoting);      
       AdvancedServerParameterNumeric overridePort = new()
       {
         ParameterName = "bindPort",
@@ -1039,13 +1053,80 @@ namespace ReforgerServerApp
         Description = "Sets the server's timeout value, in milliseconds."
       };
       advancedParametersPanel.Controls.Add(rplTimeoutMs);
-      AdvancedServerParameterString loadSessionSave = new()
+      AdvancedServerParameterBool aiPartialSim = new()
       {
-        ParameterName = "loadSessionSave",
-        ParameterFriendlyName = "Load Session Save",
-        Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
-        ParameterPlaceholder = "Using latest save..."
+        ParameterName = "aiPartialSim",
+        ParameterFriendlyName = "AI Partial Sim",
+        Description = "Sets in how many batches all simulable AIs will divided and processed."
       };
+      advancedParametersPanel.Controls.Add(aiPartialSim);
+      AdvancedServerParameterBool createDB = new()
+      {
+        ParameterName = "createDB",
+        ParameterFriendlyName = "Force Recreate Database",
+        Description = "Forces database file's regeneration. Useful after file directories changes, when some resources were moved elsewhere."
+      };
+      advancedParametersPanel.Controls.Add(createDB);
+      AdvancedServerParameterString debugger = new()
+      {
+        ParameterName = "debugger",
+        ParameterFriendlyName = "Debugger Address",
+        ParameterPlaceholder = "127.0.0.1",
+        Description = "Sets the script debugger to a specific address."
+      };
+      advancedParametersPanel.Controls.Add(debugger);
+      AdvancedServerParameterNumeric debuggerPort = new()
+      {
+        ParameterName = "debuggerPort",
+        ParameterFriendlyName = "Debugger Port",
+        ParameterIncrement = 1,
+        ParameterMin = 1,
+        ParameterMax = 65535,
+        ParameterValue = 1000,
+        Description = "Sets the script debugger to a specific port. "
+      };
+      advancedParametersPanel.Controls.Add(debuggerPort);
+      AdvancedServerParameterBool disableShadersBuild = new()
+      {
+        ParameterName = "disableShadersBuild",
+        ParameterFriendlyName = "Disable Shaders Generation",
+        Description = "Disables shaders generation."
+      };
+      advancedParametersPanel.Controls.Add(disableShadersBuild);
+      AdvancedServerParameterBool generateShaders = new()
+      {
+        ParameterName = "generateShaders",
+        ParameterFriendlyName = "Force Generate Shaders",
+        Description = "Forces shaders generation."
+      };
+      advancedParametersPanel.Controls.Add(generateShaders);
+      AdvancedServerParameterBool rplEncodeAsLongJobs = new()
+      {
+        ParameterName = "rplEncodeAsLongJobs",
+        ParameterFriendlyName = "RPL Encode as Long Jobs",
+        Description = "Makes replication use long encoding jobs instead of short ones."
+      };
+      advancedParametersPanel.Controls.Add(rplEncodeAsLongJobs);
+      AdvancedServerParameterNumeric jobsysShortWorkerCount = new()
+      {
+        ParameterName = "jobsysShortWorkerCount",
+        ParameterFriendlyName = "Short Worker Count",
+        Description = "Sets the number of threads working on short jobs (jobs that must finish in one update loop).",
+        ParameterMin = 1,
+        ParameterMax = Utilities.GetNumberAvailableThreads(),
+        ParameterValue = Utilities.GetNumberAvailableThreads(),
+      };
+      advancedParametersPanel.Controls.Add(jobsysShortWorkerCount);
+      AdvancedServerParameterNumeric jobsysLongWorkerCount = new()
+      {
+        ParameterName = "jobsysLongWorkerCount",
+        ParameterFriendlyName = "Long Worker Count",
+        Description = "Sets the number of threads working on long jobs (jobs that can span multiple iterations of update loop).",
+        ParameterMin = 1,
+        ParameterMax = Utilities.GetNumberAvailableThreads(),
+        ParameterValue = Utilities.GetNumberAvailableThreads() / 2
+      };
+      advancedParametersPanel.Controls.Add(jobsysLongWorkerCount);
       advancedParametersPanel.Controls.Add(loadSessionSave);
       AdvancedServerParameterNumeric freezeCheck = new()
       {
@@ -1254,6 +1335,66 @@ namespace ReforgerServerApp
       if (advParams["freezeCheckMode"].Checked())
       {
         args.freezeCheckMode = new("freezeCheckMode", ((AdvancedServerParameterEnumerated) advParams["freezeCheckMode"]).SelectedItem);
+      }
+
+      if (advParams["addonsRepair"].Checked())
+      {
+        args.addonsRepair = new("addonsRepair");
+      }
+
+      if (advParams["autoShutdown"].Checked())
+      {
+        args.autoShutdown = new("autoShutdown");
+      }
+
+      if (advParams["logVoting"].Checked())
+      {
+        args.logVoting = new("logVoting");
+      }
+
+      if (advParams["aiPartialSim"].Checked())
+      {
+        args.aiPartialSim = new("aiPartialSim");
+      }
+
+      if (advParams["createDB"].Checked())
+      {
+        args.createDB = new("createDB");
+      }
+
+      if (advParams["debugger"].Checked())
+      {
+        args.debugger = new("debugger", Convert.ToString(advParams["debugger"].ParameterValue));
+      }
+
+      if (advParams["debuggerPort"].Checked())
+      {
+        args.debuggerPort = new("debuggerPort", Convert.ToString(advParams["debuggerPort"].ParameterValue));
+      }
+
+      if (advParams["disableShadersBuild"].Checked())
+      {
+        args.disableShadersBuild = new("disableShadersBuild");
+      }
+
+      if (advParams["generateShaders"].Checked())
+      {
+        args.generateShaders = new("generateShaders");
+      }
+
+      if (advParams["rplEncodeAsLongJobs"].Checked())
+      {
+        args.rplEncodeAsLongJobs = new("rplEncodeAsLongJobs");
+      }
+
+      if (advParams["jobsysShortWorkerCount"].Checked())
+      {
+        args.jobSysShortWorkerCount = new("jobsysShortWorkerCount", Convert.ToString(advParams["jobsysShortWorkerCount"].ParameterValue));
+      }
+
+      if (advParams["jobsysLongWorkerCount"].Checked())
+      {
+        args.jobSysLongWorkerCount = new("jobsysLongWorkerCount", Convert.ToString(advParams["jobsysLongWorkerCount"].ParameterValue));
       }
 
       ProcessManager.GetInstance().SetLaunchArgumentsModel(args);

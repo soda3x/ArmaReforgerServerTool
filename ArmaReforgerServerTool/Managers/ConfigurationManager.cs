@@ -150,8 +150,6 @@ namespace ReforgerServerApp
         m_serverParamsDictionary["visible"].ParameterValue = m_serverConfig.root.game.visible;
         m_serverParamsDictionary["modsRequiredByDefault"].ParameterValue = m_serverConfig.root.game.modsRequiredByDefault;
         m_serverParamsDictionary["crossPlatform"].ParameterValue = m_serverConfig.root.game.crossPlatform;
-        m_serverParamsDictionary["supportedPlatformXbox"].ParameterValue = m_serverConfig.root.game.supportedPlatforms.Contains(Constants.SUPPORTED_PLATFORM_XBOX);
-        m_serverParamsDictionary["supportedPlatformPSN"].ParameterValue = m_serverConfig.root.game.supportedPlatforms.Contains(Constants.SUPPORTED_PLATFORM_PSN);
 
         m_serverParamsDictionary["serverMaxViewDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMaxViewDistance;
         m_serverParamsDictionary["serverMinGrassDistance"].ParameterValue = m_serverConfig.root.game.gameProperties.serverMinGrassDistance;
@@ -261,9 +259,7 @@ namespace ReforgerServerApp
       m_serverConfig.root.game.mods = m_enabledMods.ToArray();
       m_serverConfig.root.game.modsRequiredByDefault = (bool)m_serverParamsDictionary["modsRequiredByDefault"].ParameterValue;
 
-      m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform,
-                                                     (bool)m_serverParamsDictionary["supportedPlatformXbox"].ParameterValue,
-                                                     (bool)m_serverParamsDictionary["supportedPlatformPSN"].ParameterValue);
+      m_serverConfig.root.game.supportedPlatforms = Utilities.GetSupportedPlatforms(m_serverConfig.root.game.crossPlatform);
 
       m_serverConfig.root.game.admins = (string[])m_serverParamsDictionary["admins"].ParameterValue;
       // m_serverConfig.root.game.scenarioId - Don't need to set scenarioId as its set directly from the Scenario Selector Form

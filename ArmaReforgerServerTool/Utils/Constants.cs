@@ -113,18 +113,7 @@ namespace ReforgerServerApp
 
     public static string SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_TOOLTIP_STR = "Maximum view distance enforced by the server.";
 
-    public static string SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR = "If enabled, Xbox and PlayStation clients will be able to connect to the server.\r\n" +
-        "Valid combinations are:\r\n" +
-        "\tPC only\r\n" +
-        "\tPC + Xbox + PlayStation\r\n" +
-        "\tPC + Xbox\r\n" +
-        "Note that you cannot run a Vanilla Server unless it is set to PC only or allows all platforms to connect.\r\n" +
-        "Note that PlayStation currently does not support modded servers.\r\n" +
-        "The following combinations are invalid:\r\n" +
-        "\tPC + PlayStation\r\n" +
-        "\tXbox + PlayStation\r\n" +
-        "\tXbox only\r\n" +
-        "\tPlayStation only";
+    public static string SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR = "If enabled, Xbox and PlayStation clients will be able to connect to the server.";
 
     public static string SERVER_PARAM_VISIBLE_TOOLTIP_STR = "Set the visibility of the server in the Server Browser.";
 
