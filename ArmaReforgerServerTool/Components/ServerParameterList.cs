@@ -1,6 +1,6 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ServerParameterSelect.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The ServerParameterSelect component represents a graphical
  *               means to manage choices
  * 
@@ -9,30 +9,30 @@
 
 namespace ReforgerServerApp
 {
-    public partial class ServerParameterList : ServerParameter
+  public partial class ServerParameterList : ServerParameter
+  {
+    public ServerParameterList()
     {
-        public ServerParameterList()
-        {
-            InitializeComponent();
-            underlyingControl = parameterValue;
-            ParameterList = Array.Empty<string>();
-        }
-
-        public string[] ParameterList { get; set; }
-
-        public override object ParameterValue
-        {
-            get => ParameterList;
-            set => ParameterList = (string[]) value;
-        }
-
-        private void OnButtonPressed(object sender, EventArgs e)
-        {
-            ListForm lf = new(ParameterFriendlyName, ParameterList);
-            lf.ShowDialog();
-            ParameterList = lf.GetItems();
-        }
-
-        
+      InitializeComponent();
+      underlyingControl = parameterValue;
+      ParameterList = Array.Empty<string>();
     }
+
+    public string[] ParameterList { get; set; }
+
+    public override object ParameterValue
+    {
+      get => ParameterList;
+      set => ParameterList = (string[])value;
+    }
+
+    private void OnButtonPressed(object sender, EventArgs e)
+    {
+      ListForm lf = new(ParameterFriendlyName, ParameterList);
+      lf.ShowDialog();
+      ParameterList = lf.GetItems();
+    }
+
+
+  }
 }

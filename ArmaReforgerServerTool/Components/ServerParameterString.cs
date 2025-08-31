@@ -1,6 +1,6 @@
-﻿/******************************************************************************
+/******************************************************************************
  * File Name:    ServerParameterString.cs
- * Project:      Arma Reforger Dedicated Server Tool for Windows
+ * Project:      Longbow
  * Description:  The ServerParameterString component represents a graphical
  *               means to manage string server configuration parameters
  * 
@@ -9,18 +9,18 @@
 
 namespace ReforgerServerApp
 {
-    public partial class ServerParameterString : ServerParameter
+  public partial class ServerParameterString : ServerParameter
+  {
+    public ServerParameterString()
     {
-        public ServerParameterString()
-        {
-            InitializeComponent();
-            underlyingControl = parameterValue;
-        }
-
-        public override object ParameterValue
-        {
-            get => parameterValue.Text;
-            set => parameterValue.Text = (string) value;
-        }
+      InitializeComponent();
+      underlyingControl = parameterValue;
     }
+
+    public override object ParameterValue
+    {
+      get => parameterValue.Text;
+      set => parameterValue.Text = (string)value;
+    }
+  }
 }
