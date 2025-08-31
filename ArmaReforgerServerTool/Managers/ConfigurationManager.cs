@@ -295,6 +295,27 @@ namespace ReforgerServerApp
       m_serverConfig.root.operating.joinQueue.maxSize = Convert.ToInt32(m_serverParamsDictionary["maxSize"].ParameterValue);
     }
 
+    public void ImportModsList(List<Mod> modsToImport)
+    {
+      // First move mods back to available mods so we don't lose them
+      for (int i = 0; i < m_enabledMods.Count; i++)
+      {
+        MoveMod(m_enabledMods[i], m_enabledMods, m_availableMods);
+      }
+
+      foreach(Mod mod in modsToImport)
+      {
+        if (m_availableMods.Contains(mod))
+        {
+          MoveMod(mod, m_availableMods, m_enabledMods);
+        } else
+        {
+          m_enabledMods.Add(mod);
+        }
+      }
+      AlphabetiseModLists();
+    }
+
     /// <returns>Mod IDs of Mods in the server configuration as a List</returns>
     private static string[] GetModIDsAsList()
     {
