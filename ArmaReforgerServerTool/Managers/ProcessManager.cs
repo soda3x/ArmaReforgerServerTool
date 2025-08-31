@@ -9,6 +9,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using ReforgerServerApp.Components;
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
 using Serilog;
@@ -435,26 +436,35 @@ namespace ReforgerServerApp.Managers
     /// Method for starting asynchronous periodic timer based functionality
     /// </summary>
     /// <param name="action">Method to run</param>
-    /// <param name="interval">Interval at which to run</param>
     /// <param name="cancellationToken">Cancellation token to cancel with</param>
     /// <returns></returns>
-    public static async Task PeriodicAsync(Action action, TimeSpan interval, CancellationToken cancellationToken = default)
+    public static async Task PeriodicAsync(Action action, CancellationToken cancellationToken = default)
     {
-      using PeriodicTimer timer = new(interval);
-      while (true)
+      while (!cancellationToken.IsCancellationRequested)
       {
-        action();
-        await timer.WaitForNextTickAsync(cancellationToken);
+        if (ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"] is AdvancedServerParameterTime
+            autoRestartDaily && autoRestartDaily.Checked())
+        {
+          // Calculate time until the next run
+          TimeSpan scheduledTime = ((DateTime)autoRestartDaily.ParameterValue).TimeOfDay;
+          DateTime now = DateTime.Now;
+          DateTime todayScheduled = now.Date + scheduledTime;
+          DateTime nextRun = todayScheduled > now ? todayScheduled : todayScheduled.AddDays(1);
+          TimeSpan delay = nextRun - now;
+          // Wait until the next scheduled time
+          await Task.Delay(delay, cancellationToken);
+          action();
+        }
       }
     }
 
     /// <summary>
     /// Configure the timer to start the server
     /// </summary>
-    /// <param name="interval">to set the timer to use</param>
-    public void ConfigureAutomaticRestartTask(TimeSpan interval)
+    public void ConfigureAutomaticRestartTask()
     {
-      Task automaticRestartTask = PeriodicAsync(StartStopServerUsingTimer, interval, m_timerCancellationTokenSource.Token);
+      StartStopServerUsingTimer();
+      Task automaticRestartTask = PeriodicAsync(StartStopServerUsingTimer, m_timerCancellationTokenSource.Token);
       m_isServerUsingTimer = true;
     }
 
