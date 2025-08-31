@@ -217,15 +217,12 @@ namespace ReforgerServerApp.Utils
     /// <returns>string representation (in lowercase)</returns>
     public static string RconPermissionToString(RconPermission permission)
     {
-      switch (permission)
+      return permission switch
       {
-        case RconPermission.ADMIN:
-          return "admin";
-        case RconPermission.MONITOR:
-          return "monitor";
-        default:
-          return "admin";
-      }
+        RconPermission.ADMIN => "admin",
+        RconPermission.MONITOR => "monitor",
+        _ => "monitor",
+      };
     }
 
     /// <summary>
