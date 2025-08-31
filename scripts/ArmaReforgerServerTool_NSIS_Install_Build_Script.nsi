@@ -8,7 +8,7 @@ Name "Longbow"
 
 !include "MUI2.nsh"
 
-OutFile "install_reforger_server_tool.exe"
+OutFile "install_longbow.exe"
 
 !define MUI_ICON "${__FILEDIR__}\..\ArmaReforgerServerTool\Resources\arma_icon_white.ico"
 !define MUI_ABORTWARNING
@@ -25,7 +25,7 @@ InstallDir $LOCALAPPDATA\Longbow
 # Install Section
 Section
 SetOutPath $INSTDIR
-File /r /x *.txt /x *.pdb /x "mod_database.json" /x "properties.json" /x "logs\*" "${__FILEDIR__}\..\ArmaReforgerServerTool\bin\Release\net6.0-windows\*.*"
+File /r /x *.txt /x *.pdb /x "mod_database.json" /x "properties.json" /x "logs\*" "${__FILEDIR__}\..\Longbow\bin\Release\net6.0-windows\*.*"
 WriteUninstaller $INSTDIR\uninstall.exe
 CreateShortCut "$SMPROGRAMS\Longbow.lnk" "$INSTDIR\Longbow.exe"
 CreateShortCut "$SMPROGRAMS\Uninstall Longbow.lnk" "$INSTDIR\uninstall.exe"
