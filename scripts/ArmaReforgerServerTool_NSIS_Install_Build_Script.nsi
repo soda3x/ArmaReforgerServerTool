@@ -1,19 +1,19 @@
-!define MUI_PRODUCT "Arma Reforger Dedicated Server Tool"
+!define MUI_PRODUCT "Longbow"
 !define MUI_FILE "savefile"
 !define MUI_VERSION ""
-!define MUI_BRANDINGTEXT "Arma Reforger Dedicated Server Tool"
+!define MUI_BRANDINGTEXT "Longbow"
 CRCCheck on
 
-Name "Arma Reforger Dedicated Server Tool"
+Name "Longbow"
 
 !include "MUI2.nsh"
 
-OutFile "install_reforger_server_tool.exe"
+OutFile "install_longbow.exe"
 
 !define MUI_ICON "${__FILEDIR__}\..\ArmaReforgerServerTool\Resources\arma_icon_white.ico"
 !define MUI_ABORTWARNING
 
-InstallDir $LOCALAPPDATA\ArmaReforgerServerTool
+InstallDir $LOCALAPPDATA\Longbow
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -25,18 +25,18 @@ InstallDir $LOCALAPPDATA\ArmaReforgerServerTool
 # Install Section
 Section
 SetOutPath $INSTDIR
-File /r /x *.txt /x *.pdb /x "mod_database.json" /x "properties.json" /x "logs\*" "${__FILEDIR__}\..\ArmaReforgerServerTool\bin\Release\net6.0-windows\*.*"
+File /r /x *.txt /x *.pdb /x "mod_database.json" /x "properties.json" /x "logs\*" "${__FILEDIR__}\..\Longbow\bin\Release\net6.0-windows\*.*"
 WriteUninstaller $INSTDIR\uninstall.exe
-CreateShortCut "$SMPROGRAMS\Arma Reforger Dedicated Server Tool.lnk" "$INSTDIR\ReforgerServerApp.exe"
-CreateShortCut "$SMPROGRAMS\Uninstall Arma Reforger Dedicated Server Tool.lnk" "$INSTDIR\uninstall.exe"
-CreateShortCut "$DESKTOP\Arma Reforger Dedicated Server Tool.lnk" "$INSTDIR\ReforgerServerApp.exe"
+CreateShortCut "$SMPROGRAMS\Longbow.lnk" "$INSTDIR\Longbow.exe"
+CreateShortCut "$SMPROGRAMS\Uninstall Longbow.lnk" "$INSTDIR\uninstall.exe"
+CreateShortCut "$DESKTOP\Longbow.lnk" "$INSTDIR\Longbow.exe"
 SectionEnd
 
 # Uninstall Section
 Section "Uninstall"
 RMDir /r "$INSTDIR\*.*"
 RMDir $INSTDIR
-Delete "$SMPROGRAMS\Arma Reforger Dedicated Server Tool\Arma Reforger Dedicated Server Tool.lnk"
-Delete "$SMPROGRAMS\Arma Reforger Dedicated Server Tool\Uninstall Arma Reforger Dedicated Server Tool.lnk"
-Delete "$DESKTOP\Arma Reforger Dedicated Server Tool.lnk"
+Delete "$SMPROGRAMS\Longbow\Longbow.lnk"
+Delete "$SMPROGRAMS\Longbow\Uninstall Longbow.lnk"
+Delete "$DESKTOP\Longbow.lnk"
 SectionEnd
