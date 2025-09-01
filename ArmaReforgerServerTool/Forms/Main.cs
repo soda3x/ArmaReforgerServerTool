@@ -1369,7 +1369,7 @@ namespace ReforgerServerApp
             FileIOManager.SaveModsListToFile();
         }
 
-        private void iconButton2_Click(object sender, EventArgs e)
+        private void MoveEnabledModPositionOnTopBtnPressed(object sender, EventArgs e)
         {
             var listCtrl = GetEnabledModsList();
             if (listCtrl == null || listCtrl.SelectedItems.Count == 0) return;

@@ -197,7 +197,7 @@ namespace ReforgerServerApp
             moveModPosTopBtn.Size = new Size(50, 22);
             moveModPosTopBtn.TabIndex = 13;
             moveModPosTopBtn.UseVisualStyleBackColor = true;
-            moveModPosTopBtn.Click += iconButton2_Click;
+            moveModPosTopBtn.Click += MoveEnabledModPositionOnTopBtnPressed;
             // 
             // exportModsBtn
             // 
