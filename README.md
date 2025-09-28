@@ -16,7 +16,7 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 
 ## Requirements
 
-- [dotNET 6 Runtime](https://dotnet.microsoft.com/en-us/download)
+- [dotNET 8 Runtime](https://dotnet.microsoft.com/en-us/download)
 - Any dependencies for the Arma Reforger Dedicated Server (namely Microsoft Visual C++ Runtime)
 
 ### Developer Dependencies
