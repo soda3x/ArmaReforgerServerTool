@@ -87,6 +87,16 @@ namespace ReforgerServerApp
       exportModsToolTip.SetToolTip(exportModsBtn, Constants.EXPORT_MODS_STR);
       ToolTip importModsToolTip = new();
       exportModsToolTip.SetToolTip(importModsBtn, Constants.IMPORT_MODS_STR);
+      ToolTip startServerToolTip = new();
+      startServerToolTip.SetToolTip(startServerBtn, Constants.START_SERVER_STR);
+      ToolTip downloadToolTip = new();
+      downloadToolTip.SetToolTip(downloadSteamCmdBtn, Constants.DOWNLOAD_SERVER_FILES_STR);
+      ToolTip locateServerToolTip = new();
+      locateServerToolTip.SetToolTip(locateServerFilesBtn, Constants.LOCATE_SERVER_FILES_STR);
+      ToolTip deleteServerToolTip = new();
+      deleteServerToolTip.SetToolTip(deleteServerFilesBtn, Constants.DELETE_SERVER_FILES_STR);
+      ToolTip useExperimentalToolTip = new();
+      useExperimentalToolTip.SetToolTip(useExperimentalCheckBox, Constants.USE_EXPERIMENTAL_STR);
     }
 
     /// <summary>
@@ -104,14 +114,14 @@ namespace ReforgerServerApp
       {
         if (FileIOManager.GetInstance().IsSteamCMDInstalled())
         {
-          steamCmdAlert.Text = $"Using Arma Reforger Server files found at: \"{FileIOManager.GetInstance().GetInstallDirectory()}\"";
+          steamCmdAlert.Text = $"Using Arma Reforger Server found at: \"{FileIOManager.GetInstance().GetInstallDirectory()}\"";
           downloadSteamCmdBtn.Enabled = false;
           startServerBtn.Enabled = true;
           deleteServerFilesBtn.Enabled = true;
         }
         else
         {
-          steamCmdAlert.Text = "SteamCMD and the Arma Server files were not detected, please Download before continuing.";
+          steamCmdAlert.Text = "SteamCMD and the server files were not detected, please Download before continuing.";
           startServerBtn.Enabled = false;
           downloadSteamCmdBtn.Enabled = true;
           deleteServerFilesBtn.Enabled = false;
@@ -185,7 +195,7 @@ namespace ReforgerServerApp
     /// <param name="e"></param>
     private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
     {
-      ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod)GetAvailableModsList().SelectedItem);
+      ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
       FileIOManager.GetInstance().WriteModsDatabase();
     }
 
@@ -240,7 +250,7 @@ namespace ReforgerServerApp
     /// <param name="e"></param>
     private void MoveEnabledModPositionUpBtnPressed(object sender, EventArgs e)
     {
-      if ((Mod)GetEnabledModsList().SelectedItem != null)
+      if ((Mod) GetEnabledModsList().SelectedItem != null)
       {
         Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
@@ -260,7 +270,7 @@ namespace ReforgerServerApp
     /// <param name="e"></param>
     private void MoveEnabledModPositionDownBtnPressed(object sender, EventArgs e)
     {
-      if ((Mod)GetEnabledModsList().SelectedItem != null)
+      if ((Mod) GetEnabledModsList().SelectedItem != null)
       {
         Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
@@ -975,7 +985,7 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "Log Voting",
         Description = "Adds logging info to the voting system with information about who created, voted, and against whom the vote was created."
       };
-      advancedParametersPanel.Controls.Add(logVoting);      
+      advancedParametersPanel.Controls.Add(logVoting);
       AdvancedServerParameterNumeric overridePort = new()
       {
         ParameterName = "bindPort",
@@ -1215,7 +1225,7 @@ namespace ReforgerServerApp
       {
         startServerBtn.Enabled = e.startServerBtnEnabled;
         serverRunningLabel.Text = e.serverRunningLabelText;
-        startServerBtn.Text = e.startServerText;
+        startServerBtn.IconChar = e.startServerBtnIcon;
         EnableServerFields(e.enableServerFields);
       }
     }
