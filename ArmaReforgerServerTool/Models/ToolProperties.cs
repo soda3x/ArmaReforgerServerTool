@@ -21,8 +21,8 @@ namespace ReforgerServerApp.Models
   [JsonConverter(typeof(ToolProperitesConverter))]
   internal class ToolProperties
   {
-    private static readonly List<string> DEFAULT_SCENARIOS = new List<string>
-        {
+    private static readonly List<string> DEFAULT_SCENARIOS =
+        [
             "{ECC61978EDCC2B5A}Missions/23_Campaign.conf",
             "{59AD59368755F41A}Missions/21_GM_Eden.conf",
             "{002AF7323E0129AF}Missions/Tutorial.conf",
@@ -42,8 +42,11 @@ namespace ReforgerServerApp.Models
             "{7C491B1FCC0FF0E1}Missions/CAH_LeMoule.conf",
             "{6EA2E454519E5869}Missions/CAH_Military_Base.conf",
             "{2B4183DF23E88249}Missions/CAH_Morton.conf",
-            "{C47A1A6245A13B26}Missions/SP01_ReginaV2.conf"
-        };
+            "{C47A1A6245A13B26}Missions/SP01_ReginaV2.conf",
+            "{0648CDB32D6B02B3}Missions/SP02_AirSupport.conf",
+            "{0220741028718E7F}Missions/23_Campaign_HQC_Everon.conf",
+            "{68D1240A11492545}Missions/23_Campaign_HQC_Arland.conf"
+        ];
 
     private static readonly string DEFAULT_MOD_DATABASE_FILE = "./mod_database.json";
     private static readonly string DEFAULT_INSTALL_DIR_FILE = "./install_directory.txt";
