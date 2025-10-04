@@ -1,4 +1,4 @@
-﻿namespace ReforgerServerApp
+namespace ReforgerServerApp
 {
     partial class ScenarioSelector
     {
@@ -33,6 +33,7 @@
       reloadScenariosBtn = new Button();
       currentlySelectedLbl = new Label();
       manualScenarioIdTextBox = new TextBox();
+      loadingAnim = new AnimOfDots.Circular();
       SuspendLayout();
       // 
       // scenarioList
@@ -72,9 +73,9 @@
       // 
       currentlySelectedLbl.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       currentlySelectedLbl.AutoEllipsis = true;
-      currentlySelectedLbl.Location = new Point(133, 447);
+      currentlySelectedLbl.Location = new Point(165, 447);
       currentlySelectedLbl.Name = "currentlySelectedLbl";
-      currentlySelectedLbl.Size = new Size(440, 15);
+      currentlySelectedLbl.Size = new Size(408, 15);
       currentlySelectedLbl.TabIndex = 3;
       currentlySelectedLbl.Text = "Currently selected Scenario is:";
       currentlySelectedLbl.TextAlign = ContentAlignment.MiddleLeft;
@@ -89,11 +90,25 @@
       manualScenarioIdTextBox.TabIndex = 4;
       manualScenarioIdTextBox.TextChanged += ManualScenarioIDTextChanged;
       // 
+      // loadingAnim
+      // 
+      loadingAnim.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      loadingAnim.AnimationSpeed = 10;
+      loadingAnim.BackColor = Color.Transparent;
+      loadingAnim.ForeColor = Color.DodgerBlue;
+      loadingAnim.Location = new Point(133, 443);
+      loadingAnim.Name = "loadingAnim";
+      loadingAnim.Running = true;
+      loadingAnim.Size = new Size(26, 19);
+      loadingAnim.TabIndex = 5;
+      loadingAnim.Visible = false;
+      // 
       // ScenarioSelector
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
       ClientSize = new Size(706, 478);
+      Controls.Add(loadingAnim);
       Controls.Add(manualScenarioIdTextBox);
       Controls.Add(currentlySelectedLbl);
       Controls.Add(reloadScenariosBtn);
@@ -115,5 +130,6 @@
         private Button reloadScenariosBtn;
         private Label currentlySelectedLbl;
         private TextBox manualScenarioIdTextBox;
-    }
+    private AnimOfDots.Circular loadingAnim;
+  }
 }

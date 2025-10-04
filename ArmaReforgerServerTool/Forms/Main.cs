@@ -87,6 +87,16 @@ namespace ReforgerServerApp
       exportModsToolTip.SetToolTip(exportModsBtn, Constants.EXPORT_MODS_STR);
       ToolTip importModsToolTip = new();
       exportModsToolTip.SetToolTip(importModsBtn, Constants.IMPORT_MODS_STR);
+      ToolTip startServerToolTip = new();
+      startServerToolTip.SetToolTip(startServerBtn, Constants.START_SERVER_STR);
+      ToolTip downloadToolTip = new();
+      downloadToolTip.SetToolTip(downloadSteamCmdBtn, Constants.DOWNLOAD_SERVER_FILES_STR);
+      ToolTip locateServerToolTip = new();
+      locateServerToolTip.SetToolTip(locateServerFilesBtn, Constants.LOCATE_SERVER_FILES_STR);
+      ToolTip deleteServerToolTip = new();
+      deleteServerToolTip.SetToolTip(deleteServerFilesBtn, Constants.DELETE_SERVER_FILES_STR);
+      ToolTip useExperimentalToolTip = new();
+      useExperimentalToolTip.SetToolTip(useExperimentalCheckBox, Constants.USE_EXPERIMENTAL_STR);
     }
 
     /// <summary>
@@ -104,14 +114,14 @@ namespace ReforgerServerApp
       {
         if (FileIOManager.GetInstance().IsSteamCMDInstalled())
         {
-          steamCmdAlert.Text = $"Using Arma Reforger Server files found at: \"{FileIOManager.GetInstance().GetInstallDirectory()}\"";
+          steamCmdAlert.Text = $"Using Arma Reforger Server found at: \"{FileIOManager.GetInstance().GetInstallDirectory()}\"";
           downloadSteamCmdBtn.Enabled = false;
           startServerBtn.Enabled = true;
           deleteServerFilesBtn.Enabled = true;
         }
         else
         {
-          steamCmdAlert.Text = "SteamCMD and the Arma Server files were not detected, please Download before continuing.";
+          steamCmdAlert.Text = "SteamCMD and the server files were not detected, please Download before continuing.";
           startServerBtn.Enabled = false;
           downloadSteamCmdBtn.Enabled = true;
           deleteServerFilesBtn.Enabled = false;
@@ -1147,6 +1157,13 @@ namespace ReforgerServerApp
         ParameterAvailableValues = new List<string>() {"crash", "minidump", "kill"}
       };
       advancedParametersPanel.Controls.Add(freezeCheckMode);
+      AdvancedServerParameterBool forceDisableNightGrain = new()
+      {
+        ParameterName = "forceDisableNightGrain",
+        ParameterFriendlyName = "Force Disable Night Grain",
+        Description = "Disables night grain in multiplayer.",
+      };
+      advancedParametersPanel.Controls.Add(forceDisableNightGrain);
 
       foreach (AdvancedServerParameter param in advancedParametersPanel.Controls)
       {
@@ -1215,7 +1232,7 @@ namespace ReforgerServerApp
       {
         startServerBtn.Enabled = e.startServerBtnEnabled;
         serverRunningLabel.Text = e.serverRunningLabelText;
-        startServerBtn.Text = e.startServerText;
+        startServerBtn.IconChar = e.buttonIconChar;
         EnableServerFields(e.enableServerFields);
       }
     }
@@ -1395,6 +1412,11 @@ namespace ReforgerServerApp
       if (advParams["jobsysLongWorkerCount"].Checked())
       {
         args.jobSysLongWorkerCount = new("jobsysLongWorkerCount", Convert.ToString(advParams["jobsysLongWorkerCount"].ParameterValue));
+      }
+
+      if (advParams["forceDisableNightGrain"].Checked())
+      {
+        args.forceDisableNightGrain = new("forceDisableNightGrain");
       }
 
       ProcessManager.GetInstance().SetLaunchArgumentsModel(args);

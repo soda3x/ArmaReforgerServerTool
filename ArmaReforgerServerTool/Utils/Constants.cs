@@ -53,8 +53,10 @@ namespace ReforgerServerApp
     public static string LOAD_SESSION_SAVE_TOOLTIP_STR = "If this option is enabled and the text field is empty, the latest savegame will be loaded." +
         "\r\nEnter the path to a savegame file to load a specific save.";
     public static string SERVER_CURRENTLY_RUNNING_STR = "Server is currently running. To modify the configuration, you will need to stop it first.";
-    public static string START_SERVER_STR = "Start Server";
-    public static string STOP_SERVER_STR = "Stop Server";
+    public static string START_SERVER_STR = "Start / Stop Server";
+    public static string DOWNLOAD_SERVER_FILES_STR = "Download dedicated server files";
+    public static string LOCATE_SERVER_FILES_STR = "Locate already downloaded server";
+    public static string DELETE_SERVER_FILES_STR = "Delete server files";
     public static string SERVER_JSON_STR = "\\server.json";
     public static string CURRENTLY_SELECTED_STR = "Currently selected scenario is:";
     public static string SERVER_FILES_NOT_FOUND_SCENARIO_SELECT_STR = "Arma Reforger server files not found, you will need to install them from the Server Management tab first.";
@@ -65,6 +67,7 @@ namespace ReforgerServerApp
     public static string SUPPORTED_PLATFORM_PSN = "PLATFORM_PSN";
 
     public static string USE_UPNP_STR = "Enable this to attempt to open required ports using UPnP.\nIf this is successful, you will not need to port-forward.";
+    public static string USE_EXPERIMENTAL_STR = "Enable this to use the Experimental version of Arma Reforger.\nNote that this is not guaranteed to work and not all parameters may be available in Longbow.";
 
     public static string SERVER_PARAM_DISABLE_AI_TOOLTIP_STR = "If enabled, the server will prevent initialization and ticking of AIWorld and its components.\r\n" +
         "Will completely disable AI functionality on the server.";
