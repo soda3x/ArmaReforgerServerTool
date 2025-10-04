@@ -12,6 +12,7 @@ using System.Text.Json;
 using Serilog;
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
+using Longbow.Models;
 
 namespace ReforgerServerApp.Managers;
 
@@ -67,6 +68,6 @@ internal class ToolPropertiesManager
     return m_instance;
   }
 
-  public List<string> GetDefaultScenarios() { return m_toolProperties.defaultScenarios; }
+  public List<Scenario> GetDefaultScenarios() { return m_toolProperties.defaultScenarios; }
   public ToolProperties GetToolProperties() { return m_toolProperties; }
 }

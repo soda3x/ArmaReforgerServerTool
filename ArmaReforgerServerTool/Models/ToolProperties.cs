@@ -7,6 +7,7 @@
  * Author:       Kye Seyhun
  ******************************************************************************/
 
+using Longbow.Models;
 using Serilog;
 using Serilog.Events;
 using System.Text.Json;
@@ -21,39 +22,39 @@ namespace ReforgerServerApp.Models
   [JsonConverter(typeof(ToolProperitesConverter))]
   internal class ToolProperties
   {
-    private static readonly List<string> DEFAULT_SCENARIOS =
+    private static readonly List<Scenario> DEFAULT_SCENARIOS =
         [
-            "{ECC61978EDCC2B5A}Missions/23_Campaign.conf",
-            "{002AF7323E0129AF}Missions/Tutorial.conf",
-            "{59AD59368755F41A}Missions/21_GM_Eden.conf",
-            "{2BBBE828037C6F4B}Missions/22_GM_Arland.conf",
-            "{F45C6C15D31252E6}Missions/27_GM_Cain.conf",
-            "{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf",
-            "{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf",
-            "{94992A3D7CE4FF8A}Missions/23_Campaign_Western.conf",
-            "{FDE33AFE2ED7875B}Missions/23_Campaign_Montignac.conf",
-            "{DAA03C6E6099D50F}Missions/24_CombatOps.conf",
-            "{C41618FD18E9D714}Missions/23_Campaign_Arland.conf",
-            "{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf",
-            "{3F2E005F43DBD2F8}Missions/CAH_Briars_Coast.conf",
-            "{F1A1BEA67132113E}Missions/CAH_Castle.conf",
-            "{589945FB9FA7B97D}Missions/CAH_Concrete_Plant.conf",
-            "{9405201CBD22A30C}Missions/CAH_Factory.conf",
-            "{1CD06B409C6FAE56}Missions/CAH_Forest.conf",
-            "{7C491B1FCC0FF0E1}Missions/CAH_LeMoule.conf",
-            "{6EA2E454519E5869}Missions/CAH_Military_Base.conf",
-            "{2B4183DF23E88249}Missions/CAH_Morton.conf",
-            "{C47A1A6245A13B26}Missions/SP01_ReginaV2.conf",
-            "{0648CDB32D6B02B3}Missions/SP02_AirSupport.conf",
-            "{0220741028718E7F}Missions/23_Campaign_HQC_Everon.conf",
-            "{68D1240A11492545}Missions/23_Campaign_HQC_Arland.conf",
-            "{BB5345C22DD2B655}Missions/23_Campaign_HQC_Cain.conf",
-            "{10B8582BAD9F7040}Missions/Scenario01_Intro.conf",
-            "{1D76AF6DC4DF0577}Missions/Scenario02_Steal.conf",
-            "{D1647575BCEA5A05}Missions/Scenario03_Villa.conf",
-            "{6D224A109B973DD8}Missions/Scenario04_Sabotage.conf",
-            "{FA2AB0181129CB16}Missions/Scenario05_Hill.conf",
-            "{CB347F2F10065C9C}Missions/CombatOpsCain.conf"
+            new("Conflict - Everon", "{ECC61978EDCC2B5A}Missions/23_Campaign.conf"),
+            new("Training", "{002AF7323E0129AF}Missions/Tutorial.conf"),
+            new("Game Master - Everon", "{59AD59368755F41A}Missions/21_GM_Eden.conf"),
+            new("Game Master - Arland", "{2BBBE828037C6F4B}Missions/22_GM_Arland.conf"),
+            new("Game Master - Kolguyev", "{F45C6C15D31252E6}Missions/27_GM_Cain.conf"),
+            new("Conflict - Northern Everon", "{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf"),
+            new("Conflict - Southern Everon", "{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf"),
+            new("Conflict - Western Everon", "{94992A3D7CE4FF8A}Missions/23_Campaign_Western.conf"),
+            new("Conflict - Montignac", "{FDE33AFE2ED7875B}Missions/23_Campaign_Montignac.conf"),
+            new("Combat Ops - Arland", "{DAA03C6E6099D50F}Missions/24_CombatOps.conf"),
+            new("Conflict - Arland", "{C41618FD18E9D714}Missions/23_Campaign_Arland.conf"),
+            new("Combat Ops - Everon", "{DFAC5FABD11F2390}Missions/26_CombatOpsEveron.conf"),
+            new("Capture & Hold - Briars", "{3F2E005F43DBD2F8}Missions/CAH_Briars_Coast.conf"),
+            new("Capture & Hold - Montfort Castle", "{F1A1BEA67132113E}Missions/CAH_Castle.conf"),
+            new("Capture & Hold - Concrete Plant", "{589945FB9FA7B97D}Missions/CAH_Concrete_Plant.conf"),
+            new("Capture & Hold - Almara Factory", "{9405201CBD22A30C}Missions/CAH_Factory.conf"),
+            new("Capture & Hold - Simon's Wood", "{1CD06B409C6FAE56}Missions/CAH_Forest.conf"),
+            new("Capture & Hold - Le Moule", "{7C491B1FCC0FF0E1}Missions/CAH_LeMoule.conf"),
+            new("Capture & Hold - Camp Blake", "{6EA2E454519E5869}Missions/CAH_Military_Base.conf"),
+            new("Capture & Hold - Morton", "{2B4183DF23E88249}Missions/CAH_Morton.conf"),
+            new("Elimination", "{C47A1A6245A13B26}Missions/SP01_ReginaV2.conf"),
+            new("Air Support", "{0648CDB32D6B02B3}Missions/SP02_AirSupport.conf"),
+            new("Conflict: HQ Commander - Everon", "{0220741028718E7F}Missions/23_Campaign_HQC_Everon.conf"),
+            new("Conflict: HQ Commander - Arland", "{68D1240A11492545}Missions/23_Campaign_HQC_Arland.conf"),
+            new("Conflict: HQ Commander - Kolguyev", "{BB5345C22DD2B655}Missions/23_Campaign_HQC_Cain.conf"),
+            new("Operation Omega 01: Over The Hills And Far Away", "{10B8582BAD9F7040}Missions/Scenario01_Intro.conf"),
+            new("Operation Omega 02: Radio Check", "{1D76AF6DC4DF0577}Missions/Scenario02_Steal.conf"),
+            new("Operation Omega 03: Light In The Dark", "{D1647575BCEA5A05}Missions/Scenario03_Villa.conf"),
+            new("Operation Omega 04: Red Silence", "{6D224A109B973DD8}Missions/Scenario04_Sabotage.conf"),
+            new("Operation Omega 05: Cliffhanger", "{FA2AB0181129CB16}Missions/Scenario05_Hill.conf"),
+            new("Combat Ops - Kolguyev", "{CB347F2F10065C9C}Missions/CombatOpsCain.conf")
         ];
 
     private static readonly string DEFAULT_MOD_DATABASE_FILE = "./mod_database.json";
@@ -68,7 +69,7 @@ namespace ReforgerServerApp.Models
     private static readonly string DEFAULT_MINIMUM_LOG_LEVEL = "Debug";
     private static readonly int DEFAULT_AUTO_RESTART_TIME_MS = 2000;
 
-    public List<string> defaultScenarios { get; set; }
+    public List<Scenario> defaultScenarios { get; set; }
     public string modDatabaseFile { get; set; }
     public string installDirectoryFile { get; set; }
     public string updateRepositoryUrl { get; set; }
@@ -96,7 +97,7 @@ namespace ReforgerServerApp.Models
     /// <param name="logFile"></param>
     /// <param name="minimumLogLevel"></param>
     /// <param name="autoRestartTime_ms"></param>
-    public ToolProperties(List<string> defaultScenarios, string modDatabaseFile, string installDirectoryFile,
+    public ToolProperties(List<Scenario> defaultScenarios, string modDatabaseFile, string installDirectoryFile,
         string updateRepositoryUrl, string releaseRepositoryUrl, string bugReportUrl, bool checkForUpdatesOnStartup,
         string steamCmdDownloadUrl, string armaWorkshopUrl, string logFile, string minimumLogLevel, int autoRestartTime_ms)
     {
