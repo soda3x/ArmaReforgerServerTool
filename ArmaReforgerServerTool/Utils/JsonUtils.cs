@@ -11,6 +11,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using ReforgerServerApp.Models;
+using Longbow.Models;
 
 namespace ReforgerServerApp.Utils
 {
@@ -352,7 +353,7 @@ namespace ReforgerServerApp.Utils
             switch (propertyName)
             {
               case "defaultScenarios":
-                props.defaultScenarios = JsonSerializer.Deserialize<string[]>(ref reader, options)!.ToList();
+                props.defaultScenarios = JsonSerializer.Deserialize<Scenario[]>(ref reader, options)!.ToList();
                 break;
               case "modDatabaseFile":
                 props.modDatabaseFile = reader.GetString();
