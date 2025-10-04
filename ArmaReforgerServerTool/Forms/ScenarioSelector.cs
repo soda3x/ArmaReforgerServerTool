@@ -6,6 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Models;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
 
@@ -35,15 +36,19 @@ namespace ReforgerServerApp
     {
       try
       {
-        List<string> scenarios = new();
+        List<Scenario> scenarios = new();
         foreach (Mod m in m_parentForm.GetEnabledModsList().Items)
         {
-          scenarios.AddRange(Mod.GetScenariosForMod(m.GetModID()));
+          List<string> scenariosFromMod = Mod.GetScenariosForMod(m.GetModID());
+          foreach (string scenPath in scenariosFromMod)
+          {
+            scenarios.Add(new(m.GetModName(), scenPath));
+          }
         }
 
-        foreach (string scenId in scenarios)
+        foreach (Scenario s in scenarios)
         {
-          scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scenId)));
+          scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(s)));
         }
       }
 
@@ -68,7 +73,7 @@ namespace ReforgerServerApp
               reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = false));
               selectScenarioBtn.Invoke((MethodInvoker) (() => selectScenarioBtn.Enabled = false));
 
-              foreach (string scen in ToolPropertiesManager.GetInstance().GetDefaultScenarios())
+              foreach (Scenario scen in ToolPropertiesManager.GetInstance().GetDefaultScenarios())
               {
                 scenarioList.Invoke((MethodInvoker)(() => scenarioList.Items.Add(scen)));
               }
@@ -121,7 +126,7 @@ namespace ReforgerServerApp
       {
         if (scenarioList.SelectedItem != null)
         {
-          ConfigurationManager.GetInstance().GetServerConfiguration().root.game.scenarioId = scenarioList.SelectedItem.ToString();
+          ConfigurationManager.GetInstance().GetServerConfiguration().root.game.scenarioId = ((Scenario) scenarioList.SelectedItem).Path;
         }
       }
       m_parentForm.RefreshLoadedScenario();

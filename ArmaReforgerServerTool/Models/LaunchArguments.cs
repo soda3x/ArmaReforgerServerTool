@@ -108,5 +108,6 @@ namespace ReforgerServerApp.Models
     public LaunchArgument rplEncodeAsLongJobs;
     public LaunchArgument jobSysShortWorkerCount;
     public LaunchArgument jobSysLongWorkerCount;
+    public LaunchArgument forceDisableNightGrain;
   }
 }
