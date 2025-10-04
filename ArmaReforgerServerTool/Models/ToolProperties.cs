@@ -24,9 +24,10 @@ namespace ReforgerServerApp.Models
     private static readonly List<string> DEFAULT_SCENARIOS =
         [
             "{ECC61978EDCC2B5A}Missions/23_Campaign.conf",
-            "{59AD59368755F41A}Missions/21_GM_Eden.conf",
             "{002AF7323E0129AF}Missions/Tutorial.conf",
+            "{59AD59368755F41A}Missions/21_GM_Eden.conf",
             "{2BBBE828037C6F4B}Missions/22_GM_Arland.conf",
+            "{F45C6C15D31252E6}Missions/27_GM_Cain.conf",
             "{C700DB41F0C546E1}Missions/23_Campaign_NorthCentral.conf",
             "{28802845ADA64D52}Missions/23_Campaign_SWCoast.conf",
             "{94992A3D7CE4FF8A}Missions/23_Campaign_Western.conf",
@@ -45,7 +46,14 @@ namespace ReforgerServerApp.Models
             "{C47A1A6245A13B26}Missions/SP01_ReginaV2.conf",
             "{0648CDB32D6B02B3}Missions/SP02_AirSupport.conf",
             "{0220741028718E7F}Missions/23_Campaign_HQC_Everon.conf",
-            "{68D1240A11492545}Missions/23_Campaign_HQC_Arland.conf"
+            "{68D1240A11492545}Missions/23_Campaign_HQC_Arland.conf",
+            "{BB5345C22DD2B655}Missions/23_Campaign_HQC_Cain.conf",
+            "{10B8582BAD9F7040}Missions/Scenario01_Intro.conf",
+            "{1D76AF6DC4DF0577}Missions/Scenario02_Steal.conf",
+            "{D1647575BCEA5A05}Missions/Scenario03_Villa.conf",
+            "{6D224A109B973DD8}Missions/Scenario04_Sabotage.conf",
+            "{FA2AB0181129CB16}Missions/Scenario05_Hill.conf",
+            "{CB347F2F10065C9C}Missions/CombatOpsCain.conf"
         ];
 
     private static readonly string DEFAULT_MOD_DATABASE_FILE = "./mod_database.json";
