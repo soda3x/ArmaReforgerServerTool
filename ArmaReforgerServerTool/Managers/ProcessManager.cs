@@ -9,6 +9,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using FontAwesome.Sharp;
 using ReforgerServerApp.Components;
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
@@ -28,7 +29,7 @@ namespace ReforgerServerApp.Managers
 
   internal class GuiModelEventArgs : EventArgs
   {
-    public string startServerText;
+    public IconChar buttonIconChar;
     public bool enableServerFields;
     public string serverRunningLabelText;
     public bool startServerBtnEnabled;
@@ -121,7 +122,7 @@ namespace ReforgerServerApp.Managers
 
           GuiModelEventArgs guiModel = new()
           {
-            startServerText = Constants.START_SERVER_STR,
+            buttonIconChar = IconChar.Play,
             enableServerFields = true,
             serverRunningLabelText = string.Empty,
             startServerBtnEnabled = true
@@ -148,7 +149,7 @@ namespace ReforgerServerApp.Managers
 
         GuiModelEventArgs guiModel = new()
         {
-          startServerText = Constants.STOP_SERVER_STR,
+          buttonIconChar = IconChar.Stop,
           enableServerFields = false,
           serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
           startServerBtnEnabled = false
@@ -211,7 +212,7 @@ namespace ReforgerServerApp.Managers
 
         guiModel = new()
         {
-          startServerText = Constants.START_SERVER_STR,
+          buttonIconChar = IconChar.Play,
           enableServerFields = true,
           serverRunningLabelText = string.Empty,
           startServerBtnEnabled = true
@@ -257,7 +258,7 @@ namespace ReforgerServerApp.Managers
 
       guiModel = new()
       {
-        startServerText = Constants.STOP_SERVER_STR,
+        buttonIconChar = IconChar.Stop,
         enableServerFields = false,
         serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
         startServerBtnEnabled = false
@@ -310,7 +311,7 @@ namespace ReforgerServerApp.Managers
 
           GuiModelEventArgs guiModel = new()
           {
-            startServerText = Constants.START_SERVER_STR,
+            buttonIconChar = IconChar.Play,
             enableServerFields = true,
             serverRunningLabelText = string.Empty,
             startServerBtnEnabled = true
@@ -387,7 +388,7 @@ namespace ReforgerServerApp.Managers
 
         GuiModelEventArgs guiModel = new()
         {
-          startServerText = Constants.STOP_SERVER_STR,
+          buttonIconChar = IconChar.Stop,
           enableServerFields = false,
           serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
           startServerBtnEnabled = true
@@ -531,6 +532,7 @@ namespace ReforgerServerApp.Managers
                                                m_launchArgumentsModel.rplEncodeAsLongJobs,
                                                m_launchArgumentsModel.jobSysShortWorkerCount,
                                                m_launchArgumentsModel.jobSysLongWorkerCount,
+                                               m_launchArgumentsModel.forceDisableNightGrain,
                                                m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
 
       if (!ConfigurationManager.GetInstance().noBackend)
