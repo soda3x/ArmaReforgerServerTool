@@ -34,6 +34,8 @@ namespace ReforgerServerApp
       ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
       ConfigurationManager.GetInstance().UpdateScenarioIdFromLoadedConfigEvent += HandleUpdateScenarioIdFromLoadedConfigEvent;
 
+      useUpnp.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings()["useUpnp"].Enabled;
+      useExperimentalCheckBox.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings()["useExperimental"].Enabled;
       NetworkManager.GetInstance().useUPnP = useUpnp.Checked;
 
       // Create tooltips
