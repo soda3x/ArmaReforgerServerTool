@@ -12,6 +12,8 @@ using System.ComponentModel;
 using Serilog;
 using ReforgerServerApp.Components;
 using ReforgerServerApp.Utils;
+using Longbow.Models;
+using Longbow.Managers;
 
 namespace ReforgerServerApp
 {
@@ -195,7 +197,7 @@ namespace ReforgerServerApp
     /// <param name="e"></param>
     private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
     {
-      ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod)GetAvailableModsList().SelectedItem);
+      ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
       FileIOManager.GetInstance().WriteModsDatabase();
     }
 
@@ -250,7 +252,7 @@ namespace ReforgerServerApp
     /// <param name="e"></param>
     private void MoveEnabledModPositionUpBtnPressed(object sender, EventArgs e)
     {
-      if ((Mod)GetEnabledModsList().SelectedItem != null)
+      if ((Mod) GetEnabledModsList().SelectedItem != null)
       {
         Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
@@ -270,7 +272,7 @@ namespace ReforgerServerApp
     /// <param name="e"></param>
     private void MoveEnabledModPositionDownBtnPressed(object sender, EventArgs e)
     {
-      if ((Mod)GetEnabledModsList().SelectedItem != null)
+      if ((Mod) GetEnabledModsList().SelectedItem != null)
       {
         Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
@@ -907,6 +909,8 @@ namespace ReforgerServerApp
 
     void CreateAdvancedServerParameterControls()
     {
+      Dictionary<string, AdvancedSetting> loadedSettings = SavedStateManager.GetInstance().GetLoadedAdvancedSettings();
+
       AdvancedServerParameterNumeric limitServerMaxFPS = new()
       {
         ParameterName = "maxFPS",
@@ -914,11 +918,12 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 1000,
         ParameterIncrement = 1,
-        ParameterValue = 60,
+        ParameterValue = loadedSettings["maxFPS"].Value,
         Description = "Limits your server to the specified target FPS. Recommended."
       };
-      limitServerMaxFPS.CheckBox.Checked = true; // Checked by default
+      limitServerMaxFPS.CheckBox.Checked = loadedSettings["maxFPS"].Enabled;
       advancedParametersPanel.Controls.Add(limitServerMaxFPS);
+
       AdvancedServerParameterTime autoRestartTime = new()
       {
         ParameterName = "autoRestartDaily",
@@ -929,6 +934,7 @@ namespace ReforgerServerApp
         ParameterValue = DateTime.Today
       };
       advancedParametersPanel.Controls.Add(autoRestartTime);
+
       AdvancedServerParameterString loadSessionSave = new()
       {
         ParameterName = "loadSessionSave",
@@ -936,15 +942,23 @@ namespace ReforgerServerApp
         Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
         ParameterPlaceholder = "Using latest save..."
       };
+      bool loadSessionSavedEnabled = loadedSettings["loadSessionSave"].Enabled;
+      loadSessionSave.CheckBox.Checked = loadSessionSavedEnabled;
+      if (loadSessionSavedEnabled)
+      {
+        loadSessionSave.ParameterValue = loadedSettings["loadSessionSave"].Value;
+      }
       advancedParametersPanel.Controls.Add(loadSessionSave);
+
       AdvancedServerParameterBool addonsRepair = new()
       {
         ParameterName = "addonsRepair",
         ParameterFriendlyName = "Verify and Repair Addons",
         Description ="Verifies the integrity of all installed addons. If any corrupted addons are found, they will be repaired automatically."
       };
-      addonsRepair.CheckBox.Checked = true; // Checked by default
+      addonsRepair.CheckBox.Checked = loadedSettings["addonsRepair"].Enabled;
       advancedParametersPanel.Controls.Add(addonsRepair);
+
       AdvancedServerParameterBool autoRestartOnCrash = new()
       {
         ParameterName = "autoRestartOnCrash",
@@ -952,7 +966,9 @@ namespace ReforgerServerApp
         Description = "The tool will monitor the server for crashes and attempt to restart it automatically."
       };
       autoRestartOnCrash.CheckBox.CheckedChanged += AutoRestartOnCrashCheckChanged;
+      autoRestartOnCrash.CheckBox.Checked = loadedSettings["autoRestartOnCrash"].Enabled;
       advancedParametersPanel.Controls.Add(autoRestartOnCrash);
+
       AdvancedServerParameterNumeric autoReload = new()
       {
         ParameterName = "autoreload",
@@ -961,31 +977,39 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
-        ParameterValue = 10
+        ParameterValue = loadedSettings["autoreload"].Value
       };
+      autoReload.CheckBox.Checked = loadedSettings["autoreload"].Enabled;
       advancedParametersPanel.Controls.Add(autoReload);
+
       AdvancedServerParameterBool noBackend = new()
       {
         ParameterName = "noBackend",
         ParameterFriendlyName = "No Backend",
         Description = "Enable this to host the server without using the Arma Reforger backend."
       };
-      advancedParametersPanel.Controls.Add(noBackend);
       noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
+      noBackend.CheckBox.Checked = loadedSettings["noBackend"].Enabled;
+      advancedParametersPanel.Controls.Add(noBackend);
+
       AdvancedServerParameterBool autoShutdown = new()
       {
         ParameterName = "autoShutdown",
         ParameterFriendlyName = "Auto Shutdown",
         Description = "Ensures the correct server shutdown process, use with \"Auto Reload\"."
       };
+      autoShutdown.CheckBox.Checked = loadedSettings["autoShutdown"].Enabled;
       advancedParametersPanel.Controls.Add(autoShutdown);
+
       AdvancedServerParameterBool logVoting = new()
       {
         ParameterName = "logVoting",
         ParameterFriendlyName = "Log Voting",
         Description = "Adds logging info to the voting system with information about who created, voted, and against whom the vote was created."
       };
-      advancedParametersPanel.Controls.Add(logVoting);      
+      logVoting.CheckBox.Checked = loadedSettings["logVoting"].Enabled;
+      advancedParametersPanel.Controls.Add(logVoting);
+
       AdvancedServerParameterNumeric overridePort = new()
       {
         ParameterName = "bindPort",
@@ -993,10 +1017,12 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 65535,
         ParameterIncrement = 1,
-        ParameterValue = 2001,
+        ParameterValue = loadedSettings["bindPort"].Value,
         Description = "Override the ports specified in server configuration."
       };
+      overridePort.CheckBox.Checked = loadedSettings["bindPort"].Enabled;
       advancedParametersPanel.Controls.Add(overridePort);
+
       AdvancedServerParameterNumeric networkDynamicSim = new()
       {
         ParameterName = "nds",
@@ -1004,10 +1030,12 @@ namespace ReforgerServerApp
         ParameterMin = 0,
         ParameterMax = 2,
         ParameterIncrement = 1,
-        ParameterValue = 2,
+        ParameterValue = loadedSettings["nds"].Value,
         Description = "This is set to '2' by default if unchecked."
       };
+      networkDynamicSim.CheckBox.Checked = loadedSettings["nds"].Enabled;
       advancedParametersPanel.Controls.Add(networkDynamicSim);
+
       AdvancedServerParameterNumeric spatialMapRes = new()
       {
         ParameterName = "nwkResolution",
@@ -1015,10 +1043,12 @@ namespace ReforgerServerApp
         ParameterMin = 100,
         ParameterMax = 1000,
         ParameterIncrement = 1,
-        ParameterValue = 500,
+        ParameterValue = loadedSettings["nwkResolution"].Value,
         Description = "Defines what resolution Spatial Map cells should be set at in a 100 - 1000m range."
       };
+      spatialMapRes.CheckBox.Checked = loadedSettings["nwkResolution"].Enabled;
       advancedParametersPanel.Controls.Add(spatialMapRes);
+
       AdvancedServerParameterNumeric staggeringBudget = new()
       {
         ParameterName = "staggeringBudget",
@@ -1026,10 +1056,12 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 10201,
         ParameterIncrement = 1,
-        ParameterValue = 5000,
+        ParameterValue = loadedSettings["staggeringBudget"].Value,
         Description = "Defines how many stationary spatial map cells are allowed to be processed in one tick. If not set it uses \"-nds\" diameter."
       };
+      staggeringBudget.CheckBox.Checked = loadedSettings["staggeringBudget"].Enabled;
       advancedParametersPanel.Controls.Add(staggeringBudget);
+
       AdvancedServerParameterNumeric streamingBudget = new()
       {
         ParameterName = "streamingBudget",
@@ -1037,10 +1069,12 @@ namespace ReforgerServerApp
         ParameterMin = 100,
         ParameterMax = 10201,
         ParameterIncrement = 1,
-        ParameterValue = 500,
+        ParameterValue = loadedSettings["streamingBudget"].Value,
         Description = "Streaming budget is the global streaming budget that is equally distributed between all connections."
       };
+      streamingBudget.CheckBox.Checked = loadedSettings["streamingBudget"].Enabled;
       advancedParametersPanel.Controls.Add(streamingBudget);
+
       AdvancedServerParameterNumeric streamsDelta = new()
       {
         ParameterName = "streamsDelta",
@@ -1048,10 +1082,12 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 1000,
         ParameterIncrement = 1,
-        ParameterValue = 100,
+        ParameterValue = loadedSettings["streamsDelta"].Value,
         Description = "Streams delta is a tool to limit the amount of streams being opened for a client."
       };
+      streamsDelta.CheckBox.Checked = loadedSettings["streamsDelta"].Enabled;
       advancedParametersPanel.Controls.Add(streamsDelta);
+
       AdvancedServerParameterNumeric rplTimeoutMs = new()
       {
         ParameterName = "rpl-timeout-ms",
@@ -1059,24 +1095,30 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
-        ParameterValue = 10000,
+        ParameterValue = loadedSettings["rpl-timeout-ms"].Value,
         Description = "Sets the server's timeout value, in milliseconds."
       };
+      rplTimeoutMs.CheckBox.Checked = loadedSettings["rpl-timeout-ms"].Enabled;
       advancedParametersPanel.Controls.Add(rplTimeoutMs);
+
       AdvancedServerParameterBool aiPartialSim = new()
       {
         ParameterName = "aiPartialSim",
         ParameterFriendlyName = "AI Partial Sim",
         Description = "Sets in how many batches all simulable AIs will divided and processed."
       };
+      aiPartialSim.CheckBox.Checked = loadedSettings["aiPartialSim"].Enabled;
       advancedParametersPanel.Controls.Add(aiPartialSim);
+
       AdvancedServerParameterBool createDB = new()
       {
         ParameterName = "createDB",
         ParameterFriendlyName = "Force Recreate Database",
         Description = "Forces database file's regeneration. Useful after file directories changes, when some resources were moved elsewhere."
       };
+      createDB.CheckBox.Checked = loadedSettings["createDB"].Enabled;
       advancedParametersPanel.Controls.Add(createDB);
+
       AdvancedServerParameterString debugger = new()
       {
         ParameterName = "debugger",
@@ -1084,7 +1126,14 @@ namespace ReforgerServerApp
         ParameterPlaceholder = "127.0.0.1",
         Description = "Sets the script debugger to a specific address."
       };
+      bool debuggerEnabled = loadedSettings["debugger"].Enabled;
+      debugger.CheckBox.Checked = debuggerEnabled;
+      if (debuggerEnabled)
+      {
+        debugger.ParameterValue = loadedSettings["debugger"].Value;
+      }
       advancedParametersPanel.Controls.Add(debugger);
+
       AdvancedServerParameterNumeric debuggerPort = new()
       {
         ParameterName = "debuggerPort",
@@ -1092,31 +1141,39 @@ namespace ReforgerServerApp
         ParameterIncrement = 1,
         ParameterMin = 1,
         ParameterMax = 65535,
-        ParameterValue = 1000,
+        ParameterValue = loadedSettings["debuggerPort"].Value,
         Description = "Sets the script debugger to a specific port. "
       };
+      debuggerPort.CheckBox.Checked = loadedSettings["debuggerPort"].Enabled;
       advancedParametersPanel.Controls.Add(debuggerPort);
+
       AdvancedServerParameterBool disableShadersBuild = new()
       {
         ParameterName = "disableShadersBuild",
         ParameterFriendlyName = "Disable Shaders Generation",
         Description = "Disables shaders generation."
       };
+      disableShadersBuild.CheckBox.Checked = loadedSettings["disableShadersBuild"].Enabled;
       advancedParametersPanel.Controls.Add(disableShadersBuild);
+
       AdvancedServerParameterBool generateShaders = new()
       {
         ParameterName = "generateShaders",
         ParameterFriendlyName = "Force Generate Shaders",
         Description = "Forces shaders generation."
       };
+      generateShaders.CheckBox.Checked = loadedSettings["generateShaders"].Enabled;
       advancedParametersPanel.Controls.Add(generateShaders);
+
       AdvancedServerParameterBool rplEncodeAsLongJobs = new()
       {
         ParameterName = "rplEncodeAsLongJobs",
         ParameterFriendlyName = "RPL Encode as Long Jobs",
         Description = "Makes replication use long encoding jobs instead of short ones."
       };
+      rplEncodeAsLongJobs.CheckBox.Checked = loadedSettings["rplEncodeAsLongJobs"].Enabled;
       advancedParametersPanel.Controls.Add(rplEncodeAsLongJobs);
+
       AdvancedServerParameterNumeric jobsysShortWorkerCount = new()
       {
         ParameterName = "jobsysShortWorkerCount",
@@ -1124,9 +1181,11 @@ namespace ReforgerServerApp
         Description = "Sets the number of threads working on short jobs (jobs that must finish in one update loop).",
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
-        ParameterValue = Utilities.GetNumberAvailableThreads(),
+        ParameterValue = loadedSettings["jobsysShortWorkerCount"].Value
       };
+      jobsysShortWorkerCount.CheckBox.Checked = loadedSettings["jobsysShortWorkerCount"].Enabled;
       advancedParametersPanel.Controls.Add(jobsysShortWorkerCount);
+
       AdvancedServerParameterNumeric jobsysLongWorkerCount = new()
       {
         ParameterName = "jobsysLongWorkerCount",
@@ -1134,10 +1193,11 @@ namespace ReforgerServerApp
         Description = "Sets the number of threads working on long jobs (jobs that can span multiple iterations of update loop).",
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
-        ParameterValue = Utilities.GetNumberAvailableThreads() / 2
+        ParameterValue = loadedSettings["jobsysLongWorkerCount"].Value
       };
+      jobsysLongWorkerCount.CheckBox.Checked = loadedSettings["jobsysLongWorkerCount"].Enabled;
       advancedParametersPanel.Controls.Add(jobsysLongWorkerCount);
-      advancedParametersPanel.Controls.Add(loadSessionSave);
+
       AdvancedServerParameterNumeric freezeCheck = new()
       {
         ParameterName = "freezeCheck",
@@ -1146,9 +1206,11 @@ namespace ReforgerServerApp
         ParameterIncrement = 1,
         ParameterMin = 0,
         ParameterMax = 600,
-        ParameterValue = 300
+        ParameterValue = loadedSettings["freezeCheck"].Value
       };
+      freezeCheck.CheckBox.Checked = loadedSettings["freezeCheck"].Enabled;
       advancedParametersPanel.Controls.Add(freezeCheck);
+
       AdvancedServerParameterEnumerated freezeCheckMode = new()
       {
         ParameterName = "freezeCheckMode",
@@ -1156,13 +1218,21 @@ namespace ReforgerServerApp
         Description = "Overrides behavior which should happen when freeze is detected.",
         ParameterAvailableValues = new List<string>() {"crash", "minidump", "kill"}
       };
+      bool freezeCheckModeEnabled = loadedSettings["freezeCheckMode"].Enabled;
+      freezeCheckMode.CheckBox.Checked = freezeCheckModeEnabled;
+      if (freezeCheckModeEnabled)
+      {
+        freezeCheckMode.ParameterValue = loadedSettings["freezeCheckMode"].Value;
+      }
       advancedParametersPanel.Controls.Add(freezeCheckMode);
+
       AdvancedServerParameterBool forceDisableNightGrain = new()
       {
         ParameterName = "forceDisableNightGrain",
         ParameterFriendlyName = "Force Disable Night Grain",
         Description = "Disables night grain in multiplayer.",
       };
+      forceDisableNightGrain.CheckBox.Checked = loadedSettings["forceDisableNightGrain"].Enabled;
       advancedParametersPanel.Controls.Add(forceDisableNightGrain);
 
       foreach (AdvancedServerParameter param in advancedParametersPanel.Controls)
@@ -1486,6 +1556,42 @@ namespace ReforgerServerApp
     private void ImportModsListBtnPressed(object sender, EventArgs e)
     {
       FileIOManager.LoadModsListFromFile();
+    }
+
+    /// <summary>
+    /// Utility method to update state of each advanced server parameter with the SavedStateManager
+    /// </summary>
+    private void UpdateStateForAdvancedSettings()
+    {
+      foreach (AdvancedServerParameter param in advancedParametersPanel.Controls)
+      {
+        SavedState ss = SavedStateManager.GetInstance().GetSavedState();
+        if (ss.AdvancedSettings.ContainsKey(param.ParameterName))
+        {
+          ss.AdvancedSettings[param.ParameterName].Enabled = param.CheckBox.Checked;
+          if (param is AdvancedServerParameterEnumerated)
+          {
+            AdvancedServerParameterEnumerated enumParam = (AdvancedServerParameterEnumerated) param;
+            ss.AdvancedSettings[param.ParameterName].Value = enumParam.SelectedItem;
+          }
+          else
+          {
+            ss.AdvancedSettings[param.ParameterName].Value = param.ParameterValue;
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Event Handler for when the application is closing
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OnFormClosing(object sender, FormClosingEventArgs e)
+    {
+      UpdateStateForAdvancedSettings();
+      FileIOManager.GetInstance().WriteStateFile();
+      FileIOManager.GetInstance().WriteModsDatabase();
     }
   }
 }

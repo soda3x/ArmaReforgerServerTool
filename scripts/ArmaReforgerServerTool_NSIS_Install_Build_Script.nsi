@@ -25,7 +25,7 @@ InstallDir $LOCALAPPDATA\Longbow
 # Install Section
 Section
 SetOutPath $INSTDIR
-File /r /x *.txt /x *.pdb /x "mod_database.json" /x "properties.json" /x "logs\*" "${__FILEDIR__}\..\ArmaReforgerServerTool\bin\Release\net8.0-windows\*.*"
+File /r /x *.txt /x *.pdb /x "mod_database.json" /x "state.json" /x "properties.json" /x "logs\*" "${__FILEDIR__}\..\ArmaReforgerServerTool\bin\Release\net8.0-windows\*.*"
 WriteUninstaller $INSTDIR\uninstall.exe
 CreateShortCut "$SMPROGRAMS\Longbow.lnk" "$INSTDIR\Longbow.exe"
 CreateShortCut "$SMPROGRAMS\Uninstall Longbow.lnk" "$INSTDIR\uninstall.exe"
