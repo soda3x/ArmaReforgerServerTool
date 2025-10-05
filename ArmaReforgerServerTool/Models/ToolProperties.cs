@@ -8,6 +8,7 @@
  ******************************************************************************/
 
 using Longbow.Models;
+using ReforgerServerApp.Utils;
 using Serilog;
 using Serilog.Events;
 using System.Text.Json;
@@ -58,7 +59,6 @@ namespace ReforgerServerApp.Models
         ];
 
     private static readonly string DEFAULT_MOD_DATABASE_FILE = "./mod_database.json";
-    private static readonly string DEFAULT_INSTALL_DIR_FILE = "./install_directory.txt";
     private static readonly string DEFAULT_UPDATE_REPOSITORY = "https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool";
     private static readonly string DEFAULT_RELEASES_REPOSITORY = "https://github.com/soda3x/ArmaReforgerServerTool/releases/latest";
     private static readonly string DEFAULT_BUG_REPORT_REPOSITORY = "https://github.com/soda3x/ArmaReforgerServerTool/issues";
@@ -71,7 +71,6 @@ namespace ReforgerServerApp.Models
 
     public List<Scenario> defaultScenarios { get; set; }
     public string modDatabaseFile { get; set; }
-    public string installDirectoryFile { get; set; }
     public string updateRepositoryUrl { get; set; }
     public string releaseRepositoryUrl { get; set; }
     public string bugReportUrl { get; set; }
@@ -97,13 +96,12 @@ namespace ReforgerServerApp.Models
     /// <param name="logFile"></param>
     /// <param name="minimumLogLevel"></param>
     /// <param name="autoRestartTime_ms"></param>
-    public ToolProperties(List<Scenario> defaultScenarios, string modDatabaseFile, string installDirectoryFile,
+    public ToolProperties(List<Scenario> defaultScenarios, string modDatabaseFile,
         string updateRepositoryUrl, string releaseRepositoryUrl, string bugReportUrl, bool checkForUpdatesOnStartup,
         string steamCmdDownloadUrl, string armaWorkshopUrl, string logFile, string minimumLogLevel, int autoRestartTime_ms)
     {
       this.defaultScenarios = defaultScenarios;
       this.modDatabaseFile = modDatabaseFile;
-      this.installDirectoryFile = installDirectoryFile;
       this.updateRepositoryUrl = updateRepositoryUrl;
       this.releaseRepositoryUrl = releaseRepositoryUrl;
       this.bugReportUrl = bugReportUrl;
@@ -116,7 +114,7 @@ namespace ReforgerServerApp.Models
     }
 
 
-    public static ToolProperties Default => new(DEFAULT_SCENARIOS, DEFAULT_MOD_DATABASE_FILE, DEFAULT_INSTALL_DIR_FILE,
+    public static ToolProperties Default => new(DEFAULT_SCENARIOS, DEFAULT_MOD_DATABASE_FILE,
         DEFAULT_UPDATE_REPOSITORY, DEFAULT_RELEASES_REPOSITORY, DEFAULT_BUG_REPORT_REPOSITORY, DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP,
         DEFAULT_STEAMCMD_DOWNLOAD_URL, DEFAULT_ARMA_WORKSHOP_URL, DEFAULT_LOG_FILE, DEFAULT_MINIMUM_LOG_LEVEL, DEFAULT_AUTO_RESTART_TIME_MS);
 

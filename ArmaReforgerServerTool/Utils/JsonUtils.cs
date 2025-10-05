@@ -12,6 +12,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using ReforgerServerApp.Models;
 using Longbow.Models;
+using Serilog;
 
 namespace ReforgerServerApp.Utils
 {
@@ -34,6 +35,59 @@ namespace ReforgerServerApp.Utils
       public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
       {
         // This method is intentionally left empty because we handle the writing logic in the Write method of the ModConverter.
+      }
+    }
+
+    /// <summary>
+    /// JSON Converter for converting a generic object into its primitive
+    /// </summary>
+    public class ObjectToPrimitiveConverter : JsonConverter<object>
+    {
+      public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+      {
+        // Check the token type of the current JSON value
+        switch (reader.TokenType)
+        {
+          case JsonTokenType.Number:
+            // If it's a number, try to get it as an int, then long, then double
+            if (reader.TryGetInt32(out int intValue))
+            {
+              return intValue;
+            }
+            if (reader.TryGetInt64(out long longValue))
+            {
+              return longValue;
+            }
+            // Fallback to double for floating-point numbers
+            return reader.GetDouble();
+
+          case JsonTokenType.String:
+            // If it's a string, just return it as a string
+            return reader.GetString();
+
+          case JsonTokenType.True:
+            return true;
+
+          case JsonTokenType.False:
+            return false;
+
+          default:
+            // Using JsonElement as a fallback for complex types like objects/arrays
+            return JsonElement.ParseValue(ref reader);
+        }
+      }
+
+      public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
+      {
+        if (value is int intValue)
+          writer.WriteNumberValue(intValue);
+        else if (value is double doubleValue)
+          writer.WriteNumberValue(doubleValue);
+        else if (value is string stringValue)
+          writer.WriteStringValue(stringValue);
+        else
+          Log.Debug($"ObjectToPrimitiveConverter - Serialising value, no specific handler defined for {value.GetType().Name}, falling back to default serialiser");
+          JsonSerializer.Serialize(writer, value, value.GetType(), options);
       }
     }
 
@@ -358,9 +412,6 @@ namespace ReforgerServerApp.Utils
               case "modDatabaseFile":
                 props.modDatabaseFile = reader.GetString();
                 break;
-              case "installDirectoryFile":
-                props.installDirectoryFile = reader.GetString();
-                break;
               case "updateRepositoryUrl":
                 props.updateRepositoryUrl = reader.GetString();
                 break;
@@ -400,11 +451,7 @@ namespace ReforgerServerApp.Utils
       {
         writer.WriteStartObject();
 
-        writer.WritePropertyName("defaultScenarios");
-        JsonSerializer.Serialize(writer, value.defaultScenarios, options);
-
         writer.WriteString("modDatabaseFile", value.modDatabaseFile);
-        writer.WriteString("installDirectoryFile", value.installDirectoryFile);
         writer.WriteString("updateRepositoryUrl", value.updateRepositoryUrl);
         writer.WriteString("releaseRepositoryUrl", value.releaseRepositoryUrl);
         writer.WriteString("bugReportUrl", value.bugReportUrl);
@@ -414,6 +461,71 @@ namespace ReforgerServerApp.Utils
         writer.WriteString("logFile", value.logFile);
         writer.WriteString("minimumLogLevel", value.minimumLogLevel);
         writer.WriteNumber("autoRestartTime_ms", value.autoRestartTime_ms);
+
+        writer.WritePropertyName("defaultScenarios");
+        JsonSerializer.Serialize(writer, value.defaultScenarios, options);
+
+        writer.WriteEndObject();
+      }
+    }
+
+    /// <summary>
+    /// JSON converter for the SavedState model. This allows default values to be used for missing keys,
+    /// providing safety when needing to add parameters and keeping old versions intact.
+    /// </summary>
+    public class SavedStateConverter : JsonConverter<SavedState>
+    {
+      public override SavedState? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+      {
+        if (reader.TokenType != JsonTokenType.StartObject)
+        {
+          throw new JsonException("Expected StartObject token");
+        }
+
+        SavedState props = SavedState.Default;
+
+        while (reader.Read())
+        {
+          if (reader.TokenType == JsonTokenType.EndObject)
+          {
+            return props;
+          }
+
+          if (reader.TokenType == JsonTokenType.PropertyName)
+          {
+            string propertyName = reader.GetString();
+            reader.Read(); // Move to the value token
+
+            switch (propertyName)
+            {
+              case "serverLocation":
+                props.ServerLocation = reader.GetString();
+                break;
+              case "advancedSettings":
+                List<AdvancedSetting> advSettingsList = JsonSerializer.Deserialize<AdvancedSetting[]>(ref reader, options)!.ToList();
+                Dictionary<string, AdvancedSetting> advancedSettings = new();
+                foreach (AdvancedSetting advSetting in advSettingsList)
+                {
+                  advancedSettings.Add(advSetting.Name, advSetting);
+                }
+                props.AdvancedSettings = advancedSettings;
+                break;
+              default:
+                throw new JsonException($"Unexpected property: {propertyName}");
+            }
+          }
+        }
+        throw new JsonException("Invalid JSON format for SavedState");
+      }
+
+      public override void Write(Utf8JsonWriter writer, SavedState value, JsonSerializerOptions options)
+      {
+        writer.WriteStartObject();
+
+        writer.WriteString("serverLocation", value.ServerLocation);
+        writer.WritePropertyName("advancedSettings");
+        List<AdvancedSetting> advSettingsList = value.AdvancedSettings.Values.ToList();
+        JsonSerializer.Serialize(writer, advSettingsList, options);
 
         writer.WriteEndObject();
       }
