@@ -15,6 +15,7 @@ using System.Net;
 using System.Reflection;
 using System.Text.Json;
 using Microsoft.Win32;
+using Longbow.Managers;
 
 namespace ReforgerServerApp.Managers
 {
@@ -42,10 +43,9 @@ namespace ReforgerServerApp.Managers
         ReadModsDatabase();
       }
 
-      if (File.Exists(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile))
+      if (SavedStateManager.GetInstance().GetSavedState().serverLocation != null)
       {
-        using StreamReader sr = File.OpenText(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile);
-        m_installDir = sr.ReadToEnd();
+        m_installDir = SavedStateManager.GetInstance().GetSavedState().serverLocation;
         m_steamCmdFile = $"{m_installDir}\\steamcmd\\steamcmd.exe";
       }
       else
@@ -112,6 +112,9 @@ namespace ReforgerServerApp.Managers
       ConfigurationManager.GetInstance().AlphabetiseModLists();
     }
 
+    /// <summary>
+    /// Save Enabled Mods List to JSON file
+    /// </summary>
     public static void SaveModsListToFile()
     {
       using System.Windows.Forms.SaveFileDialog sfd = new();
@@ -158,6 +161,16 @@ namespace ReforgerServerApp.Managers
           Utilities.DisplayErrorMessage("Failed to import mods list", $"Failed to import mods list, the mods list may be malformed.\r\n\r\n{je.Message}");
         }
       }
+    }
+
+    /// <summary>
+    /// Write the State file to disk
+    /// </summary>
+    public void WriteStateFile()
+    {
+      File.WriteAllText(
+        SavedStateManager.GetInstance().GetSavedStateFile(),
+        SavedStateManager.GetInstance().GetSavedState().AsJsonString());
     }
 
     /// <summary>
@@ -273,7 +286,7 @@ namespace ReforgerServerApp.Managers
         Log.Information("FileIOManager - Downloading SteamCMD to {path}...", fbd.SelectedPath);
         m_installDir = fbd.SelectedPath;
         m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
-        File.WriteAllText(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile, m_installDir);
+        SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
       }
 
       string steamCmdUrl = $"{ToolPropertiesManager.GetInstance().GetToolProperties().steamCmdDownloadUrl}/steamcmd.zip";
@@ -419,7 +432,7 @@ namespace ReforgerServerApp.Managers
       {
         Directory.Delete(m_installDir, true);
         m_installDir = string.Empty;
-        DeleteFile(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile);
+        DeleteFile(SavedStateManager.GetInstance().GetSavedState().serverLocation);
         MessageBox.Show("Server files deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         return !Directory.Exists(m_installDir);
       }
@@ -443,7 +456,7 @@ namespace ReforgerServerApp.Managers
         {
           m_installDir = fbd.SelectedPath;
           m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
-          File.WriteAllText(ToolPropertiesManager.GetInstance().GetToolProperties().installDirectoryFile, m_installDir);
+          SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
           return true;
         }
         else
