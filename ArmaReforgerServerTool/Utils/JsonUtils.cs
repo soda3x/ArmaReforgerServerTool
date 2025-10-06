@@ -39,55 +39,92 @@ namespace ReforgerServerApp.Utils
     }
 
     /// <summary>
-    /// JSON Converter for converting a generic object into its primitive
+    /// JSON Converter <c>AdvancedSetting</c>
     /// </summary>
-    public class ObjectToPrimitiveConverter : JsonConverter<object>
+    public class AdvancedSettingConverter : JsonConverter<AdvancedSetting>
     {
-      public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+      public override AdvancedSetting Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
       {
-        // Check the token type of the current JSON value
-        switch (reader.TokenType)
+        AdvancedSetting advSetting = new();
+
+        while (reader.Read())
         {
-          case JsonTokenType.Number:
-            // If it's a number, try to get it as an int, then long, then double
-            if (reader.TryGetInt32(out int intValue))
+          if (reader.TokenType == JsonTokenType.EndObject)
+          {
+            break;
+          }
+
+          if (reader.TokenType == JsonTokenType.PropertyName)
+          {
+            string propertyName = reader.GetString();
+            reader.Read();
+            switch (propertyName)
             {
-              return intValue;
+              case "enabled":
+                advSetting.Enabled = reader.GetBoolean();
+                break;
+              case "name":
+                advSetting.Name = reader.GetString();
+                break;
+              case "value":
+                // We need to switch on the value type as this can be either bool, number or string
+                switch (reader.TokenType)
+                {
+                  case JsonTokenType.Number:
+                    // First try and get an int
+                    if (reader.TryGetInt32(out int intValue))
+                    {
+                      advSetting.Value = intValue;
+                      break;
+                    }
+                    // If its not an int, try and get a long
+                    if (reader.TryGetInt64(out long longValue))
+                    {
+                      advSetting.Value = longValue;
+                      break;
+                    }
+                    // Else, must be floating point
+                    advSetting.Value = reader.GetDouble();
+                    break;
+                  case JsonTokenType.String:
+                    advSetting.Value = reader.GetString();
+                    break;
+                  case JsonTokenType.True:
+                  case JsonTokenType.False:
+                    advSetting.Value = reader.GetBoolean();
+                    break;
+                }
+                break;
             }
-            if (reader.TryGetInt64(out long longValue))
-            {
-              return longValue;
-            }
-            // Fallback to double for floating-point numbers
-            return reader.GetDouble();
-
-          case JsonTokenType.String:
-            // If it's a string, just return it as a string
-            return reader.GetString();
-
-          case JsonTokenType.True:
-            return true;
-
-          case JsonTokenType.False:
-            return false;
-
-          default:
-            // Using JsonElement as a fallback for complex types like objects/arrays
-            return JsonElement.ParseValue(ref reader);
+          }
         }
+        return advSetting;
       }
 
-      public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
+      public override void Write(Utf8JsonWriter writer, AdvancedSetting value, JsonSerializerOptions options)
       {
-        if (value is int intValue)
-          writer.WriteNumberValue(intValue);
-        else if (value is double doubleValue)
-          writer.WriteNumberValue(doubleValue);
-        else if (value is string stringValue)
-          writer.WriteStringValue(stringValue);
-        else
-          Log.Debug($"ObjectToPrimitiveConverter - Serialising value, no specific handler defined for {value.GetType().Name}, falling back to default serialiser");
-          JsonSerializer.Serialize(writer, value, value.GetType(), options);
+        writer.WriteStartObject();
+        writer.WriteString("name", value.Name);
+
+        if (value.Value is int intValue)
+        {
+          writer.WriteNumber("value", (decimal) intValue);
+        }
+        else if (value.Value is double doubleValue)
+        {
+          writer.WriteNumber("value", (decimal) doubleValue);
+        }   
+        else if (value.Value is string stringValue)
+        {
+          // Skip writing value if this parameter is a switch
+          if (!value.IsSwitch())
+          {
+            writer.WriteString("value", stringValue);
+          }
+        }
+          
+        writer.WriteBoolean("enabled", value.Enabled);
+        writer.WriteEndObject();
       }
     }
 
@@ -499,7 +536,7 @@ namespace ReforgerServerApp.Utils
             switch (propertyName)
             {
               case "serverLocation":
-                props.ServerLocation = reader.GetString();
+                props.serverLocation = reader.GetString();
                 break;
               case "advancedSettings":
                 List<AdvancedSetting> advSettingsList = JsonSerializer.Deserialize<AdvancedSetting[]>(ref reader, options)!.ToList();
@@ -508,7 +545,7 @@ namespace ReforgerServerApp.Utils
                 {
                   advancedSettings.Add(advSetting.Name, advSetting);
                 }
-                props.AdvancedSettings = advancedSettings;
+                props.advancedSettings = advancedSettings;
                 break;
               default:
                 throw new JsonException($"Unexpected property: {propertyName}");
@@ -522,9 +559,9 @@ namespace ReforgerServerApp.Utils
       {
         writer.WriteStartObject();
 
-        writer.WriteString("serverLocation", value.ServerLocation);
+        writer.WriteString("serverLocation", value.serverLocation);
         writer.WritePropertyName("advancedSettings");
-        List<AdvancedSetting> advSettingsList = value.AdvancedSettings.Values.ToList();
+        List<AdvancedSetting> advSettingsList = value.advancedSettings.Values.ToList();
         JsonSerializer.Serialize(writer, advSettingsList, options);
 
         writer.WriteEndObject();

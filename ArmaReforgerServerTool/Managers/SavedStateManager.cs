@@ -36,7 +36,7 @@ namespace Longbow.Managers
           using StreamReader sr = File.OpenText(m_savedStateFile);
           var savedState = sr.ReadToEnd();
           m_savedState = JsonSerializer.Deserialize<SavedState>(savedState)!;
-          Log.Information("ToolPropertiesManager - successfully loaded properties file.");
+          Log.Information("SavedStateManager - successfully loaded state file.");
         }
         catch (Exception)
         {
@@ -64,7 +64,7 @@ namespace Longbow.Managers
       return m_instance;
     }
 
-    public Dictionary<string, AdvancedSetting> GetLoadedAdvancedSettings() { return m_savedState.AdvancedSettings; }
+    public Dictionary<string, AdvancedSetting> GetLoadedAdvancedSettings() { return m_savedState.advancedSettings; }
     public string GetSavedStateFile() { return m_savedStateFile; }
     public SavedState GetSavedState() { return m_savedState; }
   }

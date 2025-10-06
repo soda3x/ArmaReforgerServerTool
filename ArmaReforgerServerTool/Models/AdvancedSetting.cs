@@ -12,10 +12,11 @@ using static ReforgerServerApp.Utils.JsonUtils;
 
 namespace Longbow.Models
 {
+  [JsonConverter(typeof(AdvancedSettingConverter))]
   internal class AdvancedSetting
   {
     public string Name { get; set; }
-    [JsonConverter(typeof(ObjectToPrimitiveConverter))]
+    
     public object Value { get; set; }
     public bool Enabled { get; set; }
 
