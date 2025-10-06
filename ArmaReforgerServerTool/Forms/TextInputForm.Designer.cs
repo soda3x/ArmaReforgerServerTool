@@ -1,4 +1,4 @@
-﻿namespace ReforgerServerApp
+namespace ReforgerServerApp
 {
     partial class TextInputForm
     {
@@ -62,6 +62,7 @@
       MinimumSize = new Size(640, 480);
       Name = "TextInputForm";
       ShowIcon = false;
+      StartPosition = FormStartPosition.CenterParent;
       Text = "Longbow - Text Input Form";
       ResumeLayout(false);
       PerformLayout();

@@ -1,4 +1,4 @@
-﻿using ReforgerServerApp.Components;
+using ReforgerServerApp.Components;
 
 namespace ReforgerServerApp
 {
@@ -100,6 +100,7 @@ namespace ReforgerServerApp
       MinimumSize = new Size(640, 480);
       Name = "ListForm";
       ShowIcon = false;
+      StartPosition = FormStartPosition.CenterParent;
       Text = "Longbow - ListForm";
       ResumeLayout(false);
       PerformLayout();
