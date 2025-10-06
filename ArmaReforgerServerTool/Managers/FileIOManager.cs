@@ -43,9 +43,9 @@ namespace ReforgerServerApp.Managers
         ReadModsDatabase();
       }
 
-      if (SavedStateManager.GetInstance().GetSavedState().ServerLocation != null)
+      if (SavedStateManager.GetInstance().GetSavedState().serverLocation != null)
       {
-        m_installDir = SavedStateManager.GetInstance().GetSavedState().ServerLocation;
+        m_installDir = SavedStateManager.GetInstance().GetSavedState().serverLocation;
         m_steamCmdFile = $"{m_installDir}\\steamcmd\\steamcmd.exe";
       }
       else
@@ -112,6 +112,9 @@ namespace ReforgerServerApp.Managers
       ConfigurationManager.GetInstance().AlphabetiseModLists();
     }
 
+    /// <summary>
+    /// Save Enabled Mods List to JSON file
+    /// </summary>
     public static void SaveModsListToFile()
     {
       using System.Windows.Forms.SaveFileDialog sfd = new();
@@ -283,7 +286,7 @@ namespace ReforgerServerApp.Managers
         Log.Information("FileIOManager - Downloading SteamCMD to {path}...", fbd.SelectedPath);
         m_installDir = fbd.SelectedPath;
         m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
-        SavedStateManager.GetInstance().GetSavedState().ServerLocation = m_installDir;
+        SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
       }
 
       string steamCmdUrl = $"{ToolPropertiesManager.GetInstance().GetToolProperties().steamCmdDownloadUrl}/steamcmd.zip";
@@ -429,7 +432,7 @@ namespace ReforgerServerApp.Managers
       {
         Directory.Delete(m_installDir, true);
         m_installDir = string.Empty;
-        DeleteFile(SavedStateManager.GetInstance().GetSavedState().ServerLocation);
+        DeleteFile(SavedStateManager.GetInstance().GetSavedState().serverLocation);
         MessageBox.Show("Server files deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         return !Directory.Exists(m_installDir);
       }
@@ -453,7 +456,7 @@ namespace ReforgerServerApp.Managers
         {
           m_installDir = fbd.SelectedPath;
           m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
-          SavedStateManager.GetInstance().GetSavedState().ServerLocation = m_installDir;
+          SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
           return true;
         }
         else

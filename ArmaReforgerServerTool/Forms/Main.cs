@@ -41,7 +41,7 @@ namespace ReforgerServerApp
       // Create tooltips
       CreateTooltips();
 
-      loadedScenarioLabel.Text = "No scenario ID chosen.";
+      loadedScenarioLabel.Text = "No scenario chosen.";
 
       UpdateSteamCmdInstallStatus();
 
@@ -911,7 +911,7 @@ namespace ReforgerServerApp
 
     void CreateAdvancedServerParameterControls()
     {
-      Dictionary<string, AdvancedSetting> loadedSettings = SavedStateManager.GetInstance().GetLoadedAdvancedSettings();
+      Dictionary<string, AdvancedSetting> loadedSettings = SavedStateManager.GetInstance().GetSavedState().advancedSettings;
 
       AdvancedServerParameterNumeric limitServerMaxFPS = new()
       {
@@ -1568,17 +1568,24 @@ namespace ReforgerServerApp
       foreach (AdvancedServerParameter param in advancedParametersPanel.Controls)
       {
         SavedState ss = SavedStateManager.GetInstance().GetSavedState();
-        if (ss.AdvancedSettings.ContainsKey(param.ParameterName))
+        if (ss.advancedSettings.ContainsKey(param.ParameterName))
         {
-          ss.AdvancedSettings[param.ParameterName].Enabled = param.CheckBox.Checked;
+          ss.advancedSettings[param.ParameterName].Enabled = param.CheckBox.Checked;
           if (param is AdvancedServerParameterEnumerated)
           {
             AdvancedServerParameterEnumerated enumParam = (AdvancedServerParameterEnumerated) param;
-            ss.AdvancedSettings[param.ParameterName].Value = enumParam.SelectedItem;
+            ss.advancedSettings[param.ParameterName].Value = enumParam.SelectedItem;
           }
           else
           {
-            ss.AdvancedSettings[param.ParameterName].Value = param.ParameterValue;
+            if (param is AdvancedServerParameterNumeric)
+            {
+              ss.advancedSettings[param.ParameterName].Value = Convert.ToInt32(param.ParameterValue);
+            }
+            else if (param is AdvancedServerParameterString)
+            {
+              ss.advancedSettings[param.ParameterName].Value = param.ParameterValue;
+            }
           }
         }
       }
@@ -1592,6 +1599,11 @@ namespace ReforgerServerApp
     private void OnFormClosing(object sender, FormClosingEventArgs e)
     {
       UpdateStateForAdvancedSettings();
+
+      // Update state of UPnp and Experimental
+      SavedStateManager.GetInstance().GetSavedState().advancedSettings["useUpnp"].Enabled = useUpnp.Checked;
+      SavedStateManager.GetInstance().GetSavedState().advancedSettings["useExperimental"].Enabled = useExperimentalCheckBox.Checked;
+
       FileIOManager.GetInstance().WriteStateFile();
       FileIOManager.GetInstance().WriteModsDatabase();
     }

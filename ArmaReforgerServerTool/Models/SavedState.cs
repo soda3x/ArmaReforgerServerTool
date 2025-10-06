@@ -10,9 +10,12 @@
 
 using ReforgerServerApp.Utils;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using static ReforgerServerApp.Utils.JsonUtils;
 
 namespace Longbow.Models
 {
+  [JsonConverter(typeof(SavedStateConverter))]
   internal class SavedState
   {
     // Default Advanced Server Parameters
@@ -43,16 +46,16 @@ namespace Longbow.Models
     private static readonly AdvancedSetting DEFAULT_JOB_SYS_SHORT_WORKER_COUNT = new("jobsysShortWorkerCount", Utilities.GetNumberAvailableThreads(), false);
     private static readonly AdvancedSetting DEFAULT_JOB_SYS_LONG_WORKER_COUNT = new("jobsysLongWorkerCount", Utilities.GetNumberAvailableThreads() / 2, false);
     private static readonly AdvancedSetting DEFAULT_FREEZE_CHECK = new("freezeCheck", 300, false);
-    private static readonly AdvancedSetting DEFAULT_FREEZE_CHECK_MODE = new("freezeCheckMode", "crash", false);
+    private static readonly AdvancedSetting DEFAULT_FREEZE_CHECK_MODE = new("freezeCheckMode", "minidump", false);
     private static readonly AdvancedSetting DEFAULT_FORCE_DISABLE_NIGHT_GRAIN = new("forceDisableNightGrain", false);
 
-    public Dictionary<string, AdvancedSetting> AdvancedSettings { get; set; }
-    public string ServerLocation { get; set; }
+    public Dictionary<string, AdvancedSetting> advancedSettings { get; set; }
+    public string serverLocation { get; set; }
 
     public SavedState(Dictionary<string, AdvancedSetting> advancedSettings, string serverLocation)
     {
-      AdvancedSettings = advancedSettings;
-      ServerLocation = serverLocation;
+      this.advancedSettings = advancedSettings;
+      this.serverLocation = serverLocation;
     }
 
     public static SavedState Default => new(GetDefaultAdvancedSettings(), string.Empty);
@@ -66,6 +69,10 @@ namespace Longbow.Models
       return JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
     }
 
+    /// <summary>
+    /// Create a default Advanced Settings dictionary
+    /// </summary>
+    /// <returns>Advanced Settings dictionary containing defaults</returns>
     private static Dictionary<string, AdvancedSetting> GetDefaultAdvancedSettings()
     {
       Dictionary<string, AdvancedSetting> advancedSettings = new();
