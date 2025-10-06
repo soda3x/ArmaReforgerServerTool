@@ -14,6 +14,7 @@ using ReforgerServerApp.Components;
 using ReforgerServerApp.Utils;
 using Longbow.Models;
 using Longbow.Managers;
+using Longbow.Forms;
 
 namespace ReforgerServerApp
 {
@@ -122,6 +123,7 @@ namespace ReforgerServerApp
           downloadSteamCmdBtn.Enabled = false;
           startServerBtn.Enabled = true;
           deleteServerFilesBtn.Enabled = true;
+          loadSaveGameBtn.Enabled = true;
         }
         else
         {
@@ -129,6 +131,7 @@ namespace ReforgerServerApp
           startServerBtn.Enabled = false;
           downloadSteamCmdBtn.Enabled = true;
           deleteServerFilesBtn.Enabled = false;
+          loadSaveGameBtn.Enabled = false;
         }
       }
     }
@@ -518,6 +521,12 @@ namespace ReforgerServerApp
     {
       ScenarioSelector scenarioSelector = new(this);
       scenarioSelector.ShowDialog();
+    }
+
+    private void SpawnSaveSelect()
+    {
+      SaveSelector saveSelector = new();
+      saveSelector.ShowDialog();
     }
 
     private void EditMissionHeaderBtnClicked(object sender, EventArgs e)
@@ -936,21 +945,6 @@ namespace ReforgerServerApp
         ParameterValue = DateTime.Today
       };
       advancedParametersPanel.Controls.Add(autoRestartTime);
-
-      AdvancedServerParameterString loadSessionSave = new()
-      {
-        ParameterName = "loadSessionSave",
-        ParameterFriendlyName = "Load Session Save",
-        Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
-        ParameterPlaceholder = "Using latest save..."
-      };
-      bool loadSessionSavedEnabled = loadedSettings["loadSessionSave"].Enabled;
-      loadSessionSave.CheckBox.Checked = loadSessionSavedEnabled;
-      if (loadSessionSavedEnabled)
-      {
-        loadSessionSave.ParameterValue = loadedSettings["loadSessionSave"].Value;
-      }
-      advancedParametersPanel.Controls.Add(loadSessionSave);
 
       AdvancedServerParameterBool addonsRepair = new()
       {
@@ -1392,20 +1386,6 @@ namespace ReforgerServerApp
         args.streamsDelta = new("streamsDelta", Convert.ToString(advParams["streamsDelta"].ParameterValue));
       }
 
-      if (advParams["loadSessionSave"].Checked())
-      {
-        // As no parameter is also valid, check if there is a value
-        string loadSessionSaveVal = Convert.ToString(advParams["loadSessionSave"].ParameterValue);
-        if (String.IsNullOrWhiteSpace(loadSessionSaveVal))
-        {
-          args.loadSessionSave = new("loadSessionSave");
-        }
-        else
-        {
-          args.loadSessionSave = new("loadSessionSave", loadSessionSaveVal);
-        }
-      }
-
       if (advParams["autoreload"].Checked())
       {
         args.autoReload = new("autoreload", Convert.ToString(advParams["autoreload"].ParameterValue));
@@ -1606,6 +1586,11 @@ namespace ReforgerServerApp
 
       FileIOManager.GetInstance().WriteStateFile();
       FileIOManager.GetInstance().WriteModsDatabase();
+    }
+
+    private void LoadSaveGameBtnPressed(object sender, EventArgs e)
+    {
+      SpawnSaveSelect();
     }
   }
 }
