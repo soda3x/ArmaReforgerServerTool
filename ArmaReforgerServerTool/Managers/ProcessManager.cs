@@ -504,6 +504,19 @@ namespace ReforgerServerApp.Managers
     /// <returns>String representation of Launch Arguments</returns>
     public string GetLaunchArguments()
     {
+      // Check if we should be loading a save game and if so, add -loadSessionSave
+      if (ConfigurationManager.GetInstance().usingSave)
+      {
+        // Default to switch style launch argument to load latest
+        m_launchArgumentsModel.loadSessionSave = new("loadSessionSave");
+        // Now check if we're using a specific save instead
+        if (!ConfigurationManager.GetInstance().save.Equals(".LatestSave"))
+        {
+          // Need to wrap the save name in quotes as the tool allows for spaces
+          m_launchArgumentsModel.loadSessionSave = new("loadSessionSave", $"\"{ConfigurationManager.GetInstance().save}\"");
+        }
+      }
+
       string args = string.Join(" ", new[] {
                                                m_launchArgumentsModel.profile,
                                                m_launchArgumentsModel.addonsDir,
