@@ -1,4 +1,4 @@
-﻿namespace ReforgerServerApp
+namespace ReforgerServerApp
 {
     partial class AddModDialog
     {
@@ -42,7 +42,7 @@
       // 
       // modName
       // 
-      modName.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+      modName.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
       modName.Location = new Point(117, 12);
       modName.Name = "modName";
       modName.Size = new Size(355, 23);
@@ -51,7 +51,7 @@
       // label1
       // 
       label1.AutoSize = true;
-      label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+      label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
       label1.Location = new Point(8, 14);
       label1.Name = "label1";
       label1.Size = new Size(92, 21);
@@ -61,7 +61,7 @@
       // label2
       // 
       label2.AutoSize = true;
-      label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+      label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
       label2.Location = new Point(8, 43);
       label2.Name = "label2";
       label2.Size = new Size(65, 21);
@@ -70,7 +70,7 @@
       // 
       // modId
       // 
-      modId.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+      modId.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
       modId.Location = new Point(117, 41);
       modId.Name = "modId";
       modId.Size = new Size(355, 23);
@@ -99,7 +99,7 @@
       // label3
       // 
       label3.AutoSize = true;
-      label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+      label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
       label3.Location = new Point(8, 72);
       label3.Name = "label3";
       label3.Size = new Size(103, 21);
@@ -108,7 +108,7 @@
       // 
       // modVers
       // 
-      modVers.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point);
+      modVers.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
       modVers.Location = new Point(117, 70);
       modVers.Name = "modVers";
       modVers.PlaceholderText = "Latest";
@@ -118,7 +118,7 @@
       // requiredLabel
       // 
       requiredLabel.AutoSize = true;
-      requiredLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
+      requiredLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
       requiredLabel.Location = new Point(273, 72);
       requiredLabel.Name = "requiredLabel";
       requiredLabel.Size = new Size(77, 21);
@@ -154,6 +154,7 @@
       MinimumSize = new Size(500, 180);
       Name = "AddModDialog";
       SizeGripStyle = SizeGripStyle.Hide;
+      StartPosition = FormStartPosition.CenterParent;
       Text = "Longbow - Add Mod";
       ResumeLayout(false);
       PerformLayout();
