@@ -18,10 +18,14 @@ namespace Longbow.Forms
     public SaveSelector()
     {
       InitializeComponent();
-      CreateToolTips();
+      m_savedGames = new();
       RefreshSavedGamesList();
+      UpdateSaveLabel();
     }
 
+    /// <summary>
+    /// Utility method for reloading the saved games list
+    /// </summary>
     private void RefreshSavedGamesList()
     {
       m_savedGames = FileIOManager.GetInstance().GetSavedGames();
@@ -30,21 +34,6 @@ namespace Longbow.Forms
       {
         savedGamesList.Items.Add(save);
       }
-    }
-
-    private void CreateToolTips()
-    {
-      ToolTip keepToolTip = new();
-      keepToolTip.SetToolTip(keepPermanentlyBtn, "Keep Selected Autosave");
-
-      ToolTip renameToolTip = new();
-      renameToolTip.SetToolTip(renameSaveBtn, "Rename Selected Save");
-
-      ToolTip deleteToolTip = new();
-      deleteToolTip.SetToolTip(deleteSaveBtn, "Delete Selected Save");
-
-      ToolTip useSaveToolTip = new();
-      useSaveToolTip.SetToolTip(loadSelectedSaveBtn, "Load Selected Save");
     }
 
     /// <summary>
@@ -65,6 +54,24 @@ namespace Longbow.Forms
       }
     }
 
+    /// <summary>
+    /// Update the label stating which save is loaded
+    /// </summary>
+    private void UpdateSaveLabel()
+    {
+      if (ConfigurationManager.GetInstance().usingSave)
+      {
+        if (ConfigurationManager.GetInstance().save.Equals(".LatestSave"))
+        {
+          loadedSaveLabel.Text = $"Using latest save.";
+          return;
+        }
+        loadedSaveLabel.Text = $"Loaded save: {ConfigurationManager.GetInstance().save}";
+        return;
+      }
+      loadedSaveLabel.Text = "No save loaded. Your server will not use a save.";
+    }
+
     private void SavedGamesListSelectedIndexChanged(object sender, EventArgs e)
     {
       ToggleButtonStates(savedGamesList.SelectedItem);
@@ -72,7 +79,7 @@ namespace Longbow.Forms
 
     private void KeepBtnPressed(object sender, EventArgs e)
     {
-      string origNameKey = (string) savedGamesList.SelectedItem;
+      string origNameKey = (string) savedGamesList.SelectedItem!;
       string origName = m_savedGames[origNameKey];
       string newName = origName.Replace(".auto", "");
       FileIOManager.GetInstance().RenameFile(origName, newName);
@@ -110,7 +117,7 @@ namespace Longbow.Forms
     {
       ConfigurationManager.GetInstance().save = (string) savedGamesList.SelectedItem!;
       ConfigurationManager.GetInstance().usingSave = true;
-      loadedSaveLabel.Text = $"Loaded save: {ConfigurationManager.GetInstance().save}";
+      UpdateSaveLabel();
       ToggleButtonStates(savedGamesList.SelectedItem);
     }
 
@@ -118,14 +125,14 @@ namespace Longbow.Forms
     {
       ConfigurationManager.GetInstance().save = ".LatestSave";
       ConfigurationManager.GetInstance().usingSave = true;
-      loadedSaveLabel.Text = $"Using latest save.";
+      UpdateSaveLabel();
       ToggleButtonStates(savedGamesList.SelectedItem);
     }
 
     private void ClearSaveBtnPressed(object sender, EventArgs e)
     {
       ConfigurationManager.GetInstance().usingSave = false;
-      loadedSaveLabel.Text = "No save loaded. Your server will not use a save.";
+      UpdateSaveLabel();
       ToggleButtonStates(savedGamesList.SelectedItem);
     }
   }
