@@ -1,4 +1,4 @@
-﻿namespace ReforgerServerApp
+namespace ReforgerServerApp
 {
     partial class AboutBox
     {
@@ -37,7 +37,7 @@
       // 
       aboutText.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       aboutText.AutoSize = true;
-      aboutText.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+      aboutText.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
       aboutText.Location = new Point(12, 9);
       aboutText.Name = "aboutText";
       aboutText.Size = new Size(74, 17);
@@ -78,6 +78,7 @@
       MinimumSize = new Size(450, 180);
       Name = "AboutBox";
       ShowIcon = false;
+      StartPosition = FormStartPosition.CenterParent;
       Text = "Longbow - About";
       ResumeLayout(false);
       PerformLayout();

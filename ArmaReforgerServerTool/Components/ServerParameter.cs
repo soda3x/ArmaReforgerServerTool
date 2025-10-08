@@ -47,7 +47,7 @@ namespace ReforgerServerApp
 
     public string ParameterTooltip
     {
-      set { toolTip.SetToolTip(parameterName, value); toolTip.SetToolTip(underlyingControl, value); toolTip.SetToolTip(this, value); }
+      set { toolTip.SetToolTip(parameterName, value); toolTip.SetToolTip(underlyingControl, value); }
     }
 
     public void SetFieldEnabled(bool fieldEnabled)
