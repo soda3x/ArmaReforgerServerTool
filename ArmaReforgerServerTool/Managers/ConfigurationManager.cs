@@ -22,6 +22,7 @@ namespace ReforgerServerApp
   internal class ScenarioIdEventArgs : EventArgs
   {
     public string scenarioId;
+
     public ScenarioIdEventArgs(string scenarioId) { this.scenarioId = scenarioId; }
   }
 
@@ -40,6 +41,8 @@ namespace ReforgerServerApp
     public bool autoRestartOnCrash { get; set; }
     public bool useExperimentalServer { get; set; }
     public bool noBackend { get; set; }
+    public bool usingSave { get; set; }
+    public string save { get; set; }
 
     public delegate void UpdateScenarioIdFromLoadedConfig(object sender, ScenarioIdEventArgs e);
     public event UpdateScenarioIdFromLoadedConfig UpdateScenarioIdFromLoadedConfigEvent;

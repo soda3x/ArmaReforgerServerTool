@@ -12,6 +12,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using ReforgerServerApp.Models;
 using Longbow.Models;
+using Serilog;
 
 namespace ReforgerServerApp.Utils
 {
@@ -34,6 +35,96 @@ namespace ReforgerServerApp.Utils
       public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
       {
         // This method is intentionally left empty because we handle the writing logic in the Write method of the ModConverter.
+      }
+    }
+
+    /// <summary>
+    /// JSON Converter <c>AdvancedSetting</c>
+    /// </summary>
+    public class AdvancedSettingConverter : JsonConverter<AdvancedSetting>
+    {
+      public override AdvancedSetting Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+      {
+        AdvancedSetting advSetting = new();
+
+        while (reader.Read())
+        {
+          if (reader.TokenType == JsonTokenType.EndObject)
+          {
+            break;
+          }
+
+          if (reader.TokenType == JsonTokenType.PropertyName)
+          {
+            string propertyName = reader.GetString();
+            reader.Read();
+            switch (propertyName)
+            {
+              case "enabled":
+                advSetting.Enabled = reader.GetBoolean();
+                break;
+              case "name":
+                advSetting.Name = reader.GetString();
+                break;
+              case "value":
+                // We need to switch on the value type as this can be either bool, number or string
+                switch (reader.TokenType)
+                {
+                  case JsonTokenType.Number:
+                    // First try and get an int
+                    if (reader.TryGetInt32(out int intValue))
+                    {
+                      advSetting.Value = intValue;
+                      break;
+                    }
+                    // If its not an int, try and get a long
+                    if (reader.TryGetInt64(out long longValue))
+                    {
+                      advSetting.Value = longValue;
+                      break;
+                    }
+                    // Else, must be floating point
+                    advSetting.Value = reader.GetDouble();
+                    break;
+                  case JsonTokenType.String:
+                    advSetting.Value = reader.GetString();
+                    break;
+                  case JsonTokenType.True:
+                  case JsonTokenType.False:
+                    advSetting.Value = reader.GetBoolean();
+                    break;
+                }
+                break;
+            }
+          }
+        }
+        return advSetting;
+      }
+
+      public override void Write(Utf8JsonWriter writer, AdvancedSetting value, JsonSerializerOptions options)
+      {
+        writer.WriteStartObject();
+        writer.WriteString("name", value.Name);
+
+        if (value.Value is int intValue)
+        {
+          writer.WriteNumber("value", (decimal) intValue);
+        }
+        else if (value.Value is double doubleValue)
+        {
+          writer.WriteNumber("value", (decimal) doubleValue);
+        }   
+        else if (value.Value is string stringValue)
+        {
+          // Skip writing value if this parameter is a switch
+          if (!value.IsSwitch())
+          {
+            writer.WriteString("value", stringValue);
+          }
+        }
+          
+        writer.WriteBoolean("enabled", value.Enabled);
+        writer.WriteEndObject();
       }
     }
 
@@ -358,9 +449,6 @@ namespace ReforgerServerApp.Utils
               case "modDatabaseFile":
                 props.modDatabaseFile = reader.GetString();
                 break;
-              case "installDirectoryFile":
-                props.installDirectoryFile = reader.GetString();
-                break;
               case "updateRepositoryUrl":
                 props.updateRepositoryUrl = reader.GetString();
                 break;
@@ -400,11 +488,7 @@ namespace ReforgerServerApp.Utils
       {
         writer.WriteStartObject();
 
-        writer.WritePropertyName("defaultScenarios");
-        JsonSerializer.Serialize(writer, value.defaultScenarios, options);
-
         writer.WriteString("modDatabaseFile", value.modDatabaseFile);
-        writer.WriteString("installDirectoryFile", value.installDirectoryFile);
         writer.WriteString("updateRepositoryUrl", value.updateRepositoryUrl);
         writer.WriteString("releaseRepositoryUrl", value.releaseRepositoryUrl);
         writer.WriteString("bugReportUrl", value.bugReportUrl);
@@ -414,6 +498,71 @@ namespace ReforgerServerApp.Utils
         writer.WriteString("logFile", value.logFile);
         writer.WriteString("minimumLogLevel", value.minimumLogLevel);
         writer.WriteNumber("autoRestartTime_ms", value.autoRestartTime_ms);
+
+        writer.WritePropertyName("defaultScenarios");
+        JsonSerializer.Serialize(writer, value.defaultScenarios, options);
+
+        writer.WriteEndObject();
+      }
+    }
+
+    /// <summary>
+    /// JSON converter for the SavedState model. This allows default values to be used for missing keys,
+    /// providing safety when needing to add parameters and keeping old versions intact.
+    /// </summary>
+    public class SavedStateConverter : JsonConverter<SavedState>
+    {
+      public override SavedState? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+      {
+        if (reader.TokenType != JsonTokenType.StartObject)
+        {
+          throw new JsonException("Expected StartObject token");
+        }
+
+        SavedState props = SavedState.Default;
+
+        while (reader.Read())
+        {
+          if (reader.TokenType == JsonTokenType.EndObject)
+          {
+            return props;
+          }
+
+          if (reader.TokenType == JsonTokenType.PropertyName)
+          {
+            string propertyName = reader.GetString();
+            reader.Read(); // Move to the value token
+
+            switch (propertyName)
+            {
+              case "serverLocation":
+                props.serverLocation = reader.GetString();
+                break;
+              case "advancedSettings":
+                List<AdvancedSetting> advSettingsList = JsonSerializer.Deserialize<AdvancedSetting[]>(ref reader, options)!.ToList();
+                Dictionary<string, AdvancedSetting> advancedSettings = new();
+                foreach (AdvancedSetting advSetting in advSettingsList)
+                {
+                  advancedSettings.Add(advSetting.Name, advSetting);
+                }
+                props.advancedSettings = advancedSettings;
+                break;
+              default:
+                throw new JsonException($"Unexpected property: {propertyName}");
+            }
+          }
+        }
+        throw new JsonException("Invalid JSON format for SavedState");
+      }
+
+      public override void Write(Utf8JsonWriter writer, SavedState value, JsonSerializerOptions options)
+      {
+        writer.WriteStartObject();
+
+        writer.WriteString("serverLocation", value.serverLocation);
+        writer.WritePropertyName("advancedSettings");
+        List<AdvancedSetting> advSettingsList = value.advancedSettings.Values.ToList();
+        JsonSerializer.Serialize(writer, advSettingsList, options);
 
         writer.WriteEndObject();
       }

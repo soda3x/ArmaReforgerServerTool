@@ -33,6 +33,9 @@ namespace ReforgerServerApp
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
       tabControl1 = new TabControl();
       tabPage1 = new TabPage();
+      tableLayoutPanel6 = new TableLayoutPanel();
+      loadSettingsBtn = new FontAwesome.Sharp.IconButton();
+      saveSettingsBtn = new FontAwesome.Sharp.IconButton();
       serverRunningLabel = new Label();
       groupBox2 = new GroupBox();
       tableLayoutPanel3 = new TableLayoutPanel();
@@ -55,13 +58,13 @@ namespace ReforgerServerApp
       enabledMods = new BoundListBox();
       availableMods = new BoundListBox();
       groupBox1 = new GroupBox();
-      serverParameters = new FlowLayoutPanel();
-      editMissionHeaderBtn = new FontAwesome.Sharp.IconButton();
-      loadedScenarioLabel = new Label();
+      tableLayoutPanel5 = new TableLayoutPanel();
       scenarioSelectBtn = new FontAwesome.Sharp.IconButton();
+      loadSaveGameBtn = new FontAwesome.Sharp.IconButton();
+      editMissionHeaderBtn = new FontAwesome.Sharp.IconButton();
+      serverParameters = new FlowLayoutPanel();
+      loadedScenarioLabel = new Label();
       pictureBox1 = new PictureBox();
-      saveSettingsBtn = new FontAwesome.Sharp.IconButton();
-      loadSettingsBtn = new FontAwesome.Sharp.IconButton();
       tabPage2 = new TabPage();
       tableLayoutPanel4 = new TableLayoutPanel();
       startServerBtn = new FontAwesome.Sharp.IconButton();
@@ -81,11 +84,13 @@ namespace ReforgerServerApp
       steamCmdAlert = new Label();
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
+      tableLayoutPanel6.SuspendLayout();
       groupBox2.SuspendLayout();
       tableLayoutPanel3.SuspendLayout();
       tableLayoutPanel2.SuspendLayout();
       tableLayoutPanel1.SuspendLayout();
       groupBox1.SuspendLayout();
+      tableLayoutPanel5.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize) pictureBox1).BeginInit();
       tabPage2.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
@@ -106,11 +111,10 @@ namespace ReforgerServerApp
       // 
       // tabPage1
       // 
+      tabPage1.Controls.Add(tableLayoutPanel6);
       tabPage1.Controls.Add(serverRunningLabel);
       tabPage1.Controls.Add(groupBox2);
       tabPage1.Controls.Add(groupBox1);
-      tabPage1.Controls.Add(saveSettingsBtn);
-      tabPage1.Controls.Add(loadSettingsBtn);
       tabPage1.Location = new Point(4, 24);
       tabPage1.Name = "tabPage1";
       tabPage1.Padding = new Padding(3);
@@ -118,6 +122,57 @@ namespace ReforgerServerApp
       tabPage1.TabIndex = 0;
       tabPage1.Text = "Server Configuration";
       tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // tableLayoutPanel6
+      // 
+      tableLayoutPanel6.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
+      tableLayoutPanel6.ColumnCount = 2;
+      tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel6.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+      tableLayoutPanel6.Controls.Add(loadSettingsBtn, 0, 0);
+      tableLayoutPanel6.Controls.Add(saveSettingsBtn, 1, 0);
+      tableLayoutPanel6.Location = new Point(1305, 721);
+      tableLayoutPanel6.Name = "tableLayoutPanel6";
+      tableLayoutPanel6.RowCount = 1;
+      tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+      tableLayoutPanel6.Size = new Size(200, 23);
+      tableLayoutPanel6.TabIndex = 51;
+      // 
+      // loadSettingsBtn
+      // 
+      loadSettingsBtn.Dock = DockStyle.Fill;
+      loadSettingsBtn.IconChar = FontAwesome.Sharp.IconChar.Upload;
+      loadSettingsBtn.IconColor = Color.Black;
+      loadSettingsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      loadSettingsBtn.IconSize = 16;
+      loadSettingsBtn.ImageAlign = ContentAlignment.MiddleLeft;
+      loadSettingsBtn.Location = new Point(0, 0);
+      loadSettingsBtn.Margin = new Padding(0);
+      loadSettingsBtn.Name = "loadSettingsBtn";
+      loadSettingsBtn.Size = new Size(100, 23);
+      loadSettingsBtn.TabIndex = 1;
+      loadSettingsBtn.Text = "Load Config";
+      loadSettingsBtn.TextAlign = ContentAlignment.MiddleRight;
+      loadSettingsBtn.UseVisualStyleBackColor = true;
+      loadSettingsBtn.Click += LoadSettingsFromFileBtnPressed;
+      // 
+      // saveSettingsBtn
+      // 
+      saveSettingsBtn.Dock = DockStyle.Fill;
+      saveSettingsBtn.IconChar = FontAwesome.Sharp.IconChar.Download;
+      saveSettingsBtn.IconColor = Color.Black;
+      saveSettingsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      saveSettingsBtn.IconSize = 16;
+      saveSettingsBtn.ImageAlign = ContentAlignment.MiddleLeft;
+      saveSettingsBtn.Location = new Point(100, 0);
+      saveSettingsBtn.Margin = new Padding(0);
+      saveSettingsBtn.Name = "saveSettingsBtn";
+      saveSettingsBtn.Size = new Size(100, 23);
+      saveSettingsBtn.TabIndex = 2;
+      saveSettingsBtn.Text = "Save Config";
+      saveSettingsBtn.TextAlign = ContentAlignment.MiddleRight;
+      saveSettingsBtn.UseVisualStyleBackColor = true;
+      saveSettingsBtn.Click += SaveSettingsToFileBtnPressed;
       // 
       // serverRunningLabel
       // 
@@ -427,10 +482,9 @@ namespace ReforgerServerApp
       // groupBox1
       // 
       groupBox1.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      groupBox1.Controls.Add(tableLayoutPanel5);
       groupBox1.Controls.Add(serverParameters);
-      groupBox1.Controls.Add(editMissionHeaderBtn);
       groupBox1.Controls.Add(loadedScenarioLabel);
-      groupBox1.Controls.Add(scenarioSelectBtn);
       groupBox1.Controls.Add(pictureBox1);
       groupBox1.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
       groupBox1.Location = new Point(648, 6);
@@ -439,6 +493,79 @@ namespace ReforgerServerApp
       groupBox1.TabIndex = 46;
       groupBox1.TabStop = false;
       groupBox1.Text = "Server Settings";
+      // 
+      // tableLayoutPanel5
+      // 
+      tableLayoutPanel5.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      tableLayoutPanel5.ColumnCount = 4;
+      tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel5.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel5.Controls.Add(scenarioSelectBtn, 0, 0);
+      tableLayoutPanel5.Controls.Add(loadSaveGameBtn, 2, 0);
+      tableLayoutPanel5.Controls.Add(editMissionHeaderBtn, 1, 0);
+      tableLayoutPanel5.Location = new Point(6, 650);
+      tableLayoutPanel5.Name = "tableLayoutPanel5";
+      tableLayoutPanel5.RowCount = 1;
+      tableLayoutPanel5.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel5.Size = new Size(518, 23);
+      tableLayoutPanel5.TabIndex = 92;
+      // 
+      // scenarioSelectBtn
+      // 
+      scenarioSelectBtn.Dock = DockStyle.Fill;
+      scenarioSelectBtn.IconChar = FontAwesome.Sharp.IconChar.Map;
+      scenarioSelectBtn.IconColor = Color.Black;
+      scenarioSelectBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      scenarioSelectBtn.IconSize = 24;
+      scenarioSelectBtn.ImageAlign = ContentAlignment.MiddleLeft;
+      scenarioSelectBtn.Location = new Point(0, 0);
+      scenarioSelectBtn.Margin = new Padding(0);
+      scenarioSelectBtn.Name = "scenarioSelectBtn";
+      scenarioSelectBtn.Size = new Size(129, 23);
+      scenarioSelectBtn.TabIndex = 82;
+      scenarioSelectBtn.Text = "Select Scenario";
+      scenarioSelectBtn.TextAlign = ContentAlignment.MiddleRight;
+      scenarioSelectBtn.UseVisualStyleBackColor = true;
+      scenarioSelectBtn.Click += ScenarioSelectBtnClicked;
+      // 
+      // loadSaveGameBtn
+      // 
+      loadSaveGameBtn.Dock = DockStyle.Fill;
+      loadSaveGameBtn.Enabled = false;
+      loadSaveGameBtn.IconChar = FontAwesome.Sharp.IconChar.Save;
+      loadSaveGameBtn.IconColor = Color.Black;
+      loadSaveGameBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      loadSaveGameBtn.IconSize = 16;
+      loadSaveGameBtn.ImageAlign = ContentAlignment.MiddleLeft;
+      loadSaveGameBtn.Location = new Point(258, 0);
+      loadSaveGameBtn.Margin = new Padding(0);
+      loadSaveGameBtn.Name = "loadSaveGameBtn";
+      loadSaveGameBtn.Size = new Size(129, 23);
+      loadSaveGameBtn.TabIndex = 91;
+      loadSaveGameBtn.Text = "Save Manager";
+      loadSaveGameBtn.TextAlign = ContentAlignment.MiddleRight;
+      loadSaveGameBtn.UseVisualStyleBackColor = true;
+      loadSaveGameBtn.Click += LoadSaveGameBtnPressed;
+      // 
+      // editMissionHeaderBtn
+      // 
+      editMissionHeaderBtn.Dock = DockStyle.Fill;
+      editMissionHeaderBtn.IconChar = FontAwesome.Sharp.IconChar.Header;
+      editMissionHeaderBtn.IconColor = Color.Black;
+      editMissionHeaderBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      editMissionHeaderBtn.IconSize = 16;
+      editMissionHeaderBtn.ImageAlign = ContentAlignment.MiddleLeft;
+      editMissionHeaderBtn.Location = new Point(129, 0);
+      editMissionHeaderBtn.Margin = new Padding(0);
+      editMissionHeaderBtn.Name = "editMissionHeaderBtn";
+      editMissionHeaderBtn.Size = new Size(129, 23);
+      editMissionHeaderBtn.TabIndex = 85;
+      editMissionHeaderBtn.Text = "Mission Header";
+      editMissionHeaderBtn.TextAlign = ContentAlignment.MiddleRight;
+      editMissionHeaderBtn.UseVisualStyleBackColor = true;
+      editMissionHeaderBtn.Click += EditMissionHeaderBtnClicked;
       // 
       // serverParameters
       // 
@@ -451,51 +578,17 @@ namespace ReforgerServerApp
       serverParameters.Size = new Size(845, 423);
       serverParameters.TabIndex = 90;
       // 
-      // editMissionHeaderBtn
-      // 
-      editMissionHeaderBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
-      editMissionHeaderBtn.IconChar = FontAwesome.Sharp.IconChar.Header;
-      editMissionHeaderBtn.IconColor = Color.Black;
-      editMissionHeaderBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
-      editMissionHeaderBtn.IconSize = 16;
-      editMissionHeaderBtn.ImageAlign = ContentAlignment.MiddleLeft;
-      editMissionHeaderBtn.Location = new Point(134, 650);
-      editMissionHeaderBtn.Name = "editMissionHeaderBtn";
-      editMissionHeaderBtn.Size = new Size(122, 23);
-      editMissionHeaderBtn.TabIndex = 85;
-      editMissionHeaderBtn.Text = "Mission Header";
-      editMissionHeaderBtn.TextAlign = ContentAlignment.MiddleRight;
-      editMissionHeaderBtn.UseVisualStyleBackColor = true;
-      editMissionHeaderBtn.Click += EditMissionHeaderBtnClicked;
-      // 
       // loadedScenarioLabel
       // 
       loadedScenarioLabel.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
       loadedScenarioLabel.AutoEllipsis = true;
       loadedScenarioLabel.Font = new Font("Segoe UI", 9.75F);
-      loadedScenarioLabel.Location = new Point(6, 676);
+      loadedScenarioLabel.Location = new Point(6, 680);
       loadedScenarioLabel.Name = "loadedScenarioLabel";
       loadedScenarioLabel.Size = new Size(842, 21);
       loadedScenarioLabel.TabIndex = 83;
       loadedScenarioLabel.Text = "Scenario ID";
       loadedScenarioLabel.TextAlign = ContentAlignment.MiddleLeft;
-      // 
-      // scenarioSelectBtn
-      // 
-      scenarioSelectBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
-      scenarioSelectBtn.IconChar = FontAwesome.Sharp.IconChar.Map;
-      scenarioSelectBtn.IconColor = Color.Black;
-      scenarioSelectBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
-      scenarioSelectBtn.IconSize = 24;
-      scenarioSelectBtn.ImageAlign = ContentAlignment.MiddleLeft;
-      scenarioSelectBtn.Location = new Point(6, 650);
-      scenarioSelectBtn.Name = "scenarioSelectBtn";
-      scenarioSelectBtn.Size = new Size(122, 23);
-      scenarioSelectBtn.TabIndex = 82;
-      scenarioSelectBtn.Text = "Select Scenario";
-      scenarioSelectBtn.TextAlign = ContentAlignment.MiddleRight;
-      scenarioSelectBtn.UseVisualStyleBackColor = true;
-      scenarioSelectBtn.Click += ScenarioSelectBtnClicked;
       // 
       // pictureBox1
       // 
@@ -508,40 +601,6 @@ namespace ReforgerServerApp
       pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
       pictureBox1.TabIndex = 51;
       pictureBox1.TabStop = false;
-      // 
-      // saveSettingsBtn
-      // 
-      saveSettingsBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-      saveSettingsBtn.IconChar = FontAwesome.Sharp.IconChar.Download;
-      saveSettingsBtn.IconColor = Color.Black;
-      saveSettingsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
-      saveSettingsBtn.IconSize = 16;
-      saveSettingsBtn.ImageAlign = ContentAlignment.MiddleLeft;
-      saveSettingsBtn.Location = new Point(1409, 721);
-      saveSettingsBtn.Name = "saveSettingsBtn";
-      saveSettingsBtn.Size = new Size(96, 23);
-      saveSettingsBtn.TabIndex = 2;
-      saveSettingsBtn.Text = "Save Config";
-      saveSettingsBtn.TextAlign = ContentAlignment.MiddleRight;
-      saveSettingsBtn.UseVisualStyleBackColor = true;
-      saveSettingsBtn.Click += SaveSettingsToFileBtnPressed;
-      // 
-      // loadSettingsBtn
-      // 
-      loadSettingsBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-      loadSettingsBtn.IconChar = FontAwesome.Sharp.IconChar.Upload;
-      loadSettingsBtn.IconColor = Color.Black;
-      loadSettingsBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
-      loadSettingsBtn.IconSize = 16;
-      loadSettingsBtn.ImageAlign = ContentAlignment.MiddleLeft;
-      loadSettingsBtn.Location = new Point(1307, 721);
-      loadSettingsBtn.Name = "loadSettingsBtn";
-      loadSettingsBtn.Size = new Size(96, 23);
-      loadSettingsBtn.TabIndex = 1;
-      loadSettingsBtn.Text = "Load Config";
-      loadSettingsBtn.TextAlign = ContentAlignment.MiddleRight;
-      loadSettingsBtn.UseVisualStyleBackColor = true;
-      loadSettingsBtn.Click += LoadSettingsFromFileBtnPressed;
       // 
       // tabPage2
       // 
@@ -778,15 +837,18 @@ namespace ReforgerServerApp
       MinimumSize = new Size(1440, 782);
       Name = "Main";
       Text = "Longbow: Arma Reforger Dedicated Server Tool";
+      FormClosing += OnFormClosing;
       tabControl1.ResumeLayout(false);
       tabPage1.ResumeLayout(false);
       tabPage1.PerformLayout();
+      tableLayoutPanel6.ResumeLayout(false);
       groupBox2.ResumeLayout(false);
       groupBox2.PerformLayout();
       tableLayoutPanel3.ResumeLayout(false);
       tableLayoutPanel2.ResumeLayout(false);
       tableLayoutPanel1.ResumeLayout(false);
       groupBox1.ResumeLayout(false);
+      tableLayoutPanel5.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize) pictureBox1).EndInit();
       tabPage2.ResumeLayout(false);
       tabPage2.PerformLayout();
@@ -849,5 +911,8 @@ namespace ReforgerServerApp
     private TableLayoutPanel tableLayoutPanel2;
     private TableLayoutPanel tableLayoutPanel3;
     private TableLayoutPanel tableLayoutPanel4;
+    private FontAwesome.Sharp.IconButton loadSaveGameBtn;
+    private TableLayoutPanel tableLayoutPanel5;
+    private TableLayoutPanel tableLayoutPanel6;
   }
 }
