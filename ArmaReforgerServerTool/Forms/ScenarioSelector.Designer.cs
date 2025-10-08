@@ -117,6 +117,7 @@ namespace ReforgerServerApp
       MinimumSize = new Size(640, 480);
       Name = "ScenarioSelector";
       ShowIcon = false;
+      StartPosition = FormStartPosition.CenterParent;
       Text = "Longbow - Select Scenario";
       FormClosing += OnFormClosing;
       ResumeLayout(false);

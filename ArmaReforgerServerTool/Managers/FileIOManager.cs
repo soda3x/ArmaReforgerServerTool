@@ -28,6 +28,7 @@ namespace ReforgerServerApp.Managers
     private readonly string m_legacyModDatabaseFile = "./mod_database.txt";
     private string m_steamCmdFile;
     private string m_installDir;
+    private string m_savesPath;
     private FileIOManager()
     {
       bool modDatabaseExists = File.Exists(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile);
@@ -47,6 +48,7 @@ namespace ReforgerServerApp.Managers
       {
         m_installDir = SavedStateManager.GetInstance().GetSavedState().serverLocation;
         m_steamCmdFile = $"{m_installDir}\\steamcmd\\steamcmd.exe";
+        m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\sessions";
       }
       else
       {
@@ -286,6 +288,7 @@ namespace ReforgerServerApp.Managers
         Log.Information("FileIOManager - Downloading SteamCMD to {path}...", fbd.SelectedPath);
         m_installDir = fbd.SelectedPath;
         m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
+        m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\sessions";
         SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
       }
 
@@ -456,6 +459,7 @@ namespace ReforgerServerApp.Managers
         {
           m_installDir = fbd.SelectedPath;
           m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
+          m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\sessions";
           SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
           return true;
         }
@@ -498,6 +502,62 @@ namespace ReforgerServerApp.Managers
       {
         Utilities.DisplayErrorMessage($"An error occurred while attempting to delete file '{path}'.", ex.Message);
         return false;
+      }
+    }
+
+    public string GetSavesPath()
+    {
+      return m_savesPath;
+    }
+
+    /// <summary>
+    /// Get a dictionary of saved games, keyed on their name and their value being their paths
+    /// </summary>
+    /// <returns>Dictionary of Saved Games</returns>
+    public Dictionary<string, string> GetSavedGames()
+    {
+      List<string> savedGameNames = Directory.GetFiles(m_savesPath, "*.json")
+                                        .Select(Path.GetFileNameWithoutExtension)
+                                        .ToList()!;
+
+      List<string> savedGamePaths = Directory.GetFiles(m_savesPath, "*.json").ToList()!;
+
+      Dictionary<string, string> savedGames = new();
+
+      for (int i = 0; i < savedGameNames.Count; i++)
+      {
+        if (savedGameNames[i].Equals(".LatestSave"))
+        {
+          continue;
+        }
+        savedGames[savedGameNames[i]] = savedGamePaths[i];
+      }
+
+      return savedGames;
+    }
+
+    /// <summary>
+    /// Rename File given a full path to original and new file names
+    /// </summary>
+    /// <param name="origName"></param>
+    /// <param name="newName"></param>
+    /// <returns>New file path as string if successful, otherwise returns original file path</returns>
+    public string RenameFile(string origName, string newName)
+    {
+      try
+      {
+        if (File.Exists(origName))
+        {
+          File.Move(origName, newName);
+          return newName;
+        }
+        return origName;
+      }
+      catch (IOException ex)
+      {
+        Log.Error($"FileIOManager - An error occurred when attempting to rename file {origName} - {ex.Message}");
+        Utilities.DisplayErrorMessage($"Failed to rename {origName}", ex.Message);
+        return origName;
       }
     }
   }
