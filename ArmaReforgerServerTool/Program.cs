@@ -38,8 +38,7 @@ namespace ReforgerServerApp
       try
       {
         Log.Information("Longbow starting...");
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
+        ApplicationConfiguration.Initialize();
         Application.Run(new Main());
       }
       catch (Exception ex)
