@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <Company>soda3x</Company>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <ApplicationIcon>Resources\arma_icon_white.ico</ApplicationIcon>
+    <PublishSingleFile>true</PublishSingleFile>
+	<OutputType>winexe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\arma_icon_white.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BatLine.AnimOfDots" Version="3.0.2" />
+    <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
+    <PackageReference Include="Open.Nat" Version="2.1.0" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Components\AdvancedServerParameterBool.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Components\AdvancedServerParameterEnumerated.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Components\AdvancedServerParameterTime.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Components\ServerParameterList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Components\ServerParameterSelect.cs" />
+    <Compile Update="Components\ServerParameterSpacer.cs" />
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Components\ServerParameter.cs" />
+    <Compile Update="Components\ServerParameterBool.cs" />
+    <Compile Update="Components\ServerParameterString.cs" />
+    <Compile Update="Forms\TextInputForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\NoBackendScenarioLoader_6324F7124A9768FB.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

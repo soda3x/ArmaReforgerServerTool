@@ -1,7 +1,8 @@
 {
   "profiles": {
     "ArmaReforgerServerToolWinUI (Package)": {
-      "commandName": "MsixPackage"
+      "commandName": "MsixPackage",
+      "alwaysReinstallApp": false
     },
     "ArmaReforgerServerToolWinUI (Unpackaged)": {
       "commandName": "Project"
