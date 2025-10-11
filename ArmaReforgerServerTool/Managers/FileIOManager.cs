@@ -516,6 +516,11 @@ namespace ReforgerServerApp.Managers
     /// <returns>Dictionary of Saved Games</returns>
     public Dictionary<string, string> GetSavedGames()
     {
+      if (!Directory.Exists(m_savesPath))
+      {
+        Directory.CreateDirectory(m_savesPath);
+        Log.Debug("FileIOManager - Saves path doesn't exist, created it...");
+      }
       List<string> savedGameNames = Directory.GetFiles(m_savesPath, "*.json")
                                         .Select(Path.GetFileNameWithoutExtension)
                                         .ToList()!;
