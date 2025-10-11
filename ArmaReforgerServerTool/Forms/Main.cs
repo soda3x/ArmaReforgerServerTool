@@ -962,7 +962,7 @@ namespace ReforgerServerApp
         Description = "The tool will monitor the server for crashes and attempt to restart it automatically."
       };
       autoRestartOnCrash.CheckBox.CheckedChanged += AutoRestartOnCrashCheckChanged;
-      autoRestartOnCrash.CheckBox.Checked = loadedSettings["autoRestartOnCrash"].Enabled;
+      autoRestartOnCrash.CheckBox.Checked = loadedSettings.ContainsKey("autoRestartOnCrash") ? loadedSettings["autoRestartOnCrash"].Enabled : false;
       advancedParametersPanel.Controls.Add(autoRestartOnCrash);
 
       AdvancedServerParameterNumeric autoReload = new()
