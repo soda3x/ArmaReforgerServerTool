@@ -192,7 +192,7 @@ namespace ReforgerServerApp
   public class GameProperties
   {
     public static readonly int MIN_SERVER_VIEW_DISTANCE = 500;
-    public static readonly int MAX_SERVER_VIEW_DISTANCE = 10000;
+    public static readonly int MAX_SERVER_VIEW_DISTANCE = 12000;
     public static readonly int DEFAULT_SERVER_VIEW_DISTANCE = 1600;
     public static readonly int MIN_SERVER_GRASS_DISTANCE = 0;
     public static readonly int MAX_SERVER_GRASS_DISTANCE = 150;
