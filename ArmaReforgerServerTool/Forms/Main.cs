@@ -196,15 +196,23 @@ namespace ReforgerServerApp
     }
 
     /// <summary>
-    /// Remove the selected mod from the Available Mods ListBox when the "Remove Mod" button is pressed.
+    /// Remove the selected mod from the Available Mods ListBox when the "Remove Mod" button is pressed. (multiple selection supported)
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
     {
-      ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
-      FileIOManager.GetInstance().WriteModsDatabase();
+      Mod[] modsToDelete = new Mod[GetAvailableModsList().SelectedItems.Count];
+      GetAvailableModsList().SelectedItems.CopyTo(modsToDelete, 0);
+      foreach (Mod mod in modsToDelete)
+      {
+        ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod)GetAvailableModsList().SelectedItem);
+        FileIOManager.GetInstance().WriteModsDatabase();
+      }
+      ConfigurationManager.GetInstance().AlphabetiseModLists();
+      ResetModFilters();
     }
+
 
     /// <summary>
     /// When the "Add to Enabled Mods" button (which currently looks like '>') is pressed, 
