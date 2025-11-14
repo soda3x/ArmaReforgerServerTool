@@ -82,6 +82,9 @@ namespace ReforgerServerApp
       groupBox3 = new GroupBox();
       steamCmdLog = new TextBox();
       steamCmdAlert = new Label();
+      tabPage3 = new TabPage();
+      serverStatusGroupBox = new GroupBox();
+      serverStatusTextBox = new TextBox();
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
@@ -96,6 +99,8 @@ namespace ReforgerServerApp
       tableLayoutPanel4.SuspendLayout();
       groupBox4.SuspendLayout();
       groupBox3.SuspendLayout();
+      tabPage3.SuspendLayout();
+      serverStatusGroupBox.SuspendLayout();
       SuspendLayout();
       // 
       // tabControl1
@@ -103,6 +108,7 @@ namespace ReforgerServerApp
       tabControl1.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       tabControl1.Controls.Add(tabPage1);
       tabControl1.Controls.Add(tabPage2);
+      tabControl1.Controls.Add(tabPage3);
       tabControl1.Location = new Point(12, 12);
       tabControl1.Name = "tabControl1";
       tabControl1.SelectedIndex = 0;
@@ -827,6 +833,37 @@ namespace ReforgerServerApp
       steamCmdAlert.Text = "SteamCMD and the Arma Server files were not detected, please Download before continuing.";
       steamCmdAlert.TextAlign = ContentAlignment.MiddleRight;
       // 
+      // tabPage3
+      // 
+      tabPage3.Controls.Add(serverStatusGroupBox);
+      tabPage3.Location = new Point(4, 24);
+      tabPage3.Name = "tabPage3";
+      tabPage3.Padding = new Padding(3);
+      tabPage3.Size = new Size(1518, 750);
+      tabPage3.TabIndex = 2;
+      tabPage3.Text = "Server Status";
+      tabPage3.UseVisualStyleBackColor = true;
+      // 
+      // serverStatusGroupBox
+      // 
+      serverStatusGroupBox.Controls.Add(serverStatusTextBox);
+      serverStatusGroupBox.Dock = DockStyle.Fill;
+      serverStatusGroupBox.Location = new Point(3, 3);
+      serverStatusGroupBox.Name = "serverStatusGroupBox";
+      serverStatusGroupBox.Size = new Size(1512, 744);
+      serverStatusGroupBox.TabIndex = 0;
+      serverStatusGroupBox.TabStop = false;
+      serverStatusGroupBox.Text = "Server Status";
+      // 
+      // serverStatusTextBox
+      // 
+      serverStatusTextBox.Dock = DockStyle.Fill;
+      serverStatusTextBox.Location = new Point(3, 19);
+      serverStatusTextBox.Multiline = true;
+      serverStatusTextBox.Name = "serverStatusTextBox";
+      serverStatusTextBox.Size = new Size(1506, 722);
+      serverStatusTextBox.TabIndex = 0;
+      // 
       // Main
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -856,6 +893,9 @@ namespace ReforgerServerApp
       groupBox4.ResumeLayout(false);
       groupBox3.ResumeLayout(false);
       groupBox3.PerformLayout();
+      tabPage3.ResumeLayout(false);
+      serverStatusGroupBox.ResumeLayout(false);
+      serverStatusGroupBox.PerformLayout();
       ResumeLayout(false);
     }
 
@@ -914,5 +954,8 @@ namespace ReforgerServerApp
     private FontAwesome.Sharp.IconButton loadSaveGameBtn;
     private TableLayoutPanel tableLayoutPanel5;
     private TableLayoutPanel tableLayoutPanel6;
+    private TabPage tabPage3;
+    private GroupBox serverStatusGroupBox;
+    private TextBox serverStatusTextBox;
   }
 }
