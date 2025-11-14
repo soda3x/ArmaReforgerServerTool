@@ -20,6 +20,8 @@ namespace ReforgerServerApp.Utils
   /// </summary>
   internal class Utilities
   {
+    private const double KB_IN_MB = 1024.0;
+    private const double KB_IN_GB = KB_IN_MB * 1024.0;
 
     /// <summary>
     /// Convenience method to sort a list of Mods in order of Mod Name
@@ -266,6 +268,29 @@ namespace ReforgerServerApp.Utils
     {
       const int maxNumThreads = 16;
       return Environment.ProcessorCount > maxNumThreads ? maxNumThreads : Environment.ProcessorCount;
+    }
+
+    /// <summary>
+    /// Utility for formatting a kilobyte value into its best represented human-readable format
+    /// GB --> MB --> kB
+    /// </summary>
+    /// <param name="kilobytes">to represent</param>
+    /// <returns>Human readable formatted kilobytes</returns>
+    public static string FormatMemoryValue(long kilobytes)
+    {
+      if (kilobytes >= KB_IN_GB)
+      {
+        double gigabytes = kilobytes / KB_IN_GB;
+        return $"{gigabytes:F2} GB";
+      }
+
+      if (kilobytes >= KB_IN_MB)
+      {
+        double megabytes = kilobytes / KB_IN_MB;
+        return $"{megabytes:F2} MB";
+      }
+
+      return $"{kilobytes} kB";
     }
   }
 }

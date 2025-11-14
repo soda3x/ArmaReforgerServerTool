@@ -15,6 +15,7 @@ using ReforgerServerApp.Utils;
 using Longbow.Models;
 using Longbow.Managers;
 using Longbow.Forms;
+using Longbow.Utils;
 
 namespace ReforgerServerApp
 {
@@ -22,6 +23,7 @@ namespace ReforgerServerApp
   {
     private BindingSource m_availableModsBindingSource;
     private BindingSource m_enabledModsBindingSource;
+    private ServerStatusParser m_serverStatusParser;
     public Main()
     {
       InitializeComponent();
@@ -45,6 +47,9 @@ namespace ReforgerServerApp
       loadedScenarioLabel.Text = "No scenario chosen.";
 
       UpdateSteamCmdInstallStatus();
+
+      m_serverStatusParser = new();
+      m_serverStatusParser.UpdateServerStatus += HandleServerStatusEvent;
 
 
       m_availableModsBindingSource = new()
@@ -482,6 +487,7 @@ namespace ReforgerServerApp
       useUpnp.Enabled = enabled;
       moveModPosUpBtn.Enabled = enabled;
       moveModPosDownBtn.Enabled = enabled;
+      loadSaveGameBtn.Enabled = enabled;
     }
 
     /// <summary>
@@ -1278,6 +1284,32 @@ namespace ReforgerServerApp
       else
       {
         steamCmdLog.AppendText(e.line);
+
+        // Update the Server Status
+        m_serverStatusParser.ParseServerStatus(e.line);
+      }
+    }
+
+    private void HandleServerStatusEvent(object sender, ServerStatusEventArgs e)
+    {
+      if (serverStatusTextBox.InvokeRequired)
+      {
+        serverStatusTextBox.Invoke(new Action(() => HandleServerStatusEvent(sender, e)));
+      }
+      else
+      {
+        string serverStatus = String.Join(Environment.NewLine,
+          $"FPS: {e.LastFPS}",
+          $"Memory: {Utilities.FormatMemoryValue(e.LastMem)}",
+          $"Players: {e.LastPlayerCount}",
+          $"Ping Site: {e.LastPingSite}",
+          $"Join Code: {e.LastJoinCode}",
+          $"Join Address: {e.LastIP}",
+          $"Join Port: {e.LastPort}",
+          $"RCON Address: {e.LastRconIP}",
+          $"RCON Port: {e.LastRconPort}",
+          $"Last Updated: {e.LastUpdate.ToString()}");
+        serverStatusTextBox.Text = serverStatus;
       }
     }
 
