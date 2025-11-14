@@ -71,6 +71,11 @@ namespace ReforgerServerApp
       }
 
       FileIOManager.CheckForVCRedist();
+
+      // FIXME: Disable the Save Manager for now
+      loadSaveGameBtn.Enabled = false;
+      ToolTip loadsaveGameBtnTooltip = new();
+      loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, "Disable for the time being, for now please use the Load Session Save option in Advanced Parameters");
     }
 
     /// <summary>
@@ -978,6 +983,21 @@ namespace ReforgerServerApp
       autoReload.CheckBox.Checked = loadedSettings["autoreload"].Enabled;
       advancedParametersPanel.Controls.Add(autoReload);
 
+      AdvancedServerParameterString loadSessionSave = new()
+      {
+        ParameterName = "loadSessionSave",
+        ParameterFriendlyName = "Load Session Save",
+        Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
+        ParameterPlaceholder = "Using latest save..."
+      };
+      bool loadSessionSavedEnabled = loadedSettings["loadSessionSave"].Enabled;
+      loadSessionSave.CheckBox.Checked = loadSessionSavedEnabled;
+      if (loadSessionSavedEnabled)
+      {
+        loadSessionSave.ParameterValue = loadedSettings["loadSessionSave"].Value;
+      }
+      advancedParametersPanel.Controls.Add(loadSessionSave);
+
       AdvancedServerParameterBool noBackend = new()
       {
         ParameterName = "noBackend",
@@ -1350,6 +1370,20 @@ namespace ReforgerServerApp
       };
 
       var advParams = ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary();
+
+      if (advParams["loadSessionSave"].Checked())
+      {
+        // As no parameter is also valid, check if there is a value
+        string loadSessionSaveVal = Convert.ToString(advParams["loadSessionSave"].ParameterValue);
+        if (String.IsNullOrWhiteSpace(loadSessionSaveVal))
+        {
+          args.loadSessionSave = new("loadSessionSave");
+        }
+        else
+        {
+          args.loadSessionSave = new("loadSessionSave", loadSessionSaveVal);
+        }
+      }
 
       if (advParams["maxFPS"].Checked())
       {
