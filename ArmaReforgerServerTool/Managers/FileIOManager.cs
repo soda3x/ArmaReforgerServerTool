@@ -48,7 +48,7 @@ namespace ReforgerServerApp.Managers
       {
         m_installDir = SavedStateManager.GetInstance().GetSavedState().serverLocation;
         m_steamCmdFile = $"{m_installDir}\\steamcmd\\steamcmd.exe";
-        m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\sessions";
+        m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\game";
       }
       else
       {
@@ -288,7 +288,7 @@ namespace ReforgerServerApp.Managers
         Log.Information("FileIOManager - Downloading SteamCMD to {path}...", fbd.SelectedPath);
         m_installDir = fbd.SelectedPath;
         m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
-        m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\sessions";
+        m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\game";
         SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
       }
 
@@ -459,7 +459,7 @@ namespace ReforgerServerApp.Managers
         {
           m_installDir = fbd.SelectedPath;
           m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
-          m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\sessions";
+          m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\game";
           SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
           return true;
         }
@@ -521,21 +521,19 @@ namespace ReforgerServerApp.Managers
         Directory.CreateDirectory(m_savesPath);
         Log.Debug("FileIOManager - Saves path doesn't exist, created it...");
       }
-      List<string> savedGameNames = Directory.GetFiles(m_savesPath, "*.json")
-                                        .Select(Path.GetFileNameWithoutExtension)
-                                        .ToList()!;
 
-      List<string> savedGamePaths = Directory.GetFiles(m_savesPath, "*.json").ToList()!;
+      var savedGames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-      Dictionary<string, string> savedGames = new();
-
-      for (int i = 0; i < savedGameNames.Count; i++)
+      foreach (var path in Directory.EnumerateFiles(m_savesPath, "*.json", SearchOption.AllDirectories))
       {
-        if (savedGameNames[i].Equals(".LatestSave"))
-        {
+        var name = Path.GetFileNameWithoutExtension(path);
+
+        // salta il file speciale ".LatestSave"
+        if (string.Equals(name, ".LatestSave", StringComparison.OrdinalIgnoreCase))
           continue;
-        }
-        savedGames[savedGameNames[i]] = savedGamePaths[i];
+
+        // in caso di nomi duplicati in cartelle diverse, l'ultimo incontrato sovrascrive il precedente
+        savedGames[name] = path;
       }
 
       return savedGames;
