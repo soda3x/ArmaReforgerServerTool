@@ -204,13 +204,20 @@ namespace ReforgerServerApp
     {
       Mod[] modsToDelete = new Mod[GetAvailableModsList().SelectedItems.Count];
       GetAvailableModsList().SelectedItems.CopyTo(modsToDelete, 0);
+
+      var availableMods = ConfigurationManager.GetInstance().GetAvailableMods();
+      bool hasDeletedAtLeastOne = false;
+
       foreach (Mod mod in modsToDelete)
       {
-        ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod)GetAvailableModsList().SelectedItem);
+        if (availableMods.Remove(mod))
+          hasDeletedAtLeastOne = true;
+      }
+
+      if (hasDeletedAtLeastOne)
+      {
         FileIOManager.GetInstance().WriteModsDatabase();
       }
-      ConfigurationManager.GetInstance().AlphabetiseModLists();
-      ResetModFilters();
     }
 
 
