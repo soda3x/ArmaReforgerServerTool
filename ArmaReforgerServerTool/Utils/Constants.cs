@@ -160,8 +160,8 @@ namespace ReforgerServerApp
     public static string SERVER_PARAM_RCON_MAX_CLIENTS_TOOLTIP_STR = "The maximum number of clients that can connect to RCON at the same time.";
 
     public static string SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR = "Permission for all RCON clients:\r\n" +
-        "\tadmin - The admin can perform any command.\r\n" +
-        "\tmonitor - The monitor can only perform commands which do not change the server's state.";
+        "\tADMIN - The admin can perform any command.\r\n" +
+        "\tMONITOR - The monitor can only perform commands which do not change the server's state.";
 
     public static string SERVER_PARAM_RCON_WHITELIST_TOOLTIP_STR = "Specifies the list of commands that can be executed, and no other command is allowed. Should not be used in conjunction with RCON Blacklist.";
 
