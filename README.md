@@ -9,6 +9,7 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 - Load and Save server configuration files
 - Automatically schedule your server to restart at a specified time of day
 - Powerful mod management with the ability to import mods from saved configurations
+- Manage server saves with ease with a powerful _Save Manager_ tool
 - Import and Export mod lists to share with your mates!
 - Easily select the desired scenario you want to play
 - Automatically fetches Scenario IDs for your mods from the Arma Workshop
