@@ -92,7 +92,7 @@ namespace ReforgerServerApp
     public static readonly int MIN_CLIENTS = 1;
     public static readonly int MAX_CLIENTS = 16;
     public static readonly int DEFAULT_CLIENTS = 16;
-    public static readonly String[] PERMISSIONS = { "admin", "monitor" };
+    public static readonly String[] PERMISSIONS = { "ADMIN", "MONITOR" };
     public static readonly String DEFAULT_PERMISSION = PERMISSIONS[1];
 
     public string address { get; set; }
