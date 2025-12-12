@@ -10,6 +10,8 @@
  ******************************************************************************/
 
 using FontAwesome.Sharp;
+using Longbow.Managers;
+using Longbow.Models;
 using ReforgerServerApp.Components;
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
@@ -51,6 +53,8 @@ namespace ReforgerServerApp.Managers
 
     public delegate void UpdateGuiControlsEventHandler(object sender, GuiModelEventArgs e);
     public event UpdateGuiControlsEventHandler UpdateGuiControlsEvent;
+
+    public bool KeepServerUpdated { get; set; }
 
     private ProcessManager()
     {
@@ -349,11 +353,15 @@ namespace ReforgerServerApp.Managers
     /// <param name="e"></param>
     private void SteamCmdUpdateWorkerDoWork(object sender, DoWorkEventArgs e)
     {
+      string updateSwitch =  KeepServerUpdated ? "+app_update" : "";
+      string updateNotifMsg = KeepServerUpdated ? "Longbow will ensure the server is up-to-date." : "Longbow will not update the dedicated server.";
+      SteamCmdLogEventArgs updateNotif = new($"{Utilities.GetTimestamp()}: {updateNotifMsg} {Environment.NewLine}");
+      OnUpdateSteamCmdLogEvent(updateNotif);
 
-      string steamCommand = "+force_install_dir ..\\Arma_Reforger +login anonymous anonymous +app_update 1874900 +quit";
+      string steamCommand = $"+force_install_dir ..\\Arma_Reforger +login anonymous anonymous {updateSwitch} 1874900 +quit";
       if (ConfigurationManager.GetInstance().useExperimentalServer)
       {
-        steamCommand = "+force_install_dir ..\\Arma_Reforger\\experimental +login anonymous anonymous +app_update 1890870 +quit";
+        steamCommand = $"+force_install_dir ..\\Arma_Reforger\\experimental +login anonymous anonymous {updateSwitch} 1890870 +quit";
       }
 
       ProcessStartInfo steamCmdStartInfo = new()

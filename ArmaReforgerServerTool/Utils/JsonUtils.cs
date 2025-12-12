@@ -151,7 +151,7 @@ namespace ReforgerServerApp.Utils
 
       public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
       {
-        writer.WriteStringValue(value.ToString().ToLower());
+        writer.WriteStringValue(value.ToString());
       }
     }
 
