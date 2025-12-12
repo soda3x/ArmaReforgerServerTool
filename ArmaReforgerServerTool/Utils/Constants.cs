@@ -171,6 +171,18 @@ namespace ReforgerServerApp
 
     public static string SERVER_PARAM_MODS_REQUIRED_BY_DEFAULT_TOOLTIP_STR = "Overrides default value for 'required' for all mods.";
 
+    public static string SERVER_PARAM_AUTO_SAVE_INTERVAL_TOOLTIP_STR = "Interval (in minutes) at which automatic saves are created, if possible for the current mission. Disabled if set to 0.";
+
+    public static string SERVER_PARAM_HIVE_ID_TOOLTIP_STR = "Number identifying each hive (server) when they share the same persistence database. Used for separating UUIDs for save game data.";
+
+    public static string SERVER_PARAM_DATABASES_TOOLTIP_STR = "Case-insensitive named objects representing an override of the system configuration provided databases or the addition of a new one.\r\n" +
+      "Optional child properties:\r\n" +
+      "\t\"preset\" - refers to database config presets that are defined in game/mod data. Full resource name.\r\n" +
+      "\t\"options\" - a complex object which corresponds to the individual database type of the preset. Usually, a key-value collection";
+
+    public static string SERVER_PARAM_STORAGES_TOOLTIP_STR = "Case-insensitive named objects representing an override of the system configuration-provided storages. Optional child properties:\r\n"
+      +"\t\"database\" - changes the storage to use a different database than the default configured. Must match the name given in the databases object or \"main\".";
+
     public static string MIGRATE_LEGACY_MOD_DB_PROMPT_STR = "A mod database from a previous version of Longbow was found.\r\n\r\n" +
         "This version of the tool is not compatible with this file type.\r\n\r\n" +
         "Would you like to migrate this mod database to the new format?\r\n\r\n" +

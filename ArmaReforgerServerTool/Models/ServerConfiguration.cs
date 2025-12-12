@@ -219,11 +219,12 @@ namespace ReforgerServerApp
     public bool vonDisableDirectSpeechUI { get; set; }
     [JsonPropertyName("VONCanTransmitCrossFaction")]
     public bool vonCanTransmitCrossFaction { get; set; }
+    public Persistence persistence { get; set; }
     public JsonDocument missionHeader { get; set; }
 
     public GameProperties(int serverMaxViewDistance, int serverMinGrassDistance, int networkViewDistance,
         bool disableThirdPerson, bool fastValidation, bool battlEye, bool vonDisableUI, bool vonDisableDirectSpeechUI,
-        bool vonCanTransmitCrossFaction, JsonDocument missionHeader)
+        bool vonCanTransmitCrossFaction, JsonDocument missionHeader, Persistence persistence)
     {
       this.serverMaxViewDistance = serverMaxViewDistance;
       this.serverMinGrassDistance = serverMinGrassDistance;
@@ -235,6 +236,7 @@ namespace ReforgerServerApp
       this.vonDisableDirectSpeechUI = vonDisableDirectSpeechUI;
       this.vonCanTransmitCrossFaction = vonCanTransmitCrossFaction;
       this.missionHeader = missionHeader;
+      this.persistence = persistence;
     }
 
     public static GameProperties Default => new(
@@ -247,8 +249,43 @@ namespace ReforgerServerApp
         DEFAULT_VON_DISABLE_UI,
         DEFAULT_VON_DISABLE_DIRECT_SPEECH_UI,
         DEFAULT_VON_CAN_TRANSMIT_CROSS_FACTION,
-        JsonDocument.Parse("{}")
+        JsonDocument.Parse("{}"),
+        Persistence.Default
     );
+  }
+
+  /// <summary>
+  /// Structure representing the Persistence block of the Server Config
+  /// </summary>
+  public class Persistence
+  {
+    public static readonly int MIN_AUTOSAVE_INTERVAL_MINS = 0;
+    public static readonly int MAX_AUTOSAVE_INTERVAL_MINS = 60;
+    public static readonly int DEFAULT_AUTOSAVE_INTERVAL_MINS = 10;
+    public static readonly int MIN_HIVE_ID = 0;
+    public static readonly int MAX_HIVE_ID = 16383;
+    public static readonly int DEFAULT_HIVE_ID = 0;
+    public static readonly string DEFAULT_DATABASES = "{}";
+    public static readonly string DEFAULT_STORAGES = "{}";
+
+    public int autoSaveInterval { get; set; }
+    public int hiveId { get; set; }
+    public JsonDocument databases { get; set; }
+    public JsonDocument storages { get; set; }
+
+    public Persistence(int autoSaveInterval, int hiveId, JsonDocument databases, JsonDocument storages)
+    {
+      this.autoSaveInterval = autoSaveInterval;
+      this.hiveId = hiveId;
+      this.databases = databases;
+      this.storages = storages;
+    }
+    public static Persistence Default => new(
+        DEFAULT_AUTOSAVE_INTERVAL_MINS,
+        DEFAULT_HIVE_ID,
+        JsonDocument.Parse("{}"),
+        JsonDocument.Parse("{}")
+      );
   }
 
   /// <summary>
@@ -362,6 +399,24 @@ namespace ReforgerServerApp
     public string MissionHeaderAsJsonString()
     {
       return Utilities.GetFormattedJsonString(root.game.gameProperties.missionHeader);
+    }
+
+    /// <summary>
+    /// Display Databases from the configuration in a JSON format
+    /// </summary>
+    /// <returns>JSON string representation of the Server Configuration's Databases</returns>
+    public string DatabasesAsJsonString()
+    {
+      return Utilities.GetFormattedJsonString(root.game.gameProperties.persistence.databases);
+    }
+
+    /// <summary>
+    /// Display Storages from the configuration in a JSON format
+    /// </summary>
+    /// <returns>JSON string representation of the Server Configuration's Storages</returns>
+    public string StoragesAsJsonString()
+    {
+      return Utilities.GetFormattedJsonString(root.game.gameProperties.persistence.storages);
     }
 
     /// <summary>
