@@ -17,9 +17,9 @@ namespace ReforgerServerApp
     {
       InitializeComponent();
       StringBuilder sb = new();
-      sb.AppendLine("Longbow by soda3x");
+      sb.AppendLine("Longbow - Arma Reforger Dedicated Server Tool by soda3x");
       sb.AppendLine($"Version {Assembly.GetExecutingAssembly().GetName().Version}");
-      sb.AppendLine("\r\n\"No Backend Scenario Loader\" mod provided by ceo_of_bacon");
+      sb.AppendLine("\r\n\"No Backend Scenario Loader\" mod (v1.0.1) provided by ceo_of_bacon");
       sb.AppendLine("See full list of contributors on GitHub");
       aboutText.Text = sb.ToString();
     }
