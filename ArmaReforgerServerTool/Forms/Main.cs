@@ -35,9 +35,13 @@ namespace ReforgerServerApp
       ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
       ConfigurationManager.GetInstance().UpdateScenarioIdFromLoadedConfigEvent += HandleUpdateScenarioIdFromLoadedConfigEvent;
 
-      useUpnp.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings()["useUpnp"].Enabled;
-      useExperimentalCheckBox.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings()["useExperimental"].Enabled;
+      useUpnp.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings().GetValueOrDefault("useUpnp", SavedState.DEFAULT_USE_UPNP).Enabled;
       NetworkManager.GetInstance().useUPnP = useUpnp.Checked;
+
+      useExperimentalCheckBox.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings().GetValueOrDefault("useExperimental", SavedState.DEFAULT_USE_EXPERIMENTAL).Enabled;
+
+      keepServerUpdated.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings().GetValueOrDefault("keepServerUpdated", SavedState.DEFAULT_KEEP_SERVER_UPDATED).Enabled;
+      ProcessManager.GetInstance().KeepServerUpdated = keepServerUpdated.Checked;
 
       // Create tooltips
       CreateTooltips();
@@ -107,6 +111,8 @@ namespace ReforgerServerApp
       deleteServerToolTip.SetToolTip(deleteServerFilesBtn, Constants.DELETE_SERVER_FILES_STR);
       ToolTip useExperimentalToolTip = new();
       useExperimentalToolTip.SetToolTip(useExperimentalCheckBox, Constants.USE_EXPERIMENTAL_STR);
+      ToolTip keepServerUpdatedToolTip = new();
+      keepServerUpdatedToolTip.SetToolTip(keepServerUpdated, Constants.KEEP_SERVER_UPDATED_STR);
     }
 
     /// <summary>
@@ -201,14 +207,28 @@ namespace ReforgerServerApp
     }
 
     /// <summary>
-    /// Remove the selected mod from the Available Mods ListBox when the "Remove Mod" button is pressed.
+    /// Remove the selected mod(s) from the Available Mods ListBox when the "Remove Mod" button is pressed.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
     private void RemoveSelectedModBtnPressed(object sender, EventArgs e)
     {
-      ConfigurationManager.GetInstance().GetAvailableMods().Remove((Mod) GetAvailableModsList().SelectedItem);
-      FileIOManager.GetInstance().WriteModsDatabase();
+      Mod[] modsToDelete = new Mod[GetAvailableModsList().SelectedItems.Count];
+      GetAvailableModsList().SelectedItems.CopyTo(modsToDelete, 0);
+
+      var availableMods = ConfigurationManager.GetInstance().GetAvailableMods();
+      bool hasDeletedAtLeastOne = false;
+
+      foreach (Mod mod in modsToDelete)
+      {
+        if (availableMods.Remove(mod))
+          hasDeletedAtLeastOne = true;
+      }
+
+      if (hasDeletedAtLeastOne)
+      {
+        FileIOManager.GetInstance().WriteModsDatabase();
+      }
     }
 
     /// <summary>
@@ -536,8 +556,9 @@ namespace ReforgerServerApp
 
     private void EditMissionHeaderBtnClicked(object sender, EventArgs e)
     {
-      TextInputForm tif = new("Edit Mission Header");
+      TextInputForm tif = new("Edit Mission Header", ConfigurationManager.GetInstance().GetServerConfiguration().MissionHeaderAsJsonString());
       tif.ShowDialog();
+      ConfigurationManager.GetInstance().GetServerConfiguration().SetMissionHeaderFromJson(tif.GetText());
     }
 
     private void EditAdminsListBtnClicked(object sender, EventArgs e)
@@ -916,6 +937,38 @@ namespace ReforgerServerApp
         ParameterTooltip = Constants.SERVER_PARAM_JOIN_QUEUE_MAX_SIZE_TOOLTIP_STR
       };
       serverParameters.Controls.Add(joinQueueMaxSize);
+      ServerParameterNumeric autoSaveInterval = new()
+      {
+        ParameterName = "autoSaveInterval",
+        ParameterFriendlyName = "Auto Save Interval (mins)",
+        ParameterValue = Persistence.DEFAULT_AUTOSAVE_INTERVAL_MINS,
+        ParameterTooltip = Constants.SERVER_PARAM_AUTO_SAVE_INTERVAL_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(autoSaveInterval);
+      ServerParameterNumeric hiveId = new()
+      {
+        ParameterName = "hiveId",
+        ParameterFriendlyName = "Hive ID",
+        ParameterValue = Persistence.DEFAULT_HIVE_ID,
+        ParameterTooltip = Constants.SERVER_PARAM_HIVE_ID_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(hiveId);
+      ServerParameterText databases = new()
+      {
+        ParameterName = "databases",
+        ParameterFriendlyName = "Databases",
+        ParameterValue = Persistence.DEFAULT_DATABASES,
+        ParameterTooltip = Constants.SERVER_PARAM_DATABASES_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(databases);
+      ServerParameterText storages = new()
+      {
+        ParameterName = "storages",
+        ParameterFriendlyName = "Storages",
+        ParameterValue = Persistence.DEFAULT_STORAGES,
+        ParameterTooltip = Constants.SERVER_PARAM_STORAGES_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(storages);
 
       foreach (ServerParameter param in serverParameters.Controls)
       {
@@ -1614,9 +1667,10 @@ namespace ReforgerServerApp
     {
       UpdateStateForAdvancedSettings();
 
-      // Update state of UPnp and Experimental
+      // Update state of the checkboxes
       SavedStateManager.GetInstance().GetSavedState().advancedSettings["useUpnp"].Enabled = useUpnp.Checked;
       SavedStateManager.GetInstance().GetSavedState().advancedSettings["useExperimental"].Enabled = useExperimentalCheckBox.Checked;
+      SavedStateManager.GetInstance().GetSavedState().advancedSettings["keepServerUpdated"].Enabled = keepServerUpdated.Checked;
 
       FileIOManager.GetInstance().WriteStateFile();
       FileIOManager.GetInstance().WriteModsDatabase();
@@ -1625,6 +1679,11 @@ namespace ReforgerServerApp
     private void LoadSaveGameBtnPressed(object sender, EventArgs e)
     {
       SpawnSaveSelect();
+    }
+
+    private void KeepServerUpdatedCheckedChanged(object sender, EventArgs e)
+    {
+      ProcessManager.GetInstance().KeepServerUpdated = keepServerUpdated.Checked;
     }
   }
 }

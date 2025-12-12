@@ -68,6 +68,7 @@ namespace ReforgerServerApp
 
     public static string USE_UPNP_STR = "Enable this to attempt to open required ports using UPnP.\nIf this is successful, you will not need to port-forward.";
     public static string USE_EXPERIMENTAL_STR = "Enable this to use the Experimental version of Arma Reforger.\nNote that this is not guaranteed to work and not all parameters may be available in Longbow.";
+    public static string KEEP_SERVER_UPDATED_STR = "Enable this to have Longbow update the dedicated server on start. Disabling this will make it use the last installed version.";
 
     public static string SERVER_PARAM_DISABLE_AI_TOOLTIP_STR = "If enabled, the server will prevent initialization and ticking of AIWorld and its components.\r\n" +
         "Will completely disable AI functionality on the server.";
@@ -160,8 +161,8 @@ namespace ReforgerServerApp
     public static string SERVER_PARAM_RCON_MAX_CLIENTS_TOOLTIP_STR = "The maximum number of clients that can connect to RCON at the same time.";
 
     public static string SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR = "Permission for all RCON clients:\r\n" +
-        "\tadmin - The admin can perform any command.\r\n" +
-        "\tmonitor - The monitor can only perform commands which do not change the server's state.";
+        "\tADMIN - The admin can perform any command.\r\n" +
+        "\tMONITOR - The monitor can only perform commands which do not change the server's state.";
 
     public static string SERVER_PARAM_RCON_WHITELIST_TOOLTIP_STR = "Specifies the list of commands that can be executed, and no other command is allowed. Should not be used in conjunction with RCON Blacklist.";
 
@@ -170,6 +171,18 @@ namespace ReforgerServerApp
     public static string SERVER_PARAM_JOIN_QUEUE_MAX_SIZE_TOOLTIP_STR = "Sets the maximum number of players that can queue to join the server.";
 
     public static string SERVER_PARAM_MODS_REQUIRED_BY_DEFAULT_TOOLTIP_STR = "Overrides default value for 'required' for all mods.";
+
+    public static string SERVER_PARAM_AUTO_SAVE_INTERVAL_TOOLTIP_STR = "Interval (in minutes) at which automatic saves are created, if possible for the current mission. Disabled if set to 0.";
+
+    public static string SERVER_PARAM_HIVE_ID_TOOLTIP_STR = "Number identifying each hive (server) when they share the same persistence database. Used for separating UUIDs for save game data.";
+
+    public static string SERVER_PARAM_DATABASES_TOOLTIP_STR = "Case-insensitive named objects representing an override of the system configuration provided databases or the addition of a new one.\r\n" +
+      "Optional child properties:\r\n" +
+      "\t\"preset\" - refers to database config presets that are defined in game/mod data. Full resource name.\r\n" +
+      "\t\"options\" - a complex object which corresponds to the individual database type of the preset. Usually, a key-value collection";
+
+    public static string SERVER_PARAM_STORAGES_TOOLTIP_STR = "Case-insensitive named objects representing an override of the system configuration-provided storages. Optional child properties:\r\n"
+      +"\t\"database\" - changes the storage to use a different database than the default configured. Must match the name given in the databases object or \"main\".";
 
     public static string MIGRATE_LEGACY_MOD_DB_PROMPT_STR = "A mod database from a previous version of Longbow was found.\r\n\r\n" +
         "This version of the tool is not compatible with this file type.\r\n\r\n" +
