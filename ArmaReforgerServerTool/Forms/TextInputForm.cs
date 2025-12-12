@@ -12,17 +12,25 @@ namespace ReforgerServerApp
   public partial class TextInputForm : Form
   {
 
-    public TextInputForm(string windowTitle)
+    public TextInputForm(string windowTitle, String prefilledText)
     {
       InitializeComponent();
       this.Text = $"Longbow - {windowTitle}";
-      textInputField.Text = ConfigurationManager.GetInstance().GetServerConfiguration().MissionHeaderAsJsonString();
+      textInputField.Text = prefilledText;
     }
 
     private void OkBtnClicked(object sender, EventArgs e)
     {
-      ConfigurationManager.GetInstance().GetServerConfiguration().SetMissionHeaderFromJson(textInputField.Text);
       Close();
+    }
+
+    /// <summary>
+    /// Get the text contents of the input form
+    /// </summary>
+    /// <returns></returns>
+    public String GetText()
+    {
+      return textInputField.Text;
     }
   }
 }
