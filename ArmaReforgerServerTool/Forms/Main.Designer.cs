@@ -66,6 +66,7 @@ namespace ReforgerServerApp
       loadedScenarioLabel = new Label();
       pictureBox1 = new PictureBox();
       tabPage2 = new TabPage();
+      keepServerUpdated = new CheckBox();
       tableLayoutPanel4 = new TableLayoutPanel();
       startServerBtn = new FontAwesome.Sharp.IconButton();
       downloadSteamCmdBtn = new FontAwesome.Sharp.IconButton();
@@ -604,6 +605,7 @@ namespace ReforgerServerApp
       // 
       // tabPage2
       // 
+      tabPage2.Controls.Add(keepServerUpdated);
       tabPage2.Controls.Add(tableLayoutPanel4);
       tabPage2.Controls.Add(useUpnp);
       tabPage2.Controls.Add(useExperimentalCheckBox);
@@ -621,6 +623,20 @@ namespace ReforgerServerApp
       tabPage2.TabIndex = 1;
       tabPage2.Text = "Server Management";
       tabPage2.UseVisualStyleBackColor = true;
+      // 
+      // keepServerUpdated
+      // 
+      keepServerUpdated.AutoSize = true;
+      keepServerUpdated.Checked = true;
+      keepServerUpdated.CheckState = CheckState.Checked;
+      keepServerUpdated.Location = new Point(494, 29);
+      keepServerUpdated.Margin = new Padding(3, 2, 3, 2);
+      keepServerUpdated.Name = "keepServerUpdated";
+      keepServerUpdated.Size = new Size(147, 19);
+      keepServerUpdated.TabIndex = 34;
+      keepServerUpdated.Text = "Keep server up-to-date";
+      keepServerUpdated.UseVisualStyleBackColor = true;
+      keepServerUpdated.CheckedChanged += KeepServerUpdatedCheckedChanged;
       // 
       // tableLayoutPanel4
       // 
@@ -914,5 +930,6 @@ namespace ReforgerServerApp
     private FontAwesome.Sharp.IconButton loadSaveGameBtn;
     private TableLayoutPanel tableLayoutPanel5;
     private TableLayoutPanel tableLayoutPanel6;
+    private CheckBox keepServerUpdated;
   }
 }

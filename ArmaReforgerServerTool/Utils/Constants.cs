@@ -68,6 +68,7 @@ namespace ReforgerServerApp
 
     public static string USE_UPNP_STR = "Enable this to attempt to open required ports using UPnP.\nIf this is successful, you will not need to port-forward.";
     public static string USE_EXPERIMENTAL_STR = "Enable this to use the Experimental version of Arma Reforger.\nNote that this is not guaranteed to work and not all parameters may be available in Longbow.";
+    public static string KEEP_SERVER_UPDATED_STR = "Enable this to have Longbow update the dedicated server on start. Disabling this will make it use the last installed version.";
 
     public static string SERVER_PARAM_DISABLE_AI_TOOLTIP_STR = "If enabled, the server will prevent initialization and ticking of AIWorld and its components.\r\n" +
         "Will completely disable AI functionality on the server.";
