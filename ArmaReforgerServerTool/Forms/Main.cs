@@ -35,9 +35,13 @@ namespace ReforgerServerApp
       ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
       ConfigurationManager.GetInstance().UpdateScenarioIdFromLoadedConfigEvent += HandleUpdateScenarioIdFromLoadedConfigEvent;
 
-      useUpnp.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings()["useUpnp"].Enabled;
-      useExperimentalCheckBox.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings()["useExperimental"].Enabled;
+      useUpnp.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings().GetValueOrDefault("useUpnp", SavedState.DEFAULT_USE_UPNP).Enabled;
       NetworkManager.GetInstance().useUPnP = useUpnp.Checked;
+
+      useExperimentalCheckBox.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings().GetValueOrDefault("useExperimental", SavedState.DEFAULT_USE_EXPERIMENTAL).Enabled;
+
+      keepServerUpdated.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings().GetValueOrDefault("keepServerUpdated", SavedState.DEFAULT_KEEP_SERVER_UPDATED).Enabled;
+      ProcessManager.GetInstance().KeepServerUpdated = keepServerUpdated.Checked;
 
       // Create tooltips
       CreateTooltips();
@@ -107,6 +111,8 @@ namespace ReforgerServerApp
       deleteServerToolTip.SetToolTip(deleteServerFilesBtn, Constants.DELETE_SERVER_FILES_STR);
       ToolTip useExperimentalToolTip = new();
       useExperimentalToolTip.SetToolTip(useExperimentalCheckBox, Constants.USE_EXPERIMENTAL_STR);
+      ToolTip keepServerUpdatedToolTip = new();
+      keepServerUpdatedToolTip.SetToolTip(keepServerUpdated, Constants.KEEP_SERVER_UPDATED_STR);
     }
 
     /// <summary>
@@ -1661,9 +1667,10 @@ namespace ReforgerServerApp
     {
       UpdateStateForAdvancedSettings();
 
-      // Update state of UPnp and Experimental
+      // Update state of the checkboxes
       SavedStateManager.GetInstance().GetSavedState().advancedSettings["useUpnp"].Enabled = useUpnp.Checked;
       SavedStateManager.GetInstance().GetSavedState().advancedSettings["useExperimental"].Enabled = useExperimentalCheckBox.Checked;
+      SavedStateManager.GetInstance().GetSavedState().advancedSettings["keepServerUpdated"].Enabled = keepServerUpdated.Checked;
 
       FileIOManager.GetInstance().WriteStateFile();
       FileIOManager.GetInstance().WriteModsDatabase();
@@ -1672,6 +1679,11 @@ namespace ReforgerServerApp
     private void LoadSaveGameBtnPressed(object sender, EventArgs e)
     {
       SpawnSaveSelect();
+    }
+
+    private void KeepServerUpdatedCheckedChanged(object sender, EventArgs e)
+    {
+      ProcessManager.GetInstance().KeepServerUpdated = keepServerUpdated.Checked;
     }
   }
 }
