@@ -37,10 +37,10 @@ namespace ReforgerServerApp
       // 
       aboutText.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       aboutText.AutoSize = true;
-      aboutText.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
+      aboutText.Font = new Font("Segoe UI Semibold", 8F, FontStyle.Bold);
       aboutText.Location = new Point(12, 9);
       aboutText.Name = "aboutText";
-      aboutText.Size = new Size(74, 17);
+      aboutText.Size = new Size(61, 13);
       aboutText.TabIndex = 0;
       aboutText.Text = "About text";
       // 
