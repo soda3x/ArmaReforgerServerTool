@@ -77,9 +77,10 @@ namespace ReforgerServerApp
       FileIOManager.CheckForVCRedist();
 
       // FIXME: Disable the Save Manager for now
+      loadSaveGameBtn.Visible = false;
       loadSaveGameBtn.Enabled = false;
       ToolTip loadsaveGameBtnTooltip = new();
-      loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, "Disable for the time being, for now please use the Load Session Save option in Advanced Parameters");
+      loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, "Disabled for the time being, for now please use the Load Session Save option in Advanced Parameters");
     }
 
     /// <summary>
