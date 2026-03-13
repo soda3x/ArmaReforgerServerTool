@@ -15,6 +15,7 @@ using System.ComponentModel;
 using ReforgerServerApp.Components;
 using System.Text;
 using System.Collections;
+using System.Text.Json;
 
 namespace ReforgerServerApp
 {
@@ -166,6 +167,17 @@ namespace ReforgerServerApp
         m_serverParamsDictionary["VONDisableUI"].ParameterValue = m_serverConfig.root.game.gameProperties.vonDisableUI;
         m_serverParamsDictionary["VONDisableDirectSpeechUI"].ParameterValue = m_serverConfig.root.game.gameProperties.vonDisableDirectSpeechUI;
 
+        // Before parsing persistence, if it is absent then set it to the default values
+        if (m_serverConfig.root.game.gameProperties.persistence == null)
+        {
+          m_serverConfig.root.game.gameProperties.persistence = Persistence.Default;
+        }
+
+        m_serverParamsDictionary["autoSaveInterval"].ParameterValue = m_serverConfig.root.game.gameProperties.persistence.autoSaveInterval;
+        m_serverParamsDictionary["hiveId"].ParameterValue = m_serverConfig.root.game.gameProperties.persistence.hiveId;
+        m_serverParamsDictionary["databases"].ParameterValue = m_serverConfig.DatabasesAsJsonString();
+        m_serverParamsDictionary["storages"].ParameterValue = m_serverConfig.StoragesAsJsonString();
+
         m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue = m_serverConfig.root.operating.lobbyPlayerSynchronise;
         m_serverParamsDictionary["playerSaveTime"].ParameterValue = m_serverConfig.root.operating.playerSaveTime;
         m_serverParamsDictionary["aiLimit"].ParameterValue = m_serverConfig.root.operating.aiLimit;
@@ -189,7 +201,20 @@ namespace ReforgerServerApp
 
         foreach (Mod m in m_serverConfig.root.game.mods)
         {
-          m_enabledMods.Add(m);
+          // Only add the mod if it isn't already in Enabled Mods
+          if (!m_enabledMods.Contains(m))
+          {
+            // Check to see if the same mod but a different version is in Enabled Mods, we need to remove it from Enabled Mods so that the loaded one takes precedence
+            foreach (Mod em in m_enabledMods)
+            {
+              if (em.GetModName().Equals(m.GetModName()))
+              {
+                m_enabledMods.Remove(em);
+              }
+            }
+            m_enabledMods.Add(m);
+          }
+          
           if (m_availableMods.Contains(m))
           {
             m_availableMods.Remove(m);
@@ -277,6 +302,11 @@ namespace ReforgerServerApp
       m_serverConfig.root.game.gameProperties.vonDisableDirectSpeechUI = (bool)m_serverParamsDictionary["VONDisableDirectSpeechUI"].ParameterValue;
       m_serverConfig.root.game.gameProperties.vonCanTransmitCrossFaction = (bool)m_serverParamsDictionary["VONCanTransmitCrossFaction"].ParameterValue;
       // m_serverConfig.root.game.gameProperties.missionHeader - Don't need to set missionHeader as its set directly from the Edit Mission Header Form
+
+      m_serverConfig.root.game.gameProperties.persistence.autoSaveInterval = Convert.ToInt32(m_serverParamsDictionary["autoSaveInterval"].ParameterValue);
+      m_serverConfig.root.game.gameProperties.persistence.hiveId = Convert.ToInt32(m_serverParamsDictionary["hiveId"].ParameterValue);
+      m_serverConfig.root.game.gameProperties.persistence.databases = JsonSerializer.Deserialize<JsonDocument>((string) m_serverParamsDictionary["databases"].ParameterValue);
+      m_serverConfig.root.game.gameProperties.persistence.storages = JsonSerializer.Deserialize<JsonDocument>((string) m_serverParamsDictionary["storages"].ParameterValue);
 
       m_serverConfig.root.operating.lobbyPlayerSynchronise = (bool)m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue;
       m_serverConfig.root.operating.playerSaveTime = Convert.ToInt32(m_serverParamsDictionary["playerSaveTime"].ParameterValue);
