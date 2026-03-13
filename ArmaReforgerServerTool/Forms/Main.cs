@@ -514,6 +514,7 @@ namespace ReforgerServerApp
       moveModPosUpBtn.Enabled = enabled;
       moveModPosDownBtn.Enabled = enabled;
       loadSaveGameBtn.Enabled = enabled;
+      keepServerUpdated.Enabled = enabled;
     }
 
     /// <summary>
