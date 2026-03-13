@@ -201,7 +201,20 @@ namespace ReforgerServerApp
 
         foreach (Mod m in m_serverConfig.root.game.mods)
         {
-          m_enabledMods.Add(m);
+          // Only add the mod if it isn't already in Enabled Mods
+          if (!m_enabledMods.Contains(m))
+          {
+            // Check to see if the same mod but a different version is in Enabled Mods, we need to remove it from Enabled Mods so that the loaded one takes precedence
+            foreach (Mod em in m_enabledMods)
+            {
+              if (em.GetModName().Equals(m.GetModName()))
+              {
+                m_enabledMods.Remove(em);
+              }
+            }
+            m_enabledMods.Add(m);
+          }
+          
           if (m_availableMods.Contains(m))
           {
             m_availableMods.Remove(m);
