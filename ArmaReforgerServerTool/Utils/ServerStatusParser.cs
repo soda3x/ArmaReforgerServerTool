@@ -9,7 +9,6 @@
 
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Windows.Shapes;
 
 namespace Longbow.Utils
 {
@@ -38,6 +37,8 @@ namespace Longbow.Utils
 
   internal partial class ServerStatusParser
   {
+    private ServerStatusEventArgs m_serverStatus = new();
+
     private const string STATS_REGEX = @"FPS:\s*(?<fps>[\d\.]+).*?Mem:\s*(?<mem>\d+)\s*kB.*?Player:\s*(?<player>\d+)";
     [GeneratedRegex(STATS_REGEX)]
     private static partial Regex StatsRegex();
@@ -65,12 +66,12 @@ namespace Longbow.Utils
     /// Sender for the 'UpdateServerStatus' Event
     /// </summary>
     /// <param name="e">Arguments to pass to the GUI to update server status</param>
-    protected virtual void OnUpdateServerStatusEvent(ServerStatusEventArgs e)
+    protected virtual void OnUpdateServerStatusEvent()
     {
-      UpdateServerStatus?.Invoke(this, e);
+      UpdateServerStatus?.Invoke(this, m_serverStatus);
     }
 
-    private bool TryAndParseStats(string logLine, ServerStatusEventArgs e)
+    private bool TryAndParseStats(string logLine)
     {
       Match match = StatsRegex().Match(logLine);
 
@@ -84,52 +85,52 @@ namespace Longbow.Utils
         // Use TryParse for safe conversion
         if (double.TryParse(fps, out double fpsValue))
         {
-          e.LastFPS = fpsValue;
+          m_serverStatus.LastFPS = fpsValue;
         }
 
         if (long.TryParse(mem, out long memValue))
         {
-          e.LastMem = memValue;
+          m_serverStatus.LastMem = memValue;
         }
 
         if (int.TryParse(player, out int playerValue))
         {
-          e.LastPlayerCount = playerValue;
+          m_serverStatus.LastPlayerCount = playerValue;
         }
 
-        OnUpdateServerStatusEvent(e);
+        OnUpdateServerStatusEvent();
       }
 
       return match.Success;
     }
 
-    private bool TryAndParsePingSite(string logLine, ServerStatusEventArgs e)
+    private bool TryAndParsePingSite(string logLine)
     {
       Match match = PingSiteRegex().Match(logLine);
 
       if (match.Success)
       {
-        e.LastPingSite = match.Groups["site"].Value.Trim();
-        OnUpdateServerStatusEvent(e);
+        m_serverStatus.LastPingSite = match.Groups["site"].Value.Trim();
+        OnUpdateServerStatusEvent();
       }
 
       return match.Success;
     }
 
-    private bool TryAndParseJoinCode(string logLine, ServerStatusEventArgs e)
+    private bool TryAndParseJoinCode(string logLine)
     {
       Match match = JoinCodeRegex().Match(logLine);
 
       if (match.Success)
       {
-        e.LastJoinCode = match.Groups["code"].Value;
-        OnUpdateServerStatusEvent(e);
+        m_serverStatus.LastJoinCode = match.Groups["code"].Value;
+        OnUpdateServerStatusEvent();
       }
 
       return match.Success;
     }
 
-    private bool TryAndParseRcon(string logLine, ServerStatusEventArgs e)
+    private bool TryAndParseRcon(string logLine)
     {
       Match match = RconRegex().Match(logLine);
 
@@ -138,32 +139,32 @@ namespace Longbow.Utils
         string ip = match.Groups["ip"].Value;
         string port = match.Groups["port"].Value;
 
-        e.LastRconIP = ip;
+        m_serverStatus.LastRconIP = ip;
 
         if (int.TryParse(port, out int portValue))
         {
-          e.LastRconPort = portValue;
+          m_serverStatus.LastRconPort = portValue;
         }
-        OnUpdateServerStatusEvent(e);
+        OnUpdateServerStatusEvent();
       }
 
       return match.Success;
     }
 
-    private bool TryAndParseAddress(string logLine, ServerStatusEventArgs e)
+    private bool TryAndParseAddress(string logLine)
     {
       Match match = AddressRegex().Match(logLine);
 
       if (match.Success)
       {
-        e.LastIP = match.Groups["ip"].Value;
+        m_serverStatus.LastIP = match.Groups["ip"].Value;
         string port = match.Groups["port"].Value;
 
         if (int.TryParse(port, out int portValue))
         {
-          e.LastPort = portValue;
+          m_serverStatus.LastPort = portValue;
         }
-        OnUpdateServerStatusEvent(e);
+        OnUpdateServerStatusEvent();
       }
 
       return match.Success;
@@ -171,14 +172,13 @@ namespace Longbow.Utils
 
     public void ParseServerStatus(string logLine)
     {
-      ServerStatusEventArgs e = new();
-      e.LastUpdate = DateTime.Now;
+      m_serverStatus.LastUpdate = DateTime.Now;
       Debug.WriteLine($"DEBUG_REGEX_INPUT: |{logLine}|");
-      TryAndParseAddress(logLine, e);
-      TryAndParseRcon(logLine, e);
-      TryAndParseJoinCode(logLine, e);
-      TryAndParsePingSite(logLine, e);
-      TryAndParseStats(logLine, e);
+      TryAndParseAddress(logLine);
+      TryAndParseRcon(logLine);
+      TryAndParseJoinCode(logLine);
+      TryAndParsePingSite(logLine);
+      TryAndParseStats(logLine);
     }
   }
 }
