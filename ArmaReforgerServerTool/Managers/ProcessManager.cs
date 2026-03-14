@@ -12,12 +12,14 @@
 using FontAwesome.Sharp;
 using Longbow.Managers;
 using Longbow.Models;
+using Longbow.Utils;
 using ReforgerServerApp.Components;
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
 using Serilog;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text;
 
 namespace ReforgerServerApp.Managers
 {
@@ -53,6 +55,9 @@ namespace ReforgerServerApp.Managers
 
     public delegate void UpdateGuiControlsEventHandler(object sender, GuiModelEventArgs e);
     public event UpdateGuiControlsEventHandler UpdateGuiControlsEvent;
+
+    public delegate void UpdateServerStatusEventHandler(object sender, ServerStatusEventArgs e);
+    public event UpdateServerStatusEventHandler UpdateServerStatusEvent;
 
     public bool KeepServerUpdated { get; set; }
 
@@ -100,10 +105,6 @@ namespace ReforgerServerApp.Managers
         try
         {
           Log.Information("ProcessManager - User stopped server.");
-          m_serverProcess.OutputDataReceived -= SteamCmdDataReceived;
-          m_serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
-          m_serverProcess.CancelOutputRead();
-          m_serverProcess.CancelErrorRead();
 
           SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: User stopped server.{Environment.NewLine}");
           if (triggeredByAutoRestart)
@@ -124,6 +125,13 @@ namespace ReforgerServerApp.Managers
           m_serverProcess.Kill();
           m_isServerStarted = false;
 
+          ServerStatusEventArgs statusArgs = new()
+          {
+            ServerOnline = false
+          };
+          OnUpdateServerStatusEvent(statusArgs);
+
+
           GuiModelEventArgs guiModel = new()
           {
             buttonIconChar = IconChar.Play,
@@ -136,7 +144,20 @@ namespace ReforgerServerApp.Managers
         }
         catch (Exception ex)
         {
-          Utilities.DisplayErrorMessage("Error", ex.Message);
+          if (m_serverProcess != null && !m_serverProcess.HasExited)
+          {
+            m_serverProcess.Kill();
+            m_serverProcess.Dispose();
+          }
+          m_isServerStarted = false;
+          GuiModelEventArgs guiModel = new()
+          {
+            buttonIconChar = IconChar.Play,
+            enableServerFields = true,
+            serverRunningLabelText = string.Empty,
+            startServerBtnEnabled = true
+          };
+          OnUpdateGuiControlsEvent(guiModel);
         }
       }
       else
@@ -225,10 +246,6 @@ namespace ReforgerServerApp.Managers
 
         try
         {
-          m_serverProcess.OutputDataReceived -= SteamCmdDataReceived;
-          m_serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
-          m_serverProcess.CancelOutputRead();
-          m_serverProcess.CancelErrorRead();
 
           Log.Information("ProcessManager - Automatically stopped server.");
           steamCmd = new($"{Utilities.GetTimestamp()}: Automatically stopped server.{Environment.NewLine}");
@@ -289,63 +306,6 @@ namespace ReforgerServerApp.Managers
     }
 
     /// <summary>
-    /// Handler for when data is received from the Std Output or Error from SteamCMD or the Arma Server processes
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void SteamCmdDataReceived(object sender, DataReceivedEventArgs e)
-    {
-      if (!string.IsNullOrEmpty(e.Data))
-      {
-        SteamCmdLogEventArgs steamCmd = new($"{Utilities.GetTimestamp()}: {e.Data}{Environment.NewLine}");
-        OnUpdateSteamCmdLogEvent(steamCmd);
-        // Kill the server if it fails to start correctly.
-        if (e.Data.Contains("Unable to Initialize"))
-        {
-          steamCmd = new($"{Utilities.GetTimestamp()}: System stopped server due to an error.{Environment.NewLine}");
-          Log.Information("ProcessManager - System stopped server due to an error.");
-          OnUpdateSteamCmdLogEvent(steamCmd);
-          m_serverProcess.OutputDataReceived -= SteamCmdDataReceived;
-          m_serverProcess.ErrorDataReceived -= SteamCmdDataReceived;
-          m_serverProcess.CancelOutputRead();
-          m_serverProcess.CancelErrorRead();
-          m_serverProcess.Kill();
-
-          m_isServerStarted = false;
-
-          GuiModelEventArgs guiModel = new()
-          {
-            buttonIconChar = IconChar.Play,
-            enableServerFields = true,
-            serverRunningLabelText = string.Empty,
-            startServerBtnEnabled = true
-          };
-          OnUpdateGuiControlsEvent(guiModel);
-        }
-
-        // If server crashes, if the user has enabled auto restart on crash then attempt to restart it
-        if (e.Data.Contains("Game destroyed"))
-        {
-          if (ConfigurationManager.GetInstance().autoRestartOnCrash)
-          {
-            steamCmd = new($"{Utilities.GetTimestamp()}: Game destroyed detected. System attempting to restart server...{Environment.NewLine}");
-            OnUpdateSteamCmdLogEvent(steamCmd);
-            Log.Information("ProcessManager - Game destroyed detected. Attempting to restart server...");
-
-            // Stop the server (1st toggle)
-            StartStopServer(true);
-
-            Task.Delay(ToolPropertiesManager.GetInstance().GetToolProperties().autoRestartTime_ms).ContinueWith(_ =>
-            {
-              Log.Information("ProcessManager - Restarting server now...");
-              StartStopServer(true); // Start the server (2nd toggle)
-            });
-          }
-        }
-      }
-    }
-
-    /// <summary>
     /// Worker Thread task, this task spawns SteamCMD which will install / update the Arma Server files and then close, 
     /// once it has closed, the Arma Server is launched with the generated server configuration.
     /// </summary>
@@ -381,19 +341,17 @@ namespace ReforgerServerApp.Managers
 
       };
 
-      m_steamCmdUpdateProcess.OutputDataReceived += SteamCmdDataReceived;
-      m_steamCmdUpdateProcess.ErrorDataReceived += SteamCmdDataReceived;
       m_steamCmdUpdateProcess.Start();
-      m_steamCmdUpdateProcess.BeginOutputReadLine();
-      m_steamCmdUpdateProcess.BeginErrorReadLine();
+
+      Task steamStdout = Task.Run(() => ReadStreamAsync(m_steamCmdUpdateProcess.StandardOutput));
+      Task steamStderr = Task.Run(() => ReadStreamAsync(m_steamCmdUpdateProcess.StandardError));
       m_steamCmdUpdateProcess.WaitForExit();
+      // Wait a split second to ensure the stream readers finish emptying the pipe
+      Task.WaitAll(steamStdout, steamStderr);
 
 
       if (m_steamCmdUpdateProcess.HasExited)
       {
-        m_steamCmdUpdateProcess.OutputDataReceived -= SteamCmdDataReceived;
-        m_steamCmdUpdateProcess.ErrorDataReceived -= SteamCmdDataReceived;
-
         GuiModelEventArgs guiModel = new()
         {
           buttonIconChar = IconChar.Stop,
@@ -433,11 +391,9 @@ namespace ReforgerServerApp.Managers
         SteamCmdLogEventArgs starting = new($"{Utilities.GetTimestamp()}: Download / update complete. Starting the dedicated server...{Environment.NewLine}");
         OnUpdateSteamCmdLogEvent(starting);
 
-        m_serverProcess.OutputDataReceived += SteamCmdDataReceived;
-        m_serverProcess.ErrorDataReceived += SteamCmdDataReceived;
         m_serverProcess.Start();
-        m_serverProcess.BeginOutputReadLine();
-        m_serverProcess.BeginErrorReadLine();
+        Task armaStdout = Task.Run(() => ReadStreamAsync(m_serverProcess.StandardOutput));
+        Task armaStderr = Task.Run(() => ReadStreamAsync(m_serverProcess.StandardError));
       }
     }
 
@@ -468,6 +424,86 @@ namespace ReforgerServerApp.Managers
     }
 
     /// <summary>
+    /// Handler for when data is received from the Std Output or Error from SteamCMD or the Arma Server processes
+    /// </summary>
+    /// <param name="reader"></param>
+    private async Task ReadStreamAsync(StreamReader reader)
+    {
+      char[] buffer = new char[256]; // Read in small, fast 256-byte chunks
+      StringBuilder lineBuilder = new StringBuilder();
+
+      while (!reader.EndOfStream)
+      {
+        // Pull data immediately as it hits the pipe
+        int bytesRead = await reader.ReadAsync(buffer, 0, buffer.Length);
+
+        if (bytesRead > 0)
+        {
+          string chunk = new string(buffer, 0, bytesRead);
+
+          foreach (char c in chunk)
+          {
+            // Trigger on both \n and \r
+            if (c == '\n' || c == '\r')
+            {
+              if (lineBuilder.Length > 0)
+              {
+                string fullLine = lineBuilder.ToString() + Environment.NewLine;
+                lineBuilder.Clear();
+
+                SteamCmdLogEventArgs steamCmd = new SteamCmdLogEventArgs($"{Utilities.GetTimestamp()}: {fullLine}");
+                OnUpdateSteamCmdLogEvent(steamCmd);
+
+                if (fullLine.Contains("Error while initializing game") || fullLine.Contains("Unable to initialize the game"))
+                {
+                  steamCmd = new($"{Utilities.GetTimestamp()}: System stopped server due to an error.{Environment.NewLine}");
+                  Log.Information("ProcessManager - System stopped server due to an error.");
+                  OnUpdateSteamCmdLogEvent(steamCmd);
+                  m_serverProcess.Kill();
+
+                  m_isServerStarted = false;
+
+                  GuiModelEventArgs guiModel = new()
+                  {
+                    buttonIconChar = IconChar.Play,
+                    enableServerFields = true,
+                    serverRunningLabelText = string.Empty,
+                    startServerBtnEnabled = true
+                  };
+                  OnUpdateGuiControlsEvent(guiModel);
+                }
+
+                // If server crashes, if the user has enabled auto restart on crash then attempt to restart it
+                if (fullLine.Contains("Game destroyed"))
+                {
+                  if (ConfigurationManager.GetInstance().autoRestartOnCrash)
+                  {
+                    steamCmd = new($"{Utilities.GetTimestamp()}: Game destroyed detected. System attempting to restart server...{Environment.NewLine}");
+                    OnUpdateSteamCmdLogEvent(steamCmd);
+                    Log.Information("ProcessManager - Game destroyed detected. Attempting to restart server...");
+
+                    // Stop the server (1st toggle)
+                    StartStopServer(true);
+
+                    _ = Task.Delay(ToolPropertiesManager.GetInstance().GetToolProperties().autoRestartTime_ms).ContinueWith(_ =>
+                    {
+                      Log.Information("ProcessManager - Restarting server now...");
+                      StartStopServer(true); // Start the server (2nd toggle)
+                    });
+                  }
+                }
+              }
+            }
+            else
+            {
+              lineBuilder.Append(c);
+            }
+          }
+        }
+      }
+    }
+
+    /// <summary>
     /// Configure the timer to start the server
     /// </summary>
     public void ConfigureAutomaticRestartTask()
@@ -488,6 +524,11 @@ namespace ReforgerServerApp.Managers
       m_isServerUsingTimer = false;
     }
 
+    public void KillServer()
+    {
+      m_serverProcess.Kill();
+    }
+
     /// <summary>
     /// Sender for the 'UpdateSteamCmdLog' Event
     /// </summary>
@@ -504,6 +545,16 @@ namespace ReforgerServerApp.Managers
     protected virtual void OnUpdateGuiControlsEvent(GuiModelEventArgs e)
     {
       UpdateGuiControlsEvent?.Invoke(this, e);
+    }
+
+
+    /// <summary>
+    /// Sender for the 'UpdateServerStatusEvent' Event
+    /// </summary>
+    /// <param name="e">Arguments to pass to the GUI to inform it that it needs to update various controls</param>
+    protected virtual void OnUpdateServerStatusEvent(ServerStatusEventArgs e)
+    {
+      UpdateServerStatusEvent?.Invoke(this, e);
     }
 
     /// <summary>
