@@ -38,6 +38,7 @@ namespace ReforgerServerApp
 
       ProcessManager.GetInstance().UpdateGuiControlsEvent += HandleUpdateGuiControlsEvent;
       ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
+      ProcessManager.GetInstance().UpdateServerStatusEvent += HandleServerStatusEvent;
       ConfigurationManager.GetInstance().UpdateScenarioIdFromLoadedConfigEvent += HandleUpdateScenarioIdFromLoadedConfigEvent;
 
       useUpnp.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings().GetValueOrDefault("useUpnp", SavedState.DEFAULT_USE_UPNP).Enabled;
@@ -95,7 +96,12 @@ namespace ReforgerServerApp
       copyAddressBtn.Enabled = false;
       copyRconAddressBtn.Enabled = false;
       copyJoinCodeBtn.Enabled = false;
-      copyPingSiteBtn.Enabled = false;
+
+      chartFps.ChartAreas[0].BackColor = Color.Transparent;
+      chartMem.ChartAreas[0].BackColor = Color.Transparent;
+
+      chartFps.Legends[0].BackColor = Color.Transparent;
+      chartMem.Legends[0].BackColor = Color.Transparent;
 
       var fpsSeries = chartFps.Series["FPS"];
       var memSeries = chartMem.Series["Memory (GB)"];
@@ -546,7 +552,6 @@ namespace ReforgerServerApp
       copyAddressBtn.Enabled = !enabled;
       copyRconAddressBtn.Enabled = !enabled;
       copyJoinCodeBtn.Enabled = !enabled;
-      copyPingSiteBtn.Enabled = !enabled;
     }
 
     /// <summary>
@@ -1399,7 +1404,7 @@ namespace ReforgerServerApp
 
     private void HandleServerStatusEvent(object sender, ServerStatusEventArgs e)
     {
-      const string serverOfflineString = "Server is offline or unreachable.";
+      const string serverOfflineString = "Server is offline.";
       if (!e.ServerOnline)
       {
         serverAddressStatusLabel.Text = serverOfflineString;
@@ -1407,6 +1412,7 @@ namespace ReforgerServerApp
         pingSiteStatusLabel.Text = serverOfflineString;
         joinCodeStatusLabel.Text = serverOfflineString;
         playerCountStatusLabel.Text = serverOfflineString;
+        flagStatusPB.Image = null;
         return;
       }
       if (e.LastFPS > 0 || e.LastMem > 0)
@@ -1424,7 +1430,14 @@ namespace ReforgerServerApp
 
       pingSiteStatusLabel.Text = string.Concat(e.LastPingSite.Substring(0, 1).ToUpper(), e.LastPingSite.AsSpan(1));
       joinCodeStatusLabel.Text = e.LastJoinCode;
-      playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected players";
+
+      if (e.LastPlayerCount == 1)
+      {
+        playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected player";
+      } else
+      {
+        playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected players";
+      }
     }
 
     private void UpdatePerformanceGraphs(double fps, long memoryKb, DateTime time)
@@ -1811,11 +1824,6 @@ namespace ReforgerServerApp
     private void OnJoinCodeToClipboard(object sender, EventArgs e)
     {
       Clipboard.SetText(joinCodeStatusLabel.Text);
-    }
-
-    private void OnPingSiteToClipboard(object sender, EventArgs e)
-    {
-      Clipboard.SetText(pingSiteStatusLabel.Text);
     }
   }
 }

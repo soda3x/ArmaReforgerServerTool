@@ -56,6 +56,9 @@ namespace ReforgerServerApp.Managers
     public delegate void UpdateGuiControlsEventHandler(object sender, GuiModelEventArgs e);
     public event UpdateGuiControlsEventHandler UpdateGuiControlsEvent;
 
+    public delegate void UpdateServerStatusEventHandler(object sender, ServerStatusEventArgs e);
+    public event UpdateServerStatusEventHandler UpdateServerStatusEvent;
+
     public bool KeepServerUpdated { get; set; }
 
     private ProcessManager()
@@ -121,6 +124,13 @@ namespace ReforgerServerApp.Managers
 
           m_serverProcess.Kill();
           m_isServerStarted = false;
+
+          ServerStatusEventArgs statusArgs = new()
+          {
+            ServerOnline = false
+          };
+          OnUpdateServerStatusEvent(statusArgs);
+
 
           GuiModelEventArgs guiModel = new()
           {
@@ -535,6 +545,16 @@ namespace ReforgerServerApp.Managers
     protected virtual void OnUpdateGuiControlsEvent(GuiModelEventArgs e)
     {
       UpdateGuiControlsEvent?.Invoke(this, e);
+    }
+
+
+    /// <summary>
+    /// Sender for the 'UpdateServerStatusEvent' Event
+    /// </summary>
+    /// <param name="e">Arguments to pass to the GUI to inform it that it needs to update various controls</param>
+    protected virtual void OnUpdateServerStatusEvent(ServerStatusEventArgs e)
+    {
+      UpdateServerStatusEvent?.Invoke(this, e);
     }
 
     /// <summary>

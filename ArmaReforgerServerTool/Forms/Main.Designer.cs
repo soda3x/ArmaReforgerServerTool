@@ -102,7 +102,6 @@ namespace ReforgerServerApp
       playerCountStatusLabel = new Label();
       groupBox11 = new GroupBox();
       tableLayoutPanel11 = new TableLayoutPanel();
-      copyPingSiteBtn = new FontAwesome.Sharp.IconButton();
       tableLayoutPanel13 = new TableLayoutPanel();
       pingSiteStatusLabel = new Label();
       flagStatusPB = new PictureBox();
@@ -177,7 +176,7 @@ namespace ReforgerServerApp
       tabPage1.Padding = new Padding(3);
       tabPage1.Size = new Size(1518, 750);
       tabPage1.TabIndex = 0;
-      tabPage1.Text = "Server Configuration";
+      tabPage1.Text = "Configuration";
       tabPage1.UseVisualStyleBackColor = true;
       // 
       // tableLayoutPanel6
@@ -677,7 +676,7 @@ namespace ReforgerServerApp
       tabPage2.Padding = new Padding(3);
       tabPage2.Size = new Size(1518, 750);
       tabPage2.TabIndex = 1;
-      tabPage2.Text = "Server Management";
+      tabPage2.Text = "Management";
       tabPage2.UseVisualStyleBackColor = true;
       // 
       // keepServerUpdated
@@ -907,7 +906,7 @@ namespace ReforgerServerApp
       tabPage3.Padding = new Padding(3);
       tabPage3.Size = new Size(1518, 750);
       tabPage3.TabIndex = 2;
-      tabPage3.Text = "Server Status";
+      tabPage3.Text = "Status";
       tabPage3.UseVisualStyleBackColor = true;
       // 
       // serverStatusTableLayout
@@ -921,7 +920,7 @@ namespace ReforgerServerApp
       serverStatusTableLayout.Location = new Point(3, 3);
       serverStatusTableLayout.Name = "serverStatusTableLayout";
       serverStatusTableLayout.RowCount = 3;
-      serverStatusTableLayout.RowStyles.Add(new RowStyle());
+      serverStatusTableLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
       serverStatusTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       serverStatusTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
       serverStatusTableLayout.Size = new Size(1512, 744);
@@ -931,15 +930,16 @@ namespace ReforgerServerApp
       // 
       groupBox6.Controls.Add(chartFps);
       groupBox6.Dock = DockStyle.Fill;
-      groupBox6.Location = new Point(3, 114);
+      groupBox6.Location = new Point(3, 103);
       groupBox6.Name = "groupBox6";
-      groupBox6.Size = new Size(1506, 310);
+      groupBox6.Size = new Size(1506, 316);
       groupBox6.TabIndex = 3;
       groupBox6.TabStop = false;
       groupBox6.Text = "Server FPS";
       // 
       // chartFps
       // 
+      chartFps.BackColor = Color.Transparent;
       chartArea1.Name = "ChartArea1";
       chartFps.ChartAreas.Add(chartArea1);
       chartFps.Dock = DockStyle.Fill;
@@ -952,7 +952,7 @@ namespace ReforgerServerApp
       series1.Legend = "Legend1";
       series1.Name = "FPS";
       chartFps.Series.Add(series1);
-      chartFps.Size = new Size(1500, 288);
+      chartFps.Size = new Size(1500, 294);
       chartFps.TabIndex = 1;
       chartFps.Text = "chart1";
       // 
@@ -960,15 +960,16 @@ namespace ReforgerServerApp
       // 
       groupBox7.Controls.Add(chartMem);
       groupBox7.Dock = DockStyle.Fill;
-      groupBox7.Location = new Point(3, 430);
+      groupBox7.Location = new Point(3, 425);
       groupBox7.Name = "groupBox7";
-      groupBox7.Size = new Size(1506, 311);
+      groupBox7.Size = new Size(1506, 316);
       groupBox7.TabIndex = 4;
       groupBox7.TabStop = false;
       groupBox7.Text = "Server Memory Usage";
       // 
       // chartMem
       // 
+      chartMem.BackColor = Color.Transparent;
       chartArea2.Name = "ChartArea1";
       chartMem.ChartAreas.Add(chartArea2);
       chartMem.Dock = DockStyle.Fill;
@@ -981,7 +982,7 @@ namespace ReforgerServerApp
       series2.Legend = "Legend1";
       series2.Name = "Memory (GB)";
       chartMem.Series.Add(series2);
-      chartMem.Size = new Size(1500, 289);
+      chartMem.Size = new Size(1500, 294);
       chartMem.TabIndex = 2;
       chartMem.Text = "chart2";
       // 
@@ -991,7 +992,7 @@ namespace ReforgerServerApp
       serverInfoGroupBox.Dock = DockStyle.Fill;
       serverInfoGroupBox.Location = new Point(3, 3);
       serverInfoGroupBox.Name = "serverInfoGroupBox";
-      serverInfoGroupBox.Size = new Size(1506, 105);
+      serverInfoGroupBox.Size = new Size(1506, 94);
       serverInfoGroupBox.TabIndex = 2;
       serverInfoGroupBox.TabStop = false;
       // 
@@ -1013,7 +1014,7 @@ namespace ReforgerServerApp
       tableLayoutPanel7.Name = "tableLayoutPanel7";
       tableLayoutPanel7.RowCount = 1;
       tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel7.Size = new Size(1500, 83);
+      tableLayoutPanel7.Size = new Size(1500, 72);
       tableLayoutPanel7.TabIndex = 3;
       // 
       // groupBox5
@@ -1022,7 +1023,7 @@ namespace ReforgerServerApp
       groupBox5.Dock = DockStyle.Fill;
       groupBox5.Location = new Point(1203, 3);
       groupBox5.Name = "groupBox5";
-      groupBox5.Size = new Size(294, 77);
+      groupBox5.Size = new Size(294, 66);
       groupBox5.TabIndex = 4;
       groupBox5.TabStop = false;
       groupBox5.Text = "Player Count";
@@ -1032,11 +1033,12 @@ namespace ReforgerServerApp
       tableLayoutPanel12.ColumnCount = 1;
       tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
       tableLayoutPanel12.Controls.Add(playerCountStatusLabel, 0, 0);
+      tableLayoutPanel12.Dock = DockStyle.Fill;
       tableLayoutPanel12.Location = new Point(3, 19);
       tableLayoutPanel12.Name = "tableLayoutPanel12";
       tableLayoutPanel12.RowCount = 1;
       tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel12.Size = new Size(288, 52);
+      tableLayoutPanel12.Size = new Size(288, 44);
       tableLayoutPanel12.TabIndex = 2;
       // 
       // playerCountStatusLabel
@@ -1058,17 +1060,16 @@ namespace ReforgerServerApp
       groupBox11.Dock = DockStyle.Fill;
       groupBox11.Location = new Point(903, 3);
       groupBox11.Name = "groupBox11";
-      groupBox11.Size = new Size(294, 77);
+      groupBox11.Size = new Size(294, 66);
       groupBox11.TabIndex = 3;
       groupBox11.TabStop = false;
       groupBox11.Text = "Ping Site";
       // 
       // tableLayoutPanel11
       // 
-      tableLayoutPanel11.ColumnCount = 2;
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
-      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
-      tableLayoutPanel11.Controls.Add(copyPingSiteBtn, 1, 0);
+      tableLayoutPanel11.ColumnCount = 1;
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
       tableLayoutPanel11.Controls.Add(tableLayoutPanel13, 0, 0);
       tableLayoutPanel11.Dock = DockStyle.Fill;
       tableLayoutPanel11.Location = new Point(3, 19);
@@ -1078,24 +1079,6 @@ namespace ReforgerServerApp
       tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
       tableLayoutPanel11.Size = new Size(288, 32);
       tableLayoutPanel11.TabIndex = 2;
-      // 
-      // copyPingSiteBtn
-      // 
-      copyPingSiteBtn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-      copyPingSiteBtn.Dock = DockStyle.Right;
-      copyPingSiteBtn.IconChar = FontAwesome.Sharp.IconChar.Clipboard;
-      copyPingSiteBtn.IconColor = Color.Black;
-      copyPingSiteBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
-      copyPingSiteBtn.IconSize = 24;
-      copyPingSiteBtn.Location = new Point(256, 0);
-      copyPingSiteBtn.Margin = new Padding(0);
-      copyPingSiteBtn.MaximumSize = new Size(32, 32);
-      copyPingSiteBtn.MinimumSize = new Size(32, 32);
-      copyPingSiteBtn.Name = "copyPingSiteBtn";
-      copyPingSiteBtn.Size = new Size(32, 32);
-      copyPingSiteBtn.TabIndex = 3;
-      copyPingSiteBtn.UseVisualStyleBackColor = true;
-      copyPingSiteBtn.Click += OnPingSiteToClipboard;
       // 
       // tableLayoutPanel13
       // 
@@ -1109,7 +1092,7 @@ namespace ReforgerServerApp
       tableLayoutPanel13.Name = "tableLayoutPanel13";
       tableLayoutPanel13.RowCount = 1;
       tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-      tableLayoutPanel13.Size = new Size(210, 26);
+      tableLayoutPanel13.Size = new Size(282, 26);
       tableLayoutPanel13.TabIndex = 4;
       // 
       // pingSiteStatusLabel
@@ -1117,9 +1100,9 @@ namespace ReforgerServerApp
       pingSiteStatusLabel.AutoSize = true;
       pingSiteStatusLabel.Dock = DockStyle.Fill;
       pingSiteStatusLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point,  0);
-      pingSiteStatusLabel.Location = new Point(55, 0);
+      pingSiteStatusLabel.Location = new Point(73, 0);
       pingSiteStatusLabel.Name = "pingSiteStatusLabel";
-      pingSiteStatusLabel.Size = new Size(152, 26);
+      pingSiteStatusLabel.Size = new Size(206, 26);
       pingSiteStatusLabel.TabIndex = 3;
       pingSiteStatusLabel.Text = "adelaide";
       pingSiteStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -1128,9 +1111,10 @@ namespace ReforgerServerApp
       // 
       flagStatusPB.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       flagStatusPB.BackgroundImageLayout = ImageLayout.Center;
-      flagStatusPB.Location = new Point(3, 3);
+      flagStatusPB.Location = new Point(0, 0);
+      flagStatusPB.Margin = new Padding(0);
       flagStatusPB.Name = "flagStatusPB";
-      flagStatusPB.Size = new Size(46, 20);
+      flagStatusPB.Size = new Size(70, 26);
       flagStatusPB.TabIndex = 4;
       flagStatusPB.TabStop = false;
       // 
@@ -1140,7 +1124,7 @@ namespace ReforgerServerApp
       groupBox10.Dock = DockStyle.Fill;
       groupBox10.Location = new Point(603, 3);
       groupBox10.Name = "groupBox10";
-      groupBox10.Size = new Size(294, 77);
+      groupBox10.Size = new Size(294, 66);
       groupBox10.TabIndex = 2;
       groupBox10.TabStop = false;
       groupBox10.Text = "Join Code";
@@ -1197,7 +1181,7 @@ namespace ReforgerServerApp
       groupBox9.Dock = DockStyle.Fill;
       groupBox9.Location = new Point(303, 3);
       groupBox9.Name = "groupBox9";
-      groupBox9.Size = new Size(294, 77);
+      groupBox9.Size = new Size(294, 66);
       groupBox9.TabIndex = 1;
       groupBox9.TabStop = false;
       groupBox9.Text = "RCON Address";
@@ -1254,7 +1238,7 @@ namespace ReforgerServerApp
       groupBox8.Dock = DockStyle.Fill;
       groupBox8.Location = new Point(3, 3);
       groupBox8.Name = "groupBox8";
-      groupBox8.Size = new Size(294, 77);
+      groupBox8.Size = new Size(294, 66);
       groupBox8.TabIndex = 0;
       groupBox8.TabStop = false;
       groupBox8.Text = "Server Address";
@@ -1440,7 +1424,6 @@ namespace ReforgerServerApp
     private FontAwesome.Sharp.IconButton copyJoinCodeBtn;
     private GroupBox groupBox11;
     private TableLayoutPanel tableLayoutPanel11;
-    private FontAwesome.Sharp.IconButton copyPingSiteBtn;
     private GroupBox groupBox5;
     private TableLayoutPanel tableLayoutPanel12;
     private Label playerCountStatusLabel;
