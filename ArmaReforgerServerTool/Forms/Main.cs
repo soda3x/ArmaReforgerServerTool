@@ -6,16 +6,17 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Forms;
+using Longbow.Managers;
+using Longbow.Models;
+using Longbow.Utils;
+using ReforgerServerApp.Components;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
-using System.ComponentModel;
-using Serilog;
-using ReforgerServerApp.Components;
 using ReforgerServerApp.Utils;
-using Longbow.Models;
-using Longbow.Managers;
-using Longbow.Forms;
-using Longbow.Utils;
+using Serilog;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace ReforgerServerApp
 {
@@ -24,6 +25,8 @@ namespace ReforgerServerApp
     private BindingSource m_availableModsBindingSource;
     private BindingSource m_enabledModsBindingSource;
     private ServerStatusParser m_serverStatusParser;
+    private const int MAX_GRAPH_POINTS = 60;
+
     public Main()
     {
       InitializeComponent();
@@ -54,6 +57,8 @@ namespace ReforgerServerApp
 
       m_serverStatusParser = new();
       m_serverStatusParser.UpdateServerStatus += HandleServerStatusEvent;
+
+      HandleServerStatusEvent(this, new());
 
 
       m_availableModsBindingSource = new()
@@ -86,6 +91,27 @@ namespace ReforgerServerApp
       loadSaveGameBtn.Enabled = false;
       ToolTip loadsaveGameBtnTooltip = new();
       loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, "Disabled for the time being, for now please use the Load Session Save option in Advanced Parameters");
+
+      copyAddressBtn.Enabled = false;
+      copyRconAddressBtn.Enabled = false;
+      copyJoinCodeBtn.Enabled = false;
+      copyPingSiteBtn.Enabled = false;
+
+      var fpsSeries = chartFps.Series["FPS"];
+      var memSeries = chartMem.Series["Memory (GB)"];
+
+      fpsSeries.ToolTip = "FPS: #VALY\nTime: #VALX{HH:mm:ss}";
+      fpsSeries.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+      chartFps.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm:ss";
+
+      memSeries.ToolTip = "Memory: #VALY GB\nTime: #VALX{HH:mm:ss}";
+      memSeries.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
+      chartMem.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm:ss";
+      memSeries.Color = Color.Orange;
+      GCMemoryInfo gcInfo = GC.GetGCMemoryInfo();
+      double totalSystemMemoryGb = gcInfo.TotalAvailableMemoryBytes / (1024.0 * 1024.0 * 1024.0);
+      chartMem.ChartAreas[0].AxisY.Maximum = Math.Ceiling(totalSystemMemoryGb);
+      chartMem.ChartAreas[0].AxisY.Minimum = 0; // Lock the bottom to 0 for proper scale
     }
 
     /// <summary>
@@ -515,6 +541,12 @@ namespace ReforgerServerApp
       moveModPosDownBtn.Enabled = enabled;
       loadSaveGameBtn.Enabled = enabled;
       keepServerUpdated.Enabled = enabled;
+
+      // The clipboard buttons are the opposite
+      copyAddressBtn.Enabled = !enabled;
+      copyRconAddressBtn.Enabled = !enabled;
+      copyJoinCodeBtn.Enabled = !enabled;
+      copyPingSiteBtn.Enabled = !enabled;
     }
 
     /// <summary>
@@ -1367,24 +1399,65 @@ namespace ReforgerServerApp
 
     private void HandleServerStatusEvent(object sender, ServerStatusEventArgs e)
     {
-      if (serverStatusTextBox.InvokeRequired)
+      const string serverOfflineString = "Server is offline or unreachable.";
+      if (!e.ServerOnline)
       {
-        serverStatusTextBox.Invoke(new Action(() => HandleServerStatusEvent(sender, e)));
+        serverAddressStatusLabel.Text = serverOfflineString;
+        rconAddressStatusLabel.Text = serverOfflineString;
+        pingSiteStatusLabel.Text = serverOfflineString;
+        joinCodeStatusLabel.Text = serverOfflineString;
+        playerCountStatusLabel.Text = serverOfflineString;
+        return;
       }
-      else
+      if (e.LastFPS > 0 || e.LastMem > 0)
       {
-        string serverStatus = String.Join(Environment.NewLine,
-          $"FPS: {e.LastFPS}",
-          $"Memory: {Utilities.FormatMemoryValue(e.LastMem)}",
-          $"Players: {e.LastPlayerCount}",
-          $"Ping Site: {e.LastPingSite}",
-          $"Join Code: {e.LastJoinCode}",
-          $"Join Address: {e.LastIP}",
-          $"Join Port: {e.LastPort}",
-          $"RCON Address: {e.LastRconIP}",
-          $"RCON Port: {e.LastRconPort}",
-          $"Last Updated: {e.LastUpdate.ToString()}");
-        serverStatusTextBox.Text = serverStatus;
+        UpdatePerformanceGraphs(e.LastFPS, e.LastMem, e.LastUpdate);
+      }
+      serverAddressStatusLabel.Text = $"{e.LastIP}:{e.LastPort}";
+      rconAddressStatusLabel.Text = $"{e.LastRconIP}:{e.LastRconPort}";
+
+      if (!e.LastPingSite.Equals("Unknown"))
+      {
+        string pingSite = e.LastPingSite.Replace("_", " ").ToUpper();
+        flagStatusPB.Image = FlagUtils.ChooseFlag(pingSite);
+      }
+
+      pingSiteStatusLabel.Text = string.Concat(e.LastPingSite.Substring(0, 1).ToUpper(), e.LastPingSite.AsSpan(1));
+      joinCodeStatusLabel.Text = e.LastJoinCode;
+      playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected players";
+    }
+
+    private void UpdatePerformanceGraphs(double fps, long memoryKb, DateTime time)
+    {
+      double memoryGb = Math.Round(memoryKb / 1024.0 / 1024.0, 2);
+
+      if (this.InvokeRequired)
+      {
+        this.BeginInvoke(new Action(() => UpdatePerformanceGraphs(fps, memoryKb, time)));
+        return;
+      }
+
+      // --- Update FPS Graph ---
+      chartFps.Series["FPS"].Points.AddXY(time, fps);
+
+      if (chartFps.Series["FPS"].Points.Count > MAX_GRAPH_POINTS)
+      {
+        chartFps.Series["FPS"].Points.RemoveAt(0);
+      }
+
+      // Auto-scale Y Axis
+      double minFps = chartFps.Series["FPS"].Points.FindMinByValue().YValues[0];
+      double maxFps = chartFps.Series["FPS"].Points.FindMaxByValue().YValues[0];
+      chartFps.ChartAreas[0].AxisY.Minimum = Math.Max(0, minFps - 5);
+      chartFps.ChartAreas[0].AxisY.Maximum = maxFps + 5;
+
+
+      // --- Update Memory Graph ---
+      chartMem.Series["Memory (GB)"].Points.AddXY(time, memoryGb);
+
+      if (chartMem.Series["Memory (GB)"].Points.Count > MAX_GRAPH_POINTS)
+      {
+        chartMem.Series["Memory (GB)"].Points.RemoveAt(0);
       }
     }
 
@@ -1699,6 +1772,11 @@ namespace ReforgerServerApp
     /// <param name="e"></param>
     private void OnFormClosing(object sender, FormClosingEventArgs e)
     {
+      if (ProcessManager.GetInstance().IsServerStarted())
+      {
+        ProcessManager.GetInstance().StartStopServer();
+      }
+
       UpdateStateForAdvancedSettings();
 
       // Update state of the checkboxes
@@ -1718,6 +1796,26 @@ namespace ReforgerServerApp
     private void KeepServerUpdatedCheckedChanged(object sender, EventArgs e)
     {
       ProcessManager.GetInstance().KeepServerUpdated = keepServerUpdated.Checked;
+    }
+
+    private void OnServerAddressToClipboard(object sender, EventArgs e)
+    {
+      Clipboard.SetText(serverAddressStatusLabel.Text);
+    }
+
+    private void OnRconAddressToClipboard(object sender, EventArgs e)
+    {
+      Clipboard.SetText(rconAddressStatusLabel.Text);
+    }
+
+    private void OnJoinCodeToClipboard(object sender, EventArgs e)
+    {
+      Clipboard.SetText(joinCodeStatusLabel.Text);
+    }
+
+    private void OnPingSiteToClipboard(object sender, EventArgs e)
+    {
+      Clipboard.SetText(pingSiteStatusLabel.Text);
     }
   }
 }

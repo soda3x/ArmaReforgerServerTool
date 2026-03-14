@@ -31,6 +31,12 @@ namespace ReforgerServerApp
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
+      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+      System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+      System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+      System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+      System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
       tabControl1 = new TabControl();
       tabPage1 = new TabPage();
       tableLayoutPanel6 = new TableLayoutPanel();
@@ -84,8 +90,34 @@ namespace ReforgerServerApp
       steamCmdLog = new TextBox();
       steamCmdAlert = new Label();
       tabPage3 = new TabPage();
-      serverStatusGroupBox = new GroupBox();
-      serverStatusTextBox = new TextBox();
+      serverStatusTableLayout = new TableLayoutPanel();
+      serverInfoGroupBox = new GroupBox();
+      tableLayoutPanel7 = new TableLayoutPanel();
+      groupBox5 = new GroupBox();
+      tableLayoutPanel12 = new TableLayoutPanel();
+      playerCountStatusLabel = new Label();
+      groupBox11 = new GroupBox();
+      tableLayoutPanel11 = new TableLayoutPanel();
+      copyPingSiteBtn = new FontAwesome.Sharp.IconButton();
+      tableLayoutPanel13 = new TableLayoutPanel();
+      pingSiteStatusLabel = new Label();
+      flagStatusPB = new PictureBox();
+      groupBox10 = new GroupBox();
+      tableLayoutPanel10 = new TableLayoutPanel();
+      joinCodeStatusLabel = new Label();
+      copyJoinCodeBtn = new FontAwesome.Sharp.IconButton();
+      groupBox9 = new GroupBox();
+      tableLayoutPanel8 = new TableLayoutPanel();
+      rconAddressStatusLabel = new Label();
+      copyRconAddressBtn = new FontAwesome.Sharp.IconButton();
+      groupBox8 = new GroupBox();
+      tableLayoutPanel9 = new TableLayoutPanel();
+      serverAddressStatusLabel = new Label();
+      copyAddressBtn = new FontAwesome.Sharp.IconButton();
+      groupBox6 = new GroupBox();
+      chartFps = new System.Windows.Forms.DataVisualization.Charting.Chart();
+      groupBox7 = new GroupBox();
+      chartMem = new System.Windows.Forms.DataVisualization.Charting.Chart();
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
@@ -101,7 +133,25 @@ namespace ReforgerServerApp
       groupBox4.SuspendLayout();
       groupBox3.SuspendLayout();
       tabPage3.SuspendLayout();
-      serverStatusGroupBox.SuspendLayout();
+      serverStatusTableLayout.SuspendLayout();
+      serverInfoGroupBox.SuspendLayout();
+      tableLayoutPanel7.SuspendLayout();
+      groupBox5.SuspendLayout();
+      tableLayoutPanel12.SuspendLayout();
+      groupBox11.SuspendLayout();
+      tableLayoutPanel11.SuspendLayout();
+      tableLayoutPanel13.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize) flagStatusPB).BeginInit();
+      groupBox10.SuspendLayout();
+      tableLayoutPanel10.SuspendLayout();
+      groupBox9.SuspendLayout();
+      tableLayoutPanel8.SuspendLayout();
+      groupBox8.SuspendLayout();
+      tableLayoutPanel9.SuspendLayout();
+      groupBox6.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize) chartFps).BeginInit();
+      groupBox7.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize) chartMem).BeginInit();
       SuspendLayout();
       // 
       // tabControl1
@@ -851,7 +901,7 @@ namespace ReforgerServerApp
       // 
       // tabPage3
       // 
-      tabPage3.Controls.Add(serverStatusGroupBox);
+      tabPage3.Controls.Add(serverStatusTableLayout);
       tabPage3.Location = new Point(4, 24);
       tabPage3.Name = "tabPage3";
       tabPage3.Padding = new Padding(3);
@@ -860,25 +910,396 @@ namespace ReforgerServerApp
       tabPage3.Text = "Server Status";
       tabPage3.UseVisualStyleBackColor = true;
       // 
-      // serverStatusGroupBox
+      // serverStatusTableLayout
       // 
-      serverStatusGroupBox.Controls.Add(serverStatusTextBox);
-      serverStatusGroupBox.Dock = DockStyle.Fill;
-      serverStatusGroupBox.Location = new Point(3, 3);
-      serverStatusGroupBox.Name = "serverStatusGroupBox";
-      serverStatusGroupBox.Size = new Size(1512, 744);
-      serverStatusGroupBox.TabIndex = 0;
-      serverStatusGroupBox.TabStop = false;
-      serverStatusGroupBox.Text = "Server Status";
+      serverStatusTableLayout.ColumnCount = 1;
+      serverStatusTableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      serverStatusTableLayout.Controls.Add(serverInfoGroupBox, 0, 0);
+      serverStatusTableLayout.Controls.Add(groupBox6, 0, 1);
+      serverStatusTableLayout.Controls.Add(groupBox7, 0, 2);
+      serverStatusTableLayout.Dock = DockStyle.Fill;
+      serverStatusTableLayout.Location = new Point(3, 3);
+      serverStatusTableLayout.Name = "serverStatusTableLayout";
+      serverStatusTableLayout.RowCount = 3;
+      serverStatusTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+      serverStatusTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
+      serverStatusTableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 40F));
+      serverStatusTableLayout.Size = new Size(1512, 744);
+      serverStatusTableLayout.TabIndex = 2;
       // 
-      // serverStatusTextBox
+      // serverInfoGroupBox
       // 
-      serverStatusTextBox.Dock = DockStyle.Fill;
-      serverStatusTextBox.Location = new Point(3, 19);
-      serverStatusTextBox.Multiline = true;
-      serverStatusTextBox.Name = "serverStatusTextBox";
-      serverStatusTextBox.Size = new Size(1506, 722);
-      serverStatusTextBox.TabIndex = 0;
+      serverInfoGroupBox.Controls.Add(tableLayoutPanel7);
+      serverInfoGroupBox.Dock = DockStyle.Fill;
+      serverInfoGroupBox.Location = new Point(3, 3);
+      serverInfoGroupBox.Name = "serverInfoGroupBox";
+      serverInfoGroupBox.Size = new Size(1506, 142);
+      serverInfoGroupBox.TabIndex = 2;
+      serverInfoGroupBox.TabStop = false;
+      // 
+      // tableLayoutPanel7
+      // 
+      tableLayoutPanel7.ColumnCount = 5;
+      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+      tableLayoutPanel7.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+      tableLayoutPanel7.Controls.Add(groupBox5, 4, 0);
+      tableLayoutPanel7.Controls.Add(groupBox11, 3, 0);
+      tableLayoutPanel7.Controls.Add(groupBox10, 2, 0);
+      tableLayoutPanel7.Controls.Add(groupBox9, 1, 0);
+      tableLayoutPanel7.Controls.Add(groupBox8, 0, 0);
+      tableLayoutPanel7.Dock = DockStyle.Fill;
+      tableLayoutPanel7.Location = new Point(3, 19);
+      tableLayoutPanel7.Name = "tableLayoutPanel7";
+      tableLayoutPanel7.RowCount = 1;
+      tableLayoutPanel7.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel7.Size = new Size(1500, 120);
+      tableLayoutPanel7.TabIndex = 3;
+      // 
+      // groupBox5
+      // 
+      groupBox5.Controls.Add(tableLayoutPanel12);
+      groupBox5.Dock = DockStyle.Fill;
+      groupBox5.Location = new Point(1203, 3);
+      groupBox5.Name = "groupBox5";
+      groupBox5.Size = new Size(294, 114);
+      groupBox5.TabIndex = 4;
+      groupBox5.TabStop = false;
+      groupBox5.Text = "Player Count";
+      // 
+      // tableLayoutPanel12
+      // 
+      tableLayoutPanel12.ColumnCount = 1;
+      tableLayoutPanel12.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
+      tableLayoutPanel12.Controls.Add(playerCountStatusLabel, 0, 0);
+      tableLayoutPanel12.Dock = DockStyle.Fill;
+      tableLayoutPanel12.Location = new Point(3, 19);
+      tableLayoutPanel12.Name = "tableLayoutPanel12";
+      tableLayoutPanel12.RowCount = 1;
+      tableLayoutPanel12.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel12.Size = new Size(288, 92);
+      tableLayoutPanel12.TabIndex = 2;
+      // 
+      // playerCountStatusLabel
+      // 
+      playerCountStatusLabel.AutoSize = true;
+      playerCountStatusLabel.Dock = DockStyle.Fill;
+      playerCountStatusLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point,  0);
+      playerCountStatusLabel.Location = new Point(3, 0);
+      playerCountStatusLabel.Name = "playerCountStatusLabel";
+      playerCountStatusLabel.Size = new Size(282, 92);
+      playerCountStatusLabel.TabIndex = 2;
+      playerCountStatusLabel.Text = "0";
+      playerCountStatusLabel.TextAlign = ContentAlignment.MiddleCenter;
+      // 
+      // groupBox11
+      // 
+      groupBox11.Controls.Add(tableLayoutPanel11);
+      groupBox11.Dock = DockStyle.Fill;
+      groupBox11.Location = new Point(903, 3);
+      groupBox11.Name = "groupBox11";
+      groupBox11.Size = new Size(294, 114);
+      groupBox11.TabIndex = 3;
+      groupBox11.TabStop = false;
+      groupBox11.Text = "Ping Site";
+      // 
+      // tableLayoutPanel11
+      // 
+      tableLayoutPanel11.ColumnCount = 2;
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
+      tableLayoutPanel11.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel11.Controls.Add(copyPingSiteBtn, 1, 0);
+      tableLayoutPanel11.Controls.Add(tableLayoutPanel13, 0, 0);
+      tableLayoutPanel11.Dock = DockStyle.Fill;
+      tableLayoutPanel11.Location = new Point(3, 19);
+      tableLayoutPanel11.Name = "tableLayoutPanel11";
+      tableLayoutPanel11.RowCount = 1;
+      tableLayoutPanel11.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel11.Size = new Size(288, 92);
+      tableLayoutPanel11.TabIndex = 2;
+      // 
+      // copyPingSiteBtn
+      // 
+      copyPingSiteBtn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+      copyPingSiteBtn.Dock = DockStyle.Fill;
+      copyPingSiteBtn.IconChar = FontAwesome.Sharp.IconChar.Clipboard;
+      copyPingSiteBtn.IconColor = Color.Black;
+      copyPingSiteBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      copyPingSiteBtn.IconSize = 24;
+      copyPingSiteBtn.Location = new Point(236, 30);
+      copyPingSiteBtn.Margin = new Padding(20, 30, 20, 30);
+      copyPingSiteBtn.MaximumSize = new Size(32, 32);
+      copyPingSiteBtn.MinimumSize = new Size(32, 32);
+      copyPingSiteBtn.Name = "copyPingSiteBtn";
+      copyPingSiteBtn.Size = new Size(32, 32);
+      copyPingSiteBtn.TabIndex = 3;
+      copyPingSiteBtn.UseVisualStyleBackColor = true;
+      copyPingSiteBtn.Click += OnPingSiteToClipboard;
+      // 
+      // tableLayoutPanel13
+      // 
+      tableLayoutPanel13.ColumnCount = 2;
+      tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel13.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
+      tableLayoutPanel13.Controls.Add(pingSiteStatusLabel, 1, 0);
+      tableLayoutPanel13.Controls.Add(flagStatusPB, 0, 0);
+      tableLayoutPanel13.Dock = DockStyle.Fill;
+      tableLayoutPanel13.Location = new Point(3, 3);
+      tableLayoutPanel13.Name = "tableLayoutPanel13";
+      tableLayoutPanel13.RowCount = 1;
+      tableLayoutPanel13.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel13.Size = new Size(210, 86);
+      tableLayoutPanel13.TabIndex = 4;
+      // 
+      // pingSiteStatusLabel
+      // 
+      pingSiteStatusLabel.AutoSize = true;
+      pingSiteStatusLabel.Dock = DockStyle.Fill;
+      pingSiteStatusLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point,  0);
+      pingSiteStatusLabel.Location = new Point(55, 0);
+      pingSiteStatusLabel.Name = "pingSiteStatusLabel";
+      pingSiteStatusLabel.Size = new Size(152, 86);
+      pingSiteStatusLabel.TabIndex = 3;
+      pingSiteStatusLabel.Text = "adelaide";
+      pingSiteStatusLabel.TextAlign = ContentAlignment.MiddleLeft;
+      // 
+      // flagStatusPB
+      // 
+      flagStatusPB.BackgroundImageLayout = ImageLayout.Center;
+      flagStatusPB.Dock = DockStyle.Fill;
+      flagStatusPB.Location = new Point(3, 3);
+      flagStatusPB.Name = "flagStatusPB";
+      flagStatusPB.Size = new Size(46, 80);
+      flagStatusPB.TabIndex = 4;
+      flagStatusPB.TabStop = false;
+      // 
+      // groupBox10
+      // 
+      groupBox10.Controls.Add(tableLayoutPanel10);
+      groupBox10.Dock = DockStyle.Fill;
+      groupBox10.Location = new Point(603, 3);
+      groupBox10.Name = "groupBox10";
+      groupBox10.Size = new Size(294, 114);
+      groupBox10.TabIndex = 2;
+      groupBox10.TabStop = false;
+      groupBox10.Text = "Join Code";
+      // 
+      // tableLayoutPanel10
+      // 
+      tableLayoutPanel10.ColumnCount = 2;
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
+      tableLayoutPanel10.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel10.Controls.Add(joinCodeStatusLabel, 0, 0);
+      tableLayoutPanel10.Controls.Add(copyJoinCodeBtn, 1, 0);
+      tableLayoutPanel10.Dock = DockStyle.Fill;
+      tableLayoutPanel10.Location = new Point(3, 19);
+      tableLayoutPanel10.Name = "tableLayoutPanel10";
+      tableLayoutPanel10.RowCount = 1;
+      tableLayoutPanel10.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel10.Size = new Size(288, 92);
+      tableLayoutPanel10.TabIndex = 2;
+      // 
+      // joinCodeStatusLabel
+      // 
+      joinCodeStatusLabel.AutoSize = true;
+      joinCodeStatusLabel.Dock = DockStyle.Fill;
+      joinCodeStatusLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point,  0);
+      joinCodeStatusLabel.Location = new Point(3, 0);
+      joinCodeStatusLabel.Name = "joinCodeStatusLabel";
+      joinCodeStatusLabel.Size = new Size(210, 92);
+      joinCodeStatusLabel.TabIndex = 2;
+      joinCodeStatusLabel.Text = "12345678";
+      joinCodeStatusLabel.TextAlign = ContentAlignment.MiddleCenter;
+      // 
+      // copyJoinCodeBtn
+      // 
+      copyJoinCodeBtn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+      copyJoinCodeBtn.Dock = DockStyle.Fill;
+      copyJoinCodeBtn.IconChar = FontAwesome.Sharp.IconChar.Clipboard;
+      copyJoinCodeBtn.IconColor = Color.Black;
+      copyJoinCodeBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      copyJoinCodeBtn.IconSize = 24;
+      copyJoinCodeBtn.Location = new Point(236, 30);
+      copyJoinCodeBtn.Margin = new Padding(20, 30, 20, 30);
+      copyJoinCodeBtn.MaximumSize = new Size(32, 32);
+      copyJoinCodeBtn.MinimumSize = new Size(32, 32);
+      copyJoinCodeBtn.Name = "copyJoinCodeBtn";
+      copyJoinCodeBtn.Size = new Size(32, 32);
+      copyJoinCodeBtn.TabIndex = 3;
+      copyJoinCodeBtn.UseVisualStyleBackColor = true;
+      copyJoinCodeBtn.Click += OnJoinCodeToClipboard;
+      // 
+      // groupBox9
+      // 
+      groupBox9.Controls.Add(tableLayoutPanel8);
+      groupBox9.Dock = DockStyle.Fill;
+      groupBox9.Location = new Point(303, 3);
+      groupBox9.Name = "groupBox9";
+      groupBox9.Size = new Size(294, 114);
+      groupBox9.TabIndex = 1;
+      groupBox9.TabStop = false;
+      groupBox9.Text = "RCON Address";
+      // 
+      // tableLayoutPanel8
+      // 
+      tableLayoutPanel8.ColumnCount = 2;
+      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
+      tableLayoutPanel8.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel8.Controls.Add(rconAddressStatusLabel, 0, 0);
+      tableLayoutPanel8.Controls.Add(copyRconAddressBtn, 1, 0);
+      tableLayoutPanel8.Dock = DockStyle.Fill;
+      tableLayoutPanel8.Location = new Point(3, 19);
+      tableLayoutPanel8.Name = "tableLayoutPanel8";
+      tableLayoutPanel8.RowCount = 1;
+      tableLayoutPanel8.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel8.Size = new Size(288, 92);
+      tableLayoutPanel8.TabIndex = 2;
+      // 
+      // rconAddressStatusLabel
+      // 
+      rconAddressStatusLabel.AutoSize = true;
+      rconAddressStatusLabel.Dock = DockStyle.Fill;
+      rconAddressStatusLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point,  0);
+      rconAddressStatusLabel.Location = new Point(3, 0);
+      rconAddressStatusLabel.Name = "rconAddressStatusLabel";
+      rconAddressStatusLabel.Size = new Size(210, 92);
+      rconAddressStatusLabel.TabIndex = 2;
+      rconAddressStatusLabel.Text = "0.0.0.0:1111";
+      rconAddressStatusLabel.TextAlign = ContentAlignment.MiddleCenter;
+      // 
+      // copyRconAddressBtn
+      // 
+      copyRconAddressBtn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+      copyRconAddressBtn.Dock = DockStyle.Fill;
+      copyRconAddressBtn.IconChar = FontAwesome.Sharp.IconChar.Clipboard;
+      copyRconAddressBtn.IconColor = Color.Black;
+      copyRconAddressBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      copyRconAddressBtn.IconSize = 24;
+      copyRconAddressBtn.Location = new Point(236, 30);
+      copyRconAddressBtn.Margin = new Padding(20, 30, 20, 30);
+      copyRconAddressBtn.MaximumSize = new Size(32, 32);
+      copyRconAddressBtn.MinimumSize = new Size(32, 32);
+      copyRconAddressBtn.Name = "copyRconAddressBtn";
+      copyRconAddressBtn.Size = new Size(32, 32);
+      copyRconAddressBtn.TabIndex = 3;
+      copyRconAddressBtn.UseVisualStyleBackColor = true;
+      copyRconAddressBtn.Click += OnRconAddressToClipboard;
+      // 
+      // groupBox8
+      // 
+      groupBox8.Controls.Add(tableLayoutPanel9);
+      groupBox8.Dock = DockStyle.Fill;
+      groupBox8.Location = new Point(3, 3);
+      groupBox8.Name = "groupBox8";
+      groupBox8.Size = new Size(294, 114);
+      groupBox8.TabIndex = 0;
+      groupBox8.TabStop = false;
+      groupBox8.Text = "Server Address";
+      // 
+      // tableLayoutPanel9
+      // 
+      tableLayoutPanel9.ColumnCount = 2;
+      tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 75F));
+      tableLayoutPanel9.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+      tableLayoutPanel9.Controls.Add(serverAddressStatusLabel, 0, 0);
+      tableLayoutPanel9.Controls.Add(copyAddressBtn, 1, 0);
+      tableLayoutPanel9.Dock = DockStyle.Fill;
+      tableLayoutPanel9.Location = new Point(3, 19);
+      tableLayoutPanel9.Name = "tableLayoutPanel9";
+      tableLayoutPanel9.RowCount = 1;
+      tableLayoutPanel9.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel9.Size = new Size(288, 92);
+      tableLayoutPanel9.TabIndex = 2;
+      // 
+      // serverAddressStatusLabel
+      // 
+      serverAddressStatusLabel.AutoSize = true;
+      serverAddressStatusLabel.Dock = DockStyle.Fill;
+      serverAddressStatusLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point,  0);
+      serverAddressStatusLabel.Location = new Point(3, 0);
+      serverAddressStatusLabel.Name = "serverAddressStatusLabel";
+      serverAddressStatusLabel.Size = new Size(210, 92);
+      serverAddressStatusLabel.TabIndex = 2;
+      serverAddressStatusLabel.Text = "0.0.0.0:1111";
+      serverAddressStatusLabel.TextAlign = ContentAlignment.MiddleCenter;
+      // 
+      // copyAddressBtn
+      // 
+      copyAddressBtn.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+      copyAddressBtn.Dock = DockStyle.Fill;
+      copyAddressBtn.IconChar = FontAwesome.Sharp.IconChar.Clipboard;
+      copyAddressBtn.IconColor = Color.Black;
+      copyAddressBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      copyAddressBtn.IconSize = 24;
+      copyAddressBtn.Location = new Point(236, 30);
+      copyAddressBtn.Margin = new Padding(20, 30, 20, 30);
+      copyAddressBtn.MaximumSize = new Size(32, 32);
+      copyAddressBtn.MinimumSize = new Size(32, 32);
+      copyAddressBtn.Name = "copyAddressBtn";
+      copyAddressBtn.Size = new Size(32, 32);
+      copyAddressBtn.TabIndex = 3;
+      copyAddressBtn.UseVisualStyleBackColor = true;
+      copyAddressBtn.Click += OnServerAddressToClipboard;
+      // 
+      // groupBox6
+      // 
+      groupBox6.Controls.Add(chartFps);
+      groupBox6.Dock = DockStyle.Fill;
+      groupBox6.Location = new Point(3, 151);
+      groupBox6.Name = "groupBox6";
+      groupBox6.Size = new Size(1506, 291);
+      groupBox6.TabIndex = 3;
+      groupBox6.TabStop = false;
+      groupBox6.Text = "Server FPS";
+      // 
+      // chartFps
+      // 
+      chartArea1.Name = "ChartArea1";
+      chartFps.ChartAreas.Add(chartArea1);
+      chartFps.Dock = DockStyle.Fill;
+      legend1.Name = "Legend1";
+      chartFps.Legends.Add(legend1);
+      chartFps.Location = new Point(3, 19);
+      chartFps.Name = "chartFps";
+      series1.ChartArea = "ChartArea1";
+      series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineArea;
+      series1.Legend = "Legend1";
+      series1.Name = "FPS";
+      chartFps.Series.Add(series1);
+      chartFps.Size = new Size(1500, 269);
+      chartFps.TabIndex = 1;
+      chartFps.Text = "chart1";
+      // 
+      // groupBox7
+      // 
+      groupBox7.Controls.Add(chartMem);
+      groupBox7.Dock = DockStyle.Fill;
+      groupBox7.Location = new Point(3, 448);
+      groupBox7.Name = "groupBox7";
+      groupBox7.Size = new Size(1506, 293);
+      groupBox7.TabIndex = 4;
+      groupBox7.TabStop = false;
+      groupBox7.Text = "Server Memory Usage";
+      // 
+      // chartMem
+      // 
+      chartArea2.Name = "ChartArea1";
+      chartMem.ChartAreas.Add(chartArea2);
+      chartMem.Dock = DockStyle.Fill;
+      legend2.Name = "Legend1";
+      chartMem.Legends.Add(legend2);
+      chartMem.Location = new Point(3, 19);
+      chartMem.Name = "chartMem";
+      series2.ChartArea = "ChartArea1";
+      series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineArea;
+      series2.Legend = "Legend1";
+      series2.Name = "Memory (GB)";
+      chartMem.Series.Add(series2);
+      chartMem.Size = new Size(1500, 271);
+      chartMem.TabIndex = 2;
+      chartMem.Text = "chart2";
       // 
       // Main
       // 
@@ -910,8 +1331,30 @@ namespace ReforgerServerApp
       groupBox3.ResumeLayout(false);
       groupBox3.PerformLayout();
       tabPage3.ResumeLayout(false);
-      serverStatusGroupBox.ResumeLayout(false);
-      serverStatusGroupBox.PerformLayout();
+      serverStatusTableLayout.ResumeLayout(false);
+      serverInfoGroupBox.ResumeLayout(false);
+      tableLayoutPanel7.ResumeLayout(false);
+      groupBox5.ResumeLayout(false);
+      tableLayoutPanel12.ResumeLayout(false);
+      tableLayoutPanel12.PerformLayout();
+      groupBox11.ResumeLayout(false);
+      tableLayoutPanel11.ResumeLayout(false);
+      tableLayoutPanel13.ResumeLayout(false);
+      tableLayoutPanel13.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize) flagStatusPB).EndInit();
+      groupBox10.ResumeLayout(false);
+      tableLayoutPanel10.ResumeLayout(false);
+      tableLayoutPanel10.PerformLayout();
+      groupBox9.ResumeLayout(false);
+      tableLayoutPanel8.ResumeLayout(false);
+      tableLayoutPanel8.PerformLayout();
+      groupBox8.ResumeLayout(false);
+      tableLayoutPanel9.ResumeLayout(false);
+      tableLayoutPanel9.PerformLayout();
+      groupBox6.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize) chartFps).EndInit();
+      groupBox7.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize) chartMem).EndInit();
       ResumeLayout(false);
     }
 
@@ -971,8 +1414,34 @@ namespace ReforgerServerApp
     private TableLayoutPanel tableLayoutPanel5;
     private TableLayoutPanel tableLayoutPanel6;
     private TabPage tabPage3;
-    private GroupBox serverStatusGroupBox;
-    private TextBox serverStatusTextBox;
     private CheckBox keepServerUpdated;
+    private TableLayoutPanel serverStatusTableLayout;
+    private GroupBox serverInfoGroupBox;
+    private TableLayoutPanel tableLayoutPanel7;
+    private GroupBox groupBox6;
+    private System.Windows.Forms.DataVisualization.Charting.Chart chartFps;
+    private GroupBox groupBox7;
+    private System.Windows.Forms.DataVisualization.Charting.Chart chartMem;
+    private GroupBox groupBox8;
+    private TableLayoutPanel tableLayoutPanel9;
+    private Label serverAddressStatusLabel;
+    private FontAwesome.Sharp.IconButton copyAddressBtn;
+    private GroupBox groupBox9;
+    private TableLayoutPanel tableLayoutPanel8;
+    private Label rconAddressStatusLabel;
+    private FontAwesome.Sharp.IconButton copyRconAddressBtn;
+    private GroupBox groupBox10;
+    private TableLayoutPanel tableLayoutPanel10;
+    private Label joinCodeStatusLabel;
+    private FontAwesome.Sharp.IconButton copyJoinCodeBtn;
+    private GroupBox groupBox11;
+    private TableLayoutPanel tableLayoutPanel11;
+    private FontAwesome.Sharp.IconButton copyPingSiteBtn;
+    private GroupBox groupBox5;
+    private TableLayoutPanel tableLayoutPanel12;
+    private Label playerCountStatusLabel;
+    private TableLayoutPanel tableLayoutPanel13;
+    private Label pingSiteStatusLabel;
+    private PictureBox flagStatusPB;
   }
 }

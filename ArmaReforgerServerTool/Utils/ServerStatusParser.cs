@@ -25,6 +25,7 @@ namespace Longbow.Utils
     public string LastRconIP { set; get; }
     public int LastRconPort { set; get; }
     public DateTime LastUpdate { set; get; }
+    public bool ServerOnline { set; get; }
 
     public ServerStatusEventArgs()
     {
@@ -32,6 +33,7 @@ namespace Longbow.Utils
       LastRconIP = UNKNOWN_STR;
       LastPingSite = UNKNOWN_STR;
       LastJoinCode = UNKNOWN_STR;
+      ServerOnline = false;
     }
   }
 
@@ -158,6 +160,7 @@ namespace Longbow.Utils
       if (match.Success)
       {
         m_serverStatus.LastIP = match.Groups["ip"].Value;
+        m_serverStatus.ServerOnline = !m_serverStatus.LastIP.Equals(string.Empty) || !m_serverStatus.LastIP.Equals("Unknown");
         string port = match.Groups["port"].Value;
 
         if (int.TryParse(port, out int portValue))
@@ -173,7 +176,6 @@ namespace Longbow.Utils
     public void ParseServerStatus(string logLine)
     {
       m_serverStatus.LastUpdate = DateTime.Now;
-      Debug.WriteLine($"DEBUG_REGEX_INPUT: |{logLine}|");
       TryAndParseAddress(logLine);
       TryAndParseRcon(logLine);
       TryAndParseJoinCode(logLine);
