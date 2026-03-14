@@ -1774,7 +1774,7 @@ namespace ReforgerServerApp
     {
       if (ProcessManager.GetInstance().IsServerStarted())
       {
-        ProcessManager.GetInstance().StartStopServer();
+        ProcessManager.GetInstance().KillServer();
       }
 
       UpdateStateForAdvancedSettings();

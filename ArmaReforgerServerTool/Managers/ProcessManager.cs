@@ -514,6 +514,11 @@ namespace ReforgerServerApp.Managers
       m_isServerUsingTimer = false;
     }
 
+    public void KillServer()
+    {
+      m_serverProcess.Kill();
+    }
+
     /// <summary>
     /// Sender for the 'UpdateSteamCmdLog' Event
     /// </summary>
