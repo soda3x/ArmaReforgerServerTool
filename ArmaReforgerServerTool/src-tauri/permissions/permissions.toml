@@ -1,0 +1,7 @@
+[[permission]]
+identifier = "allow-server-commands"
+description = "Enables commands for managing Arma server instances"
+commands.allow = [
+    "get_server_status",
+    "start_server_instance"
+]

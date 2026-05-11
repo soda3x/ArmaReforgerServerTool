@@ -1,50 +1,37 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
+import { useState } from "react";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "./components/AppSidebar";
+import { WindowControls } from "./components/WindowControls";
+
+type PageId = "dashboard" | "reforger" | "arma3" | "settings";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+const [activePage, setActivePage] = useState<PageId>("dashboard");
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+  // A helper to render the correct component
+  const renderContent = () => {
+    switch (activePage) {
+      case "dashboard": return <DashboardView />;
+      case "settings": return <SettingsView />;
+      default: return <DashboardView />;
+    }
+  };
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    <div className="flex flex-col h-screen overflow-hidden bg-background">
+      <WindowControls />
+      <SidebarProvider>
+        <div className="flex h-full w-full overflow-hidden">
+          <AppSidebar />
+          <div className="md:hidden">
+            <SidebarTrigger />
+          </div>
+          <main className="flex-1 flex flex-col min-w-0">
+          </main>
+        </div>
+      </SidebarProvider>
+    </div>
   );
 }
 

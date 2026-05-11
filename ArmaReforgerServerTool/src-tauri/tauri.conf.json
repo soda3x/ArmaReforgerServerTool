@@ -12,9 +12,11 @@
   "app": {
     "windows": [
       {
-        "title": "arma-reforger-server-tool",
+        "title": "Longbow - Arma Dedicated Server Tool",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "decorations": false,
+        "transparent": true
       }
     ],
     "security": {
