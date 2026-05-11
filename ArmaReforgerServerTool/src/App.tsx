@@ -3,6 +3,8 @@ import { useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./components/AppSidebar";
 import { WindowControls } from "./components/WindowControls";
+import { DashboardView } from "./views/DashboardView";
+import ServerManagementView from "./views/ServerManagementView";
 
 type PageId = "dashboard" | "reforger" | "arma3" | "settings";
 
@@ -11,10 +13,15 @@ const [activePage, setActivePage] = useState<PageId>("dashboard");
 
   // A helper to render the correct component
   const renderContent = () => {
+    if (activePage.startsWith("manage-")) {
+      const serverId = activePage.replace("manage-", "");
+      return <ServerManagementView serverId={serverId} />;
+    }
+    
     switch (activePage) {
-      case "dashboard": return <DashboardView />;
-      case "settings": return <SettingsView />;
-      default: return <DashboardView />;
+      case "dashboard": return <DashboardView onSelectServer={(id) => setActivePage(`manage-${id}` as PageId)} />;
+      // case "settings": return <SettingsView />;
+      default: return <DashboardView onSelectServer={(id) => setActivePage(`manage-${id}` as PageId)} />;
     }
   };
 
@@ -27,7 +34,8 @@ const [activePage, setActivePage] = useState<PageId>("dashboard");
           <div className="md:hidden">
             <SidebarTrigger />
           </div>
-          <main className="flex-1 flex flex-col min-w-0">
+          <main className="flex-1 flex flex-col min-w-0 p-10 overflow-y-auto">
+            {renderContent()}
           </main>
         </div>
       </SidebarProvider>

@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "GDK_BACKEND=x11 WEBKIT_DISABLE_COMPOSITING_MODE=1 tauri"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -20,6 +20,7 @@
     "lucide-react": "^1.14.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "recharts": "^3.8.1",
     "shadcn": "^4.7.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.3.0",
