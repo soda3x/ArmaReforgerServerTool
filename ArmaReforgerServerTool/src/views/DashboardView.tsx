@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RefreshCw, Server, Shield, CheckCircle2, AlertCircle } from "lucide-react";
-import ServerStatusCard from "@/components/ServerStatusCard";
+import { RefreshCw, Server, Shield, CheckCircle2 } from "lucide-react";
+import ServerStatusCard from "@/components/dashboard/ServerStatusCard";
 
 interface DashboardProps {
   onSelectServer: (id: string) => void;
@@ -38,7 +38,7 @@ export function DashboardView({ onSelectServer }: DashboardProps) {
                 <>
                   <CheckCircle2 className="h-5 w-5 text-green-500 status-glow-green" />
                   <div>
-                    <p className="text-sm font-medium text-white">Longbow Core v2.0.4</p>
+                    <p className="text-sm font-medium text-white">Longbow v2.0.0</p>
                     <p className="text-xs text-muted-foreground">All systems nominal. No updates required.</p>
                   </div>
                 </>

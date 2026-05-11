@@ -10,7 +10,7 @@ export function WindowControls() {
       data-tauri-drag-region
       className="flex items-center justify-between h-10 bg-sidebar border-b border-sidebar-border select-none"
     >
-      <div className="flex items-center px-5 gap-3 pointer-events-none">
+      <div className="flex items-center px-5 gap-1 pointer-events-none">
         <div className="relative w-5 h-3 flex items-center justify-center">
           <div
             className="w-full h-full bg-white"

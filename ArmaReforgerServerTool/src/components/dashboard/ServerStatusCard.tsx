@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import MiniGraph, { DEBUG_MINIGRAPH_MOCK_DATA } from "./MiniGraph";
+import MiniGraph, { DEBUG_MINIGRAPH_MOCK_DATA } from "@/components/common/MiniGraph";
 
 export default function ServerStatusCard({ id, name, game, status, players, onClick }: any) {
   return (
@@ -18,9 +18,8 @@ export default function ServerStatusCard({ id, name, game, status, players, onCl
             {status}
           </Badge>
         </div>
-        {/* ... stats and sparkline ... */}
         <div className="mt-4 text-[10px] font-mono text-brand-orange opacity-0 group-hover:opacity-100 transition-opacity">
-          CLICK TO CONFIGURE →
+          Go to Server →
         </div>
       </CardContent>
       <div>

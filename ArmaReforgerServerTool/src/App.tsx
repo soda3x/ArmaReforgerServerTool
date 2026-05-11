@@ -1,10 +1,10 @@
-import "./App.css";
+import "@/App.css";
 import { useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "./components/AppSidebar";
-import { WindowControls } from "./components/WindowControls";
-import { DashboardView } from "./views/DashboardView";
-import ServerManagementView from "./views/ServerManagementView";
+import { AppSidebar } from "@/components/app/AppSidebar";
+import { WindowControls } from "@/components/app/WindowControls";
+import { DashboardView } from "@/views/DashboardView";
+import ServerManagementView from "@/views/ServerManagementView";
 
 type PageId = "dashboard" | "reforger" | "arma3" | "settings";
 
