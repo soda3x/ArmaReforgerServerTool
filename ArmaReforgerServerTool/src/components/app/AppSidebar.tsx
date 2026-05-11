@@ -14,6 +14,10 @@ const items = [
   { title: "Dashboard", url: "#", icon: LayoutDashboard },
   { title: "Servers", url: "#", icon: Server },
   { title: "Global Logs", url: "#", icon: Terminal },
+  
+]
+
+const itemsBottom = [
   { title: "Settings", url: "#", icon: Settings },
 ]
 
@@ -22,10 +26,28 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Longbow</SidebarGroupLabel>
+          {/* <SidebarGroupLabel>Longbow</SidebarGroupLabel> */}
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          {/* <SidebarGroupLabel>Longbow</SidebarGroupLabel> */}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {itemsBottom.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton>
                     <a href={item.url}>

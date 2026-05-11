@@ -1,13 +1,14 @@
-import { Activity, Clipboard } from "lucide-react";
+import { Clipboard, Info } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import Flag from 'react-world-flags'
 
-export default function PerfMetrics() {
+export default function ServerInfo() {
   return (
     <>
       <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-widest">
-        <Activity className="h-3 w-3 text-brand-orange" /> SERVER_INFO
+        <Info className="h-3 w-3 text-brand-orange" /> SERVER_INFO
       </div>
       <Card className="bg-card border-white/5">
         <CardContent className="p-4 space-y-4">
@@ -28,7 +29,8 @@ export default function PerfMetrics() {
               </div>
               <div>
                 <Label className="w-full text-gray-400 justify-start text-xs">Ping Site</Label>
-                <div className="flex items-justify">
+                <div className="flex items-justify gap-2">
+                  <Flag code="AU" className="h-7 w-10 rounded-sm opacity-80"/>
                   <Label className="w-full justify-start text-lg">Sydney</Label>
                   <Button size="sm" className="bg-brand-orange hover:bg-brand-orange/80"><Clipboard /></Button>
                 </div>

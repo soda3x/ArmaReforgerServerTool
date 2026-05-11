@@ -2,14 +2,15 @@ import Console from "@/components/server_management/Console";
 import PerfMetrics from "@/components/server_management/PerfMetrics";
 import QuickActions from "@/components/server_management/QuickActions";
 import ServerConfig from "@/components/server_management/ServerConfig";
-import ServerInfo from "@/components/server_management/ServerConfig";
+import ServerInfo from "@/components/server_management/ServerInfo";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Play, Square } from "lucide-react";
 
 export default function ServerManagementView({ serverId }: { serverId: string }) {
   return (
-    <div className="space-y-6 animate-in slide-in-from-right-4 duration-300 pb-10">
+    <div className="flex flex-col h-full space-y-6 animate-in slide-in-from-right-4 duration-300 pb-10">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-white">{serverId.toUpperCase()}</h2>
@@ -28,19 +29,30 @@ export default function ServerManagementView({ serverId }: { serverId: string })
           </Button>
         </div>
       </div>
+      <Tabs defaultValue="manage" className="flex-1 flex flex-col min-h-0">
+        <TabsList className="w-fit shrink-0">
+          <TabsTrigger value="manage">Manage</TabsTrigger>
+          <TabsTrigger value="configure">Configure</TabsTrigger>
+        </TabsList>
+        <TabsContent value="manage" className="flex-1 min-h-0 m-0 data-[state=active]:flex flex-col pt-4">
+          <div className="grid grid-cols-4 gap-6 flex-1 min-h-0 w-full">
+            {/* Main Panel */}
+            <div className="space-y-2 col-span-3 flex flex-col h-[600px]">
+              <Console />
+            </div>
 
-      <div className="grid grid-cols-4 gap-6">
-        {/* Main Panel */}
-        <Console />
-        <ServerConfig/>
-
-        {/* Right Sidebar */}
-        <div className="space-y-4 col-start-4 row-start-1">
-          <PerfMetrics />
-          <ServerInfo />
-          <QuickActions />
-        </div>
-      </div>
+            {/* Right Sidebar */}
+            <div className="space-y-4 flex-1 min-h-0 overflow-y-auto">
+              <PerfMetrics />
+              <ServerInfo />
+              <QuickActions />
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="configure" className="flex-1 min-h-0 pt-4">
+          <ServerConfig />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
