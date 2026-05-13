@@ -1,0 +1,1 @@
+export type { Mod } from "@/types/Mod.type";

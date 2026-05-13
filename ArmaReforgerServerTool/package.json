@@ -7,11 +7,12 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "GDK_BACKEND=x11 WEBKIT_DISABLE_COMPOSITING_MODE=1 tauri"
+    "tauri": "WEBKIT_DISABLE_COMPOSITING_MODE=1 tauri"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
     "@fontsource-variable/geist": "^5.2.8",
+    "@hello-pangea/dnd": "^18.0.1",
     "@tailwindcss/vite": "^4.3.0",
     "@tauri-apps/api": "^2.11.0",
     "@tauri-apps/plugin-opener": "^2",

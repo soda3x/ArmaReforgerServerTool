@@ -1,12 +1,9 @@
-import Console from "@/components/server_management/Console";
-import PerfMetrics from "@/components/server_management/PerfMetrics";
-import QuickActions from "@/components/server_management/QuickActions";
-import ServerConfig from "@/components/server_management/ServerConfig";
-import ServerInfo from "@/components/server_management/ServerInfo";
+import { ServerParamsMissionHeader } from "@/components/server_configuration/reforger";
+import { Console, ModManager, PerfMetrics, QuickActions, ServerConfig, ServerInfo } from "@/components/server_management";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Play, Square } from "lucide-react";
+import { ChevronRight, Play, Square } from "lucide-react";
 
 export default function ServerManagementView({ serverId }: { serverId: string }) {
   return (
@@ -30,9 +27,13 @@ export default function ServerManagementView({ serverId }: { serverId: string })
         </div>
       </div>
       <Tabs defaultValue="manage" className="flex-1 flex flex-col min-h-0">
-        <TabsList className="w-fit shrink-0">
-          <TabsTrigger value="manage">Manage</TabsTrigger>
-          <TabsTrigger value="configure">Configure</TabsTrigger>
+        <TabsList className="w-fit shrink-0 bg-white-800">
+          <TabsTrigger value="configure">Configure <ChevronRight /></TabsTrigger>
+          <TabsTrigger value="manage-mods">Manage Mods <ChevronRight /></TabsTrigger>
+          <TabsTrigger value="choose-scenario">Choose Scenario <ChevronRight /></TabsTrigger>
+          <TabsTrigger value="edit-mission-header">Edit Mission Header <ChevronRight /></TabsTrigger>
+          <TabsTrigger value="advanced">Advanced <ChevronRight /></TabsTrigger>
+          <TabsTrigger value="manage">Monitor</TabsTrigger>
         </TabsList>
         <TabsContent value="manage" className="flex-1 min-h-0 m-0 data-[state=active]:flex flex-col pt-4">
           <div className="grid grid-cols-4 gap-6 flex-1 min-h-0 w-full">
@@ -42,7 +43,7 @@ export default function ServerManagementView({ serverId }: { serverId: string })
             </div>
 
             {/* Right Sidebar */}
-            <div className="space-y-4 flex-1 min-h-0 overflow-y-auto">
+            <div className="flex flex-col space-y-4 flex-1 min-h-0">
               <PerfMetrics />
               <ServerInfo />
               <QuickActions />
@@ -51,6 +52,12 @@ export default function ServerManagementView({ serverId }: { serverId: string })
         </TabsContent>
         <TabsContent value="configure" className="flex-1 min-h-0 pt-4">
           <ServerConfig />
+        </TabsContent>
+        <TabsContent value="edit-mission-header" className="flex-1 min-h-0 pt-4">
+          <ServerParamsMissionHeader />
+        </TabsContent>
+        <TabsContent value="manage-mods" className="flex-1 min-h-0 pt-4">
+          <ModManager />
         </TabsContent>
       </Tabs>
     </div>

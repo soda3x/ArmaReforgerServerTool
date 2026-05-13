@@ -1,85 +1,24 @@
-import { FieldDescription, Field, FieldLabel, FieldGroup, FieldSet, FieldLegend } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch";
+import { ServerParameterBoolean, ServerParameterInput } from "@/components/server_configuration/controls";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 
 export default function ServerParamsNetwork() {
   return (
     <>
-      <FieldGroup>
-        <FieldSet>
-          <FieldLegend>Network</FieldLegend>
-          {/* <FieldDescription>General Server Parameters</FieldDescription> */}
-        </FieldSet>
-      </FieldGroup>
+      <Label className="pb-2 text-lg">Network</Label>
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-2">
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="bind-address">Bind Address</FieldLabel>
-              <Input
-                id="bind-address"
-                value="0.0.0.0"
-              />
-            </Field>
-          </FieldGroup>
-
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="bind-port">Bind Port</FieldLabel>
-              <Input
-                id="bind-port"
-                value="2001"
-                type="number"
-              />
-            </Field>
-          </FieldGroup>
+          <ServerParameterInput id="bind-address" label="Bind Address" placeholder="0.0.0.0" defaultValue="0.0.0.0" />
+          <ServerParameterInput id="bind-port" label="Bind Port" placeholder="2001" defaultValue="2001" type="number" minValue={1} maxValue={65335} />
         </div>
         <div className="flex items-center justify-between gap-2">
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="public-address">Public Address</FieldLabel>
-              <Input
-                id="public-address"
-                placeholder=""
-              />
-            </Field>
-          </FieldGroup>
-
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="public-port">Public Port</FieldLabel>
-              <Input
-                id="public-port"
-                placeholder=""
-                type="number"
-              />
-            </Field>
-          </FieldGroup>
+          <ServerParameterInput id="public-address" label="Public Address" placeholder="Leave blank to auto-detect" />
+          <ServerParameterInput id="public-port" label="Public Port" placeholder="2001" defaultValue="2001" type="number" minValue={1} maxValue={65335} />
         </div>
         <div className="flex items-center justify-between gap-2">
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="a2s-address">A2S Address</FieldLabel>
-              <Input
-                id="a2s-address"
-                value="0.0.0.0"
-              />
-            </Field>
-          </FieldGroup>
-
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="a2s-port">A2S Port</FieldLabel>
-              <Input
-                id="a2s-port"
-                value="17777"
-                type="number"
-              />
-            </Field>
-          </FieldGroup>
+          <ServerParameterInput id="a2s-address" label="A2S Address" placeholder="0.0.0.0" defaultValue="0.0.0.0" />
+          <ServerParameterInput id="a2s-port" label="A2S Port" placeholder="17777" defaultValue="17777" type="number" minValue={1} maxValue={65335} />
         </div>
+        <ServerParameterBoolean id="use-upnp" label="Use UPnP to open ports" hint="Port forwarding not required if this is enabled" />
       </div>
     </>
   );

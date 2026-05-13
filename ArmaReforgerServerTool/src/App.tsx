@@ -5,7 +5,6 @@ import { AppSidebar } from "@/components/app/AppSidebar";
 import { WindowControls } from "@/components/app/WindowControls";
 import { DashboardView } from "@/views/DashboardView";
 import ServerManagementView from "@/views/ServerManagementView";
-import { Label } from "./components/ui/label";
 import { Button } from "./components/ui/button";
 import { ChevronLeft } from "lucide-react";
 
@@ -29,7 +28,7 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background">
+    <div className="dark flex flex-col h-screen overflow-hidden bg-background">
       <WindowControls />
       <SidebarProvider>
         <div className="flex h-full w-full overflow-hidden">

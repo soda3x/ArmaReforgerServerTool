@@ -1,83 +1,31 @@
-import { FieldDescription, Field, FieldLabel, FieldGroup, FieldSet, FieldLegend } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Xbox } from "@/components/icons/Xbox";
 import { PlayStation } from "@/components/icons/PlayStation";
+import { ServerParameterBoolean, ServerParameterInput } from "@/components/server_configuration/controls";
+import { Label } from "@/components/ui/label";
 
 export default function ServerParamsGeneral() {
   return (
     <>
-      <FieldGroup>
-        <FieldSet>
-          <FieldLegend>General</FieldLegend>
-          {/* <FieldDescription>General Server Parameters</FieldDescription> */}
-        </FieldSet>
-      </FieldGroup>
+      <Label className="pb-2 text-lg">General</Label>
       <div className="flex flex-col gap-4">
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="server-name">Server Name <span className="text-destructive">*</span></FieldLabel>
-            <Input
-              id="server-name"
-              placeholder="My Longbow Arma Server"
-              required
-            />
-          </Field>
-        </FieldGroup>
+        <ServerParameterInput id="server-name" label="Server Name" placeholder="My Longbow Arma Server" defaultValue="My Longbow Arma Server" required />
         <div className="flex items-center justify-between gap-2">
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="server-pw">Server Password</FieldLabel>
-            <Input
-              id="server-pw"
-              placeholder=""
-            />
-          </Field>
-        </FieldGroup>
-
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="admin-pw">Admin Password</FieldLabel>
-            <Input
-              id="admin-pw"
-              placeholder=""
-            />
-          </Field>
-        </FieldGroup>
+          <ServerParameterInput id="server-pw" label="Server Password" />
+          <ServerParameterInput id="admin-pw" label="Admin Password" />
         </div>
-
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="max-players">Max Players</FieldLabel>
-            <Input
-              id="max-players"
-              placeholder=""
-              type="number"
-            />
-          </Field>
-        </FieldGroup>
-
-        <FieldGroup>
-          <div className="flex justify-between">
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="server-visible">Server Visible</Label>
-              <Switch id="server-visible" />
-            </div>
-            <Badge>Required for discovery in Server Browser</Badge>
-          </div>
-        </FieldGroup>
-
-        <FieldGroup>
-          <div className="flex justify-between">
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="cross-platform">Cross Platform</Label>
-              <Switch id="cross-platform" />
-            </div>
-            <Badge>Enable to play with <Xbox/> and <PlayStation/> players</Badge>
-          </div>
-        </FieldGroup>
+        <ServerParameterInput id="max-players" label="Max Players" type="number" />
+        <div className="flex items-center justify-between gap-2">
+          <ServerParameterBoolean id="cross-platform" label="Cross Platform" hint={<>Enable to play with <Xbox /> and <PlayStation /> players</>} />
+          <ServerParameterBoolean id="server-visible" label="Server Visible" startState={true} hint="Required for discovery in Server Browser" />
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <ServerParameterBoolean id="battleye" label="BattlEye Anti-Cheat" startState={true} />
+          <ServerParameterBoolean id="disable-third-person" label="Disable Third Person" />
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <ServerParameterBoolean id="fast-validation" label="Fast Validation" startState={true} hint="Always enable if server is public" />
+          <ServerParameterBoolean id="use-experimental" label="Experimental Server" />
+        </div>
       </div>
     </>
   );

@@ -4,10 +4,11 @@
   /* Brand Accents */
   --color-brand-orange: #ff6000;
   --color-brand-gold: #ceae31;
-  
+
   /* shadcn UI Mapping */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-popover: var(--popover);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-primary: var(--primary);
@@ -34,20 +35,43 @@
   --animate-collapsible-up: collapsible-up 0.2s ease-out;
 
   @keyframes accordion-down {
-    from { height: 0; }
-    to { height: var(--radix-accordion-content-height); }
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
   }
+
   @keyframes accordion-up {
-    from { height: var(--radix-accordion-content-height); }
-    to { height: 0; }
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
   }
+
   @keyframes collapsible-down {
-    from { height: 0; }
-    to { height: var(--radix-collapsible-content-height); }
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-collapsible-content-height);
+    }
   }
+
   @keyframes collapsible-up {
-    from { height: var(--radix-collapsible-content-height); }
-    to { height: 0; }
+    from {
+      height: var(--radix-collapsible-content-height);
+    }
+
+    to {
+      height: 0;
+    }
   }
 }
 
@@ -75,7 +99,7 @@
   --accent-foreground: hsl(0 0% 98%);
   --destructive: hsl(0 84% 60%);
   --destructive-foreground: hsl(0 0% 98%);
-  
+
   --border: hsl(240 10% 15%);
   --input: hsl(240 10% 15%);
   --ring: #ff6000;
@@ -92,12 +116,15 @@
 
   /* Tactical Radius: Sharp corners feel more like hardware */
   --radius: 0.25rem;
+
+
 }
 
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground antialiased;
     /* Prevent native browser selection to feel like a real app */
@@ -110,24 +137,28 @@
     width: 8px;
     height: 8px;
   }
+
   ::-webkit-scrollbar-track {
     background: var(--background);
   }
+
   ::-webkit-scrollbar-thumb {
     background: var(--border);
     border-radius: 4px;
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: var(--primary);
   }
 }
 
 @layer utilities {
+
   /* Perfect for the 'Console Output' screen */
   .console-screen {
     @apply font-mono text-[13px] leading-relaxed p-4 bg-black/40 border-t border-white/5 shadow-inner;
-    background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                      linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+      linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
     background-size: 100% 2px, 3px 100%;
   }
 
