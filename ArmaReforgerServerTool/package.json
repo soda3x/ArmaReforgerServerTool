@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "WEBKIT_DISABLE_COMPOSITING_MODE=1 tauri"
+    "tauri": "WEBKIT_DISABLE_COMPOSITING_MODE=1 tauri",
+    "tauri_x11": "GDK_BACKEND=x11 WEBKIT_DISABLE_COMPOSITING_MODE=1 tauri",
+    "tauri_win32": "tauri",
+    "tarui_osx": "tauri"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
