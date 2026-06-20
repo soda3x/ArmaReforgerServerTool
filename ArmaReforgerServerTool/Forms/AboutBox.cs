@@ -8,6 +8,7 @@
 
 using System.Reflection;
 using System.Text;
+using WinForms.Fluent;
 
 namespace ReforgerServerApp
 {
@@ -16,6 +17,7 @@ namespace ReforgerServerApp
     public AboutBox()
     {
       InitializeComponent();
+      this.Mica();
       StringBuilder sb = new();
       sb.AppendLine("Longbow - Arma Reforger Dedicated Server Tool by soda3x");
       sb.AppendLine($"Version {Assembly.GetExecutingAssembly().GetName().Version}");

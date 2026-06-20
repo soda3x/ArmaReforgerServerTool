@@ -17,6 +17,7 @@ using ReforgerServerApp.Utils;
 using Serilog;
 using System.ComponentModel;
 using System.Diagnostics;
+using WinForms.Fluent;
 
 namespace ReforgerServerApp
 {
@@ -30,6 +31,8 @@ namespace ReforgerServerApp
     public Main()
     {
       InitializeComponent();
+
+      this.Acrylic();
 
       CreateServerParameterControls();
       CreateAdvancedServerParameterControls();
@@ -118,6 +121,8 @@ namespace ReforgerServerApp
       double totalSystemMemoryGb = gcInfo.TotalAvailableMemoryBytes / (1024.0 * 1024.0 * 1024.0);
       chartMem.ChartAreas[0].AxisY.Maximum = Math.Ceiling(totalSystemMemoryGb);
       chartMem.ChartAreas[0].AxisY.Minimum = 0; // Lock the bottom to 0 for proper scale
+
+      SyncThemeColours(this);
     }
 
     /// <summary>
@@ -1774,6 +1779,30 @@ namespace ReforgerServerApp
               ss.advancedSettings[param.ParameterName].Value = param.ParameterValue;
             }
           }
+        }
+      }
+    }
+
+    private void SyncThemeColours(Control parent)
+    {
+      foreach (Control control in parent.Controls)
+      {
+        if (control is FontAwesome.Sharp.IconButton iconBtn)
+        {
+          // 1. Set the initial icon color to match the current system text color
+          iconBtn.IconColor = iconBtn.ForeColor;
+
+          // 2. Keep it synced if the OS theme changes while the app is running
+          iconBtn.ForeColorChanged += (s, e) =>
+          {
+            iconBtn.IconColor = iconBtn.ForeColor;
+          };
+        }
+
+        // Recursively check for buttons inside Panels, GroupBoxes, or TabPages
+        if (control.HasChildren)
+        {
+          SyncThemeColours(control);
         }
       }
     }

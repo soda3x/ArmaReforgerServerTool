@@ -7,6 +7,8 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using WinForms.Fluent;
+
 namespace Longbow.Forms
 {
   public partial class RenameForm : Form
@@ -15,6 +17,7 @@ namespace Longbow.Forms
     public RenameForm(string text)
     {
       InitializeComponent();
+      this.Mica();
       renameTB.Text = text;
     }
 

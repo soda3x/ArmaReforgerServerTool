@@ -6,6 +6,8 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using WinForms.Fluent;
+
 namespace ReforgerServerApp
 {
   public partial class ListForm : Form
@@ -14,6 +16,7 @@ namespace ReforgerServerApp
     public ListForm(string windowTitle, string[] items)
     {
       InitializeComponent();
+      this.Mica();
       this.Text = $"Longbow - {windowTitle}";
       m_items = new List<string>(items);
       itemListView.DataSource = m_items;

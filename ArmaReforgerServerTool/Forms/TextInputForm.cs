@@ -7,6 +7,8 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using WinForms.Fluent;
+
 namespace ReforgerServerApp
 {
   public partial class TextInputForm : Form
@@ -15,6 +17,7 @@ namespace ReforgerServerApp
     public TextInputForm(string windowTitle, String prefilledText)
     {
       InitializeComponent();
+      this.Mica();
       this.Text = $"Longbow - {windowTitle}";
       textInputField.Text = prefilledText;
     }

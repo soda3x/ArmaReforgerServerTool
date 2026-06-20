@@ -50,7 +50,7 @@ namespace ReforgerServerApp
       parameterValue.IconColor = Color.Black;
       parameterValue.IconFont = FontAwesome.Sharp.IconFont.Auto;
       parameterValue.IconSize = 16;
-      parameterValue.Location = new Point(354, 4);
+      parameterValue.Location = new Point(350, 4);
       parameterValue.Name = "parameterValue";
       parameterValue.Size = new Size(24, 24);
       parameterValue.TabIndex = 1;

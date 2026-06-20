@@ -1,4 +1,6 @@
-﻿namespace ReforgerServerApp
+using Longbow.Components.ui;
+
+namespace ReforgerServerApp
 {
     partial class ServerParameterString
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             parameterName = new Label();
-            parameterValue = new TextBox();
+            parameterValue = new FluentTextBox();
             SuspendLayout();
             // 
             // parameterName
@@ -39,7 +41,7 @@
             parameterName.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             parameterName.Location = new Point(15, 4);
             parameterName.Name = "parameterName";
-            parameterName.Size = new Size(132, 21);
+            parameterName.Size = new Size(132, 32);
             parameterName.TabIndex = 0;
             parameterName.Text = "";
             parameterName.TextAlign = ContentAlignment.MiddleLeft;
@@ -49,7 +51,7 @@
             parameterValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             parameterValue.Location = new Point(160, 5);
             parameterValue.Name = "parameterValue";
-            parameterValue.Size = new Size(216, 23);
+            parameterValue.Size = new Size(216, 32);
             parameterValue.TabIndex = 1;
             // 
             // ServerParameterString
@@ -59,7 +61,7 @@
             Controls.Add(parameterValue);
             Controls.Add(parameterName);
             Name = "ServerParameterString";
-            Size = new Size(400, 30);
+            Size = new Size(400, 38);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -67,6 +69,6 @@
         #endregion
 
         private Label parameterName;
-        private TextBox parameterValue;
+        private FluentTextBox parameterValue;
     }
 }

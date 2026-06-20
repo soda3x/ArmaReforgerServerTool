@@ -9,6 +9,7 @@
 using ReforgerServerApp;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
+using WinForms.Fluent;
 
 namespace Longbow.Forms
 {
@@ -18,6 +19,7 @@ namespace Longbow.Forms
     public SaveSelector()
     {
       InitializeComponent();
+      this.Mica();
       m_savedGames = new();
       RefreshSavedGamesList();
       UpdateSaveLabel();

@@ -1,3 +1,4 @@
+using Longbow.Components.ui;
 using ReforgerServerApp.Components;
 
 namespace ReforgerServerApp
@@ -58,7 +59,7 @@ namespace ReforgerServerApp
       addModBtn = new FontAwesome.Sharp.IconButton();
       editModBtn = new FontAwesome.Sharp.IconButton();
       removeModBtn = new FontAwesome.Sharp.IconButton();
-      modsSearchTB = new TextBox();
+      modsSearchTB = new FluentTextBox();
       label16 = new Label();
       label15 = new Label();
       enabledMods = new BoundListBox();
@@ -87,7 +88,7 @@ namespace ReforgerServerApp
       groupBox4 = new GroupBox();
       advancedParametersPanel = new FlowLayoutPanel();
       groupBox3 = new GroupBox();
-      steamCmdLog = new TextBox();
+      steamCmdLog = new FluentTextBox();
       steamCmdAlert = new Label();
       tabPage3 = new TabPage();
       serverStatusTableLayout = new TableLayoutPanel();
@@ -167,6 +168,7 @@ namespace ReforgerServerApp
       // 
       // tabPage1
       // 
+      tabPage1.BackColor = Color.Transparent;
       tabPage1.Controls.Add(tableLayoutPanel6);
       tabPage1.Controls.Add(serverRunningLabel);
       tabPage1.Controls.Add(groupBox2);
@@ -177,7 +179,6 @@ namespace ReforgerServerApp
       tabPage1.Size = new Size(1518, 750);
       tabPage1.TabIndex = 0;
       tabPage1.Text = "Configuration";
-      tabPage1.UseVisualStyleBackColor = true;
       // 
       // tableLayoutPanel6
       // 
@@ -486,11 +487,12 @@ namespace ReforgerServerApp
       // 
       // modsSearchTB
       // 
-      modsSearchTB.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+      modsSearchTB.Anchor =  AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+      modsSearchTB.BackColor = SystemColors.Window;
       modsSearchTB.Location = new Point(6, 40);
       modsSearchTB.Name = "modsSearchTB";
-      modsSearchTB.PlaceholderText = "Search Mods...";
-      modsSearchTB.Size = new Size(620, 23);
+      modsSearchTB.Padding = new Padding(10, 7, 10, 7);
+      modsSearchTB.Size = new Size(620, 30);
       modsSearchTB.TabIndex = 8;
       modsSearchTB.TextChanged += OnSearchModsTextChanged;
       // 
@@ -516,7 +518,6 @@ namespace ReforgerServerApp
       // 
       enabledMods.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
       enabledMods.FormattingEnabled = true;
-      enabledMods.ItemHeight = 15;
       enabledMods.Location = new Point(335, 74);
       enabledMods.Name = "enabledMods";
       enabledMods.SelectionMode = SelectionMode.MultiExtended;
@@ -527,7 +528,6 @@ namespace ReforgerServerApp
       // 
       availableMods.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
       availableMods.FormattingEnabled = true;
-      availableMods.ItemHeight = 15;
       availableMods.Location = new Point(6, 74);
       availableMods.Name = "availableMods";
       availableMods.SelectionMode = SelectionMode.MultiExtended;
@@ -660,6 +660,7 @@ namespace ReforgerServerApp
       // 
       // tabPage2
       // 
+      tabPage2.BackColor = Color.Transparent;
       tabPage2.Controls.Add(keepServerUpdated);
       tabPage2.Controls.Add(tableLayoutPanel4);
       tabPage2.Controls.Add(useUpnp);
@@ -677,7 +678,6 @@ namespace ReforgerServerApp
       tabPage2.Size = new Size(1518, 750);
       tabPage2.TabIndex = 1;
       tabPage2.Text = "Management";
-      tabPage2.UseVisualStyleBackColor = true;
       // 
       // keepServerUpdated
       // 
@@ -879,11 +879,10 @@ namespace ReforgerServerApp
       // steamCmdLog
       // 
       steamCmdLog.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      steamCmdLog.BackColor = SystemColors.Window;
       steamCmdLog.Location = new Point(6, 22);
-      steamCmdLog.Multiline = true;
       steamCmdLog.Name = "steamCmdLog";
-      steamCmdLog.ReadOnly = true;
-      steamCmdLog.ScrollBars = ScrollBars.Vertical;
+      steamCmdLog.Padding = new Padding(10, 7, 10, 7);
       steamCmdLog.Size = new Size(1249, 631);
       steamCmdLog.TabIndex = 1;
       // 
@@ -900,6 +899,7 @@ namespace ReforgerServerApp
       // 
       // tabPage3
       // 
+      tabPage3.BackColor = Color.Transparent;
       tabPage3.Controls.Add(serverStatusTableLayout);
       tabPage3.Location = new Point(4, 24);
       tabPage3.Name = "tabPage3";
@@ -907,7 +907,6 @@ namespace ReforgerServerApp
       tabPage3.Size = new Size(1518, 750);
       tabPage3.TabIndex = 2;
       tabPage3.Text = "Status";
-      tabPage3.UseVisualStyleBackColor = true;
       // 
       // serverStatusTableLayout
       // 
@@ -1317,7 +1316,6 @@ namespace ReforgerServerApp
       tableLayoutPanel4.ResumeLayout(false);
       groupBox4.ResumeLayout(false);
       groupBox3.ResumeLayout(false);
-      groupBox3.PerformLayout();
       tabPage3.ResumeLayout(false);
       serverStatusTableLayout.ResumeLayout(false);
       groupBox6.ResumeLayout(false);
@@ -1364,7 +1362,7 @@ namespace ReforgerServerApp
         private Label label16;
         private Label label15;
         private Label steamCmdAlert;
-        private TextBox steamCmdLog;
+        private FluentTextBox steamCmdLog;
         private FontAwesome.Sharp.IconButton downloadSteamCmdBtn;
         private GroupBox groupBox3;
         private FontAwesome.Sharp.IconButton startServerBtn;
@@ -1386,7 +1384,7 @@ namespace ReforgerServerApp
         private FontAwesome.Sharp.IconButton editModBtn;
         private BoundListBox enabledMods;
         private BoundListBox availableMods;
-        private TextBox modsSearchTB;
+        private FluentTextBox modsSearchTB;
         private CheckBox useExperimentalCheckBox;
         private FlowLayoutPanel advancedParametersPanel;
         private CheckBox useUpnp;

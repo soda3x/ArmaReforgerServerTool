@@ -1,4 +1,4 @@
-﻿namespace ReforgerServerApp
+namespace ReforgerServerApp
 {
     partial class ServerParameterSelect
     {
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             parameterName = new Label();
-            parameterValue = new ComboBox();
+            parameterValue = new FluentComboBox();
             SuspendLayout();
             // 
             // parameterName
@@ -39,16 +39,16 @@
             parameterName.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             parameterName.Location = new Point(15, 4);
             parameterName.Name = "parameterName";
-            parameterName.Size = new Size(0, 21);
+            parameterName.Size = new Size(0, 32);
             parameterName.TabIndex = 0;
             parameterName.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // parameterValue
             // 
             parameterValue.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            parameterValue.Location = new Point(264, 5);
+            parameterValue.Location = new Point(176, 5);
             parameterValue.Name = "parameterValue";
-            parameterValue.Size = new Size(114, 23);
+            parameterValue.Size = new Size(200, 32);
             parameterValue.TabIndex = 1;
             // 
             // ServerParameterSelect
@@ -58,7 +58,7 @@
             Controls.Add(parameterValue);
             Controls.Add(parameterName);
             Name = "ServerParameterSelect";
-            Size = new Size(400, 30);
+            Size = new Size(400, 38);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -66,6 +66,6 @@
         #endregion
 
         private Label parameterName;
-        private ComboBox parameterValue;
+        private FluentComboBox parameterValue;
     }
 }
