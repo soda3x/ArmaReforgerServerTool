@@ -1,3 +1,5 @@
+using Longbow.Components.ui;
+
 namespace ReforgerServerApp
 {
     partial class ServerParameterBool

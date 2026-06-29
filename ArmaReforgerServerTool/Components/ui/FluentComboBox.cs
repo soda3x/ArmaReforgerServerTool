@@ -1,22 +1,19 @@
-using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Windows.Forms;
 
 public class FluentComboBox : Control
 {
-  private int borderRadius = 8;
-  private Color borderColor = Color.FromArgb(120, 120, 120);
-  private Color fieldBackColor = SystemColors.Window;
+  private int m_borderRadius = 8;
+  private Color m_borderColor = Color.FromArgb(120, 120, 120);
+  private Color m_fieldBackColor = SystemColors.Window;
 
   // Popup components
-  private ToolStripDropDown popup;
-  private ToolStripControlHost host;
-  private ListBox popupList;
+  private ToolStripDropDown m_popup;
+  private ToolStripControlHost m_host;
+  private ListBox m_popupList;
 
   // State
-  private bool isHovered = false;
+  private bool m_isHovered = false;
 
   public event EventHandler SelectedIndexChanged;
   public event EventHandler SelectedValueChanged;
@@ -36,18 +33,17 @@ public class FluentComboBox : Control
 
   private void InitializePopup()
   {
-    popupList = new ListBox();
+    m_popupList = new ListBox();
 
-    // 1. THE MAGIC FIX: Force the ListBox to process data bindings even while hidden
-    popupList.BindingContext = new BindingContext();
+    m_popupList.BindingContext = new BindingContext();
 
-    popupList.BorderStyle = BorderStyle.None;
-    popupList.IntegralHeight = false;
-    popupList.DrawMode = DrawMode.OwnerDrawFixed;
-    popupList.ItemHeight = 32;
-    popupList.FormattingEnabled = true;
+    m_popupList.BorderStyle = BorderStyle.None;
+    m_popupList.IntegralHeight = false;
+    m_popupList.DrawMode = DrawMode.OwnerDrawFixed;
+    m_popupList.ItemHeight = 32;
+    m_popupList.FormattingEnabled = true;
 
-    popupList.DrawItem += (s, e) =>
+    m_popupList.DrawItem += (s, e) =>
     {
       if (e.Index < 0)
         return;
@@ -56,7 +52,7 @@ public class FluentComboBox : Control
 
       bool isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
 
-      using (SolidBrush bgBrush = new SolidBrush(fieldBackColor))
+      using (SolidBrush bgBrush = new SolidBrush(m_fieldBackColor))
       {
         g.FillRectangle(bgBrush, e.Bounds);
       }
@@ -74,128 +70,129 @@ public class FluentComboBox : Control
       }
 
       Color textColor = isSelected ? Color.White : this.ForeColor;
-      string text = popupList.GetItemText(popupList.Items[e.Index]);
+      string text = m_popupList.GetItemText(m_popupList.Items[e.Index]);
 
       Rectangle textRect = new Rectangle(e.Bounds.X + 12, e.Bounds.Y, e.Bounds.Width - 24, e.Bounds.Height);
       TextRenderer.DrawText(g, text, this.Font, textRect, textColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
     };
 
-    popupList.SelectedIndexChanged += (s, e) =>
+    m_popupList.SelectedIndexChanged += (s, e) =>
     {
       this.Invalidate();
       SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
     };
 
-    popupList.SelectedValueChanged += (s, e) =>
+    m_popupList.SelectedValueChanged += (s, e) =>
     {
       SelectedValueChanged?.Invoke(this, EventArgs.Empty);
     };
 
-    popupList.MouseClick += (s, e) => popup.Close();
+    m_popupList.MouseClick += (s, e) => m_popup.Close();
 
-    host = new ToolStripControlHost(popupList);
-    host.Margin = Padding.Empty;
-    host.Padding = Padding.Empty;
-    host.AutoSize = false; // 2. Turn off auto-size to prevent clipping glitches
+    m_host = new ToolStripControlHost(m_popupList);
+    m_host.Margin = Padding.Empty;
+    m_host.Padding = Padding.Empty;
+    m_host.AutoSize = false;
 
-    popup = new ToolStripDropDown();
-    popup.Padding = new Padding(1);
-    popup.Items.Add(host);
-    popup.DropShadowEnabled = true;
+    m_popup = new ToolStripDropDown();
+    m_popup.Padding = new Padding(1);
+    m_popup.Items.Add(m_host);
+    m_popup.DropShadowEnabled = true;
   }
-
-  // --- Data Binding Properties ---
 
   [Category("Data")]
   [AttributeProvider(typeof(IListSource))]
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
   public object DataSource
   {
-    get => popupList.DataSource;
-    set { popupList.DataSource = value; this.Invalidate(); }
+    get => m_popupList.DataSource;
+    set { m_popupList.DataSource = value; this.Invalidate(); }
   }
 
   [Category("Data")]
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
   public string DisplayMember
   {
-    get => popupList.DisplayMember;
-    set { popupList.DisplayMember = value; this.Invalidate(); }
+    get => m_popupList.DisplayMember;
+    set { m_popupList.DisplayMember = value; this.Invalidate(); }
   }
 
   [Category("Data")]
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
   public string ValueMember
   {
-    get => popupList.ValueMember;
-    set { popupList.ValueMember = value; }
+    get => m_popupList.ValueMember;
+    set { m_popupList.ValueMember = value; }
   }
 
   [Category("Data")]
   [Browsable(false)]
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
   public object SelectedValue
   {
-    get => popupList.SelectedValue;
-    set { popupList.SelectedValue = value; this.Invalidate(); }
+    get => m_popupList.SelectedValue;
+    set { m_popupList.SelectedValue = value; this.Invalidate(); }
   }
 
   [Category("Data")]
   [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-  public ListBox.ObjectCollection Items => popupList.Items;
+  public ListBox.ObjectCollection Items => m_popupList.Items;
 
   [Category("Behavior")]
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
   public int SelectedIndex
   {
-    get => popupList.SelectedIndex;
+    get => m_popupList.SelectedIndex;
     set
     {
-      if (popupList.SelectedIndex != value)
+      if (m_popupList.SelectedIndex != value)
       {
-        popupList.SelectedIndex = value;
+        m_popupList.SelectedIndex = value;
         this.Invalidate();
       }
     }
   }
 
   [Category("Behavior")]
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
   public object SelectedItem
   {
-    get => popupList.SelectedItem;
+    get => m_popupList.SelectedItem;
     set
     {
-      if (popupList.SelectedItem != value)
+      if (m_popupList.SelectedItem != value)
       {
-        popupList.SelectedItem = value;
+        m_popupList.SelectedItem = value;
         this.Invalidate();
       }
     }
   }
 
-  // --- Appearance & Interactions ---
-
   [Category("Appearance")]
+  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
   public Color FieldBackColor
   {
-    get => fieldBackColor;
-    set { fieldBackColor = value; this.Invalidate(); }
+    get => m_fieldBackColor;
+    set { m_fieldBackColor = value; this.Invalidate(); }
   }
 
-  protected override void OnMouseEnter(EventArgs e) { isHovered = true; this.Invalidate(); base.OnMouseEnter(e); }
-  protected override void OnMouseLeave(EventArgs e) { isHovered = false; this.Invalidate(); base.OnMouseLeave(e); }
+  protected override void OnMouseEnter(EventArgs e) { m_isHovered = true; this.Invalidate(); base.OnMouseEnter(e); }
+  protected override void OnMouseLeave(EventArgs e) { m_isHovered = false; this.Invalidate(); base.OnMouseLeave(e); }
 
   protected override void OnMouseDown(MouseEventArgs e)
   {
     base.OnMouseDown(e);
 
-    // Now that BindingContext is forced, Items.Count will correctly report your DataSource size
-    if (e.Button == MouseButtons.Left && popupList.Items.Count > 0)
+    if (e.Button == MouseButtons.Left && m_popupList.Items.Count > 0)
     {
-      popupList.BackColor = fieldBackColor;
-      popup.BackColor = borderColor;
+      m_popupList.BackColor = m_fieldBackColor;
+      m_popup.BackColor = m_borderColor;
 
-      // 3. Explicitly size both the list AND the wrapper host
-      popupList.Width = this.Width - 2;
-      popupList.Height = Math.Min(popupList.Items.Count * popupList.ItemHeight, 200);
-      host.Size = popupList.Size;
+      m_popupList.Width = this.Width - 2;
+      m_popupList.Height = Math.Min(m_popupList.Items.Count * m_popupList.ItemHeight, 200);
+      m_host.Size = m_popupList.Size;
 
-      popup.Show(this, new Point(0, this.Height + 2));
+      m_popup.Show(this, new Point(0, this.Height + 2));
     }
   }
 
@@ -205,29 +202,26 @@ public class FluentComboBox : Control
     Graphics g = e.Graphics;
     g.SmoothingMode = SmoothingMode.AntiAlias;
 
-    // 1. Draw rounded base
-    using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), borderRadius))
+    using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), m_borderRadius))
     {
-      Color currentBackColor = isHovered ? Color.FromArgb(Math.Max(0, fieldBackColor.R - 10), Math.Max(0, fieldBackColor.G - 10), Math.Max(0, fieldBackColor.B - 10)) : fieldBackColor;
+      Color currentBackColor = m_isHovered ? Color.FromArgb(Math.Max(0, m_fieldBackColor.R - 10), Math.Max(0, m_fieldBackColor.G - 10), Math.Max(0, m_fieldBackColor.B - 10)) : m_fieldBackColor;
 
       using (SolidBrush brush = new SolidBrush(currentBackColor))
         g.FillPath(brush, path);
 
-      using (Pen pen = new Pen(borderColor, 1.5f))
+      using (Pen pen = new Pen(m_borderColor, 1.5f))
         g.DrawPath(pen, path);
     }
 
-    // 2. Draw the selected text respecting DisplayMember
     string displayText = "";
-    if (popupList.SelectedIndex >= 0 && popupList.SelectedIndex < popupList.Items.Count)
+    if (m_popupList.SelectedIndex >= 0 && m_popupList.SelectedIndex < m_popupList.Items.Count)
     {
-      displayText = popupList.GetItemText(popupList.Items[popupList.SelectedIndex]);
+      displayText = m_popupList.GetItemText(m_popupList.Items[m_popupList.SelectedIndex]);
     }
 
     Rectangle textBounds = new Rectangle(10, 0, this.Width - 40, this.Height);
     TextRenderer.DrawText(g, displayText, this.Font, textBounds, this.ForeColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
 
-    // 3. Draw the Chevron
     using (Font iconFont = new Font("Segoe MDL2 Assets", 10f, FontStyle.Regular))
     {
       Rectangle iconBounds = new Rectangle(this.Width - 30, 0, 30, this.Height);

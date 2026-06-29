@@ -1,29 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
+using System.Drawing.Drawing2D;
 
 namespace Longbow.Components.ui
 {
-  using System;
-  using System.Drawing;
-  using System.Drawing.Drawing2D;
-  using System.Windows.Forms;
-
   public class FluentTextBox : UserControl
   {
-    private TextBox textBox;
-    private int borderRadius = 8;
-    private Color borderColor = Color.FromArgb(120, 120, 120);
-    private Color focusedBorderColor = Color.FromArgb(0, 120, 212); // Windows 11 Blue
-    private Color fieldBackColor = SystemColors.Window;
+    private TextBox m_textBox;
+    private int m_borderRadius = 8;
+    private Color m_borderColor = Color.FromArgb(120, 120, 120);
+    private Color m_focusedBorderColor = Color.FromArgb(0, 120, 212); // Windows 11 Blue
+    private Color m_fieldBackColor = SystemColors.Window;
 
-    private bool isHovered = false;
-    private bool isFocused = false;
+    private bool m_isHovered = false;
+    private bool m_isFocused = false;
 
     public FluentTextBox()
     {
-      // 1. Setup transparency and double buffering
       this.SetStyle(ControlStyles.SupportsTransparentBackColor |
                     ControlStyles.UserPaint |
                     ControlStyles.AllPaintingInWmPaint |
@@ -33,71 +25,65 @@ namespace Longbow.Components.ui
       this.Size = new Size(250, 32);
       this.Cursor = Cursors.IBeam;
 
-      // 2. Setup the internal borderless textbox
-      textBox = new TextBox();
-      textBox.BorderStyle = BorderStyle.None;
-      textBox.Dock = DockStyle.Fill;
-      textBox.BackColor = fieldBackColor;
-      textBox.ForeColor = this.ForeColor;
+      m_textBox = new TextBox();
+      m_textBox.BorderStyle = BorderStyle.None;
+      m_textBox.Dock = DockStyle.Fill;
+      m_textBox.BackColor = m_fieldBackColor;
+      m_textBox.ForeColor = this.ForeColor;
 
-      // Sync .NET 9 Dark Mode text colors
-      this.ForeColorChanged += (s, e) => textBox.ForeColor = this.ForeColor;
+      this.ForeColorChanged += (s, e) => m_textBox.ForeColor = this.ForeColor;
 
-      // 3. Interactive Hover States
-      // We must hook the mouse events of BOTH the wrapper and the internal textbox
-      textBox.MouseEnter += (s, e) => { isHovered = true; this.Invalidate(); };
-      textBox.MouseLeave += (s, e) => { isHovered = false; this.Invalidate(); };
-      this.MouseEnter += (s, e) => { isHovered = true; this.Invalidate(); };
-      this.MouseLeave += (s, e) => { isHovered = false; this.Invalidate(); };
+      m_textBox.MouseEnter += (s, e) => { m_isHovered = true; this.Invalidate(); };
+      m_textBox.MouseLeave += (s, e) => { m_isHovered = false; this.Invalidate(); };
+      this.MouseEnter += (s, e) => { m_isHovered = true; this.Invalidate(); };
+      this.MouseLeave += (s, e) => { m_isHovered = false; this.Invalidate(); };
 
-      // 4. Interactive Focus States (WinUI 3 Blue Border)
-      textBox.Enter += (s, e) => { isFocused = true; this.Invalidate(); };
-      textBox.Leave += (s, e) => { isFocused = false; this.Invalidate(); };
+      m_textBox.Enter += (s, e) => { m_isFocused = true; this.Invalidate(); };
+      m_textBox.Leave += (s, e) => { m_isFocused = false; this.Invalidate(); };
 
-      this.Controls.Add(textBox);
+      this.Controls.Add(m_textBox);
     }
-
-    // --- Expose essential TextBox properties to the Designer ---
 
     [Category("Data")]
     public override string Text
     {
-      get => textBox.Text;
-      set => textBox.Text = value;
+      get => m_textBox.Text;
+      set => m_textBox.Text = value;
     }
 
     [Category("Appearance")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color FieldBackColor
     {
-      get => fieldBackColor;
+      get => m_fieldBackColor;
       set
       {
-        fieldBackColor = value;
-        textBox.BackColor = value;
+        m_fieldBackColor = value;
+        m_textBox.BackColor = value;
         this.Invalidate();
       }
     }
 
     [Category("Behavior")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool UseSystemPasswordChar
     {
-      get => textBox.UseSystemPasswordChar;
-      set => textBox.UseSystemPasswordChar = value;
+      get => m_textBox.UseSystemPasswordChar;
+      set => m_textBox.UseSystemPasswordChar = value;
     }
 
     [Category("Behavior")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Multiline
     {
-      get => textBox.Multiline;
-      set => textBox.Multiline = value;
+      get => m_textBox.Multiline;
+      set => m_textBox.Multiline = value;
     }
 
     public void AppendText(string text)
     {
-      textBox.AppendText(text);
+      m_textBox.AppendText(text);
     }
-
-    // --- Custom Painting ---
 
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -105,41 +91,35 @@ namespace Longbow.Components.ui
       Graphics g = e.Graphics;
       g.SmoothingMode = SmoothingMode.AntiAlias;
 
-      using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), borderRadius))
+      using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), m_borderRadius))
       {
-        // 1. Calculate Hover Color
-        Color currentBackColor = fieldBackColor;
-        if (isHovered && !isFocused)
+        Color currentBackColor = m_fieldBackColor;
+        if (m_isHovered && !m_isFocused)
         {
-          currentBackColor = Color.FromArgb(Math.Max(0, fieldBackColor.R - 10),
-                                            Math.Max(0, fieldBackColor.G - 10),
-                                            Math.Max(0, fieldBackColor.B - 10));
+          currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColor.R - 10),
+                                            Math.Max(0, m_fieldBackColor.G - 10),
+                                            Math.Max(0, m_fieldBackColor.B - 10));
         }
 
-        // Sync inner textbox to match the hover color so there's no ugly square behind the text
-        textBox.BackColor = currentBackColor;
+        m_textBox.BackColor = currentBackColor;
 
-        // Fill background
         using (SolidBrush brush = new SolidBrush(currentBackColor))
         {
           g.FillPath(brush, path);
         }
 
-        // 2. Calculate Focus Border
-        Color currentBorderColor = isFocused ? focusedBorderColor : borderColor;
-        float borderThickness = isFocused ? 2f : 1.5f;
+        Color currentBorderColor = m_isFocused ? m_focusedBorderColor : m_borderColor;
+        float borderThickness = m_isFocused ? 2f : 1.5f;
 
         using (Pen pen = new Pen(currentBorderColor, borderThickness))
         {
           g.DrawPath(pen, path);
 
-          // WinUI 3 textboxes feature a distinct thicker accent line at the bottom when focused.
-          // This draws a thicker stroke along the bottom edge to mimic that exact design language.
-          if (isFocused)
+          if (m_isFocused)
           {
-            using (Pen thickPen = new Pen(focusedBorderColor, 3f))
+            using (Pen thickPen = new Pen(m_focusedBorderColor, 3f))
             {
-              g.DrawLine(thickPen, borderRadius, this.Height - 2, this.Width - borderRadius, this.Height - 2);
+              g.DrawLine(thickPen, m_borderRadius, this.Height - 2, this.Width - m_borderRadius, this.Height - 2);
             }
           }
         }

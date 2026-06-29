@@ -8,26 +8,26 @@ namespace Longbow.Components.ui
 
   public class FluentNumericUpDown : UserControl, ISupportInitialize
   {
-    private TextBox textBox;
-    private int borderRadius = 8;
-    private Color borderColor = Color.FromArgb(120, 120, 120);
-    private Color focusedBorderColor = Color.FromArgb(0, 120, 212); // Windows 11 Blue
-    private Color fieldBackColor = SystemColors.Window;
+    private TextBox m_textBox;
+    private int m_borderRadius = 8;
+    private Color m_borderColor = Color.FromArgb(120, 120, 120);
+    private Color m_focusedBorderColor = Color.FromArgb(0, 120, 212); // Windows 11 Blue
+    private Color m_fieldBackColor = SystemColors.Window;
 
     // Numeric State
-    private decimal _value = 0;
-    private decimal _minimum = 0;
-    private decimal _maximum = 100;
-    private decimal _increment = 1;
-    private int _decimalPlaces = 0;
+    private decimal m_value = 0;
+    private decimal m_minimum = 0;
+    private decimal m_maximum = 100;
+    private decimal m_increment = 1;
+    private int m_decimalPlaces = 0;
 
     // Interaction State
-    private bool isHovered = false;
-    private bool isFocused = false;
-    private bool isUpHovered = false;
-    private bool isDownHovered = false;
+    private bool m_isHovered = false;
+    private bool m_isFocused = false;
+    private bool m_isUpHovered = false;
+    private bool m_isDownHovered = false;
 
-    private int spinnerWidth = 30; // Width of the up/down button area
+    private int m_spinnerWidth = 30; // Width of the up/down button area
 
     public event EventHandler ValueChanged;
 
@@ -40,35 +40,35 @@ namespace Longbow.Components.ui
       this.BackColor = Color.Transparent;
 
       // Extra padding on the right to make room for our custom spinner buttons
-      this.Padding = new Padding(10, 7, spinnerWidth + 5, 7);
+      this.Padding = new Padding(10, 7, m_spinnerWidth + 5, 7);
       this.Size = new Size(150, 32);
 
       // Setup the internal borderless textbox
-      textBox = new TextBox();
-      textBox.BorderStyle = BorderStyle.None;
-      textBox.Dock = DockStyle.Fill;
-      textBox.BackColor = fieldBackColor;
-      textBox.ForeColor = this.ForeColor;
-      textBox.Text = _value.ToString();
+      m_textBox = new TextBox();
+      m_textBox.BorderStyle = BorderStyle.None;
+      m_textBox.Dock = DockStyle.Fill;
+      m_textBox.BackColor = m_fieldBackColor;
+      m_textBox.ForeColor = this.ForeColor;
+      m_textBox.Text = m_value.ToString();
 
-      this.ForeColorChanged += (s, e) => textBox.ForeColor = this.ForeColor;
+      this.ForeColorChanged += (s, e) => m_textBox.ForeColor = this.ForeColor;
 
       // Interaction Hooks
-      textBox.MouseEnter += (s, e) => { isHovered = true; this.Invalidate(); };
-      textBox.MouseLeave += (s, e) => { isHovered = false; this.Invalidate(); };
-      this.MouseEnter += (s, e) => { isHovered = true; this.Invalidate(); };
-      this.MouseLeave += (s, e) => { isHovered = false; isUpHovered = false; isDownHovered = false; this.Invalidate(); };
+      m_textBox.MouseEnter += (s, e) => { m_isHovered = true; this.Invalidate(); };
+      m_textBox.MouseLeave += (s, e) => { m_isHovered = false; this.Invalidate(); };
+      this.MouseEnter += (s, e) => { m_isHovered = true; this.Invalidate(); };
+      this.MouseLeave += (s, e) => { m_isHovered = false; m_isUpHovered = false; m_isDownHovered = false; this.Invalidate(); };
 
-      textBox.Enter += (s, e) => { isFocused = true; this.Invalidate(); };
-      textBox.Leave += (s, e) =>
+      m_textBox.Enter += (s, e) => { m_isFocused = true; this.Invalidate(); };
+      m_textBox.Leave += (s, e) =>
       {
-        isFocused = false;
+        m_isFocused = false;
         ValidateAndApplyText(); // Parse the text when the user clicks away
         this.Invalidate();
       };
 
       // Text validation on Enter key
-      textBox.KeyDown += (s, e) =>
+      m_textBox.KeyDown += (s, e) =>
       {
         if (e.KeyCode == Keys.Enter)
         {
@@ -82,22 +82,21 @@ namespace Longbow.Components.ui
         { Value -= Increment; e.Handled = true; }
       };
 
-      this.Controls.Add(textBox);
+      this.Controls.Add(m_textBox);
     }
 
-    // --- Numeric Properties ---
-
     [Category("Data")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public decimal Value
     {
-      get => _value;
+      get => m_value;
       set
       {
-        decimal clampedValue = Math.Max(_minimum, Math.Min(_maximum, value));
-        if (_value != clampedValue)
+        decimal clampedValue = Math.Max(m_minimum, Math.Min(m_maximum, value));
+        if (m_value != clampedValue)
         {
-          _value = Math.Round(clampedValue, _decimalPlaces);
-          textBox.Text = _value.ToString($"F{_decimalPlaces}");
+          m_value = Math.Round(clampedValue, m_decimalPlaces);
+          m_textBox.Text = m_value.ToString($"F{m_decimalPlaces}");
           ValueChanged?.Invoke(this, EventArgs.Empty);
           this.Invalidate();
         }
@@ -105,62 +104,63 @@ namespace Longbow.Components.ui
     }
 
     [Category("Data")]
-    public decimal Minimum { get => _minimum; set { _minimum = value; ValidateAndApplyText(); } }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public decimal Minimum { get => m_minimum; set { m_minimum = value; ValidateAndApplyText(); } }
 
     [Category("Data")]
-    public decimal Maximum { get => _maximum; set { _maximum = value; ValidateAndApplyText(); } }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public decimal Maximum { get => m_maximum; set { m_maximum = value; ValidateAndApplyText(); } }
 
     [Category("Data")]
-    public decimal Increment { get => _increment; set => _increment = value; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public decimal Increment { get => m_increment; set => m_increment = value; }
 
     [Category("Data")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int DecimalPlaces
     {
-      get => _decimalPlaces;
+      get => m_decimalPlaces;
       set
       {
-        _decimalPlaces = Math.Max(0, value);
-        textBox.Text = _value.ToString($"F{_decimalPlaces}");
+        m_decimalPlaces = Math.Max(0, value);
+        m_textBox.Text = m_value.ToString($"F{m_decimalPlaces}");
       }
     }
 
     [Category("Appearance")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Color FieldBackColor
     {
-      get => fieldBackColor;
-      set { fieldBackColor = value; textBox.BackColor = value; this.Invalidate(); }
+      get => m_fieldBackColor;
+      set { m_fieldBackColor = value; m_textBox.BackColor = value; this.Invalidate(); }
     }
-
-    // --- Logic ---
 
     private void ValidateAndApplyText()
     {
-      if (decimal.TryParse(textBox.Text, out decimal parsedValue))
+      if (decimal.TryParse(m_textBox.Text, out decimal parsedValue))
       {
         Value = parsedValue; // The setter handles clamping and formatting
       }
       else
       {
         // Revert to last known good value if they typed garbage
-        textBox.Text = _value.ToString($"F{_decimalPlaces}");
+        m_textBox.Text = m_value.ToString($"F{m_decimalPlaces}");
       }
     }
 
-    // --- Custom Spinner Buttons (Mouse Handling) ---
-
-    private Rectangle GetUpRect() => new Rectangle(this.Width - spinnerWidth - 2, 2, spinnerWidth, this.Height / 2 - 2);
-    private Rectangle GetDownRect() => new Rectangle(this.Width - spinnerWidth - 2, this.Height / 2, spinnerWidth, this.Height / 2 - 2);
+    private Rectangle GetUpRect() => new Rectangle(this.Width - m_spinnerWidth - 2, 2, m_spinnerWidth, this.Height / 2 - 2);
+    private Rectangle GetDownRect() => new Rectangle(this.Width - m_spinnerWidth - 2, this.Height / 2, m_spinnerWidth, this.Height / 2 - 2);
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
       base.OnMouseMove(e);
-      bool oldUp = isUpHovered;
-      bool oldDown = isDownHovered;
+      bool oldUp = m_isUpHovered;
+      bool oldDown = m_isDownHovered;
 
-      isUpHovered = GetUpRect().Contains(e.Location);
-      isDownHovered = GetDownRect().Contains(e.Location);
+      m_isUpHovered = GetUpRect().Contains(e.Location);
+      m_isDownHovered = GetDownRect().Contains(e.Location);
 
-      if (oldUp != isUpHovered || oldDown != isDownHovered)
+      if (oldUp != m_isUpHovered || oldDown != m_isDownHovered)
         this.Invalidate();
     }
 
@@ -175,11 +175,9 @@ namespace Longbow.Components.ui
           Value -= Increment;
 
         // Give focus back to the textbox so the user can continue typing
-        textBox.Focus();
+        m_textBox.Focus();
       }
     }
-
-    // --- Custom Painting ---
 
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -187,43 +185,39 @@ namespace Longbow.Components.ui
       Graphics g = e.Graphics;
       g.SmoothingMode = SmoothingMode.AntiAlias;
 
-      using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), borderRadius))
+      using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), m_borderRadius))
       {
-        // 1. Calculate Hover Color
-        Color currentBackColor = fieldBackColor;
-        if (isHovered && !isFocused)
+        Color currentBackColor = m_fieldBackColor;
+        if (m_isHovered && !m_isFocused)
         {
-          currentBackColor = Color.FromArgb(Math.Max(0, fieldBackColor.R - 10), Math.Max(0, fieldBackColor.G - 10), Math.Max(0, fieldBackColor.B - 10));
+          currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColor.R - 10), Math.Max(0, m_fieldBackColor.G - 10), Math.Max(0, m_fieldBackColor.B - 10));
         }
-        textBox.BackColor = currentBackColor;
+        m_textBox.BackColor = currentBackColor;
 
         using (SolidBrush brush = new SolidBrush(currentBackColor))
           g.FillPath(brush, path);
 
-        // 2. Draw Focus Border
-        Color currentBorderColor = isFocused ? focusedBorderColor : borderColor;
-        float borderThickness = isFocused ? 2f : 1.5f;
+        Color currentBorderColor = m_isFocused ? m_focusedBorderColor : m_borderColor;
+        float borderThickness = m_isFocused ? 2f : 1.5f;
 
         using (Pen pen = new Pen(currentBorderColor, borderThickness))
         {
           g.DrawPath(pen, path);
-          if (isFocused)
+          if (m_isFocused)
           {
-            using (Pen thickPen = new Pen(focusedBorderColor, 3f))
-              g.DrawLine(thickPen, borderRadius, this.Height - 2, this.Width - borderRadius, this.Height - 2);
+            using (Pen thickPen = new Pen(m_focusedBorderColor, 3f))
+              g.DrawLine(thickPen, m_borderRadius, this.Height - 2, this.Width - m_borderRadius, this.Height - 2);
           }
         }
       }
 
-      // 3. Draw the Spinner Chevrons
       using (Font iconFont = new Font("Segoe MDL2 Assets", 7f, FontStyle.Bold))
       {
         Rectangle upRect = GetUpRect();
         Rectangle downRect = GetDownRect();
 
-        // Slightly dim the chevron if the user isn't hovering directly over it
-        Color upColor = isUpHovered ? this.ForeColor : Color.FromArgb(150, this.ForeColor);
-        Color downColor = isDownHovered ? this.ForeColor : Color.FromArgb(150, this.ForeColor);
+        Color upColor = m_isUpHovered ? this.ForeColor : Color.FromArgb(150, this.ForeColor);
+        Color downColor = m_isDownHovered ? this.ForeColor : Color.FromArgb(150, this.ForeColor);
 
         TextRenderer.DrawText(g, "\uE70E", iconFont, upRect, upColor, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
         TextRenderer.DrawText(g, "\uE70D", iconFont, downRect, downColor, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
@@ -244,12 +238,12 @@ namespace Longbow.Components.ui
 
     public void BeginInit()
     {
-
+      // No op
     }
 
     public void EndInit()
     {
-
+      // No op
     }
   }
 }

@@ -6,6 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Components.ui;
 using Longbow.Forms;
 using Longbow.Managers;
 using Longbow.Models;
@@ -194,7 +195,7 @@ namespace ReforgerServerApp
     /// Get the Enabled Mods ListBox
     /// </summary>
     /// <returns>enabledMods ListBox</returns>
-    public ListBox GetEnabledModsList()
+    public FluentListBox GetEnabledModsList()
     {
       return enabledMods;
     }
@@ -203,7 +204,7 @@ namespace ReforgerServerApp
     /// Get the Available Mods ListBox
     /// </summary>
     /// <returns>availableMods ListBox</returns>
-    public ListBox GetAvailableModsList()
+    public FluentListBox GetAvailableModsList()
     {
       return availableMods;
     }
