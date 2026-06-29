@@ -11,12 +11,15 @@ using Longbow.Managers;
 using Longbow.Models;
 using Longbow.Utils;
 using ReforgerServerApp.Components;
+using ReforgerServerApp.Design;
+using ReforgerServerApp.Forms;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
 using Serilog;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 
 namespace ReforgerServerApp
 {
@@ -30,6 +33,34 @@ namespace ReforgerServerApp
     public Main()
     {
       InitializeComponent();
+
+      // CRITICAL FIX: The landscape image is covering everything.
+      // Clear all background images and the pictureBox image.
+      this.BackgroundImage = null;
+      this.BackgroundImageLayout = ImageLayout.None;
+
+      if (tabControl1 != null && tabControl1.TabPages.Count > 0)
+      {
+        foreach (TabPage page in tabControl1.TabPages)
+        {
+          page.BackgroundImage = null;
+          page.BackgroundImageLayout = ImageLayout.None;
+        }
+      }
+
+      // pictureBox1 removed - control deleted from designer
+
+      // Apply dark theme from design system
+      ApplyDarkTheme();
+
+      // Ensure TabControl is visible and properly sized
+      if (tabControl1 != null)
+      {
+        tabControl1.Visible = true;
+        tabControl1.BringToFront();
+        // Force the tab control to actually render and display tabs
+        tabControl1.Refresh();
+      }
 
       CreateServerParameterControls();
       CreateAdvancedServerParameterControls();
@@ -113,11 +144,17 @@ namespace ReforgerServerApp
       memSeries.ToolTip = "Memory: #VALY GB\nTime: #VALX{HH:mm:ss}";
       memSeries.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
       chartMem.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm:ss";
-      memSeries.Color = Color.Orange;
+      memSeries.Color = Design.Colors.Warning;
       GCMemoryInfo gcInfo = GC.GetGCMemoryInfo();
       double totalSystemMemoryGb = gcInfo.TotalAvailableMemoryBytes / (1024.0 * 1024.0 * 1024.0);
       chartMem.ChartAreas[0].AxisY.Maximum = Math.Ceiling(totalSystemMemoryGb);
       chartMem.ChartAreas[0].AxisY.Minimum = 0; // Lock the bottom to 0 for proper scale
+
+      // PHASE 1A FIX: Perform initial mod validation and set Start button state
+      Log.Information("Main - Performing initial mod validation on form load");
+      var initialValidationResult = ModValidationService.GetInstance().ValidateMods(
+        ConfigurationManager.GetInstance().GetEnabledMods().ToList());
+      UpdateStartButtonState(initialValidationResult.IsValid);
     }
 
     /// <summary>
@@ -1748,6 +1785,134 @@ namespace ReforgerServerApp
     }
 
     /// <summary>
+    /// Handler for "Check Mods" button - validates enabled mods and auto-fixes if possible
+    /// </summary>
+    private async void CheckModsBtnPressed(object sender, EventArgs e)
+    {
+      if (sender is Button btn)
+      {
+        btn.Enabled = false;
+        btn.Text = "Checking...";
+      }
+
+      try
+      {
+        // Get the list of enabled mods
+        var enabledMods = ConfigurationManager.GetInstance().GetEnabledMods().ToList();
+
+        // Run validation
+        var validationResult = ModValidationService.GetInstance().ValidateMods(enabledMods);
+        var fixesApplied = new List<string>();
+
+        // Auto-fix logic if validation failed
+        if (!validationResult.IsValid)
+        {
+          fixesApplied = ApplyAutoFixes(validationResult, enabledMods);
+
+          // Re-validate after fixes
+          if (fixesApplied.Count > 0)
+          {
+            validationResult = ModValidationService.GetInstance().ValidateMods(enabledMods);
+          }
+        }
+
+        // Show results dialog
+        var resultDialog = new ModValidationResultDialog(validationResult, fixesApplied);
+        resultDialog.ShowDialog(this);
+
+        // Update the UI based on validation result
+        UpdateStartButtonState(validationResult.IsValid);
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex, "Main - Error in CheckModsBtnPressed");
+        MessageBox.Show($"Error checking mods: {ex.Message}", "Error",
+          MessageBoxButtons.OK, MessageBoxIcon.Error);
+      }
+      finally
+      {
+        if (sender is Button btn2)
+        {
+          btn2.Enabled = true;
+          btn2.Text = "Check Mods";
+        }
+      }
+    }
+
+    /// <summary>
+    /// Apply auto-fixes for common mod issues
+    /// Returns list of fixes that were applied
+    /// </summary>
+    private List<string> ApplyAutoFixes(ValidationResult validationResult, List<Mod> enabledMods)
+    {
+      var fixesApplied = new List<string>();
+      var fatalErrors = validationResult.GetFatalErrors();
+
+      foreach (var error in fatalErrors)
+      {
+        if (error.Type == ValidationError.ErrorType.MissingDependency)
+        {
+          // Try to find the missing dependency in available mods and add it
+          var availableMods = ConfigurationManager.GetInstance().GetAvailableMods();
+          var missingModId = error.RelatedModId;
+
+          if (!string.IsNullOrEmpty(missingModId))
+          {
+            var missingMod = availableMods.FirstOrDefault(m =>
+              m.modId.Equals(missingModId, StringComparison.OrdinalIgnoreCase));
+
+            if (missingMod != null && !enabledMods.Any(m =>
+              m.modId.Equals(missingModId, StringComparison.OrdinalIgnoreCase)))
+            {
+              // Add the missing mod
+              enabledMods.Add(new Mod(missingMod));
+              availableMods.Remove(missingMod);
+              fixesApplied.Add($"Added missing dependency: {missingMod.name}");
+              Log.Information("Main - Auto-fixed: Added missing dependency {Mod}", missingMod.name);
+            }
+          }
+        }
+      }
+
+      // Re-sort mods if fixes were applied
+      if (fixesApplied.Count > 0)
+      {
+        ConfigurationManager.GetInstance().AlphabetiseModLists();
+        ResetModFilters();
+      }
+
+      return fixesApplied;
+    }
+
+    /// <summary>
+    /// Update the Start button state based on validation result
+    /// </summary>
+    private void UpdateStartButtonState(bool isValid)
+    {
+      if (startServerBtn.InvokeRequired)
+      {
+        startServerBtn.Invoke(new Action(() => UpdateStartButtonState(isValid)));
+      }
+      else
+      {
+        if (!isValid)
+        {
+          startServerBtn.BackColor = Design.Colors.Error;
+          startServerBtn.ForeColor = Design.Colors.White;
+          startServerBtn.Enabled = false;
+        }
+        else
+        {
+          // Valid mods - can start if SteamCMD is installed
+          bool steamCmdInstalled = FileIOManager.GetInstance().IsSteamCMDInstalled();
+          startServerBtn.BackColor = steamCmdInstalled ? Design.Colors.Primary : Design.Colors.DisabledBackground;
+          startServerBtn.ForeColor = Design.Colors.TextPrimary;
+          startServerBtn.Enabled = steamCmdInstalled;
+        }
+      }
+    }
+
+    /// <summary>
     /// Utility method to update state of each advanced server parameter with the SavedStateManager
     /// </summary>
     private void UpdateStateForAdvancedSettings()
@@ -1824,6 +1989,121 @@ namespace ReforgerServerApp
     private void OnJoinCodeToClipboard(object sender, EventArgs e)
     {
       Clipboard.SetText(joinCodeStatusLabel.Text);
+    }
+
+    /// <summary>
+    /// Apply dark theme colors to the entire form and all child controls.
+    /// Uses the design system color palette for consistency.
+    /// </summary>
+    private void ApplyDarkTheme()
+    {
+      // Apply dark theme to main form
+      BackColor = Design.Colors.BackgroundPrimary;
+      ForeColor = Design.Colors.TextPrimary;
+
+      // Apply theme to tab control
+      if (tabControl1 != null)
+      {
+        tabControl1.BackColor = Design.Colors.BackgroundPrimary;
+        tabControl1.ForeColor = Design.Colors.TextPrimary;
+
+        // CRITICAL: Style the tab control to use dark theme for tab headers
+        // TabControl.FlatStyle doesn't exist, so we need to set appearance manually
+        tabControl1.ItemSize = new Size(tabControl1.ItemSize.Width, 24); // Standard tab height
+
+        // Apply theme to all tab pages
+        foreach (TabPage page in tabControl1.TabPages)
+        {
+          page.BackColor = Design.Colors.BackgroundSecondary;
+          page.ForeColor = Design.Colors.TextPrimary;
+          // Make tab page text visible by ensuring text color is set
+          page.ForeColorChanged += (s, e) => { }; // Ensure ForeColor change takes effect
+        }
+      }
+
+      // Helper method to apply theme to all controls recursively
+      ApplyThemeToControls(this.Controls);
+    }
+
+    /// <summary>
+    /// Recursively apply dark theme to all controls in a collection.
+    /// Container-level labels get a background color; child labels are transparent.
+    /// </summary>
+    /// <param name="controls">Control collection to theme</param>
+    /// <param name="isTopLevel">Whether this is the top-level control collection</param>
+    private void ApplyThemeToControls(Control.ControlCollection controls, bool isTopLevel = true)
+    {
+      foreach (Control control in controls)
+      {
+        // Apply base theme colors
+        control.ForeColor = Design.Colors.TextPrimary;
+
+        // Specific styling per control type
+        if (control is GroupBox groupBox)
+        {
+          groupBox.BackColor = Design.Colors.BackgroundSecondary;
+          groupBox.ForeColor = Design.Colors.TextPrimary;
+        }
+        else if (control is Label label)
+        {
+          // Only apply background color to top-level labels; child labels inherit parent background
+          if (isTopLevel)
+          {
+            label.BackColor = Design.Colors.BackgroundSecondary;
+          }
+          else
+          {
+            label.BackColor = Color.Transparent;
+          }
+          label.ForeColor = Design.Colors.TextPrimary;
+        }
+        else if (control is TextBox textBox)
+        {
+          textBox.BackColor = Design.Colors.Surface;
+          textBox.ForeColor = Design.Colors.TextPrimary;
+          textBox.BorderStyle = BorderStyle.FixedSingle;
+        }
+        else if (control is ComboBox comboBox)
+        {
+          comboBox.BackColor = Design.Colors.Surface;
+          comboBox.ForeColor = Design.Colors.TextPrimary;
+        }
+        else if (control is CheckBox checkBox)
+        {
+          checkBox.BackColor = Design.Colors.BackgroundSecondary;
+          checkBox.ForeColor = Design.Colors.TextPrimary;
+        }
+        else if (control is TabControl tabControl)
+        {
+          tabControl.BackColor = Design.Colors.BackgroundPrimary;
+          tabControl.ForeColor = Design.Colors.TextPrimary;
+        }
+        else if (control is TableLayoutPanel || control is FlowLayoutPanel)
+        {
+          control.BackColor = Design.Colors.BackgroundSecondary;
+        }
+        else if (control is FontAwesome.Sharp.IconButton iconButton)
+        {
+          // Apply button styling with hover support
+          iconButton.BackColor = Design.Colors.Surface;
+          iconButton.ForeColor = Design.Colors.TextPrimary;
+          iconButton.IconColor = Design.Colors.TextPrimary;
+          iconButton.FlatAppearance.BorderColor = Design.Colors.Border;
+        }
+        else if (control is Button button && !(control is FontAwesome.Sharp.IconButton))
+        {
+          button.BackColor = Design.Colors.Surface;
+          button.ForeColor = Design.Colors.TextPrimary;
+          button.FlatStyle = FlatStyle.Flat;
+          button.FlatAppearance.BorderColor = Design.Colors.Border;
+        }
+
+        // Recursively apply theme to child controls
+        if (control.HasChildren)
+        {
+          ApplyThemeToControls(control.Controls, false);
+        }
+      }
     }
   }
 }

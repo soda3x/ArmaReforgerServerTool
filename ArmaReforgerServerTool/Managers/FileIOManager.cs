@@ -283,14 +283,19 @@ namespace ReforgerServerApp.Managers
       string path = string.Empty;
       using FolderBrowserDialog fbd = new();
       DialogResult result = fbd.ShowDialog();
-      if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+
+      // PHASE 1A FIX: Return early if user cancels the dialog
+      if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath))
       {
-        Log.Information("FileIOManager - Downloading SteamCMD to {path}...", fbd.SelectedPath);
-        m_installDir = fbd.SelectedPath;
-        m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
-        m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\sessions";
-        SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
+        Log.Information("FileIOManager - User cancelled SteamCMD download dialog");
+        return;
       }
+
+      Log.Information("FileIOManager - Downloading SteamCMD to {path}...", fbd.SelectedPath);
+      m_installDir = fbd.SelectedPath;
+      m_steamCmdFile = $"{fbd.SelectedPath}\\steamcmd\\steamcmd.exe";
+      m_savesPath = $"{m_installDir}\\saves\\profile\\.save\\sessions";
+      SavedStateManager.GetInstance().GetSavedState().serverLocation = m_installDir;
 
       string steamCmdUrl = $"{ToolPropertiesManager.GetInstance().GetToolProperties().steamCmdDownloadUrl}/steamcmd.zip";
       string zipFilePath = Path.Combine(m_installDir, "steamcmd.zip");
