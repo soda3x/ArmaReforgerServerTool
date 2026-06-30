@@ -99,6 +99,13 @@ namespace Longbow.Components.ui
       }
     }
 
+    [Category("Appearance")]
+    public ScrollBars ScrollBars
+    {
+      get => m_textBox.ScrollBars;
+      set => m_textBox.ScrollBars = value;
+    }
+
     private void ApplyPlaceholder()
     {
       // Ensure the internal textbox actually exists before trying to send it a Windows message
@@ -112,6 +119,17 @@ namespace Longbow.Components.ui
     public void AppendText(string text)
     {
       m_textBox.AppendText(text);
+
+      // If the logs are > 2000 lines, clear the first 500
+      if (m_textBox.Lines.Length > 2000)
+      {
+        int linesToRemove = 500;
+        int startIndex = 0;
+        int endIndex = m_textBox.GetFirstCharIndexFromLine(linesToRemove);
+
+        m_textBox.Select(startIndex, endIndex);
+        m_textBox.SelectedText = "";
+      }
     }
 
     protected override void OnPaint(PaintEventArgs e)

@@ -25,7 +25,6 @@ namespace ReforgerServerApp
     private BindingSource m_availableModsBindingSource;
     private BindingSource m_enabledModsBindingSource;
     private ServerStatusParser m_serverStatusParser;
-    private const int MAX_GRAPH_POINTS = 60;
 
     public Main()
     {
@@ -101,31 +100,12 @@ namespace ReforgerServerApp
       copyRconAddressBtn.Enabled = false;
       copyJoinCodeBtn.Enabled = false;
 
-      chartFps.ChartAreas[0].BackColor = Color.Transparent;
-      chartMem.ChartAreas[0].BackColor = Color.Transparent;
-
-      chartFps.Legends[0].BackColor = Color.Transparent;
-      chartMem.Legends[0].BackColor = Color.Transparent;
-
-      var fpsSeries = chartFps.Series["FPS"];
-      var memSeries = chartMem.Series["Memory (GB)"];
-
-      fpsSeries.ToolTip = "FPS: #VALY\nTime: #VALX{HH:mm:ss}";
-      fpsSeries.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-      chartFps.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm:ss";
-
-      memSeries.ToolTip = "Memory: #VALY GB\nTime: #VALX{HH:mm:ss}";
-      memSeries.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-      chartMem.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm:ss";
-      memSeries.Color = Color.Orange;
-      GCMemoryInfo gcInfo = GC.GetGCMemoryInfo();
-      double totalSystemMemoryGb = gcInfo.TotalAvailableMemoryBytes / (1024.0 * 1024.0 * 1024.0);
-      chartMem.ChartAreas[0].AxisY.Maximum = Math.Ceiling(totalSystemMemoryGb);
-      chartMem.ChartAreas[0].AxisY.Minimum = 0; // Lock the bottom to 0 for proper scale
-
       logLevelComboBox.SelectedIndex = 0;
 
-      SyncThemeColours(this);
+      chartFps.Units = "FPS";
+      chartMem.Units = "GB";
+
+      steamCmdLog.ScrollBars = ScrollBars.Vertical;
     }
 
     /// <summary>
@@ -1420,6 +1400,8 @@ namespace ReforgerServerApp
         pingSiteStatusLabel.Text = serverOfflineString;
         joinCodeStatusLabel.Text = serverOfflineString;
         playerCountStatusLabel.Text = serverOfflineString;
+        fpsLabel.Text = "-- FPS";
+        memLabel.Text = "-- GB";
         flagStatusPB.Image = null;
         return;
       }
@@ -1459,28 +1441,11 @@ namespace ReforgerServerApp
         return;
       }
 
-      // --- Update FPS Graph ---
-      chartFps.Series["FPS"].Points.AddXY(time, fps);
+      chartFps.AddDataPoint((float) fps);
+      chartMem.AddDataPoint((float) memoryGb);
 
-      if (chartFps.Series["FPS"].Points.Count > MAX_GRAPH_POINTS)
-      {
-        chartFps.Series["FPS"].Points.RemoveAt(0);
-      }
-
-      // Auto-scale Y Axis
-      double minFps = chartFps.Series["FPS"].Points.FindMinByValue().YValues[0];
-      double maxFps = chartFps.Series["FPS"].Points.FindMaxByValue().YValues[0];
-      chartFps.ChartAreas[0].AxisY.Minimum = Math.Max(0, minFps - 5);
-      chartFps.ChartAreas[0].AxisY.Maximum = maxFps + 5;
-
-
-      // --- Update Memory Graph ---
-      chartMem.Series["Memory (GB)"].Points.AddXY(time, memoryGb);
-
-      if (chartMem.Series["Memory (GB)"].Points.Count > MAX_GRAPH_POINTS)
-      {
-        chartMem.Series["Memory (GB)"].Points.RemoveAt(0);
-      }
+      fpsLabel.Text = $"{fps} FPS";
+      memLabel.Text = $"{memoryGb} GB";
     }
 
     /// <summary>
@@ -1783,30 +1748,6 @@ namespace ReforgerServerApp
               ss.advancedSettings[param.ParameterName].Value = param.ParameterValue;
             }
           }
-        }
-      }
-    }
-
-    private void SyncThemeColours(Control parent)
-    {
-      foreach (Control control in parent.Controls)
-      {
-        if (control is FontAwesome.Sharp.IconButton iconBtn)
-        {
-          // 1. Set the initial icon color to match the current system text color
-          iconBtn.IconColor = iconBtn.ForeColor;
-
-          // 2. Keep it synced if the OS theme changes while the app is running
-          iconBtn.ForeColorChanged += (s, e) =>
-          {
-            iconBtn.IconColor = iconBtn.ForeColor;
-          };
-        }
-
-        // Recursively check for buttons inside Panels, GroupBoxes, or TabPages
-        if (control.HasChildren)
-        {
-          SyncThemeColours(control);
         }
       }
     }

@@ -28,9 +28,8 @@ namespace Longbow.Components.ui
       m_listBox.Dock = DockStyle.Fill;
       m_listBox.BackColor = m_fieldBackColor;
       m_listBox.ForeColor = this.ForeColor;
-      m_listBox.IntegralHeight = false; // Allows the control to size smoothly, not jump by item height
+      m_listBox.IntegralHeight = false;
 
-      // Critical for Fluent styling
       m_listBox.DrawMode = DrawMode.OwnerDrawFixed;
       m_listBox.ItemHeight = 32;
 
@@ -55,7 +54,6 @@ namespace Longbow.Components.ui
 
       bool isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
 
-      // ONLY paint the background for this specific item to prevent wiping out other items
       using (SolidBrush bgBrush = new SolidBrush(m_fieldBackColor))
       {
         g.FillRectangle(bgBrush, e.Bounds);
@@ -88,13 +86,11 @@ namespace Longbow.Components.ui
 
       using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), m_borderRadius))
       {
-        // Fill background of the wrapper
         using (SolidBrush brush = new SolidBrush(m_fieldBackColor))
         {
           g.FillPath(brush, path);
         }
 
-        // Draw the border
         using (Pen pen = new Pen(m_borderColor, 1.5f))
         {
           g.DrawPath(pen, path);

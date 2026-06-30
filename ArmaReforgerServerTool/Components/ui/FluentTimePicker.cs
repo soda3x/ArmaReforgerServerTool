@@ -46,7 +46,6 @@ namespace Longbow.Components.ui
 
     private void InitializePopup()
     {
-      // 1. Setup the container to hold two lists side-by-side
       popupContainer = new TableLayoutPanel();
       popupContainer.ColumnCount = 2;
       popupContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -57,12 +56,10 @@ namespace Longbow.Components.ui
       popupContainer.Margin = Padding.Empty;
       popupContainer.Padding = new Padding(2);
 
-      // 2. Setup the Hours list
       lstHours = CreatePopupList();
       for (int i = 0; i <= 23; i++)
         lstHours.Items.Add(i.ToString("D2"));
 
-      // 3. Setup the Minutes list
       lstMinutes = CreatePopupList();
       for (int i = 0; i <= 59; i++)
         lstMinutes.Items.Add(i.ToString("D2"));
@@ -82,7 +79,6 @@ namespace Longbow.Components.ui
       lstHours.SelectedIndexChanged += listSelectionChanged;
       lstMinutes.SelectedIndexChanged += listSelectionChanged;
 
-      // 4. Wrap it in the native dropdown
       ToolStripControlHost host = new ToolStripControlHost(popupContainer);
       host.Margin = Padding.Empty;
       host.Padding = Padding.Empty;
@@ -102,9 +98,8 @@ namespace Longbow.Components.ui
       list.Dock = DockStyle.Fill;
       list.IntegralHeight = false;
       list.DrawMode = DrawMode.OwnerDrawFixed;
-      list.ItemHeight = 32; // Fluent touch target size
+      list.ItemHeight = 32;
 
-      // Draw the WinUI 3 highlight pills
       list.DrawItem += (s, e) =>
       {
         if (e.Index < 0)
@@ -128,15 +123,12 @@ namespace Longbow.Components.ui
         Color textColor = isSelected ? Color.White : this.ForeColor;
         string text = ((ListBox)s).Items[e.Index].ToString();
 
-        // Center the numbers in the list
         Rectangle textRect = new Rectangle(e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
         TextRenderer.DrawText(g, text, this.Font, textRect, textColor, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
       };
 
       return list;
     }
-
-    // --- Properties ---
 
     [Category("Data")]
     public DateTime Value
@@ -179,8 +171,6 @@ namespace Longbow.Components.ui
       set { fieldBackColor = value; this.Invalidate(); }
     }
 
-    // --- Interaction & Focus Hooks ---
-
     protected override void OnMouseEnter(EventArgs e) { isHovered = true; this.Invalidate(); base.OnMouseEnter(e); }
     protected override void OnMouseLeave(EventArgs e) { isHovered = false; this.Invalidate(); base.OnMouseLeave(e); }
     protected override void OnEnter(EventArgs e) { isFocused = true; this.Invalidate(); base.OnEnter(e); }
@@ -194,25 +184,20 @@ namespace Longbow.Components.ui
       {
         this.Focus();
 
-        // Sync the popup colors with the current app theme right before showing
         popupContainer.BackColor = fieldBackColor;
         lstHours.BackColor = fieldBackColor;
         lstMinutes.BackColor = fieldBackColor;
         popup.BackColor = borderColor;
 
-        // Pre-select the current time in the lists
         lstHours.SelectedIndex = _value.Hour;
         lstMinutes.SelectedIndex = _value.Minute;
 
-        // Scroll the lists to the selected items so they aren't stuck at 00
         lstHours.TopIndex = Math.Max(0, _value.Hour - 2);
         lstMinutes.TopIndex = Math.Max(0, _value.Minute - 2);
 
         popup.Show(this, new Point(0, this.Height + 2));
       }
     }
-
-    // --- Custom Painting ---
 
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -253,12 +238,10 @@ namespace Longbow.Components.ui
         }
       }
 
-      // Draw the Time Text
       string displayText = _value.ToString(_customFormat);
       Rectangle textBounds = new Rectangle(10, 0, this.Width - 40, this.Height);
       TextRenderer.DrawText(g, displayText, this.Font, textBounds, currentTextColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
 
-      // Draw the Clock Icon (Segoe MDL2 Assets \uE121)
       using (Font iconFont = new Font("Segoe MDL2 Assets", 10f, FontStyle.Regular))
       {
         Rectangle iconBounds = new Rectangle(this.Width - 30, 0, 30, this.Height);

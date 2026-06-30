@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using WinForms.Fluent;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace Longbow.Managers
 {
@@ -34,7 +35,31 @@ namespace Longbow.Managers
           f.Mica();
         }
       }
-      // Do nothing if SystemColorMode.Classic
+      SyncThemeColours(f);
+    }
+
+    private void SyncThemeColours(Control parent)
+    {
+      foreach (Control control in parent.Controls)
+      {
+        if (control is FontAwesome.Sharp.IconButton iconBtn)
+        {
+          // 1. Set the initial icon color to match the current system text color
+          iconBtn.IconColor = iconBtn.ForeColor;
+
+          // 2. Keep it synced if the OS theme changes while the app is running
+          iconBtn.ForeColorChanged += (s, e) =>
+          {
+            iconBtn.IconColor = iconBtn.ForeColor;
+          };
+        }
+
+        // Recursively check for buttons inside Panels, GroupBoxes, or TabPages
+        if (control.HasChildren)
+        {
+          SyncThemeColours(control);
+        }
+      }
     }
   }
 }

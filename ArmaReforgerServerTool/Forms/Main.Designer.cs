@@ -3,25 +3,25 @@ using ReforgerServerApp.Components;
 
 namespace ReforgerServerApp
 {
-    partial class Main
-    {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+  partial class Main
+  {
+    /// <summary>
+    ///  Required designer variable.
+    /// </summary>
+    private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+    /// <summary>
+    ///  Clean up any resources being used.
+    /// </summary>
+    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing && (components != null))
+      {
+        components.Dispose();
+      }
+      base.Dispose(disposing);
+    }
 
     #region Windows Form Designer generated code
 
@@ -32,12 +32,6 @@ namespace ReforgerServerApp
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-      System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-      System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-      System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-      System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
       tabControl1 = new TabControl();
       tabPage4 = new TabPage();
       tabPage1 = new TabPage();
@@ -93,8 +87,10 @@ namespace ReforgerServerApp
       tabPage3 = new TabPage();
       serverStatusTableLayout = new TableLayoutPanel();
       groupBox6 = new FluentGroupBox();
+      fpsLabel = new Label();
       chartFps = new FluentChart();
       groupBox7 = new FluentGroupBox();
+      memLabel = new Label();
       chartMem = new FluentChart();
       serverInfoGroupBox = new FluentGroupBox();
       tableLayoutPanel7 = new TableLayoutPanel();
@@ -134,9 +130,7 @@ namespace ReforgerServerApp
       tabPage3.SuspendLayout();
       serverStatusTableLayout.SuspendLayout();
       groupBox6.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) chartFps).BeginInit();
       groupBox7.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) chartMem).BeginInit();
       serverInfoGroupBox.SuspendLayout();
       tableLayoutPanel7.SuspendLayout();
       groupBox5.SuspendLayout();
@@ -513,6 +507,7 @@ namespace ReforgerServerApp
       modsSearchTB.Name = "modsSearchTB";
       modsSearchTB.Padding = new Padding(10, 7, 10, 7);
       modsSearchTB.PlaceholderText = "Search for a mod...";
+      modsSearchTB.ScrollBars = ScrollBars.None;
       modsSearchTB.Size = new Size(623, 30);
       modsSearchTB.TabIndex = 8;
       modsSearchTB.UseSystemPasswordChar = false;
@@ -734,6 +729,7 @@ namespace ReforgerServerApp
       steamCmdLog.Name = "steamCmdLog";
       steamCmdLog.Padding = new Padding(10, 7, 10, 7);
       steamCmdLog.PlaceholderText = "";
+      steamCmdLog.ScrollBars = ScrollBars.None;
       steamCmdLog.Size = new Size(1253, 637);
       steamCmdLog.TabIndex = 1;
       steamCmdLog.UseSystemPasswordChar = false;
@@ -983,6 +979,7 @@ namespace ReforgerServerApp
       groupBox6.BackColor = Color.Transparent;
       groupBox6.BorderColor = Color.FromArgb(  120,   120,   120);
       groupBox6.BorderRadius = 8;
+      groupBox6.Controls.Add(fpsLabel);
       groupBox6.Controls.Add(chartFps);
       groupBox6.Dock = DockStyle.Fill;
       groupBox6.Location = new Point(3, 103);
@@ -992,55 +989,33 @@ namespace ReforgerServerApp
       groupBox6.TabStop = false;
       groupBox6.Text = "Server FPS";
       // 
+      // fpsLabel
+      // 
+      fpsLabel.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
+      fpsLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point,  0);
+      fpsLabel.Location = new Point(0, 10);
+      fpsLabel.Name = "fpsLabel";
+      fpsLabel.Size = new Size(1500, 23);
+      fpsLabel.TabIndex = 1;
+      fpsLabel.Text = " -- FPS";
+      fpsLabel.TextAlign = ContentAlignment.MiddleRight;
+      // 
       // chartFps
       // 
-      chartFps.BackColor = Color.Transparent;
-      chartArea3.AxisX.IsLabelAutoFit = false;
-      chartArea3.AxisX.LabelStyle.Font = new Font("Segoe UI", 9F);
-      chartArea3.AxisX.LabelStyle.ForeColor = Color.Empty;
-      chartArea3.AxisX.LineColor = Color.FromArgb(  200,   200,   200);
-      chartArea3.AxisX.MajorGrid.LineColor = Color.FromArgb(  230,   230,   230);
-      chartArea3.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-      chartArea3.AxisX.MajorTickMark.LineColor = Color.FromArgb(  200,   200,   200);
-      chartArea3.AxisY.IsLabelAutoFit = false;
-      chartArea3.AxisY.LabelStyle.Font = new Font("Segoe UI", 9F);
-      chartArea3.AxisY.LabelStyle.ForeColor = Color.Empty;
-      chartArea3.AxisY.LineColor = Color.Transparent;
-      chartArea3.AxisY.MajorGrid.LineColor = Color.FromArgb(  230,   230,   230);
-      chartArea3.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-      chartArea3.AxisY.MajorTickMark.LineColor = Color.FromArgb(  200,   200,   200);
-      chartArea3.BackColor = Color.White;
-      chartArea3.BorderColor = Color.Transparent;
-      chartArea3.Name = "ChartArea1";
-      chartFps.ChartAreas.Add(chartArea3);
       chartFps.Dock = DockStyle.Fill;
-      legend3.Alignment = StringAlignment.Center;
-      legend3.BackColor = Color.Transparent;
-      legend3.BorderColor = Color.Transparent;
-      legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
-      legend3.Font = new Font("Segoe UI", 9F);
-      legend3.ForeColor = Color.Empty;
-      legend3.IsTextAutoFit = false;
-      legend3.Name = "Legend1";
-      chartFps.Legends.Add(legend3);
       chartFps.Location = new Point(3, 19);
       chartFps.Name = "chartFps";
-      series3.BorderWidth = 3;
-      series3.ChartArea = "ChartArea1";
-      series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineArea;
-      series3.Color = Color.FromArgb(  0,   120,   212);
-      series3.Legend = "Legend1";
-      series3.Name = "FPS";
-      chartFps.Series.Add(series3);
       chartFps.Size = new Size(1500, 294);
-      chartFps.TabIndex = 1;
-      chartFps.Text = "chart1";
+      chartFps.TabIndex = 0;
+      chartFps.Text = "Server FPS";
+      chartFps.Units = "%";
       // 
       // groupBox7
       // 
       groupBox7.BackColor = Color.Transparent;
       groupBox7.BorderColor = Color.FromArgb(  120,   120,   120);
       groupBox7.BorderRadius = 8;
+      groupBox7.Controls.Add(memLabel);
       groupBox7.Controls.Add(chartMem);
       groupBox7.Dock = DockStyle.Fill;
       groupBox7.Location = new Point(3, 425);
@@ -1050,49 +1025,26 @@ namespace ReforgerServerApp
       groupBox7.TabStop = false;
       groupBox7.Text = "Server Memory Usage";
       // 
+      // memLabel
+      // 
+      memLabel.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
+      memLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point,  0);
+      memLabel.Location = new Point(0, 9);
+      memLabel.Name = "memLabel";
+      memLabel.Size = new Size(1500, 23);
+      memLabel.TabIndex = 2;
+      memLabel.Text = "-- GB";
+      memLabel.TextAlign = ContentAlignment.MiddleRight;
+      // 
       // chartMem
       // 
-      chartMem.BackColor = Color.Transparent;
-      chartArea4.AxisX.IsLabelAutoFit = false;
-      chartArea4.AxisX.LabelStyle.Font = new Font("Segoe UI", 9F);
-      chartArea4.AxisX.LabelStyle.ForeColor = Color.Empty;
-      chartArea4.AxisX.LineColor = Color.FromArgb(  200,   200,   200);
-      chartArea4.AxisX.MajorGrid.LineColor = Color.FromArgb(  230,   230,   230);
-      chartArea4.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-      chartArea4.AxisX.MajorTickMark.LineColor = Color.FromArgb(  200,   200,   200);
-      chartArea4.AxisY.IsLabelAutoFit = false;
-      chartArea4.AxisY.LabelStyle.Font = new Font("Segoe UI", 9F);
-      chartArea4.AxisY.LabelStyle.ForeColor = Color.Empty;
-      chartArea4.AxisY.LineColor = Color.Transparent;
-      chartArea4.AxisY.MajorGrid.LineColor = Color.FromArgb(  230,   230,   230);
-      chartArea4.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
-      chartArea4.AxisY.MajorTickMark.LineColor = Color.FromArgb(  200,   200,   200);
-      chartArea4.BackColor = Color.White;
-      chartArea4.BorderColor = Color.Transparent;
-      chartArea4.Name = "ChartArea1";
-      chartMem.ChartAreas.Add(chartArea4);
       chartMem.Dock = DockStyle.Fill;
-      legend4.Alignment = StringAlignment.Center;
-      legend4.BackColor = Color.Transparent;
-      legend4.BorderColor = Color.Transparent;
-      legend4.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
-      legend4.Font = new Font("Segoe UI", 9F);
-      legend4.ForeColor = Color.Empty;
-      legend4.IsTextAutoFit = false;
-      legend4.Name = "Legend1";
-      chartMem.Legends.Add(legend4);
       chartMem.Location = new Point(3, 19);
       chartMem.Name = "chartMem";
-      series4.BorderWidth = 3;
-      series4.ChartArea = "ChartArea1";
-      series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineArea;
-      series4.Color = Color.FromArgb(  0,   120,   212);
-      series4.Legend = "Legend1";
-      series4.Name = "Memory (GB)";
-      chartMem.Series.Add(series4);
       chartMem.Size = new Size(1500, 294);
-      chartMem.TabIndex = 2;
-      chartMem.Text = "chart2";
+      chartMem.TabIndex = 0;
+      chartMem.Text = "Server Memory";
+      chartMem.Units = "%";
       // 
       // serverInfoGroupBox
       // 
@@ -1445,9 +1397,7 @@ namespace ReforgerServerApp
       tabPage3.ResumeLayout(false);
       serverStatusTableLayout.ResumeLayout(false);
       groupBox6.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize) chartFps).EndInit();
       groupBox7.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize) chartMem).EndInit();
       serverInfoGroupBox.ResumeLayout(false);
       tableLayoutPanel7.ResumeLayout(false);
       groupBox5.ResumeLayout(false);
@@ -1473,50 +1423,50 @@ namespace ReforgerServerApp
     #endregion
 
     private TabControl tabControl1;
-        private TabPage tabPage1;
-        private TabPage tabPage2;
-        private FontAwesome.Sharp.IconButton saveSettingsBtn;
-        private FontAwesome.Sharp.IconButton loadSettingsBtn;
-        private Label regionLabel;
-        private ComboBox region;
-        private FluentGroupBox groupBox1;
-        private FluentGroupBox groupBox2;
-        private FontAwesome.Sharp.IconButton addModBtn;
-        private FontAwesome.Sharp.IconButton removeModBtn;
-        private FontAwesome.Sharp.IconButton removeFromEnabledBtn;
-        private FontAwesome.Sharp.IconButton addToEnabledBtn;
-        private Label label16;
-        private Label label15;
-        private Label steamCmdAlert;
-        private FluentTextBox steamCmdLog;
-        private FontAwesome.Sharp.IconButton downloadSteamCmdBtn;
-        private FontAwesome.Sharp.IconButton startServerBtn;
-        private FluentGroupBox groupBox4;
-        private FontAwesome.Sharp.IconButton disableAllModsBtn;
-        private FontAwesome.Sharp.IconButton enableAllModsBtn;
-        private FontAwesome.Sharp.IconButton aboutBtn;
-        private FontAwesome.Sharp.IconButton deleteServerFilesBtn;
-        private Label serverRunningLabel;
-        private FontAwesome.Sharp.IconButton clearLogBtn;
-        private PictureBox pictureBox1;
-        private FontAwesome.Sharp.IconButton locateServerFilesBtn;
-        private Label label30;
-        private FluentComboBox logLevelComboBox;
-        private FontAwesome.Sharp.IconButton scenarioSelectBtn;
-        private Label loadedScenarioLabel;
-        private FontAwesome.Sharp.IconButton editMissionHeaderBtn;
-        private FlowLayoutPanel serverParameters;
-        private FontAwesome.Sharp.IconButton editModBtn;
-        private FluentListBox enabledMods;
-        private FluentListBox availableMods;
-        private FluentTextBox modsSearchTB;
-        private CheckBox useExperimentalCheckBox;
-        private FlowLayoutPanel advancedParametersPanel;
-        private CheckBox useUpnp;
-        private FontAwesome.Sharp.IconButton moveModPosDownBtn;
-        private FontAwesome.Sharp.IconButton moveModPosUpBtn;
-        private FontAwesome.Sharp.IconButton exportModsBtn;
-        private FontAwesome.Sharp.IconButton importModsBtn;
+    private TabPage tabPage1;
+    private TabPage tabPage2;
+    private FontAwesome.Sharp.IconButton saveSettingsBtn;
+    private FontAwesome.Sharp.IconButton loadSettingsBtn;
+    private Label regionLabel;
+    private ComboBox region;
+    private FluentGroupBox groupBox1;
+    private FluentGroupBox groupBox2;
+    private FontAwesome.Sharp.IconButton addModBtn;
+    private FontAwesome.Sharp.IconButton removeModBtn;
+    private FontAwesome.Sharp.IconButton removeFromEnabledBtn;
+    private FontAwesome.Sharp.IconButton addToEnabledBtn;
+    private Label label16;
+    private Label label15;
+    private Label steamCmdAlert;
+    private FluentTextBox steamCmdLog;
+    private FontAwesome.Sharp.IconButton downloadSteamCmdBtn;
+    private FontAwesome.Sharp.IconButton startServerBtn;
+    private FluentGroupBox groupBox4;
+    private FontAwesome.Sharp.IconButton disableAllModsBtn;
+    private FontAwesome.Sharp.IconButton enableAllModsBtn;
+    private FontAwesome.Sharp.IconButton aboutBtn;
+    private FontAwesome.Sharp.IconButton deleteServerFilesBtn;
+    private Label serverRunningLabel;
+    private FontAwesome.Sharp.IconButton clearLogBtn;
+    private PictureBox pictureBox1;
+    private FontAwesome.Sharp.IconButton locateServerFilesBtn;
+    private Label label30;
+    private FluentComboBox logLevelComboBox;
+    private FontAwesome.Sharp.IconButton scenarioSelectBtn;
+    private Label loadedScenarioLabel;
+    private FontAwesome.Sharp.IconButton editMissionHeaderBtn;
+    private FlowLayoutPanel serverParameters;
+    private FontAwesome.Sharp.IconButton editModBtn;
+    private FluentListBox enabledMods;
+    private FluentListBox availableMods;
+    private FluentTextBox modsSearchTB;
+    private CheckBox useExperimentalCheckBox;
+    private FlowLayoutPanel advancedParametersPanel;
+    private CheckBox useUpnp;
+    private FontAwesome.Sharp.IconButton moveModPosDownBtn;
+    private FontAwesome.Sharp.IconButton moveModPosUpBtn;
+    private FontAwesome.Sharp.IconButton exportModsBtn;
+    private FontAwesome.Sharp.IconButton importModsBtn;
     private TableLayoutPanel tableLayoutPanel1;
     private TableLayoutPanel tableLayoutPanel2;
     private TableLayoutPanel tableLayoutPanel3;
@@ -1530,9 +1480,7 @@ namespace ReforgerServerApp
     private FluentGroupBox serverInfoGroupBox;
     private TableLayoutPanel tableLayoutPanel7;
     private FluentGroupBox groupBox6;
-    private FluentChart chartFps;
     private FluentGroupBox groupBox7;
-    private FluentChart chartMem;
     private FluentGroupBox groupBox8;
     private TableLayoutPanel tableLayoutPanel9;
     private Label serverAddressStatusLabel;
@@ -1554,5 +1502,9 @@ namespace ReforgerServerApp
     private Label pingSiteStatusLabel;
     private PictureBox flagStatusPB;
     private TabPage tabPage4;
+    private FluentChart chartFps;
+    private FluentChart chartMem;
+    private Label fpsLabel;
+    private Label memLabel;
   }
 }

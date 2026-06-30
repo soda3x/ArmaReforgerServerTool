@@ -13,7 +13,6 @@ namespace Longbow.Components.ui
 
     public FluentGroupBox()
     {
-      // Enable custom painting and transparency
       this.SetStyle(ControlStyles.SupportsTransparentBackColor |
                     ControlStyles.UserPaint |
                     ControlStyles.AllPaintingInWmPaint |
@@ -51,14 +50,10 @@ namespace Longbow.Components.ui
 
       using (GraphicsPath path = GetRoundedRect(borderRect, borderRadius))
       {
-        // If there is text, we must cut a gap in the border line
         if (!string.IsNullOrEmpty(this.Text))
         {
-          // We create a clipping rectangle slightly wider than the text (4px padding on each side)
           Rectangle clipRect = new Rectangle(textBounds.X - 4, 0, textBounds.Width + 8, textBounds.Height);
 
-          // Exclude the text area from the graphics engine. 
-          // Any lines drawn inside this box will become completely invisible.
           g.SetClip(clipRect, CombineMode.Exclude);
         }
 
@@ -67,7 +62,6 @@ namespace Longbow.Components.ui
           g.DrawPath(pen, path);
         }
 
-        // Reset the clip so we can draw the actual text in the next step
         g.ResetClip();
       }
 

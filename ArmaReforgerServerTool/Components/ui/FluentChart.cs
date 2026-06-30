@@ -1,136 +1,117 @@
-using System;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
+using System.Drawing.Drawing2D;
 
 namespace Longbow.Components.ui
 {
-  
-  public class FluentChart : Chart
+  public class FluentChart : Control
   {
-    // Modern Windows 11 / Fluent color palette for the data series
-    private readonly Color[] fluentPalette = new Color[]
-    {
-        Color.FromArgb(0, 120, 212),   // Win 11 Blue
-        Color.FromArgb(0, 204, 106),   // Teal/Green
-        Color.FromArgb(139, 60, 212),  // Purple
-        Color.FromArgb(255, 140, 0),   // Orange
-        Color.FromArgb(232, 17, 35),   // Red
-        Color.FromArgb(0, 183, 195)    // Light Blue
-    };
+    private Queue<float> m_dataPoints = new Queue<float>();
+    private int m_maxPoints = 50; // How many data points to show at once
+    private Color m_lineColor = Color.FromArgb(0, 120, 212); // Fluent Blue
+    private Point? m_hoverPoint = null; // Stores where the mouse is
+    private float? m_hoverValue = null; // Stores the value at that point
+    private string m_units = "%"; // Default to percent
 
     public FluentChart()
     {
-      // Smooth out the drawing of the lines and text
-      this.AntiAliasing = AntiAliasingStyles.All;
-      this.TextAntiAliasingQuality = TextAntiAliasingQuality.High;
-
-      // Remove the ugly default 3D border around the entire control
-      this.BorderlineDashStyle = ChartDashStyle.NotSet;
-
-      // Hook into the .NET 9 theme changes
-      this.ForeColorChanged += (s, e) => ApplyFluentTheme();
-      this.BackColorChanged += (s, e) => ApplyFluentTheme();
+      this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
     }
 
-    // You can call this manually if you add new ChartAreas or Series dynamically via code later
-    public void ApplyFluentTheme()
+    public void AddDataPoint(float value)
     {
-      this.SuspendLayout();
+      m_dataPoints.Enqueue(value);
+      if (m_dataPoints.Count > m_maxPoints)
+        m_dataPoints.Dequeue();
+      this.Invalidate();
+    }
 
-      // 1. Determine if Dark Mode is active based on the text color
-      bool isDarkMode = this.ForeColor.R > 128;
+    public string Units
+    {
+      get => m_units;
+      set => m_units = value;
+    }
 
-      Color chartBackColor = isDarkMode ? Color.Transparent : Color.Transparent;
-      Color areaBackColor = isDarkMode ? Color.FromArgb(32, 32, 32) : Color.White; // The actual plot area
-      Color gridColor = isDarkMode ? Color.FromArgb(70, 70, 70) : Color.FromArgb(230, 230, 230);
-      Color axisLineColor = isDarkMode ? Color.FromArgb(100, 100, 100) : Color.FromArgb(200, 200, 200);
-      Color textColor = this.ForeColor;
+    protected override void OnPaint(PaintEventArgs e)
+    {
+      if (m_dataPoints.Count < 2)
+        return;
 
-      this.BackColor = chartBackColor;
+      Graphics g = e.Graphics;
+      g.SmoothingMode = SmoothingMode.AntiAlias;
 
-      // 2. Format Chart Areas (The actual graph background and gridlines)
-      foreach (ChartArea area in this.ChartAreas)
+      float xStep = (float)this.Width / (m_maxPoints - 1);
+      List<PointF> points = new List<PointF>();
+
+      for (int i = 0; i < m_dataPoints.Count; i++)
       {
-        area.BackColor = areaBackColor;
-        area.BorderColor = Color.Transparent; // Remove border around the graph
-
-        // Disable 3D completely
-        area.Area3DStyle.Enable3D = false;
-
-        // X Axis Styling
-        area.AxisX.LabelStyle.ForeColor = textColor;
-        area.AxisX.LabelStyle.Font = new Font("Segoe UI", 9f);
-        area.AxisX.LineColor = axisLineColor;
-        area.AxisX.MajorGrid.LineColor = gridColor;
-        area.AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash; // Modern dotted grids
-        area.AxisX.MajorTickMark.LineColor = axisLineColor;
-        area.AxisX.MinorGrid.Enabled = false;
-
-        // Y Axis Styling
-        area.AxisY.LabelStyle.ForeColor = textColor;
-        area.AxisY.LabelStyle.Font = new Font("Segoe UI", 9f);
-        area.AxisY.LineColor = Color.Transparent; // Hide Y axis spine for a cleaner look
-        area.AxisY.MajorGrid.LineColor = gridColor;
-        area.AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash;
-        area.AxisY.MajorTickMark.LineColor = axisLineColor;
-        area.AxisY.MinorGrid.Enabled = false;
+        float x = i * xStep;
+        // Normalize data (assuming 0-100 range)
+        float y = this.Height - ((m_dataPoints.ElementAt(i) / 100f) * this.Height);
+        points.Add(new PointF(x, y));
       }
 
-      // 3. Format Legends
-      foreach (Legend legend in this.Legends)
+      using (Pen pen = new Pen(m_lineColor, 2.5f))
       {
-        legend.BackColor = Color.Transparent; // Blend into the form
-        legend.ForeColor = textColor;
-        legend.Font = new Font("Segoe UI", 9f);
-        legend.BorderColor = Color.Transparent;
-
-        // Fluent design puts legends at the top or bottom, spaced out
-        legend.Alignment = StringAlignment.Center;
-        legend.Docking = Docking.Top;
+        g.DrawLines(pen, points.ToArray());
       }
 
-      // 4. Format Titles
-      foreach (Title title in this.Titles)
+      // Draw a subtle fill beneath the line
+      using (GraphicsPath path = new GraphicsPath())
       {
-        title.ForeColor = textColor;
-        title.Font = new Font("Segoe UI Semibold", 12f);
+        path.AddLines(points.ToArray());
+        path.AddLine(points.Last().X, this.Height, points.First().X, this.Height);
+        path.CloseFigure();
+        using (Brush brush = new SolidBrush(Color.FromArgb(30, m_lineColor)))
+          g.FillPath(brush, path);
       }
 
-      // 5. Format Series (The data lines/bars)
-      int colorIndex = 0;
-      foreach (Series series in this.Series)
+      if (m_hoverPoint.HasValue && m_hoverValue.HasValue)
       {
-        // Apply custom Fluent palette colors
-        series.Color = fluentPalette[colorIndex % fluentPalette.Length];
-        colorIndex++;
-
-        // Thicker lines and flat bars
-        series.BorderWidth = 3;
-
-        // Strip any legacy gradients
-        series.BackGradientStyle = GradientStyle.None;
-        series.BackHatchStyle = ChartHatchStyle.None;
-
-        // If it's a line chart, use smooth, rounded points
-        if (series.ChartType == SeriesChartType.Line || series.ChartType == SeriesChartType.Spline)
+        // Crosshair
+        using (Pen p = new Pen(Color.FromArgb(100, ForeColor), 1f) { DashStyle = DashStyle.Dash })
         {
-          series.MarkerStyle = MarkerStyle.Circle;
-          series.MarkerSize = 8;
-          series.MarkerBorderColor = areaBackColor; // Creates a neat cutout effect
-          series.MarkerBorderWidth = 1;
+          g.DrawLine(p, m_hoverPoint.Value.X, 0, m_hoverPoint.Value.X, this.Height);
+          g.DrawEllipse(new Pen(m_lineColor, 2f), m_hoverPoint.Value.X - 4, m_hoverPoint.Value.Y - 4, 8, 8);
         }
-      }
 
-      this.ResumeLayout();
+        // Tooltip
+        string text = $"{m_hoverValue.Value:F1} {m_units}";
+        SizeF textSize = g.MeasureString(text, this.Font);
+        RectangleF rect = new RectangleF(m_hoverPoint.Value.X + 10, m_hoverPoint.Value.Y - 20, textSize.Width + 10, textSize.Height + 5);
+
+        using (SolidBrush bg = new SolidBrush(Color.FromArgb(240, 32, 32, 32))) // Fluent dark theme style
+        using (Pen border = new Pen(Color.FromArgb(100, 100, 100)))
+        {
+          g.FillRectangle(bg, rect);
+          g.DrawRectangle(border, Rectangle.Round(rect));
+        }
+        TextRenderer.DrawText(g, text, this.Font, Rectangle.Round(rect), Color.White, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+      }
     }
 
-    // Automatically apply the theme when the control is first created and handles are bound
-    protected override void OnHandleCreated(EventArgs e)
+    protected override void OnMouseMove(MouseEventArgs e)
     {
-      base.OnHandleCreated(e);
-      ApplyFluentTheme();
+      base.OnMouseMove(e);
+      if (m_dataPoints.Count < 2)
+        return;
+
+      // Map mouse X to the nearest data point index
+      float xStep = (float)this.Width / (m_maxPoints - 1);
+      int index = (int)Math.Round(e.X / xStep);
+
+      if (index >= 0 && index < m_dataPoints.Count)
+      {
+        m_hoverPoint = new Point(e.X, (int) (this.Height - ((m_dataPoints.ElementAt(index) / 100f) * this.Height)));
+        m_hoverValue = m_dataPoints.ElementAt(index);
+        this.Invalidate();
+      }
+    }
+
+    protected override void OnMouseLeave(EventArgs e)
+    {
+      base.OnMouseLeave(e);
+      m_hoverPoint = null;
+      m_hoverValue = null;
+      this.Invalidate();
     }
   }
 }
