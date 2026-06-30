@@ -30,8 +30,6 @@ namespace ReforgerServerApp
     {
       InitializeComponent();
 
-      ThemeManager.GetInstance().ConfigureTheme(this);
-
       CreateServerParameterControls();
       CreateAdvancedServerParameterControls();
 
@@ -106,6 +104,8 @@ namespace ReforgerServerApp
       chartMem.Units = "GB";
 
       steamCmdLog.ScrollBars = ScrollBars.Vertical;
+
+      ThemeManager.GetInstance().ConfigureTheme(this);
     }
 
     /// <summary>
