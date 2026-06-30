@@ -1,50 +1,49 @@
-<p align="center">
-  <img src="https://github.com/soda3x/ArmaReforgerServerTool/raw/dev/docs/longbow_logo_full.png" />
-</p>
+# Longbow — Arma Reforger Mod Validator (Phase 1A MVP)
+
+**The only mod validator you need.** Stop digging through logs. Stop guessing if your mods will work. Longbow tells you exactly what's wrong and fixes it automatically.
 
 ## Features
 
-Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool!
+### Core (Phase 1A)
+- ✅ **Mod Validator** — Detects missing dependencies, version conflicts, circular dependencies in seconds
+- ✅ **Auto-fix** — Adds missing mods, reorders for correct load order automatically
+- ✅ **Progress feedback** — See what's happening as validation runs
+- ✅ **Steam Workshop integration** — Fetches real mod metadata (no guessing)
+- ✅ **Save/load configs** — Keep your configurations, switch between them
+- ✅ **Start button gating** — RED/disabled if invalid, GREEN/enabled if ready to launch
+- ✅ **Results display** — Understand exactly what was fixed and why
 
-- Load and Save server configuration files
-- Automatically schedule your server to restart at a specified time of day
-- Powerful mod management with the ability to import mods from saved configurations
-- Manage server saves with ease with a powerful _Save Manager_ tool
-- Import and Export mod lists to share with your mates!
-- Easily select the desired scenario you want to play
-- Automatically fetches Scenario IDs for your mods from the Arma Workshop
-- Monitors your server and automatically restarts it if it crashes
+### What it solves
+- No more `"Mod X not found"` after 10 minutes of gameplay
+- No more `"Mod Y requires version Z but you have W"`
+- No more `"Why does my mod order matter?"` — it's handled
+- No more log hunting to find the real error
 
 ## Requirements
 
-- [dotNET 8 Runtime](https://dotnet.microsoft.com/en-us/download)
-- Any dependencies for the Arma Reforger Dedicated Server (namely Microsoft Visual C++ Runtime)
-
-### Developer Dependencies
-
-If you are contributing to the project, you will also need the following:
-
-- NSIS (to build the installer)
-- Visual Studio 2022
-
-## Screenshots
-
-![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/servertoolscreen.png)
-
-![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/servertoolscreen2.png)
-
-![Screenshot](https://github.com/soda3x/ArmaReforgerServerTool/raw/main/docs/servertoolscreen3.png)
-
-## Server Parameters
-
-See [here](docs/PARAMETERS.md) for more information on the parameters in the app.
+- [.NET 8 Runtime](https://dotnet.microsoft.com/en-us/download)
+- Arma Reforger Dedicated Server (any recent version)
 
 ## Building
 
-- Build using Visual Studio 2022 (be sure to make `Release`)
+```bash
+# Build with Visual Studio 2022 (Release mode)
+# Or from command line:
+dotnet build -c Release
+```
 
-- Run `MakeNSISW` and compile the installer script in `scripts/` to make the installer
+Output: `bin/Release/net8.0-windows/Longbow.exe`
 
-## Discord
+## Contributing
 
-Come discuss with fellow users, seek help etc. on the Discord server [here](https://discord.gg/BPZmmqAvvu)
+Phase 1A is complete and shipped. If you have bug reports or feature requests, please open an issue on GitHub.
+
+## License
+
+See LICENSE.md
+
+## Support
+
+- **Community:** Discord (link in repo)
+- **Bugs:** GitHub Issues
+- **Feature requests:** Discussion forum
