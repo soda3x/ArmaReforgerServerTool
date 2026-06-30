@@ -104,7 +104,7 @@ namespace Longbow.Components.ui
 
     [Category("Data")]
     [AttributeProvider(typeof(IListSource))]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public object DataSource
     {
       get => m_listBox.DataSource;
@@ -112,7 +112,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Data")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public string DisplayMember
     {
       get => m_listBox.DisplayMember;
@@ -120,7 +120,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Data")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public string ValueMember
     {
       get => m_listBox.ValueMember;
@@ -129,7 +129,7 @@ namespace Longbow.Components.ui
 
     [Category("Data")]
     [Browsable(false)]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public object SelectedValue
     {
       get => m_listBox.SelectedValue;
@@ -141,7 +141,7 @@ namespace Longbow.Components.ui
     public ListBox.ObjectCollection Items => m_listBox.Items;
 
     [Category("Behavior")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public int SelectedIndex
     {
       get => m_listBox.SelectedIndex;
@@ -149,7 +149,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Behavior")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public object SelectedItem
     {
       get => m_listBox.SelectedItem;
@@ -162,7 +162,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Behavior")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public SelectionMode SelectionMode
     {
       get => m_listBox.SelectionMode;
@@ -170,7 +170,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Appearance")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public Color FieldBackColor
     {
       get => m_fieldBackColor;
@@ -182,14 +182,14 @@ namespace Longbow.Components.ui
       }
     }
 
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public Boolean FormattingEnabled
     {
       get => m_listBox.FormattingEnabled;
       set => m_listBox.FormattingEnabled = value;
     }
 
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public int ItemHeight
     {
       get => m_listBox.ItemHeight;

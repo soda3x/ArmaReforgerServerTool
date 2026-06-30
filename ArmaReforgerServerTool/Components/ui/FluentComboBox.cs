@@ -6,6 +6,7 @@ public class FluentComboBox : Control
   private int m_borderRadius = 8;
   private Color m_borderColor = Color.FromArgb(120, 120, 120);
   private Color m_fieldBackColor = SystemColors.Window;
+  private Color m_textColour;
 
   // Popup components
   private ToolStripDropDown m_popup;
@@ -27,6 +28,7 @@ public class FluentComboBox : Control
     this.BackColor = Color.Transparent;
     this.Size = new Size(200, 32);
     this.Cursor = Cursors.Hand;
+    m_textColour = this.ForeColor;
 
     InitializePopup();
   }
@@ -102,7 +104,7 @@ public class FluentComboBox : Control
 
   [Category("Data")]
   [AttributeProvider(typeof(IListSource))]
-  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+   
   public object DataSource
   {
     get => m_popupList.DataSource;
@@ -110,7 +112,7 @@ public class FluentComboBox : Control
   }
 
   [Category("Data")]
-  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+   
   public string DisplayMember
   {
     get => m_popupList.DisplayMember;
@@ -118,7 +120,7 @@ public class FluentComboBox : Control
   }
 
   [Category("Data")]
-  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+   
   public string ValueMember
   {
     get => m_popupList.ValueMember;
@@ -127,7 +129,7 @@ public class FluentComboBox : Control
 
   [Category("Data")]
   [Browsable(false)]
-  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+   
   public object SelectedValue
   {
     get => m_popupList.SelectedValue;
@@ -139,7 +141,7 @@ public class FluentComboBox : Control
   public ListBox.ObjectCollection Items => m_popupList.Items;
 
   [Category("Behavior")]
-  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+   
   public int SelectedIndex
   {
     get => m_popupList.SelectedIndex;
@@ -154,7 +156,7 @@ public class FluentComboBox : Control
   }
 
   [Category("Behavior")]
-  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+   
   public object SelectedItem
   {
     get => m_popupList.SelectedItem;
@@ -168,8 +170,13 @@ public class FluentComboBox : Control
     }
   }
 
+  public string Text
+  {
+    get => m_popupList.SelectedItem.ToString();
+  }
+
   [Category("Appearance")]
-  [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+   
   public Color FieldBackColor
   {
     get => m_fieldBackColor;
@@ -196,6 +203,12 @@ public class FluentComboBox : Control
     }
   }
 
+  protected override void OnEnabledChanged(EventArgs e)
+  {
+    base.OnEnabledChanged(e);
+    this.Invalidate();
+  }
+
   protected override void OnPaint(PaintEventArgs e)
   {
     base.OnPaint(e);
@@ -205,6 +218,19 @@ public class FluentComboBox : Control
     using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), m_borderRadius))
     {
       Color currentBackColor = m_isHovered ? Color.FromArgb(Math.Max(0, m_fieldBackColor.R - 10), Math.Max(0, m_fieldBackColor.G - 10), Math.Max(0, m_fieldBackColor.B - 10)) : m_fieldBackColor;
+
+      if (!this.Enabled)
+      {
+        currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColor.R - 15),
+                                          Math.Max(0, m_fieldBackColor.G - 15),
+                                          Math.Max(0, m_fieldBackColor.B - 15));
+
+        m_borderColor = Color.FromArgb(100, 150, 150, 150); // Semi-transparent gray border
+        this.ForeColor = Color.FromArgb(150, 150, 150);     // Washed out text
+      } else
+      {
+        this.ForeColor = m_textColour;
+      }
 
       using (SolidBrush brush = new SolidBrush(currentBackColor))
         g.FillPath(brush, path);

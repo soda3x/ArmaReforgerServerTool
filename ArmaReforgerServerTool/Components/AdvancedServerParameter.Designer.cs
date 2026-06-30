@@ -1,4 +1,4 @@
-﻿namespace ReforgerServerApp.Components
+namespace ReforgerServerApp.Components
 {
     partial class AdvancedServerParameter
     {
@@ -48,9 +48,9 @@
             // 
             description.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             description.Font = new Font("Segoe UI", 6.75F, FontStyle.Bold, GraphicsUnit.Point);
-            description.Location = new Point(4, 61);
+            description.Location = new Point(4, 70);
             description.Name = "description";
-            description.Size = new Size(193, 37);
+            description.Size = new Size(193, 32);
             description.TabIndex = 1;
             description.Text = "descriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescription";
             // 
@@ -61,10 +61,10 @@
             AutoSize = true;
             Controls.Add(description);
             Controls.Add(parameterEnabled);
-            MaximumSize = new Size(200, 100);
-            MinimumSize = new Size(200, 100);
+            MaximumSize = new Size(200, 130);
+            MinimumSize = new Size(200, 130);
             Name = "AdvancedServerParameter";
-            Size = new Size(200, 100);
+            Size = new Size(200, 130);
             ResumeLayout(false);
             PerformLayout();
         }

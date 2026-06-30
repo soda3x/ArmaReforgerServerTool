@@ -10,9 +10,9 @@ namespace Longbow.Components.ui
   {
     private TextBox m_textBox;
     private int m_borderRadius = 8;
-    private Color m_borderColor = Color.FromArgb(120, 120, 120);
-    private Color m_focusedBorderColor = Color.FromArgb(0, 120, 212); // Windows 11 Blue
-    private Color m_fieldBackColor = SystemColors.Window;
+    private Color m_borderColour = Color.FromArgb(120, 120, 120);
+    private Color m_focusedBorderColour = Color.FromArgb(0, 120, 212); // Windows 11 Blue
+    private Color m_fieldBackColour = SystemColors.Window;
 
     // Numeric State
     private decimal m_value = 0;
@@ -47,7 +47,7 @@ namespace Longbow.Components.ui
       m_textBox = new TextBox();
       m_textBox.BorderStyle = BorderStyle.None;
       m_textBox.Dock = DockStyle.Fill;
-      m_textBox.BackColor = m_fieldBackColor;
+      m_textBox.BackColor = m_fieldBackColour;
       m_textBox.ForeColor = this.ForeColor;
       m_textBox.Text = m_value.ToString();
 
@@ -86,7 +86,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Data")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public decimal Value
     {
       get => m_value;
@@ -104,19 +104,19 @@ namespace Longbow.Components.ui
     }
 
     [Category("Data")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public decimal Minimum { get => m_minimum; set { m_minimum = value; ValidateAndApplyText(); } }
 
     [Category("Data")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public decimal Maximum { get => m_maximum; set { m_maximum = value; ValidateAndApplyText(); } }
 
     [Category("Data")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public decimal Increment { get => m_increment; set => m_increment = value; }
 
     [Category("Data")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public int DecimalPlaces
     {
       get => m_decimalPlaces;
@@ -128,11 +128,11 @@ namespace Longbow.Components.ui
     }
 
     [Category("Appearance")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public Color FieldBackColor
     {
-      get => m_fieldBackColor;
-      set { m_fieldBackColor = value; m_textBox.BackColor = value; this.Invalidate(); }
+      get => m_fieldBackColour;
+      set { m_fieldBackColour = value; m_textBox.BackColor = value; this.Invalidate(); }
     }
 
     private void ValidateAndApplyText()
@@ -185,39 +185,52 @@ namespace Longbow.Components.ui
       Graphics g = e.Graphics;
       g.SmoothingMode = SmoothingMode.AntiAlias;
 
+      Color currentBackColor = m_fieldBackColour;
+      Color currentBorderColor = m_isFocused ? m_focusedBorderColour : m_borderColour;
+      Color currentTextColor = this.ForeColor;
+
+      if (!this.Enabled)
+      {
+        currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColour.R - 15),
+                                          Math.Max(0, m_fieldBackColour.G - 15),
+                                          Math.Max(0, m_fieldBackColour.B - 15));
+        currentBorderColor = Color.FromArgb(100, 150, 150, 150);
+        currentTextColor = Color.FromArgb(150, 150, 150);
+      }
+      else if (m_isHovered && !m_isFocused)
+      {
+        currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColour.R - 10),
+                                          Math.Max(0, m_fieldBackColour.G - 10),
+                                          Math.Max(0, m_fieldBackColour.B - 10));
+      }
+
+      m_textBox.BackColor = currentBackColor;
+
       using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), m_borderRadius))
       {
-        Color currentBackColor = m_fieldBackColor;
-        if (m_isHovered && !m_isFocused)
-        {
-          currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColor.R - 10), Math.Max(0, m_fieldBackColor.G - 10), Math.Max(0, m_fieldBackColor.B - 10));
-        }
-        m_textBox.BackColor = currentBackColor;
-
         using (SolidBrush brush = new SolidBrush(currentBackColor))
           g.FillPath(brush, path);
 
-        Color currentBorderColor = m_isFocused ? m_focusedBorderColor : m_borderColor;
         float borderThickness = m_isFocused ? 2f : 1.5f;
-
         using (Pen pen = new Pen(currentBorderColor, borderThickness))
         {
           g.DrawPath(pen, path);
-          if (m_isFocused)
+
+          if (m_isFocused && this.Enabled)
           {
-            using (Pen thickPen = new Pen(m_focusedBorderColor, 3f))
+            using (Pen thickPen = new Pen(m_focusedBorderColour, 3f))
               g.DrawLine(thickPen, m_borderRadius, this.Height - 2, this.Width - m_borderRadius, this.Height - 2);
           }
         }
       }
 
-      using (Font iconFont = new Font("Segoe MDL2 Assets", 7f, FontStyle.Bold))
+      using (Font iconFont = new Font("Segoe MDL2 Assets", 7f, System.Drawing.FontStyle.Regular))
       {
         Rectangle upRect = GetUpRect();
         Rectangle downRect = GetDownRect();
 
-        Color upColor = m_isUpHovered ? this.ForeColor : Color.FromArgb(150, this.ForeColor);
-        Color downColor = m_isDownHovered ? this.ForeColor : Color.FromArgb(150, this.ForeColor);
+        Color upColor = !this.Enabled ? currentTextColor : (m_isUpHovered ? this.ForeColor : Color.FromArgb(150, this.ForeColor));
+        Color downColor = !this.Enabled ? currentTextColor : (m_isDownHovered ? this.ForeColor : Color.FromArgb(150, this.ForeColor));
 
         TextRenderer.DrawText(g, "\uE70E", iconFont, upRect, upColor, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);
         TextRenderer.DrawText(g, "\uE70D", iconFont, downRect, downColor, TextFormatFlags.VerticalCenter | TextFormatFlags.HorizontalCenter);

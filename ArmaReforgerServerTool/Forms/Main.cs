@@ -123,6 +123,8 @@ namespace ReforgerServerApp
       chartMem.ChartAreas[0].AxisY.Maximum = Math.Ceiling(totalSystemMemoryGb);
       chartMem.ChartAreas[0].AxisY.Minimum = 0; // Lock the bottom to 0 for proper scale
 
+      logLevelComboBox.SelectedIndex = 0;
+
       SyncThemeColours(this);
     }
 
@@ -785,7 +787,7 @@ namespace ReforgerServerApp
         ParameterName = "rconPermission",
         ParameterFriendlyName = "Rcon Permission",
         ParameterTooltip = Constants.SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR,
-        ParameterValue = Rcon.PERMISSIONS,
+        ParameterValue = Rcon.PERMISSIONS
       };
       rconPermission.ParameterValueSelection(Rcon.DEFAULT_PERMISSION);
       serverParameters.Controls.Add(rconPermission);
@@ -1440,7 +1442,8 @@ namespace ReforgerServerApp
       if (e.LastPlayerCount == 1)
       {
         playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected player";
-      } else
+      }
+      else
       {
         playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected players";
       }

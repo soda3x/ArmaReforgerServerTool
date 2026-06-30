@@ -32,13 +32,14 @@ namespace ReforgerServerApp
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
-      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-      System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-      System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-      System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-      System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+      System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+      System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+      System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+      System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
       tabControl1 = new TabControl();
+      tabPage4 = new TabPage();
       tabPage1 = new TabPage();
       tableLayoutPanel6 = new TableLayoutPanel();
       loadSettingsBtn = new FontAwesome.Sharp.IconButton();
@@ -73,6 +74,7 @@ namespace ReforgerServerApp
       loadedScenarioLabel = new Label();
       pictureBox1 = new PictureBox();
       tabPage2 = new TabPage();
+      steamCmdLog = new FluentTextBox();
       keepServerUpdated = new CheckBox();
       tableLayoutPanel4 = new TableLayoutPanel();
       startServerBtn = new FontAwesome.Sharp.IconButton();
@@ -82,20 +84,18 @@ namespace ReforgerServerApp
       useUpnp = new CheckBox();
       useExperimentalCheckBox = new CheckBox();
       label30 = new Label();
-      logLevelComboBox = new ComboBox();
+      logLevelComboBox = new FluentComboBox();
       clearLogBtn = new FontAwesome.Sharp.IconButton();
       aboutBtn = new FontAwesome.Sharp.IconButton();
       groupBox4 = new FluentGroupBox();
       advancedParametersPanel = new FlowLayoutPanel();
-      groupBox3 = new FluentGroupBox();
-      steamCmdLog = new FluentTextBox();
       steamCmdAlert = new Label();
       tabPage3 = new TabPage();
       serverStatusTableLayout = new TableLayoutPanel();
       groupBox6 = new FluentGroupBox();
-      chartFps = new System.Windows.Forms.DataVisualization.Charting.Chart();
+      chartFps = new FluentChart();
       groupBox7 = new FluentGroupBox();
-      chartMem = new System.Windows.Forms.DataVisualization.Charting.Chart();
+      chartMem = new FluentChart();
       serverInfoGroupBox = new FluentGroupBox();
       tableLayoutPanel7 = new TableLayoutPanel();
       groupBox5 = new FluentGroupBox();
@@ -131,7 +131,6 @@ namespace ReforgerServerApp
       tabPage2.SuspendLayout();
       tableLayoutPanel4.SuspendLayout();
       groupBox4.SuspendLayout();
-      groupBox3.SuspendLayout();
       tabPage3.SuspendLayout();
       serverStatusTableLayout.SuspendLayout();
       groupBox6.SuspendLayout();
@@ -157,6 +156,7 @@ namespace ReforgerServerApp
       // tabControl1
       // 
       tabControl1.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      tabControl1.Controls.Add(tabPage4);
       tabControl1.Controls.Add(tabPage1);
       tabControl1.Controls.Add(tabPage2);
       tabControl1.Controls.Add(tabPage3);
@@ -165,6 +165,16 @@ namespace ReforgerServerApp
       tabControl1.SelectedIndex = 0;
       tabControl1.Size = new Size(1526, 778);
       tabControl1.TabIndex = 0;
+      // 
+      // tabPage4
+      // 
+      tabPage4.BackColor = Color.Transparent;
+      tabPage4.Location = new Point(4, 24);
+      tabPage4.Name = "tabPage4";
+      tabPage4.Padding = new Padding(3);
+      tabPage4.Size = new Size(1518, 750);
+      tabPage4.TabIndex = 3;
+      tabPage4.Text = "Dashboard";
       // 
       // tabPage1
       // 
@@ -246,6 +256,8 @@ namespace ReforgerServerApp
       // 
       groupBox2.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
       groupBox2.BackColor = Color.Transparent;
+      groupBox2.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox2.BorderRadius = 8;
       groupBox2.Controls.Add(tableLayoutPanel3);
       groupBox2.Controls.Add(tableLayoutPanel2);
       groupBox2.Controls.Add(tableLayoutPanel1);
@@ -479,7 +491,7 @@ namespace ReforgerServerApp
       // 
       removeModBtn.Dock = DockStyle.Fill;
       removeModBtn.Enabled = false;
-      removeModBtn.IconChar = FontAwesome.Sharp.IconChar.Subtract;
+      removeModBtn.IconChar = FontAwesome.Sharp.IconChar.Trash;
       removeModBtn.IconColor = Color.Black;
       removeModBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       removeModBtn.IconSize = 16;
@@ -495,12 +507,15 @@ namespace ReforgerServerApp
       // 
       modsSearchTB.Anchor =  AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
       modsSearchTB.BackColor = SystemColors.Window;
+      modsSearchTB.FieldBackColor = SystemColors.Window;
       modsSearchTB.Location = new Point(6, 40);
+      modsSearchTB.Multiline = false;
       modsSearchTB.Name = "modsSearchTB";
       modsSearchTB.Padding = new Padding(10, 7, 10, 7);
       modsSearchTB.PlaceholderText = "Search for a mod...";
       modsSearchTB.Size = new Size(623, 30);
       modsSearchTB.TabIndex = 8;
+      modsSearchTB.UseSystemPasswordChar = false;
       modsSearchTB.TextChanged += OnSearchModsTextChanged;
       // 
       // label16
@@ -525,27 +540,49 @@ namespace ReforgerServerApp
       // 
       enabledMods.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
       enabledMods.BackColor = Color.Transparent;
+      enabledMods.DataSource = null;
+      enabledMods.DisplayMember = "";
+      enabledMods.FieldBackColor = SystemColors.Window;
+      enabledMods.FormattingEnabled = false;
+      enabledMods.ItemHeight = 32;
       enabledMods.Location = new Point(338, 74);
       enabledMods.Name = "enabledMods";
       enabledMods.Padding = new Padding(3);
+      enabledMods.SelectedIndex = -1;
+      enabledMods.SelectedItem = null;
+      enabledMods.SelectedValue = null;
+      enabledMods.SelectionMode = SelectionMode.One;
       enabledMods.Size = new Size(291, 625);
       enabledMods.TabIndex = 1;
+      enabledMods.ValueMember = "";
       // 
       // availableMods
       // 
       availableMods.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
       availableMods.BackColor = Color.Transparent;
+      availableMods.DataSource = null;
+      availableMods.DisplayMember = "";
+      availableMods.FieldBackColor = SystemColors.Window;
+      availableMods.FormattingEnabled = false;
+      availableMods.ItemHeight = 32;
       availableMods.Location = new Point(6, 74);
       availableMods.Name = "availableMods";
       availableMods.Padding = new Padding(3);
+      availableMods.SelectedIndex = -1;
+      availableMods.SelectedItem = null;
+      availableMods.SelectedValue = null;
+      availableMods.SelectionMode = SelectionMode.One;
       availableMods.Size = new Size(291, 625);
       availableMods.TabIndex = 0;
+      availableMods.ValueMember = "";
       availableMods.SelectedIndexChanged += AvailableModsSelectedIndexChanged;
       // 
       // groupBox1
       // 
       groupBox1.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       groupBox1.BackColor = Color.Transparent;
+      groupBox1.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox1.BorderRadius = 8;
       groupBox1.Controls.Add(tableLayoutPanel5);
       groupBox1.Controls.Add(serverParameters);
       groupBox1.Controls.Add(loadedScenarioLabel);
@@ -556,7 +593,7 @@ namespace ReforgerServerApp
       groupBox1.Size = new Size(864, 699);
       groupBox1.TabIndex = 46;
       groupBox1.TabStop = false;
-      groupBox1.Text = "Server Settings";
+      groupBox1.Text = "Server Configuration";
       // 
       // tableLayoutPanel5
       // 
@@ -669,6 +706,7 @@ namespace ReforgerServerApp
       // tabPage2
       // 
       tabPage2.BackColor = Color.Transparent;
+      tabPage2.Controls.Add(steamCmdLog);
       tabPage2.Controls.Add(keepServerUpdated);
       tabPage2.Controls.Add(tableLayoutPanel4);
       tabPage2.Controls.Add(useUpnp);
@@ -678,7 +716,6 @@ namespace ReforgerServerApp
       tabPage2.Controls.Add(clearLogBtn);
       tabPage2.Controls.Add(aboutBtn);
       tabPage2.Controls.Add(groupBox4);
-      tabPage2.Controls.Add(groupBox3);
       tabPage2.Controls.Add(steamCmdAlert);
       tabPage2.Location = new Point(4, 24);
       tabPage2.Name = "tabPage2";
@@ -686,6 +723,20 @@ namespace ReforgerServerApp
       tabPage2.Size = new Size(1518, 750);
       tabPage2.TabIndex = 1;
       tabPage2.Text = "Management";
+      // 
+      // steamCmdLog
+      // 
+      steamCmdLog.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      steamCmdLog.BackColor = SystemColors.Window;
+      steamCmdLog.FieldBackColor = SystemColors.Window;
+      steamCmdLog.Location = new Point(259, 69);
+      steamCmdLog.Multiline = true;
+      steamCmdLog.Name = "steamCmdLog";
+      steamCmdLog.Padding = new Padding(10, 7, 10, 7);
+      steamCmdLog.PlaceholderText = "";
+      steamCmdLog.Size = new Size(1253, 637);
+      steamCmdLog.TabIndex = 1;
+      steamCmdLog.UseSystemPasswordChar = false;
       // 
       // keepServerUpdated
       // 
@@ -810,7 +861,7 @@ namespace ReforgerServerApp
       label30.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
       label30.AutoSize = true;
       label30.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-      label30.Location = new Point(259, 719);
+      label30.Location = new Point(259, 721);
       label30.Name = "label30";
       label30.Size = new Size(57, 15);
       label30.TabIndex = 30;
@@ -819,13 +870,20 @@ namespace ReforgerServerApp
       // logLevelComboBox
       // 
       logLevelComboBox.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
-      logLevelComboBox.FormattingEnabled = true;
+      logLevelComboBox.BackColor = Color.Transparent;
+      logLevelComboBox.DataSource = null;
+      logLevelComboBox.DisplayMember = "";
+      logLevelComboBox.FieldBackColor = SystemColors.Window;
+      logLevelComboBox.ForeColor = SystemColors.ControlText;
       logLevelComboBox.Items.AddRange(new object[] { "normal", "warning", "error", "fatal" });
-      logLevelComboBox.Location = new Point(317, 716);
+      logLevelComboBox.Location = new Point(322, 712);
       logLevelComboBox.Name = "logLevelComboBox";
-      logLevelComboBox.Size = new Size(96, 23);
+      logLevelComboBox.SelectedIndex = -1;
+      logLevelComboBox.SelectedItem = null;
+      logLevelComboBox.SelectedValue = null;
+      logLevelComboBox.Size = new Size(116, 32);
       logLevelComboBox.TabIndex = 30;
-      logLevelComboBox.Text = "normal";
+      logLevelComboBox.ValueMember = "";
       // 
       // clearLogBtn
       // 
@@ -833,7 +891,7 @@ namespace ReforgerServerApp
       clearLogBtn.IconChar = FontAwesome.Sharp.IconChar.None;
       clearLogBtn.IconColor = Color.Black;
       clearLogBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
-      clearLogBtn.Location = new Point(1442, 712);
+      clearLogBtn.Location = new Point(1446, 712);
       clearLogBtn.Name = "clearLogBtn";
       clearLogBtn.Size = new Size(66, 32);
       clearLogBtn.TabIndex = 6;
@@ -859,6 +917,8 @@ namespace ReforgerServerApp
       // 
       groupBox4.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
       groupBox4.BackColor = Color.Transparent;
+      groupBox4.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox4.BorderRadius = 8;
       groupBox4.Controls.Add(advancedParametersPanel);
       groupBox4.Location = new Point(5, 61);
       groupBox4.Name = "groupBox4";
@@ -879,34 +939,11 @@ namespace ReforgerServerApp
       advancedParametersPanel.TabIndex = 0;
       advancedParametersPanel.WrapContents = false;
       // 
-      // groupBox3
-      // 
-      groupBox3.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      groupBox3.BackColor = Color.Transparent;
-      groupBox3.Controls.Add(steamCmdLog);
-      groupBox3.Location = new Point(253, 61);
-      groupBox3.Name = "groupBox3";
-      groupBox3.Size = new Size(1259, 645);
-      groupBox3.TabIndex = 3;
-      groupBox3.TabStop = false;
-      groupBox3.Text = "Log";
-      // 
-      // steamCmdLog
-      // 
-      steamCmdLog.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      steamCmdLog.BackColor = SystemColors.Window;
-      steamCmdLog.Location = new Point(6, 16);
-      steamCmdLog.Name = "steamCmdLog";
-      steamCmdLog.Padding = new Padding(10, 7, 10, 7);
-      steamCmdLog.PlaceholderText = "";
-      steamCmdLog.Size = new Size(1249, 623);
-      steamCmdLog.TabIndex = 1;
-      // 
       // steamCmdAlert
       // 
       steamCmdAlert.AutoSize = true;
       steamCmdAlert.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
-      steamCmdAlert.Location = new Point(6, 6);
+      steamCmdAlert.Location = new Point(6, 3);
       steamCmdAlert.Name = "steamCmdAlert";
       steamCmdAlert.Size = new Size(573, 17);
       steamCmdAlert.TabIndex = 2;
@@ -944,6 +981,8 @@ namespace ReforgerServerApp
       // groupBox6
       // 
       groupBox6.BackColor = Color.Transparent;
+      groupBox6.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox6.BorderRadius = 8;
       groupBox6.Controls.Add(chartFps);
       groupBox6.Dock = DockStyle.Fill;
       groupBox6.Location = new Point(3, 103);
@@ -956,18 +995,43 @@ namespace ReforgerServerApp
       // chartFps
       // 
       chartFps.BackColor = Color.Transparent;
-      chartArea5.Name = "ChartArea1";
-      chartFps.ChartAreas.Add(chartArea5);
+      chartArea3.AxisX.IsLabelAutoFit = false;
+      chartArea3.AxisX.LabelStyle.Font = new Font("Segoe UI", 9F);
+      chartArea3.AxisX.LabelStyle.ForeColor = Color.Empty;
+      chartArea3.AxisX.LineColor = Color.FromArgb(  200,   200,   200);
+      chartArea3.AxisX.MajorGrid.LineColor = Color.FromArgb(  230,   230,   230);
+      chartArea3.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+      chartArea3.AxisX.MajorTickMark.LineColor = Color.FromArgb(  200,   200,   200);
+      chartArea3.AxisY.IsLabelAutoFit = false;
+      chartArea3.AxisY.LabelStyle.Font = new Font("Segoe UI", 9F);
+      chartArea3.AxisY.LabelStyle.ForeColor = Color.Empty;
+      chartArea3.AxisY.LineColor = Color.Transparent;
+      chartArea3.AxisY.MajorGrid.LineColor = Color.FromArgb(  230,   230,   230);
+      chartArea3.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+      chartArea3.AxisY.MajorTickMark.LineColor = Color.FromArgb(  200,   200,   200);
+      chartArea3.BackColor = Color.White;
+      chartArea3.BorderColor = Color.Transparent;
+      chartArea3.Name = "ChartArea1";
+      chartFps.ChartAreas.Add(chartArea3);
       chartFps.Dock = DockStyle.Fill;
-      legend5.Name = "Legend1";
-      chartFps.Legends.Add(legend5);
+      legend3.Alignment = StringAlignment.Center;
+      legend3.BackColor = Color.Transparent;
+      legend3.BorderColor = Color.Transparent;
+      legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
+      legend3.Font = new Font("Segoe UI", 9F);
+      legend3.ForeColor = Color.Empty;
+      legend3.IsTextAutoFit = false;
+      legend3.Name = "Legend1";
+      chartFps.Legends.Add(legend3);
       chartFps.Location = new Point(3, 19);
       chartFps.Name = "chartFps";
-      series5.ChartArea = "ChartArea1";
-      series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineArea;
-      series5.Legend = "Legend1";
-      series5.Name = "FPS";
-      chartFps.Series.Add(series5);
+      series3.BorderWidth = 3;
+      series3.ChartArea = "ChartArea1";
+      series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineArea;
+      series3.Color = Color.FromArgb(  0,   120,   212);
+      series3.Legend = "Legend1";
+      series3.Name = "FPS";
+      chartFps.Series.Add(series3);
       chartFps.Size = new Size(1500, 294);
       chartFps.TabIndex = 1;
       chartFps.Text = "chart1";
@@ -975,6 +1039,8 @@ namespace ReforgerServerApp
       // groupBox7
       // 
       groupBox7.BackColor = Color.Transparent;
+      groupBox7.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox7.BorderRadius = 8;
       groupBox7.Controls.Add(chartMem);
       groupBox7.Dock = DockStyle.Fill;
       groupBox7.Location = new Point(3, 425);
@@ -987,18 +1053,43 @@ namespace ReforgerServerApp
       // chartMem
       // 
       chartMem.BackColor = Color.Transparent;
-      chartArea6.Name = "ChartArea1";
-      chartMem.ChartAreas.Add(chartArea6);
+      chartArea4.AxisX.IsLabelAutoFit = false;
+      chartArea4.AxisX.LabelStyle.Font = new Font("Segoe UI", 9F);
+      chartArea4.AxisX.LabelStyle.ForeColor = Color.Empty;
+      chartArea4.AxisX.LineColor = Color.FromArgb(  200,   200,   200);
+      chartArea4.AxisX.MajorGrid.LineColor = Color.FromArgb(  230,   230,   230);
+      chartArea4.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+      chartArea4.AxisX.MajorTickMark.LineColor = Color.FromArgb(  200,   200,   200);
+      chartArea4.AxisY.IsLabelAutoFit = false;
+      chartArea4.AxisY.LabelStyle.Font = new Font("Segoe UI", 9F);
+      chartArea4.AxisY.LabelStyle.ForeColor = Color.Empty;
+      chartArea4.AxisY.LineColor = Color.Transparent;
+      chartArea4.AxisY.MajorGrid.LineColor = Color.FromArgb(  230,   230,   230);
+      chartArea4.AxisY.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dash;
+      chartArea4.AxisY.MajorTickMark.LineColor = Color.FromArgb(  200,   200,   200);
+      chartArea4.BackColor = Color.White;
+      chartArea4.BorderColor = Color.Transparent;
+      chartArea4.Name = "ChartArea1";
+      chartMem.ChartAreas.Add(chartArea4);
       chartMem.Dock = DockStyle.Fill;
-      legend6.Name = "Legend1";
-      chartMem.Legends.Add(legend6);
+      legend4.Alignment = StringAlignment.Center;
+      legend4.BackColor = Color.Transparent;
+      legend4.BorderColor = Color.Transparent;
+      legend4.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Top;
+      legend4.Font = new Font("Segoe UI", 9F);
+      legend4.ForeColor = Color.Empty;
+      legend4.IsTextAutoFit = false;
+      legend4.Name = "Legend1";
+      chartMem.Legends.Add(legend4);
       chartMem.Location = new Point(3, 19);
       chartMem.Name = "chartMem";
-      series6.ChartArea = "ChartArea1";
-      series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineArea;
-      series6.Legend = "Legend1";
-      series6.Name = "Memory (GB)";
-      chartMem.Series.Add(series6);
+      series4.BorderWidth = 3;
+      series4.ChartArea = "ChartArea1";
+      series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.SplineArea;
+      series4.Color = Color.FromArgb(  0,   120,   212);
+      series4.Legend = "Legend1";
+      series4.Name = "Memory (GB)";
+      chartMem.Series.Add(series4);
       chartMem.Size = new Size(1500, 294);
       chartMem.TabIndex = 2;
       chartMem.Text = "chart2";
@@ -1006,6 +1097,8 @@ namespace ReforgerServerApp
       // serverInfoGroupBox
       // 
       serverInfoGroupBox.BackColor = Color.Transparent;
+      serverInfoGroupBox.BorderColor = Color.FromArgb(  120,   120,   120);
+      serverInfoGroupBox.BorderRadius = 8;
       serverInfoGroupBox.Controls.Add(tableLayoutPanel7);
       serverInfoGroupBox.Dock = DockStyle.Fill;
       serverInfoGroupBox.Location = new Point(3, 3);
@@ -1038,6 +1131,8 @@ namespace ReforgerServerApp
       // groupBox5
       // 
       groupBox5.BackColor = Color.Transparent;
+      groupBox5.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox5.BorderRadius = 8;
       groupBox5.Controls.Add(tableLayoutPanel12);
       groupBox5.Dock = DockStyle.Fill;
       groupBox5.Location = new Point(1203, 3);
@@ -1076,6 +1171,8 @@ namespace ReforgerServerApp
       // groupBox11
       // 
       groupBox11.BackColor = Color.Transparent;
+      groupBox11.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox11.BorderRadius = 8;
       groupBox11.Controls.Add(tableLayoutPanel11);
       groupBox11.Dock = DockStyle.Fill;
       groupBox11.Location = new Point(903, 3);
@@ -1141,6 +1238,8 @@ namespace ReforgerServerApp
       // groupBox10
       // 
       groupBox10.BackColor = Color.Transparent;
+      groupBox10.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox10.BorderRadius = 8;
       groupBox10.Controls.Add(tableLayoutPanel10);
       groupBox10.Dock = DockStyle.Fill;
       groupBox10.Location = new Point(603, 3);
@@ -1186,8 +1285,8 @@ namespace ReforgerServerApp
       copyJoinCodeBtn.IconColor = Color.Black;
       copyJoinCodeBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       copyJoinCodeBtn.IconSize = 24;
-      copyJoinCodeBtn.Location = new Point(256, 0);
-      copyJoinCodeBtn.Margin = new Padding(0);
+      copyJoinCodeBtn.Location = new Point(251, 0);
+      copyJoinCodeBtn.Margin = new Padding(0, 0, 5, 0);
       copyJoinCodeBtn.MaximumSize = new Size(32, 32);
       copyJoinCodeBtn.MinimumSize = new Size(32, 32);
       copyJoinCodeBtn.Name = "copyJoinCodeBtn";
@@ -1199,6 +1298,8 @@ namespace ReforgerServerApp
       // groupBox9
       // 
       groupBox9.BackColor = Color.Transparent;
+      groupBox9.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox9.BorderRadius = 8;
       groupBox9.Controls.Add(tableLayoutPanel8);
       groupBox9.Dock = DockStyle.Fill;
       groupBox9.Location = new Point(303, 3);
@@ -1244,8 +1345,8 @@ namespace ReforgerServerApp
       copyRconAddressBtn.IconColor = Color.Black;
       copyRconAddressBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       copyRconAddressBtn.IconSize = 24;
-      copyRconAddressBtn.Location = new Point(256, 0);
-      copyRconAddressBtn.Margin = new Padding(0);
+      copyRconAddressBtn.Location = new Point(251, 0);
+      copyRconAddressBtn.Margin = new Padding(0, 0, 5, 0);
       copyRconAddressBtn.MaximumSize = new Size(32, 32);
       copyRconAddressBtn.MinimumSize = new Size(32, 32);
       copyRconAddressBtn.Name = "copyRconAddressBtn";
@@ -1257,6 +1358,8 @@ namespace ReforgerServerApp
       // groupBox8
       // 
       groupBox8.BackColor = Color.Transparent;
+      groupBox8.BorderColor = Color.FromArgb(  120,   120,   120);
+      groupBox8.BorderRadius = 8;
       groupBox8.Controls.Add(tableLayoutPanel9);
       groupBox8.Dock = DockStyle.Fill;
       groupBox8.Location = new Point(3, 3);
@@ -1302,8 +1405,8 @@ namespace ReforgerServerApp
       copyAddressBtn.IconColor = Color.Black;
       copyAddressBtn.IconFont = FontAwesome.Sharp.IconFont.Auto;
       copyAddressBtn.IconSize = 24;
-      copyAddressBtn.Location = new Point(256, 0);
-      copyAddressBtn.Margin = new Padding(0);
+      copyAddressBtn.Location = new Point(251, 0);
+      copyAddressBtn.Margin = new Padding(0, 0, 5, 0);
       copyAddressBtn.MaximumSize = new Size(32, 32);
       copyAddressBtn.MinimumSize = new Size(32, 32);
       copyAddressBtn.Name = "copyAddressBtn";
@@ -1321,7 +1424,7 @@ namespace ReforgerServerApp
       Icon = (Icon) resources.GetObject("$this.Icon");
       MinimumSize = new Size(1440, 782);
       Name = "Main";
-      Text = "Longbow: Arma Reforger Dedicated Server Tool";
+      Text = "Longbow: Arma Dedicated Server Tool";
       FormClosing += OnFormClosing;
       tabControl1.ResumeLayout(false);
       tabPage1.ResumeLayout(false);
@@ -1339,7 +1442,6 @@ namespace ReforgerServerApp
       tabPage2.PerformLayout();
       tableLayoutPanel4.ResumeLayout(false);
       groupBox4.ResumeLayout(false);
-      groupBox3.ResumeLayout(false);
       tabPage3.ResumeLayout(false);
       serverStatusTableLayout.ResumeLayout(false);
       groupBox6.ResumeLayout(false);
@@ -1388,7 +1490,6 @@ namespace ReforgerServerApp
         private Label steamCmdAlert;
         private FluentTextBox steamCmdLog;
         private FontAwesome.Sharp.IconButton downloadSteamCmdBtn;
-        private FluentGroupBox groupBox3;
         private FontAwesome.Sharp.IconButton startServerBtn;
         private FluentGroupBox groupBox4;
         private FontAwesome.Sharp.IconButton disableAllModsBtn;
@@ -1400,7 +1501,7 @@ namespace ReforgerServerApp
         private PictureBox pictureBox1;
         private FontAwesome.Sharp.IconButton locateServerFilesBtn;
         private Label label30;
-        private ComboBox logLevelComboBox;
+        private FluentComboBox logLevelComboBox;
         private FontAwesome.Sharp.IconButton scenarioSelectBtn;
         private Label loadedScenarioLabel;
         private FontAwesome.Sharp.IconButton editMissionHeaderBtn;
@@ -1429,9 +1530,9 @@ namespace ReforgerServerApp
     private FluentGroupBox serverInfoGroupBox;
     private TableLayoutPanel tableLayoutPanel7;
     private FluentGroupBox groupBox6;
-    private System.Windows.Forms.DataVisualization.Charting.Chart chartFps;
+    private FluentChart chartFps;
     private FluentGroupBox groupBox7;
-    private System.Windows.Forms.DataVisualization.Charting.Chart chartMem;
+    private FluentChart chartMem;
     private FluentGroupBox groupBox8;
     private TableLayoutPanel tableLayoutPanel9;
     private Label serverAddressStatusLabel;
@@ -1452,5 +1553,6 @@ namespace ReforgerServerApp
     private TableLayoutPanel tableLayoutPanel13;
     private Label pingSiteStatusLabel;
     private PictureBox flagStatusPB;
+    private TabPage tabPage4;
   }
 }

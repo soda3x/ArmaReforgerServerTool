@@ -23,7 +23,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Appearance")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public Color BorderColor
     {
       get => borderColor;
@@ -31,7 +31,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Appearance")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public int BorderRadius
     {
       get => borderRadius;

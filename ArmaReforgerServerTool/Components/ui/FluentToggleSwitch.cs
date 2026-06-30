@@ -25,7 +25,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Behavior")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public bool Checked
     {
       get { return m_checked; }

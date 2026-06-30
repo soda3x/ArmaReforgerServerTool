@@ -407,18 +407,28 @@ namespace ReforgerServerApp.Managers
     {
       while (!cancellationToken.IsCancellationRequested)
       {
-        if (ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"] is AdvancedServerParameterTime
-            autoRestartDaily && autoRestartDaily.Checked())
+        if (ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"] is AdvancedServerParameterTime autoRestartDaily
+            && autoRestartDaily.Checked())
         {
-          // Calculate time until the next run
           TimeSpan scheduledTime = ((DateTime)autoRestartDaily.ParameterValue).TimeOfDay;
+
+          // Calculate how long to wait from this moment
           DateTime now = DateTime.Now;
           DateTime todayScheduled = now.Date + scheduledTime;
           DateTime nextRun = todayScheduled > now ? todayScheduled : todayScheduled.AddDays(1);
-          TimeSpan delay = nextRun - now;
-          // Wait until the next scheduled time
-          await Task.Delay(delay, cancellationToken);
-          action();
+
+          await Task.Delay(nextRun - now, cancellationToken);
+
+          // Only execute if we haven't been cancelled during the delay
+          if (!cancellationToken.IsCancellationRequested)
+          {
+            action();
+          }
+        }
+        else
+        {
+          // If the setting is disabled, don't spin the CPU; wait a bit before checking the setting again
+          await Task.Delay(5000, cancellationToken);
         }
       }
     }

@@ -22,7 +22,7 @@ namespace ReforgerServerApp.Components
     public override object ParameterValue
     {
       get => parameterValue;
-      set => parameterValue = (ComboBox) value;
+      set => parameterValue = (FluentComboBox) value;
     }
 
     public List<string> ParameterAvailableValues

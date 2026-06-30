@@ -60,7 +60,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Appearance")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public Color FieldBackColor
     {
       get => m_fieldBackColor;
@@ -73,7 +73,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Behavior")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+     
     public bool UseSystemPasswordChar
     {
       get => m_textBox.UseSystemPasswordChar;
@@ -81,7 +81,6 @@ namespace Longbow.Components.ui
     }
 
     [Category("Behavior")]
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool Multiline
     {
       get => m_textBox.Multiline;
