@@ -1,4 +1,6 @@
-﻿namespace ReforgerServerApp.Components
+using Longbow.Components.ui;
+
+namespace ReforgerServerApp.Components
 {
     partial class AdvancedServerParameterString
     {
@@ -28,14 +30,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            parameterValue = new TextBox();
+            parameterValue = new FluentTextBox();
             SuspendLayout();
             // 
             // parameterValue
             // 
             parameterValue.Location = new Point(4, 28);
             parameterValue.Name = "parameterValue";
-            parameterValue.Size = new Size(191, 23);
+            parameterValue.Size = new Size(191, 32);
             parameterValue.TabIndex = 2;
             // 
             // AdvancedServerParameterString
@@ -51,6 +53,6 @@
 
         #endregion
 
-        private TextBox parameterValue;
+        private FluentTextBox parameterValue;
     }
 }

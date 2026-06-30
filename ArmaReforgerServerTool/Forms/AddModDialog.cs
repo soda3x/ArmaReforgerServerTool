@@ -6,6 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
 using ReforgerServerApp.Managers;
 using WinForms.Fluent;
 
@@ -19,7 +20,7 @@ namespace ReforgerServerApp
     public AddModDialog(Main reforgerApp)
     {
       InitializeComponent();
-      this.Mica();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       this.Text = "Longbow - Add Mod";
       m_reforgerApp = reforgerApp;
       CreateTooltips();

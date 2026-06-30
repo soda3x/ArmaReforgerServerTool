@@ -17,8 +17,6 @@ using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
 using Serilog;
 using System.ComponentModel;
-using System.Diagnostics;
-using WinForms.Fluent;
 
 namespace ReforgerServerApp
 {
@@ -33,12 +31,14 @@ namespace ReforgerServerApp
     {
       InitializeComponent();
 
-      this.Acrylic();
+      ThemeManager.GetInstance().ConfigureTheme(this);
 
       CreateServerParameterControls();
       CreateAdvancedServerParameterControls();
 
       serverRunningLabel.Text = string.Empty;
+
+      modsSearchTB.PlaceholderText = "Search for a mod...";
 
       ProcessManager.GetInstance().UpdateGuiControlsEvent += HandleUpdateGuiControlsEvent;
       ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;

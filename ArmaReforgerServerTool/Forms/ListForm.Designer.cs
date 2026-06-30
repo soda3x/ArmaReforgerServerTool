@@ -33,16 +33,16 @@ namespace ReforgerServerApp
       addBtn = new Button();
       removeBtn = new Button();
       closeBtn = new Button();
-      itemTB = new TextBox();
-      itemListView = new BoundListBox();
+      itemTB = new FluentTextBox();
+      itemListView = new FluentListBox();
       SuspendLayout();
       // 
       // addBtn
       // 
       addBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-      addBtn.Location = new Point(392, 415);
+      addBtn.Location = new Point(392, 406);
       addBtn.Name = "addBtn";
-      addBtn.Size = new Size(75, 23);
+      addBtn.Size = new Size(75, 32);
       addBtn.TabIndex = 1;
       addBtn.Text = "Add";
       addBtn.UseVisualStyleBackColor = true;
@@ -51,9 +51,9 @@ namespace ReforgerServerApp
       // removeBtn
       // 
       removeBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-      removeBtn.Location = new Point(473, 415);
+      removeBtn.Location = new Point(473, 406);
       removeBtn.Name = "removeBtn";
-      removeBtn.Size = new Size(75, 23);
+      removeBtn.Size = new Size(75, 32);
       removeBtn.TabIndex = 2;
       removeBtn.Text = "Remove";
       removeBtn.UseVisualStyleBackColor = true;
@@ -62,9 +62,9 @@ namespace ReforgerServerApp
       // closeBtn
       // 
       closeBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-      closeBtn.Location = new Point(713, 415);
+      closeBtn.Location = new Point(713, 406);
       closeBtn.Name = "closeBtn";
-      closeBtn.Size = new Size(75, 23);
+      closeBtn.Size = new Size(75, 32);
       closeBtn.TabIndex = 3;
       closeBtn.Text = "Close";
       closeBtn.UseVisualStyleBackColor = true;
@@ -73,17 +73,20 @@ namespace ReforgerServerApp
       // itemTB
       // 
       itemTB.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      itemTB.Location = new Point(12, 415);
+      itemTB.BackColor = Color.Transparent;
+      itemTB.Location = new Point(12, 406);
       itemTB.Name = "itemTB";
-      itemTB.Size = new Size(374, 23);
+      itemTB.Padding = new Padding(10, 7, 10, 7);
+      itemTB.Size = new Size(374, 32);
       itemTB.TabIndex = 4;
       // 
       // itemListView
       // 
       itemListView.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      itemListView.ItemHeight = 15;
+      itemListView.BackColor = Color.Transparent;
       itemListView.Location = new Point(12, 12);
       itemListView.Name = "itemListView";
+      itemListView.Padding = new Padding(3);
       itemListView.Size = new Size(776, 379);
       itemListView.TabIndex = 0;
       // 
@@ -103,14 +106,13 @@ namespace ReforgerServerApp
       StartPosition = FormStartPosition.CenterParent;
       Text = "Longbow - ListForm";
       ResumeLayout(false);
-      PerformLayout();
     }
 
     #endregion
     private Button addBtn;
         private Button removeBtn;
         private Button closeBtn;
-        private TextBox itemTB;
-        private BoundListBox itemListView;
+        private FluentTextBox itemTB;
+        private FluentListBox itemListView;
     }
 }

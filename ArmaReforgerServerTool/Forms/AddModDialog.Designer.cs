@@ -1,3 +1,5 @@
+using Longbow.Components.ui;
+
 namespace ReforgerServerApp
 {
     partial class AddModDialog
@@ -28,59 +30,42 @@ namespace ReforgerServerApp
     /// </summary>
     private void InitializeComponent()
     {
-      modName = new TextBox();
-      label1 = new Label();
-      label2 = new Label();
-      modId = new TextBox();
+      modName = new FluentTextBox();
+      modId = new FluentTextBox();
       addBtn = new Button();
       cancelBtn = new Button();
-      label3 = new Label();
-      modVers = new TextBox();
+      modVers = new FluentTextBox();
       requiredLabel = new Label();
-      required = new CheckBox();
+      required = new FluentToggleSwitch();
       SuspendLayout();
       // 
       // modName
       // 
+      modName.BackColor = Color.Transparent;
       modName.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-      modName.Location = new Point(117, 12);
+      modName.Location = new Point(12, 12);
       modName.Name = "modName";
-      modName.Size = new Size(355, 23);
+      modName.Padding = new Padding(10, 7, 10, 7);
+      modName.PlaceholderText = "Enter Mod Name...";
+      modName.Size = new Size(460, 32);
       modName.TabIndex = 0;
-      // 
-      // label1
-      // 
-      label1.AutoSize = true;
-      label1.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-      label1.Location = new Point(8, 14);
-      label1.Name = "label1";
-      label1.Size = new Size(92, 21);
-      label1.TabIndex = 1;
-      label1.Text = "Mod Name";
-      // 
-      // label2
-      // 
-      label2.AutoSize = true;
-      label2.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-      label2.Location = new Point(8, 43);
-      label2.Name = "label2";
-      label2.Size = new Size(65, 21);
-      label2.TabIndex = 3;
-      label2.Text = "Mod ID";
       // 
       // modId
       // 
+      modId.BackColor = Color.Transparent;
       modId.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-      modId.Location = new Point(117, 41);
+      modId.Location = new Point(12, 57);
       modId.Name = "modId";
-      modId.Size = new Size(355, 23);
+      modId.PlaceholderText = "Enter Mod ID from Arma Workshop...";
+      modId.Padding = new Padding(10, 7, 10, 7);
+      modId.Size = new Size(460, 32);
       modId.TabIndex = 1;
       // 
       // addBtn
       // 
-      addBtn.Location = new Point(400, 109);
+      addBtn.Location = new Point(397, 157);
       addBtn.Name = "addBtn";
-      addBtn.Size = new Size(75, 23);
+      addBtn.Size = new Size(75, 32);
       addBtn.TabIndex = 4;
       addBtn.Text = "Add";
       addBtn.UseVisualStyleBackColor = true;
@@ -88,38 +73,30 @@ namespace ReforgerServerApp
       // 
       // cancelBtn
       // 
-      cancelBtn.Location = new Point(319, 109);
+      cancelBtn.Location = new Point(12, 157);
       cancelBtn.Name = "cancelBtn";
-      cancelBtn.Size = new Size(75, 23);
+      cancelBtn.Size = new Size(75, 32);
       cancelBtn.TabIndex = 3;
       cancelBtn.Text = "Cancel";
       cancelBtn.UseVisualStyleBackColor = true;
       cancelBtn.Click += CancelBtnPressed;
       // 
-      // label3
-      // 
-      label3.AutoSize = true;
-      label3.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-      label3.Location = new Point(8, 72);
-      label3.Name = "label3";
-      label3.Size = new Size(103, 21);
-      label3.TabIndex = 9;
-      label3.Text = "Mod Version";
-      // 
       // modVers
       // 
+      modVers.BackColor = Color.Transparent;
       modVers.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-      modVers.Location = new Point(117, 70);
+      modVers.Location = new Point(12, 104);
       modVers.Name = "modVers";
-      modVers.PlaceholderText = "Latest";
-      modVers.Size = new Size(150, 23);
+      modVers.PlaceholderText = "Enter Mod Version, or leave empty to get the latest...";
+      modVers.Padding = new Padding(10, 7, 10, 7);
+      modVers.Size = new Size(300, 32);
       modVers.TabIndex = 2;
       // 
       // requiredLabel
       // 
       requiredLabel.AutoSize = true;
       requiredLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
-      requiredLabel.Location = new Point(273, 72);
+      requiredLabel.Location = new Point(394, 110);
       requiredLabel.Name = "requiredLabel";
       requiredLabel.Size = new Size(77, 21);
       requiredLabel.TabIndex = 11;
@@ -127,31 +104,27 @@ namespace ReforgerServerApp
       // 
       // required
       // 
-      required.AutoSize = true;
-      required.Location = new Point(457, 78);
+      required.BackColor = Color.Transparent;
+      required.Location = new Point(338, 108);
       required.Name = "required";
-      required.Size = new Size(15, 14);
+      required.Size = new Size(50, 24);
       required.TabIndex = 12;
-      required.UseVisualStyleBackColor = true;
       // 
       // AddModDialog
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(484, 141);
+      ClientSize = new Size(484, 201);
       ControlBox = false;
       Controls.Add(required);
       Controls.Add(requiredLabel);
-      Controls.Add(label3);
       Controls.Add(modVers);
       Controls.Add(cancelBtn);
       Controls.Add(addBtn);
-      Controls.Add(label2);
       Controls.Add(modId);
-      Controls.Add(label1);
       Controls.Add(modName);
-      MaximumSize = new Size(500, 180);
-      MinimumSize = new Size(500, 180);
+      MaximumSize = new Size(500, 240);
+      MinimumSize = new Size(500, 240);
       Name = "AddModDialog";
       SizeGripStyle = SizeGripStyle.Hide;
       StartPosition = FormStartPosition.CenterParent;
@@ -162,15 +135,12 @@ namespace ReforgerServerApp
 
     #endregion
 
-    private TextBox modName;
-        private Label label1;
-        private Label label2;
-        private TextBox modId;
+    private FluentTextBox modName;
+        private FluentTextBox modId;
         private Button addBtn;
         private Button cancelBtn;
-        private Label label3;
-        private TextBox modVers;
+        private FluentTextBox modVers;
         private Label requiredLabel;
-        private CheckBox required;
+        private FluentToggleSwitch required;
     }
 }

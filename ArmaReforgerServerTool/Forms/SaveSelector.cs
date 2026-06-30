@@ -6,6 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
 using ReforgerServerApp;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
@@ -19,7 +20,7 @@ namespace Longbow.Forms
     public SaveSelector()
     {
       InitializeComponent();
-      this.Mica();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       m_savedGames = new();
       RefreshSavedGamesList();
       UpdateSaveLabel();

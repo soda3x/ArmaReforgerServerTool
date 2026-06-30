@@ -6,6 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
 using Longbow.Models;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
@@ -23,7 +24,7 @@ namespace ReforgerServerApp
     public ScenarioSelector(Main parent)
     {
       InitializeComponent();
-      this.Mica();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       PrintSelectedScenario();
       m_parentForm = parent;
       m_getScenariosRequested = true;

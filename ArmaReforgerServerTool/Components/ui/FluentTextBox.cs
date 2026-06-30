@@ -1,15 +1,21 @@
 using System.ComponentModel;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 
 namespace Longbow.Components.ui
 {
   public class FluentTextBox : UserControl
   {
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+    private const int EM_SETCUEBANNER = 0x1501;
+
     private TextBox m_textBox;
     private int m_borderRadius = 8;
     private Color m_borderColor = Color.FromArgb(120, 120, 120);
     private Color m_focusedBorderColor = Color.FromArgb(0, 120, 212); // Windows 11 Blue
     private Color m_fieldBackColor = SystemColors.Window;
+    private string m_placeholderText = "";
 
     private bool m_isHovered = false;
     private bool m_isFocused = false;
@@ -30,6 +36,8 @@ namespace Longbow.Components.ui
       m_textBox.Dock = DockStyle.Fill;
       m_textBox.BackColor = m_fieldBackColor;
       m_textBox.ForeColor = this.ForeColor;
+
+      m_textBox.HandleCreated += (s, e) => ApplyPlaceholder();
 
       this.ForeColorChanged += (s, e) => m_textBox.ForeColor = this.ForeColor;
 
@@ -78,6 +86,28 @@ namespace Longbow.Components.ui
     {
       get => m_textBox.Multiline;
       set => m_textBox.Multiline = value;
+    }
+
+    [Category("Appearance")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+    public string PlaceholderText
+    {
+      get => m_placeholderText;
+      set
+      {
+        m_placeholderText = value;
+        ApplyPlaceholder();
+      }
+    }
+
+    private void ApplyPlaceholder()
+    {
+      // Ensure the internal textbox actually exists before trying to send it a Windows message
+      if (m_textBox != null && m_textBox.IsHandleCreated)
+      {
+        // IntPtr(1) = Keep visible on focus until typing begins
+        SendMessage(m_textBox.Handle, EM_SETCUEBANNER, new IntPtr(1), m_placeholderText);
+      }
     }
 
     public void AppendText(string text)

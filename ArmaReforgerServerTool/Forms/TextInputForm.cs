@@ -7,7 +7,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using WinForms.Fluent;
+using Longbow.Managers;
 
 namespace ReforgerServerApp
 {
@@ -17,7 +17,7 @@ namespace ReforgerServerApp
     public TextInputForm(string windowTitle, String prefilledText)
     {
       InitializeComponent();
-      this.Mica();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       this.Text = $"Longbow - {windowTitle}";
       textInputField.Text = prefilledText;
     }

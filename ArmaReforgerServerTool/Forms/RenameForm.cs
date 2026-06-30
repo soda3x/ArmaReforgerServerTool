@@ -7,6 +7,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
 using WinForms.Fluent;
 
 namespace Longbow.Forms
@@ -17,7 +18,7 @@ namespace Longbow.Forms
     public RenameForm(string text)
     {
       InitializeComponent();
-      this.Mica();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       renameTB.Text = text;
     }
 

@@ -189,6 +189,18 @@ namespace Longbow.Components.ui
       set => m_listBox.FormattingEnabled = value;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public int ItemHeight
+    {
+      get => m_listBox.ItemHeight;
+      set => m_listBox.ItemHeight = value;
+    }
+
+    public void RefreshItems()
+    {
+      m_listBox.RefreshItems();
+    }
+
     private GraphicsPath GetRoundedRect(Rectangle bounds, int radius)
     {
       int d = radius * 2;
