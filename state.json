@@ -1,0 +1,141 @@
+{
+  "serverLocation": "",
+  "advancedSettings": [
+    {
+      "name": "maxFPS",
+      "value": 60,
+      "enabled": true
+    },
+    {
+      "name": "addonsRepair",
+      "enabled": true
+    },
+    {
+      "name": "useUpnp",
+      "enabled": true
+    },
+    {
+      "name": "useExperimental",
+      "enabled": false
+    },
+    {
+      "name": "keepServerUpdated",
+      "enabled": true
+    },
+    {
+      "name": "loadSessionSave",
+      "value": "",
+      "enabled": false
+    },
+    {
+      "name": "autoRestartOnCrash",
+      "enabled": false
+    },
+    {
+      "name": "autoreload",
+      "value": 10,
+      "enabled": false
+    },
+    {
+      "name": "noBackend",
+      "enabled": false
+    },
+    {
+      "name": "autoShutdown",
+      "enabled": false
+    },
+    {
+      "name": "logVoting",
+      "enabled": false
+    },
+    {
+      "name": "bindPort",
+      "value": 2001,
+      "enabled": false
+    },
+    {
+      "name": "nds",
+      "value": 2,
+      "enabled": false
+    },
+    {
+      "name": "nwkResolution",
+      "value": 500,
+      "enabled": false
+    },
+    {
+      "name": "staggeringBudget",
+      "value": 5000,
+      "enabled": false
+    },
+    {
+      "name": "streamingBudget",
+      "value": 500,
+      "enabled": false
+    },
+    {
+      "name": "streamsDelta",
+      "value": 100,
+      "enabled": false
+    },
+    {
+      "name": "rpl-timeout-ms",
+      "value": 10000,
+      "enabled": false
+    },
+    {
+      "name": "aiPartialSim",
+      "enabled": false
+    },
+    {
+      "name": "createDB",
+      "enabled": false
+    },
+    {
+      "name": "debugger",
+      "value": "",
+      "enabled": false
+    },
+    {
+      "name": "debuggerPort",
+      "value": 1000,
+      "enabled": false
+    },
+    {
+      "name": "disableShadersBuild",
+      "enabled": false
+    },
+    {
+      "name": "generateShaders",
+      "enabled": false
+    },
+    {
+      "name": "rplEncodeAsLongJobs",
+      "enabled": false
+    },
+    {
+      "name": "jobsysShortWorkerCount",
+      "value": 16,
+      "enabled": false
+    },
+    {
+      "name": "jobsysLongWorkerCount",
+      "value": 8,
+      "enabled": false
+    },
+    {
+      "name": "freezeCheck",
+      "value": 300,
+      "enabled": false
+    },
+    {
+      "name": "freezeCheckMode",
+      "value": "crash",
+      "enabled": false
+    },
+    {
+      "name": "forceDisableNightGrain",
+      "enabled": false
+    }
+  ]
+}

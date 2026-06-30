@@ -1,0 +1,29 @@
+
+
+[2026-06-29 00:02:15] Client version: 1782532820
+[2026-06-29 00:02:15] ThreadedReadFromDisk: loading appinfo cache from: D:\Projects\ArmaReforgerServerTool\steamcmd/appcache/appinfo.vdf
+[2026-06-29 00:02:15] ThreadedReadFromDisk: failed to open file: D:\Projects\ArmaReforgerServerTool\steamcmd/appcache/appinfo.vdf
+[2026-06-29 00:02:15] CAppInfoCacheReadFromDiskThread took 0 milliseconds to initialize
+[2026-06-29 00:02:17] RequestAppInfoUpdate: AppIDs 7
+[2026-06-29 00:02:18] Change number 0->36904588, apps: 0/0, packages: 0/0
+[2026-06-29 00:02:18] Requesting 1 apps, 1 packages (meta data, 1024 prev attempts, expected 0 KB)
+[2026-06-29 00:02:18] Downloaded 1 apps via HTTP, 15 KB (3 KB compressed)
+[2026-06-29 00:02:18] Requesting 0 apps, 1 packages (full data, 1024 prev attempts, expected 17 KB)
+[2026-06-29 00:02:18] UpdatesJob: finished OK, apps updated 1 (15 KB), packages updated 1 (17 KB)
+[2026-06-29 00:02:18] Requesting 736 apps, 0 packages (meta data, 1024 prev attempts, expected 34 KB)
+[2026-06-29 00:02:19] Requested 91 app access tokens, 24 received, 67 denied
+[2026-06-29 00:02:19] Updated SHAs with 24 new access tokens
+[2026-06-29 00:02:20] Downloaded 178 apps via HTTP, 2416 KB (570 KB compressed)
+[2026-06-29 00:02:20] Requesting 558 apps, 0 packages (full data, 1024 prev attempts, expected 2370 KB)
+[2026-06-29 00:02:21] UpdatesJob: finished OK, apps updated 736 (4814 KB), packages updated 0 (0 KB)
+[2026-06-29 00:02:21] UpdatesJob: apps still needs updates, run again
+[2026-06-29 00:02:21] Requesting 67 apps, 0 packages (meta data, 1024 prev attempts, expected 3 KB)
+[2026-06-29 00:02:21] RequestAppInfoUpdate: AppIDs 1874900
+[2026-06-29 00:02:22] Requested 67 app access tokens, 0 received, 67 denied
+[2026-06-29 00:02:22] UpdatesJob: finished OK, apps updated 0 (0 KB), packages updated 0 (0 KB)
+[2026-06-29 00:02:22] UpdatesJob: apps still needs updates, run again
+[2026-06-29 00:02:22] Requesting 1 apps, 0 packages (meta data, 1024 prev attempts, expected 0 KB)
+[2026-06-29 00:02:22] UpdatesJob: finished OK, apps updated 0 (0 KB), packages updated 0 (0 KB)
+[2026-06-29 00:02:22] UpdatesJob: apps still needs updates, run again
+[2026-06-29 00:02:22] ThreadedWriteToDisk: writing appinfo cache to: D:\Projects\ArmaReforgerServerTool\steamcmd/appcache/appinfo.vdf
+[2026-06-29 00:02:22] App cache write succeeded D:\Projects\ArmaReforgerServerTool\steamcmd/appcache/appinfo.vdf (737 apps, 2342 KB) in 12 ms

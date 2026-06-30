@@ -150,11 +150,38 @@ namespace ReforgerServerApp
       chartMem.ChartAreas[0].AxisY.Maximum = Math.Ceiling(totalSystemMemoryGb);
       chartMem.ChartAreas[0].AxisY.Minimum = 0; // Lock the bottom to 0 for proper scale
 
-      // PHASE 1A FIX: Perform initial mod validation and set Start button state
-      Log.Information("Main - Performing initial mod validation on form load");
-      var initialValidationResult = ModValidationService.GetInstance().ValidateMods(
-        ConfigurationManager.GetInstance().GetEnabledMods().ToList());
-      UpdateStartButtonState(initialValidationResult.IsValid);
+      // Hook Load event to perform initial validation asynchronously
+      this.Load += Main_Load;
+    }
+
+    /// <summary>
+    /// Form Load event handler - performs initial mod validation on background thread
+    /// Deferred to Load event to allow async/await in proper context
+    /// </summary>
+    private async void Main_Load(object sender, EventArgs e)
+    {
+      // Only run once
+      this.Load -= Main_Load;
+
+      // PHASE 1A FIX: Perform initial mod validation on background thread to prevent form freeze
+      Log.Information("Main - Main_Load fired: Performing initial mod validation on form load");
+      try
+      {
+        var enabledMods = ConfigurationManager.GetInstance().GetEnabledMods().ToList();
+        Log.Information("Main - Main_Load: Found {ModCount} enabled mods for initial validation", enabledMods.Count);
+
+        var initialValidationResult = await Task.Run(() =>
+          ModValidationService.GetInstance().ValidateMods(enabledMods));
+
+        Log.Information("Main - Main_Load: Initial validation complete. IsValid={IsValid}, Errors={ErrorCount}",
+          initialValidationResult.IsValid, initialValidationResult.Errors.Count);
+
+        UpdateStartButtonState(initialValidationResult.IsValid);
+      }
+      catch (Exception ex)
+      {
+        Log.Error(ex, "Main - Error during initial validation");
+      }
     }
 
     /// <summary>
@@ -1786,9 +1813,12 @@ namespace ReforgerServerApp
 
     /// <summary>
     /// Handler for "Check Mods" button - validates enabled mods and auto-fixes if possible
+    /// Runs validation on background thread to keep UI responsive
     /// </summary>
     private async void CheckModsBtnPressed(object sender, EventArgs e)
     {
+      Log.Information("Main - CheckModsBtnPressed fired");
+
       if (sender is Button btn)
       {
         btn.Enabled = false;
@@ -1799,28 +1829,48 @@ namespace ReforgerServerApp
       {
         // Get the list of enabled mods
         var enabledMods = ConfigurationManager.GetInstance().GetEnabledMods().ToList();
+        Log.Information("Main - CheckModsBtnPressed: Found {ModCount} enabled mods", enabledMods.Count);
 
-        // Run validation
-        var validationResult = ModValidationService.GetInstance().ValidateMods(enabledMods);
+        if (enabledMods.Count == 0)
+        {
+          Log.Warning("Main - No enabled mods to validate");
+          MessageBox.Show("No mods enabled. Add mods and try again.", "No Mods",
+            MessageBoxButtons.OK, MessageBoxIcon.Information);
+          return;
+        }
+
+        // Run validation on background thread to prevent UI freeze
+        var validationResult = await Task.Run(() =>
+          ModValidationService.GetInstance().ValidateMods(enabledMods));
+
+        Log.Information("Main - Validation complete. IsValid={IsValid}, Errors={ErrorCount}, Warnings={WarningCount}",
+          validationResult.IsValid, validationResult.Errors.Count, validationResult.Warnings.Count);
+
         var fixesApplied = new List<string>();
 
         // Auto-fix logic if validation failed
         if (!validationResult.IsValid)
         {
+          Log.Information("Main - Validation failed, attempting auto-fixes");
           fixesApplied = ApplyAutoFixes(validationResult, enabledMods);
 
-          // Re-validate after fixes
+          // Re-validate after fixes on background thread
           if (fixesApplied.Count > 0)
           {
-            validationResult = ModValidationService.GetInstance().ValidateMods(enabledMods);
+            Log.Information("Main - Applied {FixCount} fixes, re-validating", fixesApplied.Count);
+            validationResult = await Task.Run(() =>
+              ModValidationService.GetInstance().ValidateMods(enabledMods));
+            Log.Information("Main - Re-validation complete. IsValid={IsValid}", validationResult.IsValid);
           }
         }
 
         // Show results dialog
+        Log.Information("Main - Showing validation results dialog");
         var resultDialog = new ModValidationResultDialog(validationResult, fixesApplied);
         resultDialog.ShowDialog(this);
 
         // Update the UI based on validation result
+        Log.Information("Main - Updating start button state based on validation result: {IsValid}", validationResult.IsValid);
         UpdateStartButtonState(validationResult.IsValid);
       }
       catch (Exception ex)
@@ -1835,6 +1885,7 @@ namespace ReforgerServerApp
         {
           btn2.Enabled = true;
           btn2.Text = "Check Mods";
+          Log.Information("Main - CheckModsBtnPressed complete");
         }
       }
     }
@@ -1889,25 +1940,32 @@ namespace ReforgerServerApp
     /// </summary>
     private void UpdateStartButtonState(bool isValid)
     {
+      Log.Information("Main - UpdateStartButtonState called with isValid={IsValid}", isValid);
+
       if (startServerBtn.InvokeRequired)
       {
+        Log.Debug("Main - UpdateStartButtonState: Invoking on UI thread");
         startServerBtn.Invoke(new Action(() => UpdateStartButtonState(isValid)));
       }
       else
       {
         if (!isValid)
         {
+          Log.Warning("Main - UpdateStartButtonState: Mods invalid, disabling start button and setting to red");
           startServerBtn.BackColor = Design.Colors.Error;
           startServerBtn.ForeColor = Design.Colors.White;
           startServerBtn.Enabled = false;
+          startServerBtn.Text = "Start Server (Invalid Mods)";
         }
         else
         {
           // Valid mods - can start if SteamCMD is installed
           bool steamCmdInstalled = FileIOManager.GetInstance().IsSteamCMDInstalled();
+          Log.Information("Main - UpdateStartButtonState: Mods valid. SteamCMD installed={Installed}", steamCmdInstalled);
           startServerBtn.BackColor = steamCmdInstalled ? Design.Colors.Primary : Design.Colors.DisabledBackground;
           startServerBtn.ForeColor = Design.Colors.TextPrimary;
           startServerBtn.Enabled = steamCmdInstalled;
+          startServerBtn.Text = steamCmdInstalled ? "Start Server" : "Start Server (SteamCMD Not Found)";
         }
       }
     }

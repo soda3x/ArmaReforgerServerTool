@@ -25,6 +25,29 @@ namespace ReforgerServerApp
     public string version { get; set; }
     public bool required { get; set; }
 
+    /// <summary>
+    /// List of mods that this mod depends on. Optional field for backwards compatibility.
+    /// </summary>
+    public List<ModDependency> Dependencies { get; set; } = new List<ModDependency>();
+
+    /// <summary>
+    /// List of mod IDs that this mod conflicts with. Optional field for backwards compatibility.
+    /// </summary>
+    public List<string> Conflicts { get; set; } = new List<string>();
+
+    /// <summary>
+    /// Mod version (e.g., "1.2.0"). Distinct from the 'version' field which tracks mod version in the mission.
+    /// This field represents the actual mod semantic version.
+    /// Optional field for backwards compatibility.
+    /// </summary>
+    public string ModVersion { get; set; }
+
+    /// <summary>
+    /// Minimum Arma Reforger game version required for this mod (e.g., "1.2.0").
+    /// Optional field for backwards compatibility.
+    /// </summary>
+    public string MinGameVersion { get; set; }
+
     private const string LATEST_MOD_VER_STR = "latest";
 
     public Mod() { /* Exists only for JSON deserializing */ }
@@ -51,6 +74,10 @@ namespace ReforgerServerApp
       this.name = m.name;
       this.version = m.version;
       this.required = m.required;
+      this.Dependencies = new List<ModDependency>(m.Dependencies ?? new List<ModDependency>());
+      this.Conflicts = new List<string>(m.Conflicts ?? new List<string>());
+      this.ModVersion = m.ModVersion;
+      this.MinGameVersion = m.MinGameVersion;
     }
 
     public string GetModID()

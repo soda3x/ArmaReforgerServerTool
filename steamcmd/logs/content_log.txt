@@ -1,0 +1,6 @@
+
+
+[2026-06-29 00:02:17] Client version: 1782532820
+[2026-06-29 00:02:17] Loaded 0 apps from install folder "d:\projects\armareforgerservertool\arma_reforger\steamapps\appmanifest_*.acf".
+[2026-06-29 00:02:17] Triggered async write of Steam library folders configuration (1 libraries).
+[2026-06-29 00:02:22] Failed installing AppID 1874900 (Missing configuration)

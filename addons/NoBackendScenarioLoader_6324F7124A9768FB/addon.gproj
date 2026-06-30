@@ -1,0 +1,8 @@
+GameProject {
+ ID "NoBackendScenarioLoader"
+ GUID "6324F7124A9768FB"
+ TITLE "No Backend Scenario Loader"
+ Dependencies {
+  "58D0FB3206B6F859"
+ }
+}

@@ -1,0 +1,13 @@
+
+
+[2026-06-29 00:02:15] Client version: 1782532820
+[2026-06-29 00:02:15] Failed to read store 'install' from 'D:\Projects\ArmaReforgerServerTool\steamcmd\config\config.vdf.tmp'
+[2026-06-29 00:02:15] Failed to read store 'install' from 'D:\Projects\ArmaReforgerServerTool\steamcmd\config\config.vdf.tmp'
+[2026-06-29 00:02:15] Failed to read store 'install' from 'D:\Projects\ArmaReforgerServerTool\steamcmd\config\config.vdf.tmp'
+[2026-06-29 00:02:15] Failed to read store 'install' from 'D:\Projects\ArmaReforgerServerTool\steamcmd\config\config.vdf.tmp'
+[2026-06-29 00:02:15] Flushed store 'install' to 'D:\Projects\ArmaReforgerServerTool\steamcmd\config\config.vdf'
+[2026-06-29 00:02:16] Loaded store 'install' from 'D:\Projects\ArmaReforgerServerTool\steamcmd\config\config.vdf' successfully
+[2026-06-29 00:02:17] Failed to read store 'userlocal' from 'D:\Projects\ArmaReforgerServerTool\steamcmd\userdata\anonymous\config\localconfig.vdf.tmp'
+[2026-06-29 00:02:18] Flushed store 'install' to 'D:\Projects\ArmaReforgerServerTool\steamcmd\config\config.vdf'
+[2026-06-29 00:02:19] Flushed store 'userlocal' to 'D:\Projects\ArmaReforgerServerTool\steamcmd\userdata\anonymous\config\localconfig.vdf'
+[2026-06-29 00:02:22] Loaded store 'userlocal' from 'D:\Projects\ArmaReforgerServerTool\steamcmd\userdata\anonymous\config\localconfig.vdf' successfully
