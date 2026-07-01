@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Drawing.Drawing2D;
 
+
 namespace Longbow.Components.ui
 {
   public class FluentListBox : UserControl
@@ -36,6 +37,8 @@ namespace Longbow.Components.ui
       this.ForeColorChanged += (s, e) => m_listBox.ForeColor = this.ForeColor;
 
       m_listBox.DrawItem += ListBox_DrawItem;
+
+      m_listBox.Resize += (s, e) => this.Invalidate();
 
       // Bubble up standard events
       m_listBox.SelectedIndexChanged += (s, e) => SelectedIndexChanged?.Invoke(this, EventArgs.Empty);
@@ -195,6 +198,16 @@ namespace Longbow.Components.ui
     public void RefreshItems()
     {
       m_listBox.RefreshItems();
+    }
+
+    public void BeginUpdate()
+    {
+      m_listBox.BeginUpdate();
+    }
+
+    public void EndUpdate()
+    {
+      m_listBox.EndUpdate();
     }
 
     private GraphicsPath GetRoundedRect(Rectangle bounds, int radius)

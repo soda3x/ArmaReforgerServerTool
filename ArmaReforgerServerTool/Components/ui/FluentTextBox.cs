@@ -53,7 +53,9 @@ namespace Longbow.Components.ui
     }
 
     [Category("Data")]
-    public override string Text
+    [Browsable(true)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+    public new string Text
     {
       get => m_textBox.Text;
       set => m_textBox.Text = value;
@@ -104,6 +106,15 @@ namespace Longbow.Components.ui
     {
       get => m_textBox.ScrollBars;
       set => m_textBox.ScrollBars = value;
+    }
+
+    [Category("Data")]
+    [Browsable(true)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+    public new event EventHandler TextChanged
+    {
+      add => m_textBox.TextChanged += value;
+      remove => m_textBox.TextChanged -= value;
     }
 
     private void ApplyPlaceholder()

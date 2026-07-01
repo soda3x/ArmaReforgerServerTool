@@ -33,7 +33,6 @@ namespace ReforgerServerApp
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
       tabControl1 = new TabControl();
-      tabPage4 = new TabPage();
       tabPage1 = new TabPage();
       tableLayoutPanel6 = new TableLayoutPanel();
       loadSettingsBtn = new FontAwesome.Sharp.IconButton();
@@ -150,7 +149,6 @@ namespace ReforgerServerApp
       // tabControl1
       // 
       tabControl1.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-      tabControl1.Controls.Add(tabPage4);
       tabControl1.Controls.Add(tabPage1);
       tabControl1.Controls.Add(tabPage2);
       tabControl1.Controls.Add(tabPage3);
@@ -159,16 +157,6 @@ namespace ReforgerServerApp
       tabControl1.SelectedIndex = 0;
       tabControl1.Size = new Size(1526, 778);
       tabControl1.TabIndex = 0;
-      // 
-      // tabPage4
-      // 
-      tabPage4.BackColor = Color.Transparent;
-      tabPage4.Location = new Point(4, 24);
-      tabPage4.Name = "tabPage4";
-      tabPage4.Padding = new Padding(3);
-      tabPage4.Size = new Size(1518, 750);
-      tabPage4.TabIndex = 3;
-      tabPage4.Text = "Dashboard";
       // 
       // tabPage1
       // 
@@ -1376,7 +1364,7 @@ namespace ReforgerServerApp
       Icon = (Icon) resources.GetObject("$this.Icon");
       MinimumSize = new Size(1440, 782);
       Name = "Main";
-      Text = "Longbow: Arma Dedicated Server Tool";
+      Text = "Longbow - Arma Dedicated Server Tool";
       FormClosing += OnFormClosing;
       tabControl1.ResumeLayout(false);
       tabPage1.ResumeLayout(false);
@@ -1501,7 +1489,6 @@ namespace ReforgerServerApp
     private TableLayoutPanel tableLayoutPanel13;
     private Label pingSiteStatusLabel;
     private PictureBox flagStatusPB;
-    private TabPage tabPage4;
     private FluentChart chartFps;
     private FluentChart chartMem;
     private Label fpsLabel;

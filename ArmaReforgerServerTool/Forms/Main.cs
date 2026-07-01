@@ -244,7 +244,7 @@ namespace ReforgerServerApp
 
       var availableMods = ConfigurationManager.GetInstance().GetAvailableMods();
       bool hasDeletedAtLeastOne = false;
-
+      GetAvailableModsList().BeginUpdate();
       foreach (Mod mod in modsToDelete)
       {
         if (availableMods.Remove(mod))
@@ -255,6 +255,7 @@ namespace ReforgerServerApp
       {
         FileIOManager.GetInstance().WriteModsDatabase();
       }
+      GetAvailableModsList().EndUpdate();
     }
 
     /// <summary>
@@ -268,6 +269,8 @@ namespace ReforgerServerApp
     private void AddToEnabledModsBtnPressed(object sender, EventArgs e)
     {
       Mod[] modsToMove = new Mod[GetAvailableModsList().SelectedItems.Count];
+      GetAvailableModsList().BeginUpdate();
+      GetEnabledModsList().BeginUpdate();
       GetAvailableModsList().SelectedItems.CopyTo(modsToMove, 0);
       foreach (Mod mod in modsToMove)
       {
@@ -277,6 +280,8 @@ namespace ReforgerServerApp
       }
       ConfigurationManager.GetInstance().AlphabetiseModLists();
       ResetModFilters();
+      GetAvailableModsList().EndUpdate();
+      GetEnabledModsList().EndUpdate();
     }
 
     /// <summary>
@@ -290,6 +295,8 @@ namespace ReforgerServerApp
     private void RemovedFromEnabledModsBtnPressed(object sender, EventArgs e)
     {
       Mod[] modsToMove = new Mod[GetEnabledModsList().SelectedItems.Count];
+      GetAvailableModsList().BeginUpdate();
+      GetEnabledModsList().BeginUpdate();
       GetEnabledModsList().SelectedItems.CopyTo(modsToMove, 0);
       foreach (Mod mod in modsToMove)
       {
@@ -299,6 +306,8 @@ namespace ReforgerServerApp
       }
       ConfigurationManager.GetInstance().AlphabetiseModLists();
       ResetModFilters();
+      GetAvailableModsList().EndUpdate();
+      GetEnabledModsList().EndUpdate();
     }
 
     /// <summary>
@@ -310,6 +319,7 @@ namespace ReforgerServerApp
     {
       if ((Mod) GetEnabledModsList().SelectedItem != null)
       {
+        GetEnabledModsList().BeginUpdate();
         Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
         // Set move backward to true as moving position 'up' actually means moving the mod earlier in the list
@@ -318,6 +328,7 @@ namespace ReforgerServerApp
         // Re-select the mod so we can do multiple moves in a row if we like
         GetEnabledModsList().SelectedItems.Clear();
         GetEnabledModsList().SelectedItem = m;
+        GetEnabledModsList().EndUpdate();
       }
     }
 
@@ -330,6 +341,7 @@ namespace ReforgerServerApp
     {
       if ((Mod) GetEnabledModsList().SelectedItem != null)
       {
+        GetEnabledModsList().BeginUpdate();
         Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
         // Move forward is the default, this will mean moving the mod later in the list
@@ -338,6 +350,7 @@ namespace ReforgerServerApp
         // Re-select the mod so we can do multiple moves in a row if we like
         GetEnabledModsList().SelectedItems.Clear();
         GetEnabledModsList().SelectedItem = m;
+        GetEnabledModsList().EndUpdate();
       }
     }
 
