@@ -64,6 +64,16 @@ namespace Longbow.Managers
       return m_instance;
     }
 
+    public static AdvancedSetting GetSetting(Dictionary<string, AdvancedSetting> settings, string key)
+    {
+      if (settings.TryGetValue(key, out var setting))
+      {
+        return setting;
+      }
+      // Return a "safe" default so the app doesn't crash
+      return SavedState.GetDefaultAdvancedSettings()[key];
+    }
+
     public Dictionary<string, AdvancedSetting> GetLoadedAdvancedSettings() { return m_savedState.advancedSettings; }
     public string GetSavedStateFile() { return m_savedStateFile; }
     public SavedState GetSavedState() { return m_savedState; }

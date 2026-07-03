@@ -109,5 +109,7 @@ namespace ReforgerServerApp.Models
     public LaunchArgument jobSysShortWorkerCount;
     public LaunchArgument jobSysLongWorkerCount;
     public LaunchArgument forceDisableNightGrain;
+    public LaunchArgument keepSessionSave;
+    public LaunchArgument playerLimits;
   }
 }

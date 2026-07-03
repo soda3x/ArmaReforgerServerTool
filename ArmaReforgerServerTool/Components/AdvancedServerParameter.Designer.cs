@@ -50,7 +50,7 @@ namespace ReforgerServerApp.Components
             description.Font = new Font("Segoe UI", 6.75F, FontStyle.Bold, GraphicsUnit.Point);
             description.Location = new Point(4, 70);
             description.Name = "description";
-            description.Size = new Size(193, 32);
+            description.Size = new Size(193, 50);
             description.TabIndex = 1;
             description.Text = "descriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescriptiondescription";
             // 

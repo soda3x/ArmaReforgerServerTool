@@ -17,6 +17,7 @@ using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
 using Serilog;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace ReforgerServerApp
 {
@@ -25,6 +26,8 @@ namespace ReforgerServerApp
     private BindingSource m_availableModsBindingSource;
     private BindingSource m_enabledModsBindingSource;
     private ServerStatusParser m_serverStatusParser;
+    private ReconClient m_reconClient;
+    private BindingList<RconPlayer> m_rconPlayers;
 
     public Main()
     {
@@ -104,6 +107,18 @@ namespace ReforgerServerApp
       chartMem.Units = "GB";
 
       steamCmdLog.ScrollBars = ScrollBars.Vertical;
+
+      steamCmdLog.ReadOnly = true;
+
+      reconLog.ReadOnly = true;
+      reconSpinner.Visible = false;
+      reconConnectButton.Text = "Connect";
+
+      m_rconPlayers = [];
+
+      connectedPlayersList.DataSource = m_rconPlayers;
+      connectedPlayersList.DisplayMember = "PlayerName";
+      connectedPlayersList.ValueMember = "PlayerId";
 
       ThemeManager.GetInstance().ConfigureTheme(this);
     }
@@ -548,6 +563,8 @@ namespace ReforgerServerApp
       moveModPosDownBtn.Enabled = enabled;
       loadSaveGameBtn.Enabled = enabled;
       keepServerUpdated.Enabled = enabled;
+      importModsBtn.Enabled = enabled;
+      exportModsBtn.Enabled = enabled;
 
       // The clipboard buttons are the opposite
       copyAddressBtn.Enabled = !enabled;
@@ -1022,7 +1039,7 @@ namespace ReforgerServerApp
       }
     }
 
-    void CreateAdvancedServerParameterControls()
+    private void CreateAdvancedServerParameterControls()
     {
       Dictionary<string, AdvancedSetting> loadedSettings = SavedStateManager.GetInstance().GetSavedState().advancedSettings;
 
@@ -1033,10 +1050,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 1000,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["maxFPS"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "maxFPS").Value,
         Description = "Limits your server to the specified target FPS. Recommended."
       };
-      limitServerMaxFPS.CheckBox.Checked = loadedSettings["maxFPS"].Enabled;
+      limitServerMaxFPS.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "maxFPS").Enabled;
       advancedParametersPanel.Controls.Add(limitServerMaxFPS);
 
       AdvancedServerParameterTime autoRestartTime = new()
@@ -1054,9 +1071,9 @@ namespace ReforgerServerApp
       {
         ParameterName = "addonsRepair",
         ParameterFriendlyName = "Verify and Repair Addons",
-        Description ="Verifies the integrity of all installed addons. If any corrupted addons are found, they will be repaired automatically."
+        Description ="Verifies the integrity of all installed addons.\r\nIf any corrupted addons are found, they will be repaired automatically."
       };
-      addonsRepair.CheckBox.Checked = loadedSettings["addonsRepair"].Enabled;
+      addonsRepair.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "addonsRepair").Enabled;
       advancedParametersPanel.Controls.Add(addonsRepair);
 
       AdvancedServerParameterBool autoRestartOnCrash = new()
@@ -1066,7 +1083,7 @@ namespace ReforgerServerApp
         Description = "The tool will monitor the server for crashes and attempt to restart it automatically."
       };
       autoRestartOnCrash.CheckBox.CheckedChanged += AutoRestartOnCrashCheckChanged;
-      autoRestartOnCrash.CheckBox.Checked = loadedSettings.ContainsKey("autoRestartOnCrash") ? loadedSettings["autoRestartOnCrash"].Enabled : false;
+      autoRestartOnCrash.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoRestartOnCrash").Enabled;
       advancedParametersPanel.Controls.Add(autoRestartOnCrash);
 
       AdvancedServerParameterNumeric autoReload = new()
@@ -1077,23 +1094,23 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["autoreload"].Value
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "autoreload").Value
       };
-      autoReload.CheckBox.Checked = loadedSettings["autoreload"].Enabled;
+      autoReload.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoreload").Enabled;
       advancedParametersPanel.Controls.Add(autoReload);
 
       AdvancedServerParameterString loadSessionSave = new()
       {
         ParameterName = "loadSessionSave",
         ParameterFriendlyName = "Load Session Save",
-        Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
+        Description = "Name of save excluding the path and file extension.\r\n\r\nLeave blank to use the latest save.",
         ParameterPlaceholder = "Using latest save..."
       };
-      bool loadSessionSavedEnabled = loadedSettings["loadSessionSave"].Enabled;
+      bool loadSessionSavedEnabled = SavedStateManager.GetSetting(loadedSettings, "loadSessionSave").Enabled;
       loadSessionSave.CheckBox.Checked = loadSessionSavedEnabled;
       if (loadSessionSavedEnabled)
       {
-        loadSessionSave.ParameterValue = loadedSettings["loadSessionSave"].Value;
+        loadSessionSave.ParameterValue = SavedStateManager.GetSetting(loadedSettings, "loadSessionSave").Value;
       }
       advancedParametersPanel.Controls.Add(loadSessionSave);
 
@@ -1104,7 +1121,7 @@ namespace ReforgerServerApp
         Description = "Enable this to host the server without using the Arma Reforger backend."
       };
       noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
-      noBackend.CheckBox.Checked = loadedSettings["noBackend"].Enabled;
+      noBackend.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "noBackend").Enabled;
       advancedParametersPanel.Controls.Add(noBackend);
 
       AdvancedServerParameterBool autoShutdown = new()
@@ -1113,16 +1130,16 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "Auto Shutdown",
         Description = "Ensures the correct server shutdown process, use with \"Auto Reload\"."
       };
-      autoShutdown.CheckBox.Checked = loadedSettings["autoShutdown"].Enabled;
+      autoShutdown.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoShutdown").Enabled;
       advancedParametersPanel.Controls.Add(autoShutdown);
 
       AdvancedServerParameterBool logVoting = new()
       {
         ParameterName = "logVoting",
         ParameterFriendlyName = "Log Voting",
-        Description = "Adds logging info to the voting system with information about who created, voted, and against whom the vote was created."
+        Description = "Adds logging info to the voting system with information about who created,\r\nvoted, and against whom the vote was created."
       };
-      logVoting.CheckBox.Checked = loadedSettings["logVoting"].Enabled;
+      logVoting.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "logVoting").Enabled;
       advancedParametersPanel.Controls.Add(logVoting);
 
       AdvancedServerParameterNumeric overridePort = new()
@@ -1132,10 +1149,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 65535,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["bindPort"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "bindPort").Value,
         Description = "Override the ports specified in server configuration."
       };
-      overridePort.CheckBox.Checked = loadedSettings["bindPort"].Enabled;
+      overridePort.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "bindPort").Enabled;
       advancedParametersPanel.Controls.Add(overridePort);
 
       AdvancedServerParameterNumeric networkDynamicSim = new()
@@ -1145,10 +1162,10 @@ namespace ReforgerServerApp
         ParameterMin = 0,
         ParameterMax = 2,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["nds"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "nds").Value,
         Description = "This is set to '2' by default if unchecked."
       };
-      networkDynamicSim.CheckBox.Checked = loadedSettings["nds"].Enabled;
+      networkDynamicSim.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "nds").Enabled;
       advancedParametersPanel.Controls.Add(networkDynamicSim);
 
       AdvancedServerParameterNumeric spatialMapRes = new()
@@ -1158,10 +1175,10 @@ namespace ReforgerServerApp
         ParameterMin = 100,
         ParameterMax = 1000,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["nwkResolution"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "nwkResolution").Value,
         Description = "Defines what resolution Spatial Map cells should be set at in a 100 - 1000m range."
       };
-      spatialMapRes.CheckBox.Checked = loadedSettings["nwkResolution"].Enabled;
+      spatialMapRes.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "nwkResolution").Enabled;
       advancedParametersPanel.Controls.Add(spatialMapRes);
 
       AdvancedServerParameterNumeric staggeringBudget = new()
@@ -1171,10 +1188,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 10201,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["staggeringBudget"].Value,
-        Description = "Defines how many stationary spatial map cells are allowed to be processed in one tick. If not set it uses \"-nds\" diameter."
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "staggeringBudget").Value,
+        Description = "Defines how many stationary spatial map cells are allowed to be processed in one tick.\r\n\r\nIf not set it uses \"-nds\" diameter."
       };
-      staggeringBudget.CheckBox.Checked = loadedSettings["staggeringBudget"].Enabled;
+      staggeringBudget.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "staggeringBudget").Enabled;
       advancedParametersPanel.Controls.Add(staggeringBudget);
 
       AdvancedServerParameterNumeric streamingBudget = new()
@@ -1184,10 +1201,10 @@ namespace ReforgerServerApp
         ParameterMin = 100,
         ParameterMax = 10201,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["streamingBudget"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "streamingBudget").Value,
         Description = "Streaming budget is the global streaming budget that is equally distributed between all connections."
       };
-      streamingBudget.CheckBox.Checked = loadedSettings["streamingBudget"].Enabled;
+      streamingBudget.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "streamingBudget").Enabled;
       advancedParametersPanel.Controls.Add(streamingBudget);
 
       AdvancedServerParameterNumeric streamsDelta = new()
@@ -1197,10 +1214,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 1000,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["streamsDelta"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "streamsDelta").Value,
         Description = "Streams delta is a tool to limit the amount of streams being opened for a client."
       };
-      streamsDelta.CheckBox.Checked = loadedSettings["streamsDelta"].Enabled;
+      streamsDelta.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "streamsDelta").Enabled;
       advancedParametersPanel.Controls.Add(streamsDelta);
 
       AdvancedServerParameterNumeric rplTimeoutMs = new()
@@ -1210,10 +1227,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["rpl-timeout-ms"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "rpl-timeout-ms").Value,
         Description = "Sets the server's timeout value, in milliseconds."
       };
-      rplTimeoutMs.CheckBox.Checked = loadedSettings["rpl-timeout-ms"].Enabled;
+      rplTimeoutMs.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "rpl-timeout-ms").Enabled;
       advancedParametersPanel.Controls.Add(rplTimeoutMs);
 
       AdvancedServerParameterBool aiPartialSim = new()
@@ -1222,16 +1239,16 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "AI Partial Sim",
         Description = "Sets in how many batches all simulable AIs will divided and processed."
       };
-      aiPartialSim.CheckBox.Checked = loadedSettings["aiPartialSim"].Enabled;
+      aiPartialSim.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "aiPartialSim").Enabled;
       advancedParametersPanel.Controls.Add(aiPartialSim);
 
       AdvancedServerParameterBool createDB = new()
       {
         ParameterName = "createDB",
         ParameterFriendlyName = "Force Recreate Database",
-        Description = "Forces database file's regeneration. Useful after file directories changes, when some resources were moved elsewhere."
+        Description = "Forces database file's regeneration.\r\n\r\nUseful after file directories changes, when some resources were moved elsewhere."
       };
-      createDB.CheckBox.Checked = loadedSettings["createDB"].Enabled;
+      createDB.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "createDB").Enabled;
       advancedParametersPanel.Controls.Add(createDB);
 
       AdvancedServerParameterString debugger = new()
@@ -1241,11 +1258,11 @@ namespace ReforgerServerApp
         ParameterPlaceholder = "127.0.0.1",
         Description = "Sets the script debugger to a specific address."
       };
-      bool debuggerEnabled = loadedSettings["debugger"].Enabled;
+      bool debuggerEnabled = SavedStateManager.GetSetting(loadedSettings, "debugger").Enabled;
       debugger.CheckBox.Checked = debuggerEnabled;
       if (debuggerEnabled)
       {
-        debugger.ParameterValue = loadedSettings["debugger"].Value;
+        debugger.ParameterValue = SavedStateManager.GetSetting(loadedSettings, "debugger").Value;
       }
       advancedParametersPanel.Controls.Add(debugger);
 
@@ -1256,10 +1273,10 @@ namespace ReforgerServerApp
         ParameterIncrement = 1,
         ParameterMin = 1,
         ParameterMax = 65535,
-        ParameterValue = loadedSettings["debuggerPort"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "debuggerPort").Value,
         Description = "Sets the script debugger to a specific port. "
       };
-      debuggerPort.CheckBox.Checked = loadedSettings["debuggerPort"].Enabled;
+      debuggerPort.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "debuggerPort").Enabled;
       advancedParametersPanel.Controls.Add(debuggerPort);
 
       AdvancedServerParameterBool disableShadersBuild = new()
@@ -1268,7 +1285,7 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "Disable Shaders Generation",
         Description = "Disables shaders generation."
       };
-      disableShadersBuild.CheckBox.Checked = loadedSettings["disableShadersBuild"].Enabled;
+      disableShadersBuild.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "disableShadersBuild").Enabled;
       advancedParametersPanel.Controls.Add(disableShadersBuild);
 
       AdvancedServerParameterBool generateShaders = new()
@@ -1277,7 +1294,7 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "Force Generate Shaders",
         Description = "Forces shaders generation."
       };
-      generateShaders.CheckBox.Checked = loadedSettings["generateShaders"].Enabled;
+      generateShaders.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "generateShaders").Enabled;
       advancedParametersPanel.Controls.Add(generateShaders);
 
       AdvancedServerParameterBool rplEncodeAsLongJobs = new()
@@ -1286,7 +1303,7 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "RPL Encode as Long Jobs",
         Description = "Makes replication use long encoding jobs instead of short ones."
       };
-      rplEncodeAsLongJobs.CheckBox.Checked = loadedSettings["rplEncodeAsLongJobs"].Enabled;
+      rplEncodeAsLongJobs.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "rplEncodeAsLongJobs").Enabled;
       advancedParametersPanel.Controls.Add(rplEncodeAsLongJobs);
 
       AdvancedServerParameterNumeric jobsysShortWorkerCount = new()
@@ -1296,9 +1313,9 @@ namespace ReforgerServerApp
         Description = "Sets the number of threads working on short jobs (jobs that must finish in one update loop).",
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
-        ParameterValue = loadedSettings["jobsysShortWorkerCount"].Value
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "jobsysShortWorkerCount").Value
       };
-      jobsysShortWorkerCount.CheckBox.Checked = loadedSettings["jobsysShortWorkerCount"].Enabled;
+      jobsysShortWorkerCount.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "jobsysShortWorkerCount").Enabled;
       advancedParametersPanel.Controls.Add(jobsysShortWorkerCount);
 
       AdvancedServerParameterNumeric jobsysLongWorkerCount = new()
@@ -1308,9 +1325,9 @@ namespace ReforgerServerApp
         Description = "Sets the number of threads working on long jobs (jobs that can span multiple iterations of update loop).",
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
-        ParameterValue = loadedSettings["jobsysLongWorkerCount"].Value
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "jobsysLongWorkerCount").Value
       };
-      jobsysLongWorkerCount.CheckBox.Checked = loadedSettings["jobsysLongWorkerCount"].Enabled;
+      jobsysLongWorkerCount.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "jobsysLongWorkerCount").Enabled;
       advancedParametersPanel.Controls.Add(jobsysLongWorkerCount);
 
       AdvancedServerParameterNumeric freezeCheck = new()
@@ -1321,9 +1338,9 @@ namespace ReforgerServerApp
         ParameterIncrement = 1,
         ParameterMin = 0,
         ParameterMax = 600,
-        ParameterValue = loadedSettings["freezeCheck"].Value
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "freezeCheck").Value
       };
-      freezeCheck.CheckBox.Checked = loadedSettings["freezeCheck"].Enabled;
+      freezeCheck.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "freezeCheck").Enabled;
       advancedParametersPanel.Controls.Add(freezeCheck);
 
       AdvancedServerParameterEnumerated freezeCheckMode = new()
@@ -1333,11 +1350,11 @@ namespace ReforgerServerApp
         Description = "Overrides behavior which should happen when freeze is detected.",
         ParameterAvailableValues = new List<string>() {"crash", "minidump", "kill"}
       };
-      bool freezeCheckModeEnabled = loadedSettings["freezeCheckMode"].Enabled;
+      bool freezeCheckModeEnabled = SavedStateManager.GetSetting(loadedSettings, "freezeCheckMode").Enabled;
       freezeCheckMode.CheckBox.Checked = freezeCheckModeEnabled;
       if (freezeCheckModeEnabled)
       {
-        freezeCheckMode.ParameterValue = loadedSettings["freezeCheckMode"].Value;
+        freezeCheckMode.ParameterValue = SavedStateManager.GetSetting(loadedSettings, "freezeCheckMode").Value;
       }
       advancedParametersPanel.Controls.Add(freezeCheckMode);
 
@@ -1347,8 +1364,28 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "Force Disable Night Grain",
         Description = "Disables night grain in multiplayer.",
       };
-      forceDisableNightGrain.CheckBox.Checked = loadedSettings["forceDisableNightGrain"].Enabled;
+      forceDisableNightGrain.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "forceDisableNightGrain").Enabled;
       advancedParametersPanel.Controls.Add(forceDisableNightGrain);
+
+      AdvancedServerParameterBool keepSessionSave = new()
+      {
+        ParameterName = "keepSessionSave",
+        ParameterFriendlyName = "Keep Session Save",
+        Description = "Keep any data for completed playthroughs on the game's end screen."
+      };
+      keepSessionSave.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "keepSessionSave").Enabled;
+      advancedParametersPanel.Controls.Add(keepSessionSave);
+
+      AdvancedServerParameterString playerLimits = new()
+      {
+        ParameterName = "playerLimits",
+        ParameterFriendlyName = "Player Faction Limits",
+        Description = "Maximum number of players per faction.\r\n\r\nFormat is FactionKey:Number, comma separated. E.g. \"FIA:3,US:1,USSR:2\".",
+        ParameterPlaceholder = "e.g. FIA:3,US:1,USSR:2",
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings,"playerLimits").Value
+      };
+      playerLimits.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "playerLimits").Enabled;
+      advancedParametersPanel.Controls.Add(playerLimits);
 
       foreach (AdvancedServerParameter param in advancedParametersPanel.Controls)
       {
@@ -1415,6 +1452,8 @@ namespace ReforgerServerApp
         playerCountStatusLabel.Text = serverOfflineString;
         fpsLabel.Text = "-- FPS";
         memLabel.Text = "-- GB";
+        chartFps.Clear();
+        chartMem.Clear();
         flagStatusPB.Image = null;
         return;
       }
@@ -1665,6 +1704,16 @@ namespace ReforgerServerApp
         args.forceDisableNightGrain = new("forceDisableNightGrain");
       }
 
+      if (advParams["playerLimits"].Checked())
+      {
+        args.playerLimits = new("playerLimits", Convert.ToString(advParams["playerLimits"].ParameterValue));
+      }
+
+      if (advParams["keepSessionSave"].Checked())
+      {
+        args.keepSessionSave = new("keepSessionSave");
+      }
+
       ProcessManager.GetInstance().SetLaunchArgumentsModel(args);
     }
 
@@ -1811,6 +1860,151 @@ namespace ReforgerServerApp
     private void OnJoinCodeToClipboard(object sender, EventArgs e)
     {
       Clipboard.SetText(joinCodeStatusLabel.Text);
+    }
+
+    private void OnReconDisconnect()
+    {
+      this.Invoke(new Action(() =>
+      {
+        reconSpinner.Visible = false;
+        reconConnectButton.Enabled = true;
+        reconConnectButton.Text = "Connect";
+        reconAddress.Enabled = true;
+        reconPort.Enabled = true;
+        reconPassword.Enabled = true;
+        reconPassword.UseSystemPasswordChar = false;
+        reconLog.AppendText($"{Utilities.GetTimestamp()} Disconnected from RCON server.{Environment.NewLine}");
+      }));
+
+      m_reconClient.StopRecurringCommand("periodicPlayers");
+    }
+
+    private void OnReconConnectPressed(object sender, EventArgs e)
+    {
+      if (m_reconClient != null && m_reconClient.IsConnected)
+      {
+        m_reconClient.Disconnect();
+        return;
+      }
+      reconSpinner.Visible = true;
+      reconConnectButton.Enabled = false;
+      reconConnectButton.Text = "Connecting...";
+      reconAddress.Enabled = false;
+      reconPort.Enabled = false;
+      reconPassword.Enabled = false;
+      reconPassword.UseSystemPasswordChar = true;
+      m_reconClient = new(reconAddress.Text, Convert.ToUInt16(reconPort.Value), reconPassword.Text);
+
+      m_reconClient.OnServerMessage += (message) =>
+      {
+        if (message.Contains("Players on server"))
+        {
+          string[] lines = message.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+          List<RconPlayer> parsedPlayers = new List<RconPlayer>();
+
+          for (int i = 1; i < lines.Length; i++)
+          {
+            string line = lines[i].Trim();
+
+            if (string.IsNullOrEmpty(line) || line.StartsWith('-'))
+            {
+              continue;
+            }
+
+            try
+            {
+              parsedPlayers.Add(new RconPlayer(line));
+            }
+            catch (Exception ex)
+            {
+              Debug.WriteLine($"ReCON Client - Failed to parse line '{line}': {ex.Message}");
+            }
+          }
+          this.Invoke(new Action(() =>
+          {
+            connectedPlayersList.BeginUpdate();
+
+            m_rconPlayers.Clear();
+            foreach (var player in parsedPlayers)
+            {
+              m_rconPlayers.Add(player);
+            }
+
+            connectedPlayersList.EndUpdate();
+          }));
+          return;
+        }
+        this.Invoke(new Action(() =>
+        {
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {message}{Environment.NewLine}");
+        }));
+      };
+
+      m_reconClient.OnDisconnected += () =>
+      {
+        OnReconDisconnect();
+      };
+
+      Task.Run(async () =>
+      {
+        bool connected = await m_reconClient.ConnectAsync();
+        if (connected)
+        {
+          this.Invoke(new Action(() =>
+          {
+            reconConnectButton.Text = "Disconnect";
+            reconLog.AppendText($"{Utilities.GetTimestamp()} Connected to RCON server.{Environment.NewLine}");
+          }));
+
+          // Start sending the players command to populate the player list
+          m_reconClient.StartRecurringCommand("periodicPlayers", "players", TimeSpan.FromSeconds(30), (response) =>
+          {
+            Debug.WriteLine(response);
+          });
+        }
+        else
+        {
+          this.Invoke(new Action(() =>
+          {
+            reconConnectButton.Text = "Connect";
+            reconAddress.Enabled = true;
+            reconPort.Enabled = true;
+            reconPassword.Enabled = true;
+            reconPassword.UseSystemPasswordChar = false;
+          }));
+        }
+        this.Invoke(new Action(() =>
+        {
+          reconConnectButton.Enabled = true;
+          reconSpinner.Visible = false;
+        }));
+      });
+    }
+
+    private void ReconSendCmdPressed(object sender, EventArgs e)
+    {
+      string command = reconCmd.Text.Trim();
+      if (string.IsNullOrEmpty(command))
+      {
+        return;
+      }
+      reconLog.AppendText($"{Utilities.GetTimestamp()} Sent: {command}{Environment.NewLine}");
+      if (m_reconClient != null && m_reconClient.IsConnected)
+      {
+        Task.Run(async () =>
+        {
+          string response = await m_reconClient.SendCommandAsync(command);
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {response}{Environment.NewLine}");
+        });
+        reconCmd.Text = string.Empty;
+      }
+      else
+      {
+        this.Invoke(new Action(() =>
+        {
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to send command. Check your connection to the RCON server.{Environment.NewLine}");
+        }));
+      }
     }
   }
 }

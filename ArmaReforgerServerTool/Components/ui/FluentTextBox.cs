@@ -75,6 +75,13 @@ namespace Longbow.Components.ui
     }
 
     [Category("Behavior")]
+    public bool ReadOnly
+    {
+      get => m_textBox.ReadOnly;
+      set => m_textBox.ReadOnly = value;
+    }
+
+    [Category("Behavior")]
      
     public bool UseSystemPasswordChar
     {

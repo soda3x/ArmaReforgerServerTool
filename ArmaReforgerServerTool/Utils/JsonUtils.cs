@@ -548,7 +548,8 @@ namespace ReforgerServerApp.Utils
                 props.advancedSettings = advancedSettings;
                 break;
               default:
-                throw new JsonException($"Unexpected property: {propertyName}");
+                reader.Skip();
+                break;
             }
           }
         }

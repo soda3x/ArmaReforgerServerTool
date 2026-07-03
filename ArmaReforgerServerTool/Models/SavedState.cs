@@ -49,6 +49,8 @@ namespace Longbow.Models
     public static readonly AdvancedSetting DEFAULT_FREEZE_CHECK = new("freezeCheck", 300, false);
     public static readonly AdvancedSetting DEFAULT_FREEZE_CHECK_MODE = new("freezeCheckMode", "minidump", false);
     public static readonly AdvancedSetting DEFAULT_FORCE_DISABLE_NIGHT_GRAIN = new("forceDisableNightGrain", false);
+    public static readonly AdvancedSetting DEFAULT_PLAYER_LIMITS = new("playerLimits", "", false);
+    public static readonly AdvancedSetting DEFAULT_KEEP_SESSION_SAVE = new("keepSessionSave", false);
 
     public Dictionary<string, AdvancedSetting> advancedSettings { get; set; }
     public string serverLocation { get; set; }
@@ -74,7 +76,7 @@ namespace Longbow.Models
     /// Create a default Advanced Settings dictionary
     /// </summary>
     /// <returns>Advanced Settings dictionary containing defaults</returns>
-    private static Dictionary<string, AdvancedSetting> GetDefaultAdvancedSettings()
+    public static Dictionary<string, AdvancedSetting> GetDefaultAdvancedSettings()
     {
       Dictionary<string, AdvancedSetting> advancedSettings = new();
       advancedSettings[DEFAULT_MAX_FPS.Name] = DEFAULT_MAX_FPS;
@@ -111,6 +113,8 @@ namespace Longbow.Models
       advancedSettings[DEFAULT_FREEZE_CHECK.Name] = DEFAULT_FREEZE_CHECK;
       advancedSettings[DEFAULT_FREEZE_CHECK_MODE.Name] = DEFAULT_FREEZE_CHECK_MODE;
       advancedSettings[DEFAULT_FORCE_DISABLE_NIGHT_GRAIN.Name] = DEFAULT_FORCE_DISABLE_NIGHT_GRAIN;
+      advancedSettings[DEFAULT_PLAYER_LIMITS.Name] = DEFAULT_PLAYER_LIMITS;
+      advancedSettings[DEFAULT_KEEP_SESSION_SAVE.Name] = DEFAULT_KEEP_SESSION_SAVE;
       return advancedSettings;
     }
   }

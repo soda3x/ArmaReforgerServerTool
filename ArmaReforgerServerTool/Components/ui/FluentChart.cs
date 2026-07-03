@@ -24,6 +24,12 @@ namespace Longbow.Components.ui
       this.Invalidate();
     }
 
+    public void Clear()
+    {
+      m_dataPoints.Clear();
+      this.Invalidate();
+    }
+
     public string Units
     {
       get => m_units;

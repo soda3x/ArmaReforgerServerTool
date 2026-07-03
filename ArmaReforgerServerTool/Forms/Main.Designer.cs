@@ -113,6 +113,26 @@ namespace ReforgerServerApp
       tableLayoutPanel9 = new TableLayoutPanel();
       serverAddressStatusLabel = new Label();
       copyAddressBtn = new FontAwesome.Sharp.IconButton();
+      tabPage4 = new TabPage();
+      tableLayoutPanel14 = new TableLayoutPanel();
+      tableLayoutPanel15 = new TableLayoutPanel();
+      connectedPlayersList = new FluentListBox();
+      pictureBox2 = new PictureBox();
+      tableLayoutPanel19 = new TableLayoutPanel();
+      kickButton = new FontAwesome.Sharp.IconButton();
+      banButton = new FontAwesome.Sharp.IconButton();
+      banManagerButton = new FontAwesome.Sharp.IconButton();
+      tableLayoutPanel16 = new TableLayoutPanel();
+      tableLayoutPanel17 = new TableLayoutPanel();
+      reconAddress = new FluentTextBox();
+      reconPort = new FluentNumericUpDown();
+      reconPassword = new FluentTextBox();
+      reconConnectButton = new FontAwesome.Sharp.IconButton();
+      reconSpinner = new AnimOfDots.Circular();
+      reconLog = new FluentTextBox();
+      tableLayoutPanel18 = new TableLayoutPanel();
+      reconSendCmdButton = new FontAwesome.Sharp.IconButton();
+      reconCmd = new FluentTextBox();
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
@@ -144,6 +164,15 @@ namespace ReforgerServerApp
       tableLayoutPanel8.SuspendLayout();
       groupBox8.SuspendLayout();
       tableLayoutPanel9.SuspendLayout();
+      tabPage4.SuspendLayout();
+      tableLayoutPanel14.SuspendLayout();
+      tableLayoutPanel15.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize) pictureBox2).BeginInit();
+      tableLayoutPanel19.SuspendLayout();
+      tableLayoutPanel16.SuspendLayout();
+      tableLayoutPanel17.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize) reconPort).BeginInit();
+      tableLayoutPanel18.SuspendLayout();
       SuspendLayout();
       // 
       // tabControl1
@@ -152,6 +181,7 @@ namespace ReforgerServerApp
       tabControl1.Controls.Add(tabPage1);
       tabControl1.Controls.Add(tabPage2);
       tabControl1.Controls.Add(tabPage3);
+      tabControl1.Controls.Add(tabPage4);
       tabControl1.Location = new Point(12, 12);
       tabControl1.Name = "tabControl1";
       tabControl1.SelectedIndex = 0;
@@ -495,6 +525,7 @@ namespace ReforgerServerApp
       modsSearchTB.Name = "modsSearchTB";
       modsSearchTB.Padding = new Padding(10, 7, 10, 7);
       modsSearchTB.PlaceholderText = "Search for a mod...";
+      modsSearchTB.ReadOnly = false;
       modsSearchTB.ScrollBars = ScrollBars.None;
       modsSearchTB.Size = new Size(623, 30);
       modsSearchTB.TabIndex = 8;
@@ -717,6 +748,7 @@ namespace ReforgerServerApp
       steamCmdLog.Name = "steamCmdLog";
       steamCmdLog.Padding = new Padding(10, 7, 10, 7);
       steamCmdLog.PlaceholderText = "";
+      steamCmdLog.ReadOnly = false;
       steamCmdLog.ScrollBars = ScrollBars.None;
       steamCmdLog.Size = new Size(1253, 637);
       steamCmdLog.TabIndex = 1;
@@ -1355,6 +1387,330 @@ namespace ReforgerServerApp
       copyAddressBtn.UseVisualStyleBackColor = true;
       copyAddressBtn.Click += OnServerAddressToClipboard;
       // 
+      // tabPage4
+      // 
+      tabPage4.BackColor = Color.Transparent;
+      tabPage4.Controls.Add(tableLayoutPanel14);
+      tabPage4.Location = new Point(4, 24);
+      tabPage4.Name = "tabPage4";
+      tabPage4.Padding = new Padding(3);
+      tabPage4.Size = new Size(1518, 750);
+      tabPage4.TabIndex = 3;
+      tabPage4.Text = "ReCON";
+      // 
+      // tableLayoutPanel14
+      // 
+      tableLayoutPanel14.ColumnCount = 2;
+      tableLayoutPanel14.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 77.97619F));
+      tableLayoutPanel14.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 22.02381F));
+      tableLayoutPanel14.Controls.Add(tableLayoutPanel15, 1, 0);
+      tableLayoutPanel14.Controls.Add(tableLayoutPanel16, 0, 0);
+      tableLayoutPanel14.Dock = DockStyle.Fill;
+      tableLayoutPanel14.Location = new Point(3, 3);
+      tableLayoutPanel14.Name = "tableLayoutPanel14";
+      tableLayoutPanel14.RowCount = 1;
+      tableLayoutPanel14.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+      tableLayoutPanel14.Size = new Size(1512, 744);
+      tableLayoutPanel14.TabIndex = 0;
+      // 
+      // tableLayoutPanel15
+      // 
+      tableLayoutPanel15.ColumnCount = 1;
+      tableLayoutPanel15.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel15.Controls.Add(connectedPlayersList, 0, 1);
+      tableLayoutPanel15.Controls.Add(pictureBox2, 0, 0);
+      tableLayoutPanel15.Controls.Add(tableLayoutPanel19, 0, 2);
+      tableLayoutPanel15.Dock = DockStyle.Fill;
+      tableLayoutPanel15.Location = new Point(1179, 0);
+      tableLayoutPanel15.Margin = new Padding(0);
+      tableLayoutPanel15.Name = "tableLayoutPanel15";
+      tableLayoutPanel15.RowCount = 3;
+      tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 14.042551F));
+      tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Percent, 85.95745F));
+      tableLayoutPanel15.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+      tableLayoutPanel15.Size = new Size(333, 744);
+      tableLayoutPanel15.TabIndex = 0;
+      // 
+      // connectedPlayersList
+      // 
+      connectedPlayersList.BackColor = Color.Transparent;
+      connectedPlayersList.DataSource = null;
+      connectedPlayersList.DisplayMember = "";
+      connectedPlayersList.Dock = DockStyle.Fill;
+      connectedPlayersList.FieldBackColor = SystemColors.Window;
+      connectedPlayersList.FormattingEnabled = false;
+      connectedPlayersList.ItemHeight = 32;
+      connectedPlayersList.Location = new Point(0, 99);
+      connectedPlayersList.Margin = new Padding(0, 0, 0, 5);
+      connectedPlayersList.Name = "connectedPlayersList";
+      connectedPlayersList.Padding = new Padding(3);
+      connectedPlayersList.SelectedIndex = -1;
+      connectedPlayersList.SelectedItem = null;
+      connectedPlayersList.SelectedValue = null;
+      connectedPlayersList.SelectionMode = SelectionMode.One;
+      connectedPlayersList.Size = new Size(333, 607);
+      connectedPlayersList.TabIndex = 3;
+      connectedPlayersList.ValueMember = "";
+      // 
+      // pictureBox2
+      // 
+      pictureBox2.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      pictureBox2.Image = (Image) resources.GetObject("pictureBox2.Image");
+      pictureBox2.Location = new Point(5, 5);
+      pictureBox2.Margin = new Padding(5);
+      pictureBox2.Name = "pictureBox2";
+      pictureBox2.Size = new Size(323, 89);
+      pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+      pictureBox2.TabIndex = 0;
+      pictureBox2.TabStop = false;
+      // 
+      // tableLayoutPanel19
+      // 
+      tableLayoutPanel19.ColumnCount = 3;
+      tableLayoutPanel19.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 75F));
+      tableLayoutPanel19.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 75F));
+      tableLayoutPanel19.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 15F));
+      tableLayoutPanel19.Controls.Add(kickButton, 0, 0);
+      tableLayoutPanel19.Controls.Add(banButton, 1, 0);
+      tableLayoutPanel19.Controls.Add(banManagerButton, 2, 0);
+      tableLayoutPanel19.Dock = DockStyle.Fill;
+      tableLayoutPanel19.Location = new Point(0, 711);
+      tableLayoutPanel19.Margin = new Padding(0);
+      tableLayoutPanel19.MaximumSize = new Size(0, 32);
+      tableLayoutPanel19.Name = "tableLayoutPanel19";
+      tableLayoutPanel19.RowCount = 1;
+      tableLayoutPanel19.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel19.Size = new Size(333, 32);
+      tableLayoutPanel19.TabIndex = 2;
+      // 
+      // kickButton
+      // 
+      kickButton.Dock = DockStyle.Fill;
+      kickButton.IconChar = FontAwesome.Sharp.IconChar.None;
+      kickButton.IconColor = Color.Black;
+      kickButton.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      kickButton.Location = new Point(0, 0);
+      kickButton.Margin = new Padding(0, 0, 5, 0);
+      kickButton.MaximumSize = new Size(0, 32);
+      kickButton.Name = "kickButton";
+      kickButton.Size = new Size(70, 32);
+      kickButton.TabIndex = 0;
+      kickButton.Text = "Kick";
+      kickButton.UseVisualStyleBackColor = true;
+      // 
+      // banButton
+      // 
+      banButton.Dock = DockStyle.Fill;
+      banButton.IconChar = FontAwesome.Sharp.IconChar.None;
+      banButton.IconColor = Color.Black;
+      banButton.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      banButton.Location = new Point(75, 0);
+      banButton.Margin = new Padding(0, 0, 5, 0);
+      banButton.MaximumSize = new Size(0, 32);
+      banButton.Name = "banButton";
+      banButton.Size = new Size(70, 32);
+      banButton.TabIndex = 1;
+      banButton.Text = "Ban";
+      banButton.UseVisualStyleBackColor = true;
+      // 
+      // banManagerButton
+      // 
+      banManagerButton.Dock = DockStyle.Right;
+      banManagerButton.IconChar = FontAwesome.Sharp.IconChar.None;
+      banManagerButton.IconColor = Color.Black;
+      banManagerButton.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      banManagerButton.Location = new Point(238, 0);
+      banManagerButton.Margin = new Padding(0);
+      banManagerButton.MaximumSize = new Size(95, 32);
+      banManagerButton.Name = "banManagerButton";
+      banManagerButton.Size = new Size(95, 32);
+      banManagerButton.TabIndex = 2;
+      banManagerButton.Text = "Ban Manager";
+      banManagerButton.UseVisualStyleBackColor = true;
+      // 
+      // tableLayoutPanel16
+      // 
+      tableLayoutPanel16.ColumnCount = 1;
+      tableLayoutPanel16.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel16.Controls.Add(tableLayoutPanel17, 0, 0);
+      tableLayoutPanel16.Controls.Add(reconLog, 0, 1);
+      tableLayoutPanel16.Controls.Add(tableLayoutPanel18, 0, 2);
+      tableLayoutPanel16.Dock = DockStyle.Fill;
+      tableLayoutPanel16.Location = new Point(0, 5);
+      tableLayoutPanel16.Margin = new Padding(0, 5, 5, 0);
+      tableLayoutPanel16.Name = "tableLayoutPanel16";
+      tableLayoutPanel16.RowCount = 3;
+      tableLayoutPanel16.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+      tableLayoutPanel16.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel16.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+      tableLayoutPanel16.Size = new Size(1174, 739);
+      tableLayoutPanel16.TabIndex = 1;
+      // 
+      // tableLayoutPanel17
+      // 
+      tableLayoutPanel17.ColumnCount = 5;
+      tableLayoutPanel17.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.411768F));
+      tableLayoutPanel17.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
+      tableLayoutPanel17.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 29.4117661F));
+      tableLayoutPanel17.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100F));
+      tableLayoutPanel17.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 41.1764679F));
+      tableLayoutPanel17.Controls.Add(reconAddress, 0, 0);
+      tableLayoutPanel17.Controls.Add(reconPort, 1, 0);
+      tableLayoutPanel17.Controls.Add(reconPassword, 2, 0);
+      tableLayoutPanel17.Controls.Add(reconConnectButton, 3, 0);
+      tableLayoutPanel17.Controls.Add(reconSpinner, 4, 0);
+      tableLayoutPanel17.Dock = DockStyle.Fill;
+      tableLayoutPanel17.Location = new Point(0, 0);
+      tableLayoutPanel17.Margin = new Padding(0);
+      tableLayoutPanel17.Name = "tableLayoutPanel17";
+      tableLayoutPanel17.RowCount = 1;
+      tableLayoutPanel17.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel17.Size = new Size(1174, 32);
+      tableLayoutPanel17.TabIndex = 1;
+      // 
+      // reconAddress
+      // 
+      reconAddress.BackColor = Color.Transparent;
+      reconAddress.Dock = DockStyle.Fill;
+      reconAddress.FieldBackColor = SystemColors.Window;
+      reconAddress.Location = new Point(0, 0);
+      reconAddress.Margin = new Padding(0, 0, 5, 0);
+      reconAddress.Multiline = false;
+      reconAddress.Name = "reconAddress";
+      reconAddress.Padding = new Padding(10, 7, 10, 7);
+      reconAddress.PlaceholderText = "RCON Address";
+      reconAddress.ReadOnly = false;
+      reconAddress.ScrollBars = ScrollBars.None;
+      reconAddress.Size = new Size(281, 32);
+      reconAddress.TabIndex = 0;
+      reconAddress.UseSystemPasswordChar = false;
+      // 
+      // reconPort
+      // 
+      reconPort.BackColor = Color.Transparent;
+      reconPort.DecimalPlaces = 0;
+      reconPort.Dock = DockStyle.Fill;
+      reconPort.FieldBackColor = SystemColors.Window;
+      reconPort.Increment = new decimal(new int[] { 1, 0, 0, 0 });
+      reconPort.Location = new Point(286, 0);
+      reconPort.Margin = new Padding(0, 0, 5, 0);
+      reconPort.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+      reconPort.Minimum = new decimal(new int[] { 0, 0, 0, 0 });
+      reconPort.Name = "reconPort";
+      reconPort.Padding = new Padding(10, 7, 35, 7);
+      reconPort.Size = new Size(95, 32);
+      reconPort.TabIndex = 1;
+      reconPort.Value = new decimal(new int[] { 1337, 0, 0, 0 });
+      // 
+      // reconPassword
+      // 
+      reconPassword.BackColor = Color.Transparent;
+      reconPassword.Dock = DockStyle.Fill;
+      reconPassword.FieldBackColor = SystemColors.Window;
+      reconPassword.Location = new Point(386, 0);
+      reconPassword.Margin = new Padding(0, 0, 5, 0);
+      reconPassword.Multiline = false;
+      reconPassword.Name = "reconPassword";
+      reconPassword.Padding = new Padding(10, 7, 10, 7);
+      reconPassword.PlaceholderText = "RCON Password";
+      reconPassword.ReadOnly = false;
+      reconPassword.ScrollBars = ScrollBars.None;
+      reconPassword.Size = new Size(281, 32);
+      reconPassword.TabIndex = 2;
+      reconPassword.UseSystemPasswordChar = false;
+      // 
+      // reconConnectButton
+      // 
+      reconConnectButton.Dock = DockStyle.Fill;
+      reconConnectButton.IconChar = FontAwesome.Sharp.IconChar.None;
+      reconConnectButton.IconColor = Color.Black;
+      reconConnectButton.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      reconConnectButton.Location = new Point(672, 0);
+      reconConnectButton.Margin = new Padding(0);
+      reconConnectButton.Name = "reconConnectButton";
+      reconConnectButton.Size = new Size(100, 32);
+      reconConnectButton.TabIndex = 3;
+      reconConnectButton.Text = "Connect";
+      reconConnectButton.UseVisualStyleBackColor = true;
+      reconConnectButton.Click += OnReconConnectPressed;
+      // 
+      // reconSpinner
+      // 
+      reconSpinner.AnimationSpeed = 10;
+      reconSpinner.BackColor = Color.Transparent;
+      reconSpinner.ForeColor = Color.DodgerBlue;
+      reconSpinner.Location = new Point(777, 5);
+      reconSpinner.Margin = new Padding(5);
+      reconSpinner.Name = "reconSpinner";
+      reconSpinner.Running = true;
+      reconSpinner.Size = new Size(26, 22);
+      reconSpinner.TabIndex = 4;
+      // 
+      // reconLog
+      // 
+      reconLog.BackColor = Color.Transparent;
+      reconLog.Dock = DockStyle.Fill;
+      reconLog.FieldBackColor = SystemColors.Window;
+      reconLog.Location = new Point(0, 37);
+      reconLog.Margin = new Padding(0, 5, 0, 5);
+      reconLog.Multiline = true;
+      reconLog.Name = "reconLog";
+      reconLog.Padding = new Padding(10, 7, 10, 7);
+      reconLog.PlaceholderText = "";
+      reconLog.ReadOnly = false;
+      reconLog.ScrollBars = ScrollBars.None;
+      reconLog.Size = new Size(1174, 665);
+      reconLog.TabIndex = 2;
+      reconLog.UseSystemPasswordChar = false;
+      // 
+      // tableLayoutPanel18
+      // 
+      tableLayoutPanel18.ColumnCount = 2;
+      tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+      tableLayoutPanel18.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70F));
+      tableLayoutPanel18.Controls.Add(reconSendCmdButton, 1, 0);
+      tableLayoutPanel18.Controls.Add(reconCmd, 0, 0);
+      tableLayoutPanel18.Dock = DockStyle.Fill;
+      tableLayoutPanel18.Location = new Point(0, 707);
+      tableLayoutPanel18.Margin = new Padding(0);
+      tableLayoutPanel18.Name = "tableLayoutPanel18";
+      tableLayoutPanel18.RowCount = 1;
+      tableLayoutPanel18.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+      tableLayoutPanel18.Size = new Size(1174, 32);
+      tableLayoutPanel18.TabIndex = 3;
+      // 
+      // reconSendCmdButton
+      // 
+      reconSendCmdButton.Dock = DockStyle.Fill;
+      reconSendCmdButton.IconChar = FontAwesome.Sharp.IconChar.None;
+      reconSendCmdButton.IconColor = Color.Black;
+      reconSendCmdButton.IconFont = FontAwesome.Sharp.IconFont.Auto;
+      reconSendCmdButton.Location = new Point(1104, 0);
+      reconSendCmdButton.Margin = new Padding(0);
+      reconSendCmdButton.Name = "reconSendCmdButton";
+      reconSendCmdButton.Size = new Size(70, 32);
+      reconSendCmdButton.TabIndex = 0;
+      reconSendCmdButton.Text = "Send";
+      reconSendCmdButton.UseVisualStyleBackColor = true;
+      reconSendCmdButton.Click += ReconSendCmdPressed;
+      // 
+      // reconCmd
+      // 
+      reconCmd.BackColor = Color.Transparent;
+      reconCmd.Dock = DockStyle.Fill;
+      reconCmd.FieldBackColor = SystemColors.Window;
+      reconCmd.Location = new Point(0, 0);
+      reconCmd.Margin = new Padding(0, 0, 5, 0);
+      reconCmd.Multiline = false;
+      reconCmd.Name = "reconCmd";
+      reconCmd.Padding = new Padding(10, 7, 10, 7);
+      reconCmd.PlaceholderText = "Enter a command...";
+      reconCmd.ReadOnly = false;
+      reconCmd.ScrollBars = ScrollBars.None;
+      reconCmd.Size = new Size(1099, 32);
+      reconCmd.TabIndex = 1;
+      reconCmd.UseSystemPasswordChar = false;
+      // 
       // Main
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1405,6 +1761,15 @@ namespace ReforgerServerApp
       groupBox8.ResumeLayout(false);
       tableLayoutPanel9.ResumeLayout(false);
       tableLayoutPanel9.PerformLayout();
+      tabPage4.ResumeLayout(false);
+      tableLayoutPanel14.ResumeLayout(false);
+      tableLayoutPanel15.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize) pictureBox2).EndInit();
+      tableLayoutPanel19.ResumeLayout(false);
+      tableLayoutPanel16.ResumeLayout(false);
+      tableLayoutPanel17.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize) reconPort).EndInit();
+      tableLayoutPanel18.ResumeLayout(false);
       ResumeLayout(false);
     }
 
@@ -1493,5 +1858,25 @@ namespace ReforgerServerApp
     private FluentChart chartMem;
     private Label fpsLabel;
     private Label memLabel;
+    private TabPage tabPage4;
+    private TableLayoutPanel tableLayoutPanel14;
+    private TableLayoutPanel tableLayoutPanel15;
+    private TableLayoutPanel tableLayoutPanel16;
+    private PictureBox pictureBox2;
+    private TableLayoutPanel tableLayoutPanel17;
+    private FluentTextBox reconAddress;
+    private FluentNumericUpDown reconPort;
+    private FluentTextBox reconPassword;
+    private FontAwesome.Sharp.IconButton reconConnectButton;
+    private FluentTextBox reconLog;
+    private TableLayoutPanel tableLayoutPanel18;
+    private FontAwesome.Sharp.IconButton reconSendCmdButton;
+    private FluentTextBox reconCmd;
+    private TableLayoutPanel tableLayoutPanel19;
+    private FontAwesome.Sharp.IconButton kickButton;
+    private FontAwesome.Sharp.IconButton banButton;
+    private FontAwesome.Sharp.IconButton banManagerButton;
+    private FluentListBox connectedPlayersList;
+    private AnimOfDots.Circular reconSpinner;
   }
 }
