@@ -62,7 +62,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Appearance")]
-     
+
     public Color FieldBackColor
     {
       get => m_fieldBackColor;
@@ -82,7 +82,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Behavior")]
-     
+
     public bool UseSystemPasswordChar
     {
       get => m_textBox.UseSystemPasswordChar;

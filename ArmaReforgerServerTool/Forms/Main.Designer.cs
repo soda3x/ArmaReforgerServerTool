@@ -1497,6 +1497,7 @@ namespace ReforgerServerApp
       kickButton.TabIndex = 0;
       kickButton.Text = "Kick";
       kickButton.UseVisualStyleBackColor = true;
+      kickButton.Click += OnReconKickButtonPressed;
       // 
       // banButton
       // 
@@ -1875,8 +1876,8 @@ namespace ReforgerServerApp
     private TableLayoutPanel tableLayoutPanel19;
     private FontAwesome.Sharp.IconButton kickButton;
     private FontAwesome.Sharp.IconButton banButton;
-    private FontAwesome.Sharp.IconButton banManagerButton;
     private FluentListBox connectedPlayersList;
     private AnimOfDots.Circular reconSpinner;
+    private FontAwesome.Sharp.IconButton banManagerButton;
   }
 }

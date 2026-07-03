@@ -2006,5 +2006,25 @@ namespace ReforgerServerApp
         }));
       }
     }
+
+    private void OnReconKickButtonPressed(object sender, EventArgs e)
+    {
+      if (m_reconClient != null && m_reconClient.IsConnected && connectedPlayersList.SelectedItem != null)
+      {
+        Task.Run(async () =>
+        {
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Kicking {connectedPlayersList.Text} from the server.{Environment.NewLine}");
+          string response = await m_reconClient.SendCommandAsync($"kick {connectedPlayersList.SelectedValue}");
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {response}{Environment.NewLine}");
+        });
+      }
+      else
+      {
+        this.Invoke(new Action(() =>
+        {
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to send command. Check your connection to the RCON server.{Environment.NewLine}");
+        }));
+      }
+    }
   }
 }
