@@ -18,6 +18,7 @@ using ReforgerServerApp.Utils;
 using Serilog;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net.Sockets;
 
 namespace ReforgerServerApp
 {
@@ -1893,7 +1894,25 @@ namespace ReforgerServerApp
       reconPort.Enabled = false;
       reconPassword.Enabled = false;
       reconPassword.UseSystemPasswordChar = true;
-      m_reconClient = new(reconAddress.Text, Convert.ToUInt16(reconPort.Value), reconPassword.Text);
+      try
+      {
+        m_reconClient = new(reconAddress.Text, Convert.ToUInt16(reconPort.Value), reconPassword.Text);
+      }
+      catch (Exception)
+      {
+        this.Invoke(new Action(() =>
+        {
+          reconSpinner.Visible = false;
+          reconConnectButton.Enabled = true;
+          reconConnectButton.Text = "Connect";
+          reconAddress.Enabled = true;
+          reconPort.Enabled = true;
+          reconPassword.Enabled = true;
+          reconPassword.UseSystemPasswordChar = false;
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to connect to RCON server.{Environment.NewLine}");
+        }));
+        return;
+      }
 
       m_reconClient.OnServerMessage += (message) =>
       {
@@ -1971,6 +1990,7 @@ namespace ReforgerServerApp
             reconPort.Enabled = true;
             reconPassword.Enabled = true;
             reconPassword.UseSystemPasswordChar = false;
+            reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to connect to the RCON server.{Environment.NewLine}");
           }));
         }
         this.Invoke(new Action(() =>
@@ -2015,6 +2035,33 @@ namespace ReforgerServerApp
         {
           reconLog.AppendText($"{Utilities.GetTimestamp()} Kicking {connectedPlayersList.Text} from the server.{Environment.NewLine}");
           string response = await m_reconClient.SendCommandAsync($"kick {connectedPlayersList.SelectedValue}");
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {response}{Environment.NewLine}");
+        });
+      }
+      else
+      {
+        this.Invoke(new Action(() =>
+        {
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to send command. Check your connection to the RCON server.{Environment.NewLine}");
+        }));
+      }
+    }
+
+    private void OnBanManagerButtonPressed(object sender, EventArgs e)
+    {
+      BanManager mgr = new(m_reconClient);
+      mgr.Show();
+    }
+
+    private void OnRconBanButtonPressed(object sender, EventArgs e)
+    {
+      // TODO: Add ability to choose ban duration
+      if (m_reconClient != null && m_reconClient.IsConnected && connectedPlayersList.SelectedItem != null)
+      {
+        Task.Run(async () =>
+        {
+          reconLog.AppendText($"{Utilities.GetTimestamp()} Banning {connectedPlayersList.Text} from the server.{Environment.NewLine}");
+          string response = await m_reconClient.SendCommandAsync($"ban {connectedPlayersList.SelectedValue} 60");
           reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {response}{Environment.NewLine}");
         });
       }

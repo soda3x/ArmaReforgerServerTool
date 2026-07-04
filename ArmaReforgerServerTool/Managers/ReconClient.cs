@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Longbow.Managers
 {
-  internal class ReconClient
+  public class ReconClient
   {
 
     private UdpClient m_udpClient;
@@ -28,7 +28,13 @@ namespace Longbow.Managers
     public ReconClient(string address, int port, string password)
     {
       m_udpClient = new UdpClient();
-      m_udpClient.Connect(address, port);
+      try
+      {
+        m_udpClient.Connect(address, port);
+      } catch (SocketException)
+      {
+        throw new SocketException();
+      }
       m_password = password;
     }
 

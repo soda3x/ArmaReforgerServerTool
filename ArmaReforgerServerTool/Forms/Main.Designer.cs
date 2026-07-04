@@ -1513,6 +1513,7 @@ namespace ReforgerServerApp
       banButton.TabIndex = 1;
       banButton.Text = "Ban";
       banButton.UseVisualStyleBackColor = true;
+      banButton.Click += OnRconBanButtonPressed;
       // 
       // banManagerButton
       // 
@@ -1528,6 +1529,7 @@ namespace ReforgerServerApp
       banManagerButton.TabIndex = 2;
       banManagerButton.Text = "Ban Manager";
       banManagerButton.UseVisualStyleBackColor = true;
+      banManagerButton.Click += OnBanManagerButtonPressed;
       // 
       // tableLayoutPanel16
       // 
