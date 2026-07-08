@@ -11,6 +11,8 @@ validator for Arma Reforger dedicated servers.
   Steam Workshop metadata), fragile points.
 - [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) — dated log of real bugs and issues found in this
   codebase, with symptom / root cause / remedy for each.
+- [FAQ.md](./FAQ.md) — practical answers to common questions: how to build/run/test, what the
+  validator does, requirements, where config and logs live, and common gotchas.
 - [PARAMETERS.md](./PARAMETERS.md) — reference for server configuration parameters (pre-existing
   doc, not maintained by this pass).
 
@@ -39,7 +41,6 @@ they don't disappear.
 
 ## Scope note
 
-This repo is the **public Phase 1A MVP only** (see [../HANDOFF.md](../HANDOFF.md)). Docs here
-describe only what's actually implemented in this codebase. Phase 1B+/roadmap/business/
-monetization content does not belong here — that lives in the private Sentinel-Desktop repo and
-is out of scope for this documentation set.
+This repo is the **public Phase 1A MVP only**. Docs here describe only what's actually
+implemented in this codebase. Phase 1B+ content does not belong here — that development happens
+in a separate private repo and is out of scope for this documentation set.
