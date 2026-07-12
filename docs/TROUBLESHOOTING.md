@@ -8,7 +8,17 @@ convention (Open / Monitoring / Resolved) and the entry template at the bottom o
 
 ### 2026-07-03 — `build_output.txt` disagrees with current source (SteamWorkshopMetadataProvider)
 
-**Status:** Monitoring
+**Status:** Resolved (2026-07-03/08). `build_output.txt` was deleted from the repo
+(`f8e885a chore: remove stale build_output.txt`), confirming the "stale snapshot,
+never a real live failure" read below was correct for *this specific* CS1061.
+Separately — and this is the more useful finding — a **real, different** build
+break existed at the same time: `Managers/SitrepConfigService.cs` referenced
+`ToolProperties.sitrepApiUrl`, which didn't exist on `main` (only on feature
+branches that had already merged it). Fixed in `dcdbe04 fix: main doesn't build -
+add missing ToolProperties.sitrepApiUrl`, verified 0 build errors. Lesson for
+future entries: "the committed build log looks stale" and "main currently
+builds clean" are two separate claims — confirm both before closing an entry
+like this, don't let one imply the other.
 
 **Symptom:** The committed `build_output.txt` at the repo root shows a real `dotnet build`
 failure — 4x `CS1061` errors in
