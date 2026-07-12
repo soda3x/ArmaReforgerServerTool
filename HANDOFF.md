@@ -24,16 +24,6 @@ Phase 1A MVP only: **Mod Validator + Auto-fix**
 - Start button gating (RED=invalid, GREEN=valid)
 - Save/load configurations
 
-## For Internal Development
-
-**All Phase 1B/2 work and strategic planning has moved to a private repository:**
-
-- **Private repo:** https://github.com/Vpirate12/Sentinel-Desktop (internal use only)
-- Contains: Full roadmap, monetization strategy, Sentinel Link plans, all docs
-- Access: Aaron + core team only
-
-**Session protocol:** New sessions should pull from the private repo for development work.
-
 ## Building & Running
 
 ```bash
@@ -50,7 +40,7 @@ Found a bug in the validator? Open an issue on this repo.
 
 ## No New Features Here
 
-Phase 1A is complete. Future development (Phase 1B+) happens in the private repository.
+Phase 1A is complete. This public repository tracks the Phase 1A mod validator only; it is not where future feature development happens.
 
 ---
 

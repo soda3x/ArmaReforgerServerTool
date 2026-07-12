@@ -67,6 +67,7 @@ namespace ReforgerServerApp.Models
     private static readonly string DEFAULT_LOG_FILE = "logs/longbow.log";
     private static readonly string DEFAULT_MINIMUM_LOG_LEVEL = "Debug";
     private static readonly int DEFAULT_AUTO_RESTART_TIME_MS = 2000;
+    private static readonly string DEFAULT_SITREP_API_URL = "https://api.sitrep.example.com";
 
     public List<Scenario> defaultScenarios { get; set; }
     public string modDatabaseFile { get; set; }
@@ -79,6 +80,7 @@ namespace ReforgerServerApp.Models
     public string logFile { get; set; }
     public string minimumLogLevel { get; set; }
     public int autoRestartTime_ms { get; set; }
+    public string? sitrepApiUrl { get; set; }
 
     /// <summary>
     /// Constructs an instance of the Tool Properties model
@@ -95,9 +97,11 @@ namespace ReforgerServerApp.Models
     /// <param name="logFile"></param>
     /// <param name="minimumLogLevel"></param>
     /// <param name="autoRestartTime_ms"></param>
+    /// <param name="sitrepApiUrl"></param>
     public ToolProperties(List<Scenario> defaultScenarios, string modDatabaseFile,
         string updateRepositoryUrl, string releaseRepositoryUrl, string bugReportUrl, bool checkForUpdatesOnStartup,
-        string steamCmdDownloadUrl, string armaWorkshopUrl, string logFile, string minimumLogLevel, int autoRestartTime_ms)
+        string steamCmdDownloadUrl, string armaWorkshopUrl, string logFile, string minimumLogLevel, int autoRestartTime_ms,
+        string? sitrepApiUrl = null)
     {
       this.defaultScenarios = defaultScenarios;
       this.modDatabaseFile = modDatabaseFile;
@@ -110,12 +114,14 @@ namespace ReforgerServerApp.Models
       this.logFile = logFile;
       this.minimumLogLevel = minimumLogLevel;
       this.autoRestartTime_ms = autoRestartTime_ms;
+      this.sitrepApiUrl = sitrepApiUrl ?? DEFAULT_SITREP_API_URL;
     }
 
 
     public static ToolProperties Default => new(DEFAULT_SCENARIOS, DEFAULT_MOD_DATABASE_FILE,
         DEFAULT_UPDATE_REPOSITORY, DEFAULT_RELEASES_REPOSITORY, DEFAULT_BUG_REPORT_REPOSITORY, DEFAULT_CHECK_FOR_UPDATES_ON_STARTUP,
-        DEFAULT_STEAMCMD_DOWNLOAD_URL, DEFAULT_ARMA_WORKSHOP_URL, DEFAULT_LOG_FILE, DEFAULT_MINIMUM_LOG_LEVEL, DEFAULT_AUTO_RESTART_TIME_MS);
+        DEFAULT_STEAMCMD_DOWNLOAD_URL, DEFAULT_ARMA_WORKSHOP_URL, DEFAULT_LOG_FILE, DEFAULT_MINIMUM_LOG_LEVEL, DEFAULT_AUTO_RESTART_TIME_MS,
+        DEFAULT_SITREP_API_URL);
 
     /// <summary>
     /// Display <c>ToolProperties</c> in readable Json format.
