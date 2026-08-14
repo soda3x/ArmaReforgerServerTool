@@ -57,7 +57,9 @@ impl FileIoService {
 
     /// `{install_dir}/server.json`
     fn server_json_path(&self) -> Option<PathBuf> {
-        self.install_dir.as_ref().map(|dir| dir.join("server.json"))
+        self.install_dir
+            .as_ref()
+            .map(|dir| dir.join(crate::util::SERVER_JSON_FILENAME))
     }
 
     /// Read the combined mod database (all mods, available+enabled) as a JSON array of `Mod`.

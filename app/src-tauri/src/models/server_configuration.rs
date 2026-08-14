@@ -5,30 +5,25 @@ use super::mod_entry::Mod;
 /// Returns the list of supported platforms for the given cross-platform setting. Port of
 /// the C# `Utilities.GetSupportedPlatforms`.
 pub fn supported_platforms(cross_platform: bool) -> Vec<String> {
-    let mut platforms = vec!["PLATFORM_PC".to_string()];
+    let mut platforms = vec![crate::util::SUPPORTED_PLATFORM_PC.to_string()];
     if cross_platform {
-        platforms.push("PLATFORM_XBL".to_string());
-        platforms.push("PLATFORM_PSN".to_string());
+        platforms.push(crate::util::SUPPORTED_PLATFORM_XBOX.to_string());
+        platforms.push(crate::util::SUPPORTED_PLATFORM_PSN.to_string());
     }
     platforms
 }
 
 /// Enum representing the permissions for RCon clients.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum RconPermission {
     Admin,
+    #[default]
     Monitor,
 }
 
-impl Default for RconPermission {
-    fn default() -> Self {
-        RconPermission::Monitor
-    }
-}
-
 /// Top-level wrapper matching the on-disk `server.json`.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct ServerConfiguration {
     #[serde(default)]
@@ -41,11 +36,6 @@ impl ServerConfiguration {
         serde_json::to_string_pretty(&self.root)
     }
 
-    /// Display the configuration's Mods in JSON format.
-    pub fn mods_to_json_string(&self) -> serde_json::Result<String> {
-        serde_json::to_string_pretty(&self.root.game.mods)
-    }
-
     /// Deserialize a JSON string into a `ServerConfiguration`.
     pub fn from_json_str(json: &str) -> serde_json::Result<ServerConfiguration> {
         let root: Root = serde_json::from_str(json)?;
@@ -53,13 +43,6 @@ impl ServerConfiguration {
     }
 }
 
-impl Default for ServerConfiguration {
-    fn default() -> Self {
-        Self {
-            root: Root::default(),
-        }
-    }
-}
 
 /// Structure representing the root of the Server Config.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -325,18 +308,13 @@ impl Default for Operating {
 }
 
 /// Structure representing the joinQueue block of the Server Config.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct JoinQueue {
     #[serde(default)]
     pub max_size: u32,
 }
 
-impl Default for JoinQueue {
-    fn default() -> Self {
-        Self { max_size: 0 }
-    }
-}
 
 #[cfg(test)]
 mod schema_tests {

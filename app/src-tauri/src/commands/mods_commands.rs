@@ -128,18 +128,6 @@ pub async fn update_mod(
 }
 
 #[tauri::command]
-pub async fn import_mods_list(
-    state: tauri::State<'_, AppState>,
-    mods: Vec<Mod>,
-) -> Result<ModLists, String> {
-    {
-        let mut config = state.config.lock().await;
-        config.import_mods_list(mods);
-    }
-    Ok(mod_lists(&state).await)
-}
-
-#[tauri::command]
 pub async fn export_mods_list_to_path(
     state: tauri::State<'_, AppState>,
     path: String,

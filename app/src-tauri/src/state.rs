@@ -57,7 +57,41 @@ impl AppState {
         } else {
             config_dir.join(configured_db.file_name().unwrap_or_else(|| "mod_database.json".as_ref()))
         };
-        let file_io = FileIoService::new(install_dir, mod_database_file);
+        let file_io = FileIoService::new(install_dir, mod_database_file.clone());
+
+        // One-time migration from the pre-0.8.3 mod database format (a plain-text file of
+        // `modId,name[,version]` lines) to the current JSON format, matching what the C#
+        // original did on startup. Only runs if the new-format file doesn't exist yet, so it
+        // can't clobber a database that's already been migrated.
+        let legacy_path = mod_database_file.with_extension("txt");
+        if legacy_path.exists() && !mod_database_file.exists() {
+            match std::fs::read_to_string(&legacy_path)
+                .map_err(ServiceError::from)
+                .and_then(|contents| FileIoService::parse_legacy_mod_database(&contents))
+            {
+                Ok(mods) => match file_io.write_mods_database(&mods) {
+                    Ok(()) => {
+                        tracing::info!(
+                            "Migrated {} mod(s) from the legacy mod database at {}",
+                            mods.len(),
+                            legacy_path.display()
+                        );
+                        if let Err(e) = std::fs::remove_file(&legacy_path) {
+                            tracing::warn!(
+                                "Migrated the legacy mod database but could not remove the old \
+                                 file at {}: {e}",
+                                legacy_path.display()
+                            );
+                        }
+                    }
+                    Err(e) => tracing::error!("Failed to write migrated mod database: {e}"),
+                },
+                Err(e) => tracing::error!(
+                    "Failed to migrate legacy mod database at {}: {e}",
+                    legacy_path.display()
+                ),
+            }
+        }
 
         let mut config = ConfigService::new();
         if let Ok(mods) = file_io.read_mods_database() {
@@ -83,5 +117,46 @@ impl AppState {
             network: Mutex::new(network),
             process: ProcessService::new(),
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn init_migrates_a_legacy_mod_database_and_removes_the_old_file() {
+        let dir = tempfile::tempdir().unwrap();
+        // `mod_database_file` defaults to "./mod_database.json" resolved against the config
+        // dir, so the legacy sibling file is "mod_database.txt" in that same directory.
+        std::fs::write(dir.path().join("mod_database.txt"), "12345,MyMod,1.2.3\n67890,OtherMod").unwrap();
+
+        let state = AppState::init(dir.path()).unwrap();
+
+        assert!(
+            !dir.path().join("mod_database.txt").exists(),
+            "legacy file should be removed after a successful migration"
+        );
+        assert!(dir.path().join("mod_database.json").exists());
+
+        let config = tokio::runtime::Runtime::new()
+            .unwrap()
+            .block_on(async { state.config.lock().await.available_mods().to_vec() });
+        assert_eq!(config.len(), 2);
+        assert!(config.iter().any(|m| m.name == "MyMod" && m.version == "1.2.3"));
+        assert!(config.iter().any(|m| m.name == "OtherMod" && m.version == "latest"));
+    }
+
+    #[test]
+    fn init_does_not_migrate_when_the_new_format_file_already_exists() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join("mod_database.txt"), "12345,LegacyMod").unwrap();
+        std::fs::write(dir.path().join("mod_database.json"), "[]").unwrap();
+
+        let _state = AppState::init(dir.path()).unwrap();
+
+        // The legacy file is left alone rather than risk clobbering an already-migrated (and
+        // possibly since-edited) database.
+        assert!(dir.path().join("mod_database.txt").exists());
     }
 }

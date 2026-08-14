@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend (svelte-check)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+        working-directory: app
+      - run: npm run check
+        working-directory: app
+      - run: npm run build
+        working-directory: app
+
+  backend:
+    name: Backend (test + clippy)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: app/src-tauri -> target
+      # `tauri::generate_context!()` checks at compile time that `frontendDist` (../build)
+      # exists, so the frontend has to be built before cargo can compile at all here.
+      - run: npm ci
+        working-directory: app
+      - run: npm run build
+        working-directory: app
+      - run: cargo test --locked
+        working-directory: app/src-tauri
+      - run: cargo clippy --all-targets --locked -- -D warnings
+        working-directory: app/src-tauri

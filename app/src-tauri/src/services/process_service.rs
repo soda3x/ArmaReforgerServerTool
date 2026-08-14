@@ -1,5 +1,5 @@
 //! Server process lifecycle: SteamCMD download/update, spawning the dedicated server,
-//! streaming its stdout/stderr, crash/fatal-error detection, and scheduled/auto restart.
+//! streaming its stdout/stderr, and crash/fatal-error detection with auto-restart-on-crash.
 //!
 //! Ported from `Managers/ProcessManager.cs`. Architectural differences from the C# original:
 //! - No singleton — this is a plain struct wrapped by the caller in `Arc<ProcessService>` (its
@@ -20,7 +20,7 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
-use chrono::{Local, NaiveTime, Timelike};
+use chrono::Local;
 use serde::Serialize;
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::Command;
@@ -100,9 +100,9 @@ const SERVER_CURRENTLY_RUNNING_STR: &str = "Server is currently running";
 const APP_ID_STANDARD: &str = "1874900";
 const APP_ID_EXPERIMENTAL: &str = "1890870";
 
+#[derive(Default)]
 struct Inner {
     is_server_started: bool,
-    is_server_using_timer: bool,
     /// Cancellation flag for the *current* run. A fresh flag is created on every start; setting
     /// it tells the in-flight run to kill SteamCMD (if still downloading), skip launching the
     /// server, and/or kill an already-running server. Replaces the previous design of storing
@@ -113,21 +113,8 @@ struct Inner {
     /// the killing, and during process teardown that task may never be scheduled again.
     server_pid: Option<u32>,
     last_start_ctx: Option<StartServerContext>,
-    restart_timer_cancel: Option<Arc<AtomicBool>>,
 }
 
-impl Default for Inner {
-    fn default() -> Self {
-        Self {
-            is_server_started: false,
-            is_server_using_timer: false,
-            run_cancel: None,
-            server_pid: None,
-            last_start_ctx: None,
-            restart_timer_cancel: None,
-        }
-    }
-}
 
 pub struct ProcessService {
     inner: Mutex<Inner>,
@@ -156,10 +143,6 @@ impl ProcessService {
 
     pub async fn is_server_started(&self) -> bool {
         self.inner.lock().await.is_server_started
-    }
-
-    pub async fn is_server_using_timer(&self) -> bool {
-        self.inner.lock().await.is_server_using_timer
     }
 
     /// Builds the final CLI argument string for the dedicated server, mirroring
@@ -228,21 +211,6 @@ impl ProcessService {
         let joined = args.join(" ");
         tracing::info!("Launching server with the following launch arguments: \"{}\"", joined);
         joined
-    }
-
-    /// Starts (or, if already started, stops) the server — mirrors the C# `StartStopServer`
-    /// toggle. `triggered_by_auto_restart` only affects log wording.
-    pub async fn start_stop_server(
-        self: &Arc<Self>,
-        ctx: StartServerContext,
-        triggered_by_auto_restart: bool,
-    ) -> Result<(), ServiceError> {
-        let started = self.inner.lock().await.is_server_started;
-        if started {
-            self.stop_server(triggered_by_auto_restart).await
-        } else {
-            self.start_server(ctx, triggered_by_auto_restart).await
-        }
     }
 
     /// Spawns SteamCMD, waits for it to finish, then spawns the dedicated server and streams
@@ -332,27 +300,80 @@ impl ProcessService {
         ctx: StartServerContext,
         cancel: Arc<AtomicBool>,
     ) -> Result<(), ServiceError> {
-        let update_switch = if ctx.keep_server_updated { "+app_update" } else { "" };
-        self.emit(log_line(if ctx.keep_server_updated {
-            "Longbow will ensure the server is up-to-date."
+        // Derived once and shared with the launch step below, so the directory SteamCMD
+        // installs into can never disagree with the one the server is launched from.
+        let arma_subdir = if ctx.use_experimental {
+            "arma_reforger\\experimental"
         } else {
-            "Longbow will not update the dedicated server."
-        }));
+            "arma_reforger"
+        };
+        let server_working_dir = ctx.install_dir.join(arma_subdir);
+        let server_exe = server_working_dir.join("ArmaReforgerServer.exe");
 
-        let (force_install_dir, app_id) = if ctx.use_experimental {
-            ("..\\Arma_Reforger\\experimental", APP_ID_EXPERIMENTAL)
+        if ctx.keep_server_updated {
+            self.emit(log_line("Longbow will ensure the server is up-to-date."));
+            self.run_steamcmd(&ctx, &server_working_dir, Arc::clone(&cancel)).await?;
         } else {
-            ("..\\Arma_Reforger", APP_ID_STANDARD)
+            // Skip SteamCMD entirely rather than invoking it without `+app_update`: without
+            // that switch the app id is parsed as a third argument to `+login`, which is a
+            // malformed command line rather than a no-op update.
+            self.emit(log_line(
+                "Longbow will not update the dedicated server; skipping SteamCMD.",
+            ));
+        }
+
+        if cancel.load(Ordering::SeqCst) {
+            self.emit(log_line("Server start cancelled."));
+            return Ok(());
+        }
+
+        // Fail with something actionable rather than letting `spawn` report the bare OS error
+        // "The directory name is invalid" when the install didn't produce a server binary.
+        if !server_exe.exists() {
+            return Err(ServiceError::Other(format!(
+                "The dedicated server executable was not found at '{}'. SteamCMD may have failed \
+                 to install it — check the log above for SteamCMD errors.",
+                server_exe.display()
+            )));
+        }
+
+        self.launch_server(&ctx, &server_working_dir, &server_exe, cancel).await
+    }
+
+    /// Runs SteamCMD to install/update the dedicated server, streaming its output.
+    async fn run_steamcmd(
+        self: &Arc<Self>,
+        ctx: &StartServerContext,
+        server_working_dir: &std::path::Path,
+        cancel: Arc<AtomicBool>,
+    ) -> Result<(), ServiceError> {
+        let app_id = if ctx.use_experimental {
+            APP_ID_EXPERIMENTAL
+        } else {
+            APP_ID_STANDARD
         };
 
-        let steam_args_str = format!(
-            "+force_install_dir {force_install_dir} +login anonymous anonymous {update_switch} {app_id} +quit"
-        );
-        // Split on whitespace is safe here: none of these tokens contain spaces.
-        let steam_args: Vec<String> = steam_args_str.split_whitespace().map(String::from).collect();
+        // Built as separate argv entries rather than one formatted string: the install path is
+        // absolute and may contain spaces, which a whitespace split would tear apart.
+        let steam_args: Vec<String> = vec![
+            "+force_install_dir".to_string(),
+            server_working_dir.display().to_string(),
+            "+login".to_string(),
+            "anonymous".to_string(),
+            "anonymous".to_string(),
+            "+app_update".to_string(),
+            app_id.to_string(),
+            "+quit".to_string(),
+        ];
 
         let mut cmd = Command::new(&ctx.steamcmd_exe);
         cmd.args(&steam_args);
+        // SteamCMD self-updates in place and resolves its own bootstrapper/steam.dll relative to
+        // the working directory. Launched from anywhere else it fails the update and then dies
+        // with "Failed to load steam.dll", so it must run from its own directory.
+        if let Some(steamcmd_dir) = ctx.steamcmd_exe.parent() {
+            cmd.current_dir(steamcmd_dir);
+        }
         cmd.stdout(std::process::Stdio::piped());
         cmd.stderr(std::process::Stdio::piped());
         #[cfg(target_os = "windows")]
@@ -403,11 +424,17 @@ impl ProcessService {
             tracing::warn!("SteamCMD exited with status {:?}", status);
         }
 
-        if cancel.load(Ordering::SeqCst) {
-            self.emit(log_line("Server start cancelled."));
-            return Ok(());
-        }
+        Ok(())
+    }
 
+    /// Spawns the dedicated server and wires up its output streams and exit monitor.
+    async fn launch_server(
+        self: &Arc<Self>,
+        ctx: &StartServerContext,
+        server_working_dir: &std::path::Path,
+        server_exe: &std::path::Path,
+        cancel: Arc<AtomicBool>,
+    ) -> Result<(), ServiceError> {
         self.emit(ProcessEvent::GuiUpdate(GuiModel {
             button_icon: ServerButtonIcon::Stop,
             enable_server_fields: false,
@@ -415,30 +442,22 @@ impl ProcessService {
             start_server_btn_enabled: true,
         }));
 
-        let arma_subdir = if ctx.use_experimental {
-            "arma_reforger\\experimental"
-        } else {
-            "arma_reforger"
-        };
-        let server_working_dir = ctx.install_dir.join(arma_subdir);
-        let server_exe = server_working_dir.join("ArmaReforgerServer.exe");
-
-        let launch_args_str = Self::build_launch_arguments(&ctx);
+        let launch_args_str = Self::build_launch_arguments(ctx);
         let launch_args: Vec<String> = shell_split(&launch_args_str);
 
-        self.emit(log_line("Download / update complete. Starting the dedicated server..."));
+        self.emit(log_line("Starting the dedicated server..."));
 
         let mut server_cmd = match &ctx.server_target {
             ServerTarget::Windows => {
-                let mut c = Command::new(&server_exe);
-                c.current_dir(&server_working_dir);
+                let mut c = Command::new(server_exe);
+                c.current_dir(server_working_dir);
                 c.args(&launch_args);
                 c
             }
             ServerTarget::Wsl { distro } => {
                 // Linux binary is conventionally named without the .exe suffix.
                 let linux_binary = "ArmaReforgerServer";
-                wsl_command(distro.as_deref(), &server_working_dir, linux_binary, &launch_args)
+                wsl_command(distro.as_deref(), server_working_dir, linux_binary, &launch_args)
             }
         };
         server_cmd.stdout(std::process::Stdio::piped());
@@ -653,81 +672,6 @@ impl ProcessService {
             .status();
     }
 
-    /// Starts the daily scheduled auto-restart loop: restarts the server every day at
-    /// `daily_time`. `restart` is called each time the schedule fires (the caller supplies a
-    /// closure that rebuilds a fresh `StartServerContext`, since config may change between
-    /// firings). Mirrors `ProcessManager.ConfigureAutomaticRestartTask` + `PeriodicAsync`.
-    pub async fn configure_automatic_restart_task<F, Fut>(
-        self: &Arc<Self>,
-        daily_time: NaiveTime,
-        rebuild_ctx: F,
-    ) where
-        F: Fn() -> Fut + Send + Sync + 'static,
-        Fut: std::future::Future<Output = StartServerContext> + Send,
-    {
-        // Immediately (re)start once, matching the C# original calling
-        // `StartStopServerUsingTimer()` synchronously before entering the periodic loop.
-        let ctx = rebuild_ctx().await;
-        let _ = self.start_stop_server(ctx, true).await;
-
-        let cancel_flag = Arc::new(AtomicBool::new(false));
-        {
-            let mut inner = self.inner.lock().await;
-            inner.is_server_using_timer = true;
-            inner.restart_timer_cancel = Some(Arc::clone(&cancel_flag));
-        }
-
-        let this = Arc::clone(self);
-        tokio::spawn(async move {
-            loop {
-                if cancel_flag.load(Ordering::SeqCst) {
-                    break;
-                }
-
-                let now = Local::now();
-                let today_scheduled = now
-                    .date_naive()
-                    .and_hms_opt(daily_time.hour(), daily_time.minute(), daily_time.second())
-                    .unwrap();
-                let now_naive = now.naive_local();
-                let next_run = if today_scheduled > now_naive {
-                    today_scheduled
-                } else {
-                    today_scheduled + chrono::Duration::days(1)
-                };
-                let delay = (next_run - now_naive)
-                    .to_std()
-                    .unwrap_or(std::time::Duration::from_secs(1));
-
-                tokio::select! {
-                    _ = tokio::time::sleep(delay) => {
-                        if cancel_flag.load(Ordering::SeqCst) {
-                            break;
-                        }
-                        let ctx = rebuild_ctx().await;
-                        let _ = this.start_stop_server(ctx, true).await;
-                    }
-                    _ = wait_for_cancel(Arc::clone(&cancel_flag)) => {
-                        break;
-                    }
-                }
-            }
-        });
-    }
-
-    /// Cancels the daily auto-restart loop and stops the server. Mirrors
-    /// `ProcessManager.CancelAutomaticRestartTask`.
-    pub async fn cancel_automatic_restart_task(&self) -> Result<(), ServiceError> {
-        let cancel = {
-            let mut inner = self.inner.lock().await;
-            inner.is_server_using_timer = false;
-            inner.restart_timer_cancel.take()
-        };
-        if let Some(cancel) = cancel {
-            cancel.store(true, Ordering::SeqCst);
-        }
-        self.stop_server(false).await
-    }
 }
 
 /// Polls a cancellation flag; used to make the daily-restart sleep interruptible.
@@ -796,6 +740,32 @@ mod tests {
     fn shell_split_quoted() {
         let parts = shell_split(r#"-loadSessionSave "my save""#);
         assert_eq!(parts, vec!["-loadSessionSave", "my save"]);
+    }
+
+    #[test]
+    fn steamcmd_install_dir_matches_the_server_launch_dir() {
+        // The install path SteamCMD is given and the directory the server is launched from are
+        // derived from the same expression, so they cannot drift apart. Previously SteamCMD got
+        // a *relative* `..\Arma_Reforger` that only resolved correctly if the process happened
+        // to have the steamcmd folder as its working directory.
+        let install_dir = PathBuf::from(r"C:\Arma Server");
+
+        for (experimental, expected_subdir) in
+            [(false, "arma_reforger"), (true, r"arma_reforger\experimental")]
+        {
+            let subdir = if experimental {
+                "arma_reforger\\experimental"
+            } else {
+                "arma_reforger"
+            };
+            let server_working_dir = install_dir.join(subdir);
+
+            assert_eq!(server_working_dir, install_dir.join(expected_subdir));
+            assert!(server_working_dir.is_absolute());
+            // Passing this as a single argv entry is what keeps the space in "Arma Server"
+            // intact; it must never be whitespace-split.
+            assert!(server_working_dir.display().to_string().contains(' '));
+        }
     }
 
     #[test]

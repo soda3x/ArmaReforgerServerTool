@@ -26,6 +26,10 @@
     buildLaunchArgumentsPreview,
     checkForUpdates,
     setServerConfiguration,
+    isWslAvailable,
+    listWslDistros,
+    getSavedGames,
+    renameSave,
     LOG_LEVELS,
     type LogLevel,
   } from "../../api";
@@ -56,6 +60,79 @@
   let logContainer: HTMLDivElement | undefined = $state();
   let autoScroll = $state(true);
 
+  // WSL detection is lazy (only probed the first time the WSL target is selected) rather than
+  // on every mount, since it shells out to `wsl.exe` and most users will never touch it.
+  let wslChecked = $state(false);
+  let wslAvailable = $state(false);
+  let wslDistros = $state<string[]>([]);
+
+  async function ensureWslChecked() {
+    if (wslChecked) return;
+    wslChecked = true;
+    try {
+      wslAvailable = await isWslAvailable();
+      wslDistros = wslAvailable ? await listWslDistros() : [];
+    } catch {
+      // wsl.exe missing or erroring is a normal, expected outcome on a machine without WSL —
+      // fall back to manual distro entry rather than surfacing this as an app error.
+      wslAvailable = false;
+      wslDistros = [];
+    }
+  }
+
+  // Saved-game names -> full path, as returned by the backend (a `.LatestSave` sentinel entry
+  // is filtered out server-side, since "use the latest save" is its own dropdown option below).
+  let savedGames = $state<Record<string, string>>({});
+  let renamingSave = $state<string | null>(null);
+  let renameDraft = $state("");
+
+  async function refreshSavedGames() {
+    try {
+      savedGames = await getSavedGames();
+    } catch (e) {
+      errorMsg = e instanceof Error ? e.message : String(e);
+    }
+  }
+
+  function onSessionSaveChange(value: string) {
+    if (value === "__none__") {
+      configFlags.update((f) => ({ ...f, usingSave: false, save: null }));
+    } else if (value === "__latest__") {
+      configFlags.update((f) => ({ ...f, usingSave: true, save: null }));
+    } else {
+      configFlags.update((f) => ({ ...f, usingSave: true, save: value }));
+    }
+    persistConfigFlags();
+  }
+
+  function startRename(name: string) {
+    renamingSave = name;
+    renameDraft = name;
+  }
+
+  async function confirmRename() {
+    if (!renamingSave) return;
+    const oldName = renamingSave;
+    const newName = renameDraft.trim();
+    if (newName.length === 0 || newName === oldName) {
+      renamingSave = null;
+      return;
+    }
+    try {
+      const finalName = await renameSave(oldName, newName);
+      // Keep the current selection pointed at the renamed save if it was the active one.
+      configFlags.update((f) => (f.save === oldName ? { ...f, save: finalName } : f));
+      if ($configFlags.save === finalName) {
+        await persistConfigFlags();
+      }
+      await refreshSavedGames();
+    } catch (e) {
+      errorMsg = e instanceof Error ? e.message : String(e);
+    } finally {
+      renamingSave = null;
+    }
+  }
+
   async function loadAll() {
     loading = true;
     errorMsg = "";
@@ -68,6 +145,7 @@
         isSteamCmdInstalled(),
         isServerStarted(),
       ]);
+      await refreshSavedGames();
       advancedSettings.set(settings);
       configFlags.set(flags);
       useUpnp.set(upnp);
@@ -195,6 +273,9 @@
 
   function onServerTargetChange(kind: "windows" | "wsl") {
     serverTargetKind.set(kind);
+    if (kind === "wsl") {
+      ensureWslChecked();
+    }
   }
 
   // --- Advanced settings ---------------------------------------------------------------------
@@ -393,13 +474,31 @@
       {#if $serverTargetKind === "wsl"}
         <div class="field-row">
           <label for="wsl-distro">WSL Distro (blank = default)</label>
-          <input
-            id="wsl-distro"
-            type="text"
-            value={$wslDistro ?? ""}
-            oninput={(e) => wslDistro.set((e.target as HTMLInputElement).value)}
-            placeholder="Ubuntu"
-          />
+          {#if wslChecked && !wslAvailable}
+            <span class="field-hint" style="color:var(--danger);">
+              WSL was not detected on this machine — the server will fail to start.
+            </span>
+          {/if}
+          {#if wslDistros.length > 0}
+            <select
+              id="wsl-distro"
+              value={$wslDistro ?? ""}
+              onchange={(e) => wslDistro.set((e.target as HTMLSelectElement).value)}
+            >
+              <option value="">Default</option>
+              {#each wslDistros as distro (distro)}
+                <option value={distro}>{distro}</option>
+              {/each}
+            </select>
+          {:else}
+            <input
+              id="wsl-distro"
+              type="text"
+              value={$wslDistro ?? ""}
+              oninput={(e) => wslDistro.set((e.target as HTMLInputElement).value)}
+              placeholder="Ubuntu"
+            />
+          {/if}
         </div>
       {/if}
       <div class="field-row">
@@ -413,6 +512,58 @@
             <option value={level}>{level}</option>
           {/each}
         </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Session Save</div>
+    <div class="grid-2">
+      <div class="field-row">
+        <label for="session-save">Load on start</label>
+        <select
+          id="session-save"
+          value={!$configFlags.usingSave ? "__none__" : ($configFlags.save ?? "__latest__")}
+          onchange={(e) => onSessionSaveChange((e.target as HTMLSelectElement).value)}
+        >
+          <option value="__none__">Don't load a save</option>
+          <option value="__latest__">Latest save</option>
+          {#each Object.keys(savedGames).sort() as name (name)}
+            <option value={name}>{name}</option>
+          {/each}
+        </select>
+        {#if Object.keys(savedGames).length === 0}
+          <span class="field-hint">
+            No saves found{$installDir ? "" : " — set an install directory first"}.
+          </span>
+        {/if}
+      </div>
+
+      <div class="field-row">
+        <span class="field-label">Manage saves</span>
+        {#if renamingSave}
+          <div style="display:flex; gap:0.4rem; align-items:center;">
+            <input
+              type="text"
+              value={renameDraft}
+              oninput={(e) => (renameDraft = (e.target as HTMLInputElement).value)}
+              aria-label="New save name"
+            />
+            <button class="small primary" onclick={confirmRename}>Save</button>
+            <button class="small" onclick={() => (renamingSave = null)}>Cancel</button>
+          </div>
+        {:else}
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
+            <button class="small" onclick={refreshSavedGames}>Refresh</button>
+            <button
+              class="small"
+              disabled={!$configFlags.save}
+              onclick={() => $configFlags.save && startRename($configFlags.save)}
+            >
+              Rename selected…
+            </button>
+          </div>
+        {/if}
       </div>
     </div>
   </div>

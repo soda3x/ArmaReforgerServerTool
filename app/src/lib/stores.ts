@@ -9,6 +9,7 @@ import {
   type AdvancedSetting,
   type ConfigFlags,
   type ServerStatus,
+  type ServerButtonIcon,
 } from "./api";
 
 export const serverConfiguration = writable<ServerConfiguration>(defaultServerConfiguration());
@@ -40,7 +41,7 @@ export const wslDistro = writable<string | null>(null);
 
 export const serverRunning = writable<boolean>(false);
 export const serverBusy = writable<boolean>(false); // true while a start/stop call is in-flight
-export const buttonIcon = writable<"play" | "stop">("play");
+export const buttonIcon = writable<ServerButtonIcon>("play");
 export const serverRunningLabel = writable<string>("Server stopped");
 export const startServerBtnEnabled = writable<boolean>(true);
 

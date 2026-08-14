@@ -8,6 +8,10 @@
 
   let { title, text, onSave, onClose }: Props = $props();
 
+  // `text` seeds the editable draft once when the modal opens; each open creates a fresh
+  // instance of this component (see TextBlockField's `{#if open}`), so it never changes
+  // mid-life.
+  // svelte-ignore state_referenced_locally
   let draft = $state(text);
   let error = $state("");
 

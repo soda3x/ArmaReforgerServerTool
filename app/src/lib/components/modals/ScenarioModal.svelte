@@ -13,6 +13,10 @@
   let scenarios = $state<Scenario[]>([]);
   let loading = $state(true);
   let loadError = $state("");
+  // `currentScenarioId` seeds the manual-entry field once when the modal opens; each open
+  // creates a fresh instance of this component (see ConfigurationTab's `{#if
+  // showScenarioModal}`), so it never changes mid-life.
+  // svelte-ignore state_referenced_locally
   let manualId = $state(currentScenarioId);
 
   onMount(async () => {

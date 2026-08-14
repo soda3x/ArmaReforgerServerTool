@@ -2,7 +2,7 @@
 //! Linux) as an alternative to a native Windows install. New in the Rust port — the C#
 //! original was Windows-native only.
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::Stdio;
 
 use tokio::process::Command;
@@ -10,21 +10,17 @@ use tokio::process::Command;
 use super::error::ServiceError;
 
 /// Which platform the managed dedicated server binary targets.
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "kind", rename_all = "camelCase")]
 pub enum ServerTarget {
     /// Native Windows server, launched directly.
+    #[default]
     Windows,
     /// Linux server, launched inside WSL. `distro` selects a specific WSL distribution
     /// (`wsl -d <distro> -- ...`); `None` uses the default distro.
     Wsl { distro: Option<String> },
 }
 
-impl Default for ServerTarget {
-    fn default() -> Self {
-        ServerTarget::Windows
-    }
-}
 
 /// Checks whether `wsl.exe` is available on PATH and at least one distribution is installed.
 pub async fn is_wsl_available() -> bool {
@@ -69,7 +65,7 @@ fn decode_wsl_output(bytes: &[u8]) -> String {
     if bytes.len() >= 2 && bytes.iter().skip(1).step_by(2).take(8).all(|b| *b == 0) {
         // Looks like UTF-16LE (lots of zero high bytes) — decode as such.
         let utf16: Vec<u16> = bytes
-            .chunks_exact(2)
+            .as_chunks::<2>().0.iter()
             .map(|c| u16::from_le_bytes([c[0], c[1]]))
             .collect();
         String::from_utf16_lossy(&utf16)
@@ -113,15 +109,6 @@ pub fn wsl_command(
     cmd.args(args);
     cmd
 }
-
-/// Convenience: the WSL path to a dedicated server binary given its Windows install dir.
-pub fn wsl_server_binary_path(install_dir_windows: &Path, relative: &str) -> String {
-    let base = windows_path_to_wsl(install_dir_windows);
-    format!("{}/{}", base.trim_end_matches('/'), relative.trim_start_matches('/'))
-}
-
-#[allow(dead_code)]
-fn _unused_pathbuf_import_anchor(_p: PathBuf) {}
 
 #[cfg(test)]
 mod tests {

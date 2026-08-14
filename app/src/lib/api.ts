@@ -176,10 +176,6 @@ export async function setServerConfiguration(configuration: ServerConfiguration)
   return invoke<void>("set_server_configuration", { configuration });
 }
 
-export async function setMissionHeader(missionHeaderJson: string): Promise<void> {
-  return invoke<void>("set_mission_header", { missionHeaderJson });
-}
-
 export async function saveServerConfiguration(): Promise<void> {
   return invoke<void>("save_server_configuration");
 }
@@ -199,10 +195,6 @@ export async function saveServerConfigurationToPath(path: string): Promise<void>
 export interface ModLists {
   available: Mod[];
   enabled: Mod[];
-}
-
-export function newMod(modId: string, name: string, required: boolean, version = "latest"): Mod {
-  return { modId, name, version, required };
 }
 
 export async function getModLists(): Promise<ModLists> {
@@ -240,10 +232,6 @@ export async function moveEnabledMod(m: Mod, delta: number): Promise<ModLists> {
 /** Edits an existing mod in place, preserving whether it's enabled and its load-order slot. */
 export async function updateMod(original: Mod, updated: Mod): Promise<ModLists> {
   return invoke<ModLists>("update_mod", { original, updated });
-}
-
-export async function importModsList(mods: Mod[]): Promise<ModLists> {
-  return invoke<ModLists>("import_mods_list", { mods });
 }
 
 export async function exportModsListToPath(path: string): Promise<void> {
@@ -354,6 +342,16 @@ export async function buildLaunchArgumentsPreview(
   serverTarget: ServerTarget,
 ): Promise<string> {
   return invoke<string>("build_launch_arguments_preview", { launchArguments, serverTarget });
+}
+
+/** Whether `wsl.exe` is available with at least one distribution installed. */
+export async function isWslAvailable(): Promise<boolean> {
+  return invoke<boolean>("is_wsl_available");
+}
+
+/** Installed WSL distribution names, for populating the WSL distro picker. */
+export async function listWslDistros(): Promise<string[]> {
+  return invoke<string[]>("list_wsl_distros");
 }
 
 // ---------------------------------------------------------------------------

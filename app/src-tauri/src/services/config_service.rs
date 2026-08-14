@@ -107,7 +107,7 @@ impl ConfigService {
 
         // First move all currently-enabled mods back to available so we
         // don't lose them.
-        for m in staged_enabled.drain(..).collect::<Vec<_>>() {
+        for m in std::mem::take(&mut staged_enabled) {
             if !staged_available.contains(&m) {
                 staged_available.push(m);
             }

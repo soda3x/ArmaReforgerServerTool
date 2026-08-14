@@ -9,9 +9,16 @@
 
   let { initial = null, onSave, onClose }: Props = $props();
 
+  // `initial` seeds these editable fields once when the modal opens; it's intentionally not
+  // tracked reactively — this component instance is created fresh each time the modal is
+  // shown (see ModTransferList's `{#if showAddModal}`), so `initial` never changes mid-life.
+  // svelte-ignore state_referenced_locally
   let modId = $state(initial?.modId ?? "");
+  // svelte-ignore state_referenced_locally
   let name = $state(initial?.name ?? "");
+  // svelte-ignore state_referenced_locally
   let version = $state(initial?.version ?? "latest");
+  // svelte-ignore state_referenced_locally
   let required = $state(initial?.required ?? false);
 
   let error = $state("");

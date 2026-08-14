@@ -5,7 +5,11 @@
 
 version: 2
 updates:
-  - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "/ArmaReforgerServerTool" # Location of package manifests
+  - package-ecosystem: "cargo"
+    directory: "/app/src-tauri"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/app"
     schedule:
       interval: "weekly"

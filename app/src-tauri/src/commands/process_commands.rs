@@ -4,8 +4,8 @@
 use tauri::{Emitter, Manager};
 
 use crate::models::LaunchArguments;
-use crate::services::process_service::{ProcessEvent, StartServerContext};
-use crate::services::wsl_service::ServerTarget;
+use crate::services::process_service::StartServerContext;
+use crate::services::wsl_service::{self, ServerTarget};
 use crate::state::AppState;
 
 /// The Tauri event name used to forward every [`ProcessEvent`] to the frontend. The frontend
@@ -82,7 +82,7 @@ async fn build_start_context(
     let quoted = |p: std::path::PathBuf| format!("\"{}\"", p.display());
     launch_arguments.config = Some(crate::models::LaunchArgument::new(
         "config",
-        quoted(install_dir.join("server.json")),
+        quoted(install_dir.join(crate::util::SERVER_JSON_FILENAME)),
     ));
     launch_arguments.profile = Some(crate::models::LaunchArgument::new(
         "profile",
@@ -161,7 +161,7 @@ pub async fn start_stop_server(
         let install_dir = file_io
             .install_dir()
             .ok_or_else(|| "No install directory is set".to_string())?;
-        let server_json_path = install_dir.join("server.json");
+        let server_json_path = install_dir.join(crate::util::SERVER_JSON_FILENAME);
         file_io
             .save_configuration_to_file(&server_json_path, &config)
             .map_err(|e| e.to_string())?;
@@ -197,9 +197,17 @@ pub async fn build_launch_arguments_preview(
     Ok(crate::services::process_service::ProcessService::build_launch_arguments(&ctx))
 }
 
-// Re-emit the event enum's variant shape to the frontend type layer implicitly via serde tags —
-// no extra command needed, `ProcessEvent` is `Serialize` and forwarded verbatim by
-// `spawn_event_forwarder`. This marker keeps the import used even if no command references it
-// directly yet.
-#[allow(dead_code)]
-fn _process_event_type_anchor(_e: ProcessEvent) {}
+/// Whether `wsl.exe` is available and has at least one distribution installed, so the frontend
+/// can grey out the WSL server-target option rather than let the user pick it and fail at
+/// launch time.
+#[tauri::command]
+pub async fn is_wsl_available() -> bool {
+    wsl_service::is_wsl_available().await
+}
+
+/// Lists installed WSL distribution names, so the frontend can offer a dropdown instead of
+/// free-text entry for the "Server Target: WSL" distro field.
+#[tauri::command]
+pub async fn list_wsl_distros() -> Result<Vec<String>, String> {
+    wsl_service::list_distros().await.map_err(|e| e.to_string())
+}

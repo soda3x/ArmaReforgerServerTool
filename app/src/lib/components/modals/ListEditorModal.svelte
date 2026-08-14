@@ -9,6 +9,9 @@
 
   let { title, items, placeholder = "Add an entry…", onSave, onClose }: Props = $props();
 
+  // `items` seeds the editable draft once when the modal opens; each open creates a fresh
+  // instance of this component (see ListField's `{#if open}`), so it never changes mid-life.
+  // svelte-ignore state_referenced_locally
   let draft = $state<string[]>([...items]);
   let newEntry = $state("");
 

@@ -1,4 +1,4 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use crate::models::SavedState;
 
@@ -50,10 +50,6 @@ impl SavedStateService {
         let json = serde_json::to_string_pretty(&self.state)?;
         std::fs::write(&self.path, json)?;
         Ok(())
-    }
-
-    pub fn path(&self) -> &Path {
-        &self.path
     }
 }
 
