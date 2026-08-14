@@ -74,6 +74,50 @@ fn log_line(msg: impl AsRef<str>) -> ProcessEvent {
     }
 }
 
+/// Best-effort detection of a known cloud-sync folder (matched by path component, so it doesn't
+/// false-positive on e.g. a folder that merely has "onedrive" as a substring of a longer word).
+/// Not exhaustive — this is a diagnostic hint, not a hard block.
+fn cloud_sync_provider(path: &std::path::Path) -> Option<&'static str> {
+    let providers: &[(&str, &str)] = &[
+        ("onedrive", "OneDrive"),
+        ("dropbox", "Dropbox"),
+        ("google drive", "Google Drive"),
+        ("googledrive", "Google Drive"),
+        ("icloud", "iCloud Drive"),
+    ];
+    path.components().find_map(|c| {
+        let name = c.as_os_str().to_string_lossy().to_lowercase();
+        providers
+            .iter()
+            .find(|(marker, _)| name.contains(marker))
+            .map(|(_, label)| *label)
+    })
+}
+
+#[cfg(test)]
+mod cloud_sync_tests {
+    use super::cloud_sync_provider;
+    use std::path::PathBuf;
+
+    #[test]
+    fn detects_onedrive_regardless_of_case() {
+        let p = PathBuf::from(r"C:\Users\Culle\OneDrive\Documents\reforger");
+        assert_eq!(cloud_sync_provider(&p), Some("OneDrive"));
+    }
+
+    #[test]
+    fn detects_dropbox() {
+        let p = PathBuf::from(r"C:\Users\Culle\Dropbox\reforger");
+        assert_eq!(cloud_sync_provider(&p), Some("Dropbox"));
+    }
+
+    #[test]
+    fn no_false_positive_on_plain_path() {
+        let p = PathBuf::from(r"C:\ArmaServer");
+        assert_eq!(cloud_sync_provider(&p), None);
+    }
+}
+
 /// Everything [`ProcessService::start_server`] needs to launch SteamCMD + the dedicated
 /// server. Built by the commands layer from `ConfigService`/`FileIoService`/`SavedState`.
 #[derive(Debug, Clone)]
@@ -99,6 +143,10 @@ pub struct StartServerContext {
 const SERVER_CURRENTLY_RUNNING_STR: &str = "Server is currently running";
 const APP_ID_STANDARD: &str = "1874900";
 const APP_ID_EXPERIMENTAL: &str = "1890870";
+/// How many times to re-run SteamCMD if it exits without actually installing the server binary
+/// (see the comment at the call site — this is normal SteamCMD self-update behavior, not an
+/// error condition, especially on a first run).
+const MAX_STEAMCMD_ATTEMPTS: u32 = 5;
 
 #[derive(Default)]
 struct Inner {
@@ -310,9 +358,49 @@ impl ProcessService {
         let server_working_dir = ctx.install_dir.join(arma_subdir);
         let server_exe = server_working_dir.join("ArmaReforgerServer.exe");
 
+        if let Some(provider) = cloud_sync_provider(&ctx.install_dir) {
+            self.emit(log_line(format!(
+                "Warning: the install directory is inside a {provider} folder. Cloud-sync file \
+                 virtualization can interfere with SteamCMD's install/update process (locked or \
+                 partially-hydrated files causing repeated self-update loops or corrupt \
+                 installs). If you hit persistent install failures, move the install directory \
+                 outside {provider} and try again."
+            )));
+        }
+
         if ctx.keep_server_updated {
             self.emit(log_line("Longbow will ensure the server is up-to-date."));
-            self.run_steamcmd(&ctx, &server_working_dir, Arc::clone(&cancel)).await?;
+
+            // SteamCMD frequently needs to self-update on a fresh/first-boot install before it
+            // will actually run the requested `+app_update`. When that happens it can exit
+            // *without ever downloading the app* — sometimes after several internal self-update
+            // passes in a row (observed: three, in under 20 seconds) — leaving nothing installed
+            // even though the process "succeeded". SteamCMD itself doesn't reliably signal this
+            // distinction on exit, so the only robust check is: did the server binary actually
+            // show up. If not, just run it again — this is the same thing a user manually
+            // clicking "Start Server" repeatedly was doing, now automatic.
+            for attempt in 1..=MAX_STEAMCMD_ATTEMPTS {
+                self.run_steamcmd(&ctx, &server_working_dir, Arc::clone(&cancel)).await?;
+
+                if cancel.load(Ordering::SeqCst) {
+                    self.emit(log_line("Server start cancelled."));
+                    return Ok(());
+                }
+
+                if server_exe.exists() {
+                    break;
+                }
+
+                if attempt < MAX_STEAMCMD_ATTEMPTS {
+                    self.emit(log_line(format!(
+                        "SteamCMD didn't finish installing the dedicated server yet (this is \
+                         normal on a first run while SteamCMD updates itself) — retrying \
+                         ({} of {})...",
+                        attempt + 1,
+                        MAX_STEAMCMD_ATTEMPTS
+                    )));
+                }
+            }
         } else {
             // Skip SteamCMD entirely rather than invoking it without `+app_update`: without
             // that switch the app id is parsed as a third argument to `+login`, which is a
