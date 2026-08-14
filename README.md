@@ -37,10 +37,8 @@ backend is Rust; the interface is Svelte + TypeScript running in a webview.
 
 ## Download
 
-Every push to `main` builds an installer via GitHub Actions — grab it from that commit's
-[Build Windows app](https://github.com/cullenwerks/ARST-RUST/actions/workflows/build.yml) run
-(under "Artifacts"). Tagged versions (`vX.Y.Z`) are additionally published to
-[Releases](https://github.com/cullenwerks/ARST-RUST/releases) with the installer attached.
+Every push to `main` builds and publishes a new [Release](https://github.com/cullenwerks/ARST-RUST/releases)
+automatically, tagged `vX.Y.Z-build.N` — grab the NSIS or MSI installer from the latest one.
 The installer isn't code-signed, so Windows SmartScreen will show an "unrecognized app"
 warning on first run — click "More info" → "Run anyway".
 
