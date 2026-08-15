@@ -11,7 +11,7 @@ use tokio::sync::Mutex;
 
 use crate::services::{
     ConfigService, FileIoService, NetworkService, ProcessService, SavedStateService,
-    ServiceError, ToolPropertiesService,
+    ServiceError, ToolPropertiesService, WorkshopService,
 };
 
 pub struct AppState {
@@ -21,6 +21,7 @@ pub struct AppState {
     pub config: Mutex<ConfigService>,
     pub network: Mutex<NetworkService>,
     pub process: Arc<ProcessService>,
+    pub workshop: Mutex<WorkshopService>,
 }
 
 impl AppState {
@@ -109,6 +110,11 @@ impl AppState {
             .unwrap_or(true);
         let network = NetworkService::new(use_upnp);
 
+        let workshop = WorkshopService::new(
+            &tool_properties.properties().arma_workshop_url,
+            env!("CARGO_PKG_VERSION"),
+        );
+
         Ok(Self {
             saved_state: Mutex::new(saved_state),
             tool_properties: Mutex::new(tool_properties),
@@ -116,6 +122,7 @@ impl AppState {
             config: Mutex::new(config),
             network: Mutex::new(network),
             process: ProcessService::new(),
+            workshop: Mutex::new(workshop),
         })
     }
 }

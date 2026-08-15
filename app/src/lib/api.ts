@@ -432,6 +432,57 @@ export function countryCodeToFlagEmoji(code: string): string {
 }
 
 // ---------------------------------------------------------------------------
+// Workshop catalog (browse/search the live Arma Workshop)
+// ---------------------------------------------------------------------------
+
+export interface WorkshopAssetSummary {
+  id: string;
+  name: string;
+  summary: string;
+  averageRating: number;
+  ratingCount: number;
+  subscriberCount: number;
+  currentVersionNumber: string;
+  currentVersionSize: number;
+  thumbnailUrl: string | null;
+  authorUsername: string;
+  tags: string[];
+}
+
+export interface WorkshopAssetDetail {
+  id: string;
+  name: string;
+  summary: string;
+  description: string;
+  license: string | null;
+  averageRating: number;
+  ratingCount: number;
+  subscriberCount: number;
+  currentVersionNumber: string;
+  currentVersionSize: number;
+  previewUrls: string[];
+  authorUsername: string;
+  tags: string[];
+}
+
+export interface WorkshopSearchResult {
+  count: number;
+  rows: WorkshopAssetSummary[];
+}
+
+export async function searchWorkshopMods(
+  query: string | null,
+  page: number,
+  sort: string | null,
+): Promise<WorkshopSearchResult> {
+  return invoke<WorkshopSearchResult>("search_workshop_mods", { query, page, sort });
+}
+
+export async function getWorkshopModDetails(modId: string): Promise<WorkshopAssetDetail> {
+  return invoke<WorkshopAssetDetail>("get_workshop_mod_details", { modId });
+}
+
+// ---------------------------------------------------------------------------
 // Advanced settings & config flags
 // ---------------------------------------------------------------------------
 

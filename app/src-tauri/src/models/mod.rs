@@ -5,6 +5,7 @@ pub mod saved_state;
 pub mod scenario;
 pub mod server_configuration;
 pub mod tool_properties;
+pub mod workshop;
 
 pub use advanced_setting::*;
 pub use launch_argument::*;
@@ -13,3 +14,4 @@ pub use saved_state::*;
 pub use scenario::*;
 pub use server_configuration::*;
 pub use tool_properties::*;
+pub use workshop::*;

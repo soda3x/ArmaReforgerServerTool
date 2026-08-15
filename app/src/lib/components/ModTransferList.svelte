@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { open, save } from "@tauri-apps/plugin-dialog";
   import ModModal from "./modals/ModModal.svelte";
+  import WorkshopBrowserModal from "./modals/WorkshopBrowserModal.svelte";
   import {
     type Mod,
     type ModLists,
@@ -95,6 +96,15 @@
     showAddModal = true;
   }
 
+  let showWorkshopModal = $state(false);
+
+  async function closeWorkshopModal() {
+    showWorkshopModal = false;
+    // The workshop modal adds mods directly via addMod/enableMod, bypassing this component's
+    // own state — refresh so anything added while it was open shows up immediately.
+    await refresh();
+  }
+
   async function onModSaved(m: Mod) {
     // Editing goes through updateMod so version/required-only edits actually stick (mod
     // identity is name+modId, so an add would be treated as a duplicate and dropped) and so an
@@ -140,6 +150,7 @@
   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
     <h3 style="margin:0;">Mods</h3>
     <div style="display:flex; gap:0.5rem;">
+      <button class="small primary" onclick={() => (showWorkshopModal = true)} disabled={busy}>Browse Workshop…</button>
       <button class="small" onclick={openAdd} disabled={busy}>+ Add Mod</button>
       <button class="small" onclick={onImport} disabled={busy}>Import…</button>
       <button class="small" onclick={onExport} disabled={busy}>Export…</button>
@@ -206,4 +217,8 @@
 
 {#if showAddModal}
   <ModModal initial={editingMod} onSave={onModSaved} onClose={() => (showAddModal = false)} />
+{/if}
+
+{#if showWorkshopModal}
+  <WorkshopBrowserModal onClose={closeWorkshopModal} />
 {/if}

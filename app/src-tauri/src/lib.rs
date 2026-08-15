@@ -84,6 +84,8 @@ pub fn run() {
             commands::rename_save,
             commands::check_for_updates,
             commands::get_default_scenarios,
+            commands::search_workshop_mods,
+            commands::get_workshop_mod_details,
             commands::ping_site_country_code,
             commands::get_advanced_settings,
             commands::set_advanced_setting,
