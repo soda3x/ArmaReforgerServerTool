@@ -89,9 +89,27 @@ pub fn windows_path_to_wsl(path: &Path) -> String {
     }
 }
 
-/// Builds a `tokio::process::Command` that runs `program args...` inside WSL, with the
-/// working directory (a Windows path) translated automatically. `program` and `args` should
-/// already be Linux-side values (e.g. a Linux binary path, not a Windows one).
+/// Builds a `tokio::process::Command` that runs `program args...` inside WSL, with the working
+/// directory (a Windows path) translated automatically. `program` is a binary name relative to
+/// that working directory (e.g. one SteamCMD just installed there) — it is invoked as `./program`
+/// rather than a bare name, since POSIX shells only search `$PATH` for unqualified names and
+/// never implicitly include the current directory. It's also `chmod +x`'d immediately before
+/// being exec'd: Windows drives mounted into WSL (`/mnt/c/...`) generally don't preserve Linux
+/// executable bits, so a binary that was just written onto an NTFS-backed install directory can't
+/// be assumed to already be marked executable.
+///
+/// Uses `--exec` rather than plain `--`: `wsl.exe --` runs the trailing command line through the
+/// distribution's *default login shell*, which re-joins the argv `tokio::process::Command` built
+/// back into a single string and re-tokenizes it — silently dropping our intended positional
+/// parameters (confirmed live: with `--`, `/bin/sh -c '...$1...' sh foo "has space" bar` receives
+/// `$1`/`$2`/`$3` as empty). `--exec` executes the given program directly with the given argv,
+/// with no shell rewriting it in between, so `program`/`args` arrive on the Linux side exactly as
+/// given here — including any embedded spaces.
+///
+/// The chmod+exec logic itself runs inside `/bin/sh -c '<script>' sh <binary> <args...>` rather
+/// than interpolating `program`/`args` into the script text — they're passed as positional
+/// parameters instead, so nothing in a mod name, save name, or other launch argument can be
+/// interpreted as shell syntax.
 pub fn wsl_command(
     distro: Option<&str>,
     working_dir_windows: &Path,
@@ -104,8 +122,12 @@ pub fn wsl_command(
     }
     let wsl_cwd = windows_path_to_wsl(working_dir_windows);
     cmd.arg("--cd").arg(&wsl_cwd);
-    cmd.arg("--");
-    cmd.arg(program);
+    cmd.arg("--exec");
+    cmd.arg("/bin/sh");
+    cmd.arg("-c");
+    cmd.arg(r#"bin="$1"; shift; chmod +x -- "$bin"; exec "$bin" "$@""#);
+    cmd.arg("sh"); // $0 placeholder, never read by the script above
+    cmd.arg(format!("./{program}"));
     cmd.args(args);
     cmd
 }
@@ -125,6 +147,37 @@ mod tests {
     fn lowercases_drive_letter() {
         let p = PathBuf::from(r"D:\stuff");
         assert_eq!(windows_path_to_wsl(&p), "/mnt/d/stuff");
+    }
+
+    #[test]
+    fn wsl_command_runs_binary_relative_to_cwd_via_chmod_exec_wrapper() {
+        let cmd = wsl_command(
+            Some("Ubuntu"),
+            &PathBuf::from(r"C:\Arma Server\arma_reforger"),
+            "ArmaReforgerServer",
+            &["-config".to_string(), "server.json".to_string()],
+        );
+        let std_cmd = cmd.as_std();
+        let args: Vec<String> = std_cmd.get_args().map(|a| a.to_string_lossy().to_string()).collect();
+
+        assert_eq!(std_cmd.get_program(), "wsl");
+        assert_eq!(
+            args,
+            vec![
+                "-d",
+                "Ubuntu",
+                "--cd",
+                "/mnt/c/Arma Server/arma_reforger",
+                "--exec",
+                "/bin/sh",
+                "-c",
+                r#"bin="$1"; shift; chmod +x -- "$bin"; exec "$bin" "$@""#,
+                "sh",
+                "./ArmaReforgerServer",
+                "-config",
+                "server.json",
+            ]
+        );
     }
 
     #[test]

@@ -148,6 +148,41 @@ const APP_ID_EXPERIMENTAL: &str = "1890870";
 /// error condition, especially on a first run).
 const MAX_STEAMCMD_ATTEMPTS: u32 = 5;
 
+/// The dedicated server binary's filename inside its install directory. Platform-specific: a
+/// WSL/Linux target needs the extension-less Linux binary, not the Windows `.exe` — SteamCMD only
+/// installs one or the other depending on which depot [`build_steamcmd_args`] asked for.
+fn server_exe_filename(target: &ServerTarget) -> &'static str {
+    match target {
+        ServerTarget::Windows => "ArmaReforgerServer.exe",
+        ServerTarget::Wsl { .. } => "ArmaReforgerServer",
+    }
+}
+
+/// Builds SteamCMD's script arguments. When targeting WSL, `@sSteamCmdForcePlatformType linux`
+/// is prepended: SteamCMD here is a *native Windows* process, so left to its default behavior it
+/// downloads the Windows depot regardless of where the server will actually run, leaving nothing
+/// on disk that the WSL launch step could execute.
+fn build_steamcmd_args(server_target: &ServerTarget, working_dir: &std::path::Path, app_id: &str) -> Vec<String> {
+    let mut args = Vec::new();
+    if matches!(server_target, ServerTarget::Wsl { .. }) {
+        args.push("+@sSteamCmdForcePlatformType".to_string());
+        args.push("linux".to_string());
+    }
+    // Built as separate argv entries rather than one formatted string: the install path is
+    // absolute and may contain spaces, which a whitespace split would tear apart.
+    args.extend([
+        "+force_install_dir".to_string(),
+        working_dir.display().to_string(),
+        "+login".to_string(),
+        "anonymous".to_string(),
+        "anonymous".to_string(),
+        "+app_update".to_string(),
+        app_id.to_string(),
+        "+quit".to_string(),
+    ]);
+    args
+}
+
 #[derive(Default)]
 struct Inner {
     is_server_started: bool,
@@ -356,7 +391,7 @@ impl ProcessService {
             "arma_reforger"
         };
         let server_working_dir = ctx.install_dir.join(arma_subdir);
-        let server_exe = server_working_dir.join("ArmaReforgerServer.exe");
+        let server_exe = server_working_dir.join(server_exe_filename(&ctx.server_target));
 
         if let Some(provider) = cloud_sync_provider(&ctx.install_dir) {
             self.emit(log_line(format!(
@@ -441,18 +476,7 @@ impl ProcessService {
             APP_ID_STANDARD
         };
 
-        // Built as separate argv entries rather than one formatted string: the install path is
-        // absolute and may contain spaces, which a whitespace split would tear apart.
-        let steam_args: Vec<String> = vec![
-            "+force_install_dir".to_string(),
-            server_working_dir.display().to_string(),
-            "+login".to_string(),
-            "anonymous".to_string(),
-            "anonymous".to_string(),
-            "+app_update".to_string(),
-            app_id.to_string(),
-            "+quit".to_string(),
-        ];
+        let steam_args = build_steamcmd_args(&ctx.server_target, server_working_dir, app_id);
 
         let mut cmd = Command::new(&ctx.steamcmd_exe);
         cmd.args(&steam_args);
@@ -543,9 +567,7 @@ impl ProcessService {
                 c
             }
             ServerTarget::Wsl { distro } => {
-                // Linux binary is conventionally named without the .exe suffix.
-                let linux_binary = "ArmaReforgerServer";
-                wsl_command(distro.as_deref(), server_working_dir, linux_binary, &launch_args)
+                wsl_command(distro.as_deref(), server_working_dir, server_exe_filename(&ctx.server_target), &launch_args)
             }
         };
         server_cmd.stdout(std::process::Stdio::piped());
@@ -854,6 +876,30 @@ mod tests {
             // intact; it must never be whitespace-split.
             assert!(server_working_dir.display().to_string().contains(' '));
         }
+    }
+
+    #[test]
+    fn server_exe_filename_is_platform_specific() {
+        assert_eq!(server_exe_filename(&ServerTarget::Windows), "ArmaReforgerServer.exe");
+        assert_eq!(server_exe_filename(&ServerTarget::Wsl { distro: None }), "ArmaReforgerServer");
+    }
+
+    #[test]
+    fn steamcmd_args_force_linux_platform_only_for_wsl_target() {
+        let dir = PathBuf::from(r"C:\Arma Server\arma_reforger");
+
+        let windows_args = build_steamcmd_args(&ServerTarget::Windows, &dir, "1874900");
+        assert!(!windows_args.contains(&"+@sSteamCmdForcePlatformType".to_string()));
+        assert_eq!(windows_args[0], "+force_install_dir");
+
+        let wsl_args = build_steamcmd_args(&ServerTarget::Wsl { distro: None }, &dir, "1874900");
+        assert_eq!(wsl_args[0], "+@sSteamCmdForcePlatformType");
+        assert_eq!(wsl_args[1], "linux");
+        // The platform override must come before +app_update, or SteamCMD will already have
+        // resolved the Windows depot by the time it sees it.
+        let app_update_idx = wsl_args.iter().position(|a| a == "+app_update").unwrap();
+        let force_platform_idx = wsl_args.iter().position(|a| a == "+@sSteamCmdForcePlatformType").unwrap();
+        assert!(force_platform_idx < app_update_idx);
     }
 
     #[test]
