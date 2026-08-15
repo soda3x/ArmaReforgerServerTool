@@ -94,6 +94,28 @@ fn cloud_sync_provider(path: &std::path::Path) -> Option<&'static str> {
     })
 }
 
+/// Friendlier hints for a couple of well-known Windows process-startup failure codes, which
+/// otherwise show up to the user as an opaque hex NTSTATUS value. Both are common real-world
+/// causes of a dedicated server failing to start on a freshly provisioned Windows machine (a
+/// VPS/VM used purely for hosting, which often lacks runtime redistributables a desktop install
+/// would already have) — not something specific to this app, but worth surfacing plainly.
+fn exit_code_hint(status: &std::process::ExitStatus) -> Option<&'static str> {
+    const STATUS_DLL_NOT_FOUND: i32 = 0xC0000135u32 as i32;
+    const STATUS_INVALID_IMAGE_FORMAT: i32 = 0xC000007Bu32 as i32;
+    match status.code()? {
+        STATUS_DLL_NOT_FOUND => Some(
+            "This usually means the Microsoft Visual C++ Redistributable (x64) isn't installed \
+             on this machine — install it from Microsoft's website, then try starting the \
+             server again.",
+        ),
+        STATUS_INVALID_IMAGE_FORMAT => Some(
+            "This usually means the downloaded server files are corrupted or incomplete — try \
+             deleting the install directory and letting SteamCMD reinstall it.",
+        ),
+        _ => None,
+    }
+}
+
 #[cfg(test)]
 mod cloud_sync_tests {
     use super::cloud_sync_provider;
@@ -616,7 +638,12 @@ impl ProcessService {
                 res = server_child.wait() => {
                     match res {
                         Ok(status) => {
-                            this.emit(log_line(format!("Server process exited ({status}).")));
+                            let mut msg = format!("Server process exited ({status}).");
+                            if let Some(hint) = exit_code_hint(&status) {
+                                msg.push(' ');
+                                msg.push_str(hint);
+                            }
+                            this.emit(log_line(msg));
                         }
                         Err(e) => {
                             this.emit(log_line(format!("Lost track of the server process: {e}")));
@@ -876,6 +903,20 @@ mod tests {
             // intact; it must never be whitespace-split.
             assert!(server_working_dir.display().to_string().contains(' '));
         }
+    }
+
+    #[test]
+    fn exit_code_hint_recognizes_known_windows_startup_failures() {
+        use std::os::windows::process::ExitStatusExt;
+
+        let dll_not_found = std::process::ExitStatus::from_raw(0xC0000135u32);
+        assert!(exit_code_hint(&dll_not_found).unwrap().contains("Visual C++ Redistributable"));
+
+        let invalid_image = std::process::ExitStatus::from_raw(0xC000007Bu32);
+        assert!(exit_code_hint(&invalid_image).unwrap().contains("corrupted or incomplete"));
+
+        let clean_exit = std::process::ExitStatus::from_raw(0);
+        assert_eq!(exit_code_hint(&clean_exit), None);
     }
 
     #[test]
