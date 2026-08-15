@@ -16,13 +16,13 @@
 //! it lazily, cache it, and on a 404 from the data endpoint (which is what a stale buildId looks
 //! like) rediscover it once and retry — self-healing without any user-visible break.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use scraper::{Html, Selector};
 use serde::Deserialize;
 use tokio::sync::Mutex;
 
-use crate::models::{WorkshopAssetDetail, WorkshopAssetSummary, WorkshopSearchResult};
+use crate::models::{WorkshopAssetDetail, WorkshopAssetSummary, WorkshopDependency, WorkshopSearchResult};
 
 use super::error::ServiceError;
 
@@ -306,10 +306,16 @@ struct RawAssetDetail {
     tags: Vec<RawTag>,
     #[serde(default)]
     author: RawAuthor,
+    #[serde(default)]
+    dependencies: Vec<RawDependencyEntry>,
 }
 
 impl RawAssetDetail {
     fn into_detail(self) -> WorkshopAssetDetail {
+        let mut dependencies = Vec::new();
+        let mut seen = HashSet::new();
+        flatten_dependencies(&self.dependencies, &mut dependencies, &mut seen);
+
         WorkshopAssetDetail {
             id: self.id,
             name: self.name,
@@ -329,7 +335,48 @@ impl RawAssetDetail {
                 .collect(),
             author_username: self.author.username,
             tags: self.tags.into_iter().map(|t| t.name).collect(),
+            dependencies,
         }
+    }
+}
+
+#[derive(Debug, Deserialize, Default, Clone)]
+#[serde(rename_all = "camelCase")]
+struct RawDependencyAssetRef {
+    #[serde(default)]
+    id: String,
+    #[serde(default)]
+    name: String,
+}
+
+#[derive(Debug, Deserialize, Default, Clone)]
+#[serde(rename_all = "camelCase")]
+struct RawDependencyEntry {
+    #[serde(default)]
+    asset: RawDependencyAssetRef,
+    #[serde(default)]
+    total_file_size: u64,
+    /// Dependencies can themselves have dependencies (e.g. a compatibility patch requiring both
+    /// a base mod and an addon) — upstream nests these rather than flattening them for us.
+    #[serde(default)]
+    dependencies: Vec<RawDependencyEntry>,
+}
+
+/// Flattens upstream's nested dependency tree into the transitive set of required mods,
+/// deduplicated by ID (the same dependency can appear more than once in the tree).
+fn flatten_dependencies(entries: &[RawDependencyEntry], out: &mut Vec<WorkshopDependency>, seen: &mut HashSet<String>) {
+    for entry in entries {
+        if entry.asset.id.is_empty() {
+            continue;
+        }
+        if seen.insert(entry.asset.id.clone()) {
+            out.push(WorkshopDependency {
+                id: entry.asset.id.clone(),
+                name: entry.asset.name.clone(),
+                total_file_size: entry.total_file_size,
+            });
+        }
+        flatten_dependencies(&entry.dependencies, out, seen);
     }
 }
 
@@ -464,6 +511,54 @@ mod tests {
         }
     }"#;
 
+    /// Captured from a real `workshop/{id}-slug.json` response for a mod with dependencies
+    /// ("RHS Status Quo", which requires two RHS content-pack addons). Trimmed to the fields
+    /// relevant to dependency parsing.
+    const SAMPLE_DETAIL_WITH_DEPENDENCIES_JSON: &str = r#"{
+        "pageProps": {
+            "pathId": "595F2BF2F44836FB",
+            "asset": {
+                "averageRating": 0.88,
+                "id": "595F2BF2F44836FB",
+                "name": "RHS - Status Quo",
+                "summary": "RHS on Arma Reforger",
+                "description": "RHS: Status Quo.",
+                "license": "Custom license",
+                "ratingCount": 9220,
+                "subscriberCount": 31995,
+                "currentVersionNumber": "0.16.5150",
+                "currentVersionSize": 204219382,
+                "previews": [],
+                "author": {"id": "bef0c20c", "username": "Red Hammer Studios"},
+                "tags": [],
+                "dependencies": [
+                    {
+                        "asset": {"id": "1337C0DE5DABBEEF", "name": "RHS - Content Pack 01"},
+                        "version": "0.16.5150",
+                        "totalFileSize": 6343204665,
+                        "published": true,
+                        "dependencies": []
+                    },
+                    {
+                        "asset": {"id": "BADC0DEDABBEDA5E", "name": "RHS - Content Pack 02"},
+                        "version": "0.16.5150",
+                        "totalFileSize": 2393417241,
+                        "published": true,
+                        "dependencies": [
+                            {
+                                "asset": {"id": "1337C0DE5DABBEEF", "name": "RHS - Content Pack 01"},
+                                "version": "0.16.5150",
+                                "totalFileSize": 6343204665,
+                                "published": true,
+                                "dependencies": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }"#;
+
     #[test]
     fn parses_search_response_and_maps_to_clean_summary() {
         let raw: RawSearchResponse = serde_json::from_str(SAMPLE_SEARCH_JSON).unwrap();
@@ -516,6 +611,24 @@ mod tests {
         assert_eq!(detail.author_username, "ValterB");
         assert_eq!(detail.tags, vec!["EASY".to_string(), "GPS".to_string()]);
         assert_eq!(detail.preview_urls, vec!["https://ar-gcp-cdn.bistudio.com/full1.jpg".to_string()]);
+        assert_eq!(detail.dependencies, Vec::new());
+    }
+
+    #[test]
+    fn flattens_nested_dependency_tree_and_dedupes_by_id() {
+        let raw: RawDetailResponse = serde_json::from_str(SAMPLE_DETAIL_WITH_DEPENDENCIES_JSON).unwrap();
+        let detail = raw.page_props.asset.into_detail();
+
+        // "RHS - Content Pack 01" appears both as a direct dependency and nested under "RHS -
+        // Content Pack 02" — it must only appear once in the flattened, deduplicated result.
+        assert_eq!(detail.dependencies.len(), 2);
+        let ids: Vec<&str> = detail.dependencies.iter().map(|d| d.id.as_str()).collect();
+        assert!(ids.contains(&"1337C0DE5DABBEEF"));
+        assert!(ids.contains(&"BADC0DEDABBEDA5E"));
+
+        let pack_one = detail.dependencies.iter().find(|d| d.id == "1337C0DE5DABBEEF").unwrap();
+        assert_eq!(pack_one.name, "RHS - Content Pack 01");
+        assert_eq!(pack_one.total_file_size, 6343204665);
     }
 
     #[test]
@@ -557,6 +670,14 @@ mod tests {
         let detail = service.get_details(&first.id).await.expect("detail fetch failed");
         assert_eq!(detail.id, first.id);
         assert!(!detail.name.is_empty());
+
+        // "RHS - Status Quo" is a known real mod with dependencies (two RHS content packs) —
+        // confirms the `dependencies` field actually parses against production, not just fixtures.
+        let rhs = service
+            .get_details("595F2BF2F44836FB")
+            .await
+            .expect("RHS - Status Quo detail fetch failed");
+        assert!(!rhs.dependencies.is_empty(), "expected RHS - Status Quo to report dependencies");
     }
 
     /// Confirms the 404-and-rediscover path actually works against production: force a

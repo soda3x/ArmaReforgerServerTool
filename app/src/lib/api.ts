@@ -449,6 +449,12 @@ export interface WorkshopAssetSummary {
   tags: string[];
 }
 
+export interface WorkshopDependency {
+  id: string;
+  name: string;
+  totalFileSize: number;
+}
+
 export interface WorkshopAssetDetail {
   id: string;
   name: string;
@@ -463,6 +469,7 @@ export interface WorkshopAssetDetail {
   previewUrls: string[];
   authorUsername: string;
   tags: string[];
+  dependencies: WorkshopDependency[];
 }
 
 export interface WorkshopSearchResult {

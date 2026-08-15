@@ -39,6 +39,18 @@ pub struct WorkshopAssetDetail {
     pub preview_urls: Vec<String>,
     pub author_username: String,
     pub tags: Vec<String>,
+    /// The full transitive set of other workshop mods this one requires (flattened and
+    /// deduplicated from upstream's nested dependency tree), so the UI can offer to add them
+    /// alongside the mod the user actually picked.
+    pub dependencies: Vec<WorkshopDependency>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WorkshopDependency {
+    pub id: String,
+    pub name: String,
+    pub total_file_size: u64,
 }
 
 #[derive(Debug, Clone, Serialize)]

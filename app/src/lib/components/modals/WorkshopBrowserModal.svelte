@@ -3,6 +3,7 @@
   import {
     type WorkshopAssetSummary,
     type WorkshopAssetDetail,
+    type WorkshopDependency,
     type Mod,
     searchWorkshopMods,
     getWorkshopModDetails,
@@ -114,17 +115,28 @@
     detailError = "";
   }
 
+  // "latest" is the sentinel this app's Mod format uses for "no specific version pinned" (see
+  // Mod::LATEST_MOD_VER_STR on the Rust side) — the same convention manually adding a mod uses.
+  function toMod(id: string, name: string): Mod {
+    return { modId: id, name, version: "latest", required: false };
+  }
+
   async function addToServer(asset: WorkshopAssetDetail) {
     addBusy = true;
     detailError = "";
     try {
-      const mod: Mod = { modId: asset.id, name: asset.name, version: "latest", required: false };
+      const mods = [toMod(asset.id, asset.name), ...asset.dependencies.map((d) => toMod(d.id, d.name))];
       // Mirrors what manually adding via the "+ Add Mod" dialog then clicking "→ Enable"
       // already does: addMod persists it into the known-mods catalog, enableMod moves it into
-      // this server's enabled/load-order list.
-      await addMod(mod);
-      await enableMod(mod);
-      addedIds = new Set(addedIds).add(asset.id);
+      // this server's enabled/load-order list. Dependencies go in the same way, so they show up
+      // as ordinary mods the user can still reorder/remove afterward.
+      for (const mod of mods) {
+        await addMod(mod);
+        await enableMod(mod);
+      }
+      const next = new Set(addedIds);
+      for (const mod of mods) next.add(mod.modId);
+      addedIds = next;
     } catch (e) {
       detailError = e instanceof Error ? e.message : String(e);
     } finally {
@@ -189,6 +201,23 @@
               {/if}
               <p class="field-hint" style="font-family:var(--font-mono); margin-bottom:0.75rem;">{selected.id}</p>
 
+              {#if selected.dependencies.length > 0}
+                <div style="margin-bottom:0.75rem;">
+                  <div class="field-hint" style="margin-bottom:0.3rem;">
+                    Requires {selected.dependencies.length}
+                    {selected.dependencies.length === 1 ? "other mod" : "other mods"}:
+                  </div>
+                  <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.15rem;">
+                    {#each selected.dependencies as dep (dep.id)}
+                      <li style="display:flex; justify-content:space-between; gap:0.6rem; font-size:0.85rem;">
+                        <span>{dep.name}</span>
+                        <span class="field-hint">{formatSize(dep.totalFileSize)}</span>
+                      </li>
+                    {/each}
+                  </ul>
+                </div>
+              {/if}
+
               {#if detailError}
                 <p style="color:var(--danger);">{detailError}</p>
               {/if}
@@ -197,7 +226,11 @@
                 <span class="badge online">Added to server ✓</span>
               {:else}
                 <button class="primary" onclick={() => selected && addToServer(selected)} disabled={addBusy}>
-                  {addBusy ? "Adding…" : "Add to server"}
+                  {addBusy
+                    ? "Adding…"
+                    : selected.dependencies.length > 0
+                      ? `Add mod + ${selected.dependencies.length} ${selected.dependencies.length === 1 ? "dependency" : "dependencies"}`
+                      : "Add to server"}
                 </button>
               {/if}
             </div>
