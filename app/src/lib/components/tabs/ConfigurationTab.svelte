@@ -205,7 +205,7 @@
     <div class="card">
       <div class="section-title">Basic</div>
       <div class="grid-2">
-        <TextField label="Server Name" bind:value={$serverConfiguration.root.game.name} />
+        <TextField label="Server Name" bind:value={$serverConfiguration.root.game.name} placeholder="Required" />
         <NumberField label="Max Players" bind:value={$serverConfiguration.root.game.maxPlayers} min={1} max={256} />
         <TextField label="Password" bind:value={$serverConfiguration.root.game.password} password />
         <TextField label="Admin Password" bind:value={$serverConfiguration.root.game.passwordAdmin} password />

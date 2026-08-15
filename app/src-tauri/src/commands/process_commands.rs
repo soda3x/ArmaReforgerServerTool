@@ -157,6 +157,16 @@ pub async fn start_stop_server(
             .map_err(|e| e.to_string())
     } else {
         let config = state.config.lock().await.build_configuration();
+        // The dedicated server's own config schema requires a non-empty name (`minLength: 1`
+        // on `game.name`) — without this check the server still launches, gets all the way
+        // through SteamCMD and engine startup, and only then fails with an opaque backend JSON
+        // schema error, having wasted the update/launch time in the process.
+        if config.root.game.name.trim().is_empty() {
+            return Err(
+                "Server Name is required — set one on the Configuration tab before starting the server."
+                    .to_string(),
+            );
+        }
         let file_io = state.file_io.lock().await;
         let install_dir = file_io
             .install_dir()
