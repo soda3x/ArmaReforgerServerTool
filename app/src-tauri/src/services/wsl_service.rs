@@ -116,6 +116,33 @@ pub fn wsl_command(
     program: &str,
     args: &[String],
 ) -> Command {
+    let mut cmd = wsl_raw_command(
+        distro,
+        working_dir_windows,
+        "/bin/sh",
+        &[
+            "-c".to_string(),
+            r#"bin="$1"; shift; chmod +x -- "$bin"; exec "$bin" "$@""#.to_string(),
+            "sh".to_string(), // $0 placeholder, never read by the script above
+            format!("./{program}"),
+        ],
+    );
+    cmd.args(args);
+    cmd
+}
+
+/// Runs `program args...` inside WSL exactly as given, with no chmod/exec wrapper — for invoking
+/// tools that already live on the distribution's `$PATH` (`ldd`, package managers, and the like)
+/// rather than launching a binary out of the install directory.
+///
+/// Uses `--exec` for the same reason [`wsl_command`] does: plain `--` would hand the command line
+/// to the distro's login shell to re-parse.
+pub fn wsl_raw_command(
+    distro: Option<&str>,
+    working_dir_windows: &Path,
+    program: &str,
+    args: &[String],
+) -> Command {
     let mut cmd = Command::new("wsl");
     if let Some(distro) = distro {
         cmd.args(["-d", distro]);
@@ -123,11 +150,7 @@ pub fn wsl_command(
     let wsl_cwd = windows_path_to_wsl(working_dir_windows);
     cmd.arg("--cd").arg(&wsl_cwd);
     cmd.arg("--exec");
-    cmd.arg("/bin/sh");
-    cmd.arg("-c");
-    cmd.arg(r#"bin="$1"; shift; chmod +x -- "$bin"; exec "$bin" "$@""#);
-    cmd.arg("sh"); // $0 placeholder, never read by the script above
-    cmd.arg(format!("./{program}"));
+    cmd.arg(program);
     cmd.args(args);
     cmd
 }

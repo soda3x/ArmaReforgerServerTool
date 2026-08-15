@@ -170,13 +170,18 @@ const APP_ID_EXPERIMENTAL: &str = "1890870";
 /// error condition, especially on a first run).
 const MAX_STEAMCMD_ATTEMPTS: u32 = 5;
 
+/// The Linux dedicated server binary's filename (no extension, unlike its Windows counterpart).
+pub const LINUX_SERVER_BINARY: &str = "ArmaReforgerServer";
+/// The native Windows dedicated server binary's filename.
+pub const WINDOWS_SERVER_BINARY: &str = "ArmaReforgerServer.exe";
+
 /// The dedicated server binary's filename inside its install directory. Platform-specific: a
 /// WSL/Linux target needs the extension-less Linux binary, not the Windows `.exe` — SteamCMD only
 /// installs one or the other depending on which depot [`build_steamcmd_args`] asked for.
 fn server_exe_filename(target: &ServerTarget) -> &'static str {
     match target {
-        ServerTarget::Windows => "ArmaReforgerServer.exe",
-        ServerTarget::Wsl { .. } => "ArmaReforgerServer",
+        ServerTarget::Windows => WINDOWS_SERVER_BINARY,
+        ServerTarget::Wsl { .. } => LINUX_SERVER_BINARY,
     }
 }
 
@@ -482,7 +487,49 @@ impl ProcessService {
             )));
         }
 
+        // Check the runtime libraries the binary needs *before* handing it to the OS loader.
+        // Without this the failure surfaces as a bare `0xC0000135` with no indication of which
+        // library is missing (or, under WSL, as a silent immediate exit).
+        self.report_missing_prerequisites(&ctx, &server_working_dir).await;
+
         self.launch_server(&ctx, &server_working_dir, &server_exe, cancel).await
+    }
+
+    /// Logs any unsatisfied runtime prerequisite for the target platform. Deliberately advisory
+    /// rather than fatal: the checks are heuristics about someone else's machine, and refusing to
+    /// launch on a false negative would be worse than letting the launch proceed and fail on its
+    /// own. Naming the missing pieces up front is what turns an opaque loader error into
+    /// something actionable.
+    async fn report_missing_prerequisites(
+        self: &Arc<Self>,
+        ctx: &StartServerContext,
+        server_working_dir: &std::path::Path,
+    ) {
+        let prereqs = match &ctx.server_target {
+            ServerTarget::Windows => crate::services::prereq_service::check_windows_runtime(),
+            ServerTarget::Wsl { distro } => {
+                match crate::services::prereq_service::check_wsl_runtime(
+                    distro.as_deref(),
+                    server_working_dir,
+                    LINUX_SERVER_BINARY,
+                )
+                .await
+                {
+                    Ok(Some(prereq)) => vec![prereq],
+                    // An inconclusive or failed check is not evidence of a problem.
+                    Ok(None) | Err(_) => Vec::new(),
+                }
+            }
+        };
+
+        for prereq in prereqs.iter().filter(|p| !p.satisfied) {
+            self.emit(log_line(format!(
+                "Missing prerequisite — {}: {} not found. {}",
+                prereq.name,
+                prereq.missing.join(", "),
+                prereq.detail
+            )));
+        }
     }
 
     /// Runs SteamCMD to install/update the dedicated server, streaming its output.

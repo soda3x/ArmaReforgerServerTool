@@ -72,6 +72,8 @@ pub fn run() {
             commands::build_launch_arguments_preview,
             commands::is_wsl_available,
             commands::list_wsl_distros,
+            commands::check_prerequisites,
+            commands::install_prerequisite,
             commands::get_use_upnp,
             commands::set_use_upnp,
             commands::get_install_dir,

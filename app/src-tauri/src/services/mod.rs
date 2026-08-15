@@ -2,6 +2,7 @@ pub mod config_service;
 pub mod error;
 pub mod file_io_service;
 pub mod network_service;
+pub mod prereq_service;
 pub mod process_service;
 pub mod saved_state_service;
 pub mod tool_properties_service;

@@ -30,6 +30,9 @@
     listWslDistros,
     getSavedGames,
     renameSave,
+    checkPrerequisites,
+    installPrerequisite,
+    type Prerequisite,
     LOG_LEVELS,
     type LogLevel,
   } from "../../api";
@@ -163,7 +166,43 @@
 
   onMount(() => {
     loadAll();
+    refreshPrereqs();
   });
+
+  // --- Runtime prerequisites -----------------------------------------------------------------
+
+  let prereqs = $state<Prerequisite[]>([]);
+  let prereqBusy = $state(false);
+  let prereqError = $state("");
+  let installingId = $state<string | null>(null);
+
+  async function refreshPrereqs() {
+    prereqBusy = true;
+    prereqError = "";
+    try {
+      prereqs = await checkPrerequisites(currentServerTarget());
+    } catch (e) {
+      prereqError = e instanceof Error ? e.message : String(e);
+      prereqs = [];
+    } finally {
+      prereqBusy = false;
+    }
+  }
+
+  async function onInstallPrereq(id: string) {
+    installingId = id;
+    prereqError = "";
+    try {
+      await installPrerequisite(id);
+      // Re-probe rather than assuming success: the installer may have been declined at the UAC
+      // prompt, or have needed a reboot to finish.
+      await refreshPrereqs();
+    } catch (e) {
+      prereqError = e instanceof Error ? e.message : String(e);
+    } finally {
+      installingId = null;
+    }
+  }
 
   $effect(() => {
     if (autoScroll && logContainer) {
@@ -276,6 +315,9 @@
     if (kind === "wsl") {
       ensureWslChecked();
     }
+    // Prerequisites are entirely different per target (Windows DLLs vs Linux shared libraries),
+    // so the previous target's results are meaningless now.
+    refreshPrereqs();
   }
 
   // --- Advanced settings ---------------------------------------------------------------------
@@ -514,6 +556,58 @@
         </select>
       </div>
     </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem; margin-bottom:0.75rem;">
+      <div class="section-title" style="margin:0; border:none; padding:0;">Prerequisites</div>
+      <button class="small" onclick={refreshPrereqs} disabled={prereqBusy}>
+        {prereqBusy ? "Checking…" : "Re-check"}
+      </button>
+    </div>
+
+    {#if prereqError}
+      <p style="color:var(--danger);">{prereqError}</p>
+    {/if}
+
+    {#if prereqBusy && prereqs.length === 0}
+      <p class="field-hint">Checking…</p>
+    {:else if prereqs.length === 0}
+      <p class="field-hint">
+        {#if $serverTargetKind === "wsl"}
+          Linux libraries are checked against the installed server binary — this appears once the
+          server files have been downloaded.
+        {:else}
+          Nothing to check.
+        {/if}
+      </p>
+    {:else}
+      <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.5rem;">
+        {#each prereqs as p (p.id)}
+          <li style="display:flex; gap:0.6rem; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;">
+            <div style="min-width:0; flex:1;">
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <span class={p.satisfied ? "badge online" : "badge"} style={p.satisfied ? "" : "color:var(--danger); border-color:var(--danger);"}>
+                  {p.satisfied ? "OK" : "Missing"}
+                </span>
+                <strong>{p.name}</strong>
+              </div>
+              {#if !p.satisfied}
+                <div class="field-hint" style="font-family:var(--font-mono); margin-top:0.15rem;">
+                  {p.missing.join(", ")}
+                </div>
+                <div class="field-hint" style="margin-top:0.15rem;">{p.detail}</div>
+              {/if}
+            </div>
+            {#if !p.satisfied && p.autoInstallable}
+              <button class="small primary" onclick={() => onInstallPrereq(p.id)} disabled={installingId !== null}>
+                {installingId === p.id ? "Installing…" : "Install"}
+              </button>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    {/if}
   </div>
 
   <div class="card">

@@ -337,6 +337,23 @@ export async function killServer(): Promise<void> {
   return invoke<void>("kill_server");
 }
 
+export interface Prerequisite {
+  id: string;
+  name: string;
+  satisfied: boolean;
+  missing: string[];
+  detail: string;
+  autoInstallable: boolean;
+}
+
+export async function checkPrerequisites(serverTarget: ServerTarget): Promise<Prerequisite[]> {
+  return invoke<Prerequisite[]>("check_prerequisites", { serverTarget });
+}
+
+export async function installPrerequisite(id: string): Promise<void> {
+  return invoke<void>("install_prerequisite", { id });
+}
+
 export async function buildLaunchArgumentsPreview(
   launchArguments: LaunchArguments,
   serverTarget: ServerTarget,
