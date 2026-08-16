@@ -3,6 +3,7 @@
   import { open, save } from "@tauri-apps/plugin-dialog";
   import ModModal from "./modals/ModModal.svelte";
   import WorkshopBrowserModal from "./modals/WorkshopBrowserModal.svelte";
+  import ModTemplateModal from "./modals/ModTemplateModal.svelte";
   import {
     type Mod,
     type ModLists,
@@ -97,6 +98,7 @@
   }
 
   let showWorkshopModal = $state(false);
+  let showTemplateModal = $state(false);
 
   async function closeWorkshopModal() {
     showWorkshopModal = false;
@@ -151,6 +153,7 @@
     <h3 style="margin:0;">Mods</h3>
     <div style="display:flex; gap:0.5rem;">
       <button class="small primary" onclick={() => (showWorkshopModal = true)} disabled={busy}>Browse Workshop…</button>
+      <button class="small" onclick={() => (showTemplateModal = true)} disabled={busy}>Templates…</button>
       <button class="small" onclick={openAdd} disabled={busy}>+ Add Mod</button>
       <button class="small" onclick={onImport} disabled={busy}>Import…</button>
       <button class="small" onclick={onExport} disabled={busy}>Export…</button>
@@ -221,4 +224,8 @@
 
 {#if showWorkshopModal}
   <WorkshopBrowserModal onClose={closeWorkshopModal} />
+{/if}
+
+{#if showTemplateModal}
+  <ModTemplateModal onApplied={applyLists} onClose={() => (showTemplateModal = false)} />
 {/if}

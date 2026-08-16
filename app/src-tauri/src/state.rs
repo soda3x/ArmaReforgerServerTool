@@ -11,7 +11,7 @@ use tokio::sync::Mutex;
 
 use crate::services::{
     ConfigService, FileIoService, NetworkService, ProcessService, SavedStateService,
-    ServiceError, ToolPropertiesService, WorkshopService,
+    ServiceError, TemplateService, ToolPropertiesService, WorkshopService,
 };
 
 pub struct AppState {
@@ -22,6 +22,7 @@ pub struct AppState {
     pub network: Mutex<NetworkService>,
     pub process: Arc<ProcessService>,
     pub workshop: Mutex<WorkshopService>,
+    pub templates: Mutex<TemplateService>,
 }
 
 impl AppState {
@@ -115,6 +116,8 @@ impl AppState {
             env!("CARGO_PKG_VERSION"),
         );
 
+        let templates = TemplateService::load(config_dir.join("mod_templates.json"));
+
         Ok(Self {
             saved_state: Mutex::new(saved_state),
             tool_properties: Mutex::new(tool_properties),
@@ -123,6 +126,7 @@ impl AppState {
             network: Mutex::new(network),
             process: ProcessService::new(),
             workshop: Mutex::new(workshop),
+            templates: Mutex::new(templates),
         })
     }
 }

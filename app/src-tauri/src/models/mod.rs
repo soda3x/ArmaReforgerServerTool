@@ -1,6 +1,7 @@
 pub mod advanced_setting;
 pub mod launch_argument;
 pub mod mod_entry;
+pub mod mod_template;
 pub mod prerequisite;
 pub mod saved_state;
 pub mod scenario;
@@ -11,6 +12,7 @@ pub mod workshop;
 pub use advanced_setting::*;
 pub use launch_argument::*;
 pub use mod_entry::*;
+pub use mod_template::*;
 pub use prerequisite::*;
 pub use saved_state::*;
 pub use scenario::*;

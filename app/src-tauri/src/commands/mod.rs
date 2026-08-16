@@ -5,6 +5,7 @@ pub mod network_commands;
 pub mod prereq_commands;
 pub mod process_commands;
 pub mod saved_state_commands;
+pub mod template_commands;
 pub mod workshop_commands;
 
 pub use config_commands::*;
@@ -14,4 +15,5 @@ pub use network_commands::*;
 pub use prereq_commands::*;
 pub use process_commands::*;
 pub use saved_state_commands::*;
+pub use template_commands::*;
 pub use workshop_commands::*;

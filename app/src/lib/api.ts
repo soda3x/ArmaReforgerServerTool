@@ -337,6 +337,29 @@ export async function killServer(): Promise<void> {
   return invoke<void>("kill_server");
 }
 
+export interface ModTemplate {
+  name: string;
+  description: string;
+  mods: Mod[];
+  updatedAt: string;
+}
+
+export async function listModTemplates(): Promise<ModTemplate[]> {
+  return invoke<ModTemplate[]>("list_mod_templates");
+}
+
+export async function saveModTemplate(name: string, description: string): Promise<ModTemplate[]> {
+  return invoke<ModTemplate[]>("save_mod_template", { name, description });
+}
+
+export async function deleteModTemplate(name: string): Promise<ModTemplate[]> {
+  return invoke<ModTemplate[]>("delete_mod_template", { name });
+}
+
+export async function applyModTemplate(name: string, replace: boolean): Promise<ModLists> {
+  return invoke<ModLists>("apply_mod_template", { name, replace });
+}
+
 export interface Prerequisite {
   id: string;
   name: string;

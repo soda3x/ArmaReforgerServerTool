@@ -9,7 +9,7 @@ pub struct ModLists {
     pub enabled: Vec<Mod>,
 }
 
-async fn mod_lists(state: &tauri::State<'_, AppState>) -> ModLists {
+pub(crate) async fn mod_lists(state: &tauri::State<'_, AppState>) -> ModLists {
     let config = state.config.lock().await;
     ModLists {
         available: config.available_mods().to_vec(),
@@ -22,7 +22,7 @@ pub async fn get_mod_lists(state: tauri::State<'_, AppState>) -> Result<ModLists
     Ok(mod_lists(&state).await)
 }
 
-async fn persist_mods_database(state: &tauri::State<'_, AppState>) -> Result<(), String> {
+pub(crate) async fn persist_mods_database(state: &tauri::State<'_, AppState>) -> Result<(), String> {
     let config = state.config.lock().await;
     let mut all = config.available_mods().to_vec();
     all.extend(config.enabled_mods().iter().cloned());
