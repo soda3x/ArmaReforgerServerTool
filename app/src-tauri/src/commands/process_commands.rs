@@ -79,7 +79,14 @@ async fn build_start_context(
     // `-addonsDir` is what makes mods load, `-profile` is where saves go, and `-logStats` is
     // what makes the server emit the stat lines the Status screen's charts are built from.
     // Paths are quoted so `shell_split` keeps them intact when they contain spaces.
-    let quoted = |p: std::path::PathBuf| format!("\"{}\"", p.display());
+    //
+    // Under WSL they're also translated to their `/mnt/<drive>/...` form: the server is a Linux
+    // process, so a `C:\...` argument is just an unopenable filename to it — it starts normally
+    // and then fails at "Unable to open server config file". Only these *arguments* are
+    // translated; the paths Longbow itself reads and writes (server.json, the install directory)
+    // stay Windows paths, because Longbow is the Windows-side process.
+    let quoted =
+        |p: std::path::PathBuf| format!("\"{}\"", wsl_service::path_for_target(&server_target, &p));
     launch_arguments.config = Some(crate::models::LaunchArgument::new(
         "config",
         quoted(install_dir.join(crate::util::SERVER_JSON_FILENAME)),
@@ -157,16 +164,10 @@ pub async fn start_stop_server(
             .map_err(|e| e.to_string())
     } else {
         let config = state.config.lock().await.build_configuration();
-        // The dedicated server's own config schema requires a non-empty name (`minLength: 1`
-        // on `game.name`) — without this check the server still launches, gets all the way
-        // through SteamCMD and engine startup, and only then fails with an opaque backend JSON
-        // schema error, having wasted the update/launch time in the process.
-        if config.root.game.name.trim().is_empty() {
-            return Err(
-                "Server Name is required — set one on the Configuration tab before starting the server."
-                    .to_string(),
-            );
-        }
+        // Without this the server still launches, gets all the way through SteamCMD and engine
+        // startup, and only then fails against its own config schema — having spent the whole
+        // update/launch cycle first, and reporting it as raw schema-validator output.
+        config.validate_for_start()?;
         let file_io = state.file_io.lock().await;
         let install_dir = file_io
             .install_dir()

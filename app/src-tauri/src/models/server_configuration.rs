@@ -41,7 +41,47 @@ impl ServerConfiguration {
         let root: Root = serde_json::from_str(json)?;
         Ok(ServerConfiguration { root })
     }
+
+    /// Checks the fields the dedicated server's own JSON schema rejects at startup, so a bad
+    /// value is reported immediately instead of after SteamCMD and a full engine initialization
+    /// — at which point it surfaces as a wall of `BACKEND (E)` schema output.
+    ///
+    /// Deliberately narrow: this mirrors specific, documented schema constraints rather than
+    /// second-guessing the server about what a valid config looks like in general.
+    pub fn validate_for_start(&self) -> Result<(), String> {
+        if self.root.game.name.trim().is_empty() {
+            return Err(
+                "Server Name is required — set one on the Configuration tab before starting the \
+                 server."
+                    .to_string(),
+            );
+        }
+
+        let scenario_id = self.root.game.scenario_id.trim();
+        if scenario_id.is_empty() {
+            return Err(
+                "No scenario is selected — pick one with the Select… button on the Configuration \
+                 tab before starting the server."
+                    .to_string(),
+            );
+        }
+        if !SCENARIO_ID_REGEX.is_match(scenario_id) {
+            return Err(format!(
+                "Scenario ID '{scenario_id}' isn't in the format the server accepts. It must be a \
+                 16-character resource GUID in braces followed by a path, e.g. \
+                 {{ECC61978EDCC2B5A}}Missions/23_Campaign.conf."
+            ));
+        }
+
+        Ok(())
+    }
 }
+
+/// The pattern the dedicated server's config schema enforces on `game.scenarioId`, copied from
+/// the schema error the server itself emits when the value doesn't match.
+static SCENARIO_ID_REGEX: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+    regex::Regex::new(r"^\{[0-9A-F]{16}\}[a-zA-Z0-9_./ -]+$").expect("invalid SCENARIO_ID_REGEX")
+});
 
 
 /// Structure representing the root of the Server Config.
@@ -315,6 +355,56 @@ pub struct JoinQueue {
     pub max_size: u32,
 }
 
+
+#[cfg(test)]
+mod validation_tests {
+    use super::*;
+
+    fn valid_config() -> ServerConfiguration {
+        let mut config = ServerConfiguration::default();
+        config.root.game.name = "My Server".to_string();
+        config.root.game.scenario_id = "{ECC61978EDCC2B5A}Missions/23_Campaign.conf".to_string();
+        config
+    }
+
+    #[test]
+    fn accepts_a_fully_populated_config() {
+        assert_eq!(valid_config().validate_for_start(), Ok(()));
+    }
+
+    #[test]
+    fn rejects_a_blank_or_whitespace_only_server_name() {
+        for name in ["", "   "] {
+            let mut config = valid_config();
+            config.root.game.name = name.to_string();
+            let err = config.validate_for_start().unwrap_err();
+            assert!(err.contains("Server Name is required"), "unexpected error: {err}");
+        }
+    }
+
+    #[test]
+    fn rejects_a_missing_scenario() {
+        let mut config = valid_config();
+        config.root.game.scenario_id = String::new();
+        let err = config.validate_for_start().unwrap_err();
+        assert!(err.contains("No scenario is selected"), "unexpected error: {err}");
+    }
+
+    #[test]
+    fn rejects_a_scenario_id_the_servers_schema_would_reject() {
+        // Lowercase hex, a missing GUID, and a GUID with no path all fail the server's pattern.
+        for bad in [
+            "{ecc61978edcc2b5a}Missions/23_Campaign.conf",
+            "Missions/23_Campaign.conf",
+            "{ECC61978EDCC2B5A}",
+        ] {
+            let mut config = valid_config();
+            config.root.game.scenario_id = bad.to_string();
+            let err = config.validate_for_start().unwrap_err();
+            assert!(err.contains("isn't in the format"), "expected a format error for {bad}, got: {err}");
+        }
+    }
+}
 
 #[cfg(test)]
 mod schema_tests {

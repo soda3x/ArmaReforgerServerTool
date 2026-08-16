@@ -89,6 +89,19 @@ pub fn windows_path_to_wsl(path: &Path) -> String {
     }
 }
 
+/// Renders a Windows path in the form a process running on `target` can actually open.
+///
+/// A server running under WSL is a Linux process: a `C:\...` argument means nothing to it, so
+/// paths handed to it as launch arguments have to be in `/mnt/<drive>/...` form. This applies
+/// only to paths *given to the server*; paths Longbow itself reads and writes stay Windows paths,
+/// since Longbow is always the Windows-side process.
+pub fn path_for_target(target: &ServerTarget, path: &Path) -> String {
+    match target {
+        ServerTarget::Windows => path.display().to_string(),
+        ServerTarget::Wsl { .. } => windows_path_to_wsl(path),
+    }
+}
+
 /// Builds a `tokio::process::Command` that runs `program args...` inside WSL, with the working
 /// directory (a Windows path) translated automatically. `program` is a binary name relative to
 /// that working directory (e.g. one SteamCMD just installed there) — it is invoked as `./program`
@@ -200,6 +213,23 @@ mod tests {
                 "-config",
                 "server.json",
             ]
+        );
+    }
+
+    #[test]
+    fn launch_argument_paths_are_translated_only_for_the_wsl_target() {
+        // Regression: the server launched under WSL but was handed `-config C:\...\server.json`,
+        // so it started, initialized the engine, and then died on "Unable to open server config
+        // file" — the Linux process can't open a Windows path.
+        let config = PathBuf::from(r"C:\Users\Culle\Documents\reforger\server.json");
+
+        assert_eq!(
+            path_for_target(&ServerTarget::Windows, &config),
+            r"C:\Users\Culle\Documents\reforger\server.json"
+        );
+        assert_eq!(
+            path_for_target(&ServerTarget::Wsl { distro: None }, &config),
+            "/mnt/c/Users/Culle/Documents/reforger/server.json"
         );
     }
 
