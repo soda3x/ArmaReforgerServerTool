@@ -94,6 +94,34 @@ fn cloud_sync_provider(path: &std::path::Path) -> Option<&'static str> {
     })
 }
 
+/// Turns the engine's `Addon loading failed {GUID,GUID,...}` line into the corresponding mod
+/// names. Returns `None` for any other line.
+///
+/// The engine lists every addon that was loaded when the failure happened, not the one at fault,
+/// so the caller must not present this as "these mods are broken" — it's the candidate set to
+/// bisect, and the accompanying script errors are what actually identify the culprit.
+fn failed_addon_names(line: &str, enabled: &[crate::models::Mod]) -> Option<String> {
+    let start = line.find("Addon loading failed {")? + "Addon loading failed {".len();
+    let rest = &line[start..];
+    let end = rest.find('}')?;
+
+    let names: Vec<String> = rest[..end]
+        .split(',')
+        .map(str::trim)
+        .filter(|guid| !guid.is_empty())
+        .map(|guid| {
+            enabled
+                .iter()
+                .find(|m| m.mod_id.eq_ignore_ascii_case(guid))
+                .map(|m| m.name.clone())
+                // A GUID with no matching entry is still worth showing as-is.
+                .unwrap_or_else(|| guid.to_string())
+        })
+        .collect();
+
+    (!names.is_empty()).then(|| names.join(", "))
+}
+
 /// Friendlier hints for a couple of well-known Windows process-startup failure codes, which
 /// otherwise show up to the user as an opaque hex NTSTATUS value. Both are common real-world
 /// causes of a dedicated server failing to start on a freshly provisioned Windows machine (a
@@ -160,6 +188,9 @@ pub struct StartServerContext {
     pub auto_restart_on_crash: bool,
     pub auto_restart_delay_ms: u64,
     pub server_target: ServerTarget,
+    /// Only used to translate the workshop GUIDs the engine prints on an addon failure back into
+    /// the mod names the user actually recognises.
+    pub enabled_mods: Vec<crate::models::Mod>,
 }
 
 const SERVER_CURRENTLY_RUNNING_STR: &str = "Server is currently running";
@@ -748,6 +779,38 @@ impl ProcessService {
                         }
                     }
 
+                    // A mod whose scripts don't compile takes the whole server down, and the
+                    // engine says so only via a `SCRIPT (E)` wall followed by a GUID list —
+                    // neither of which reads as "one of your mods is broken" to most people.
+                    if line.contains(r#"Can't compile "Game" script module!"#) {
+                        self.emit(log_line(
+                            "A mod's scripts failed to compile, so the server can't start. This \
+                             is a fault in the mod itself (or an incompatibility with the current \
+                             game version) rather than a problem with the server setup — the \
+                             'SCRIPT (E)' lines above name the script files that failed, and the \
+                             mod owning those scripts is the one to disable or update.",
+                        ));
+                    }
+
+                    if line.contains("Addon loading failed {") {
+                        let enabled = {
+                            let inner = self.inner.lock().await;
+                            inner
+                                .last_start_ctx
+                                .as_ref()
+                                .map(|c| c.enabled_mods.clone())
+                                .unwrap_or_default()
+                        };
+                        if let Some(names) = failed_addon_names(&line, &enabled) {
+                            self.emit(log_line(format!(
+                                "Mods loaded when the failure occurred: {names}. That's every \
+                                 enabled mod, not only the one at fault — if the script errors \
+                                 above don't make the culprit obvious, disable half of them and \
+                                 retry to narrow it down.",
+                            )));
+                        }
+                    }
+
                     if line.contains("Error while initializing game")
                         || line.contains("Unable to initialize the game")
                     {
@@ -953,6 +1016,33 @@ mod tests {
     }
 
     #[test]
+    fn failed_addon_guids_are_reported_as_mod_names() {
+        // The real line the engine emitted when Project Redline - Core's scripts failed to
+        // compile, trimmed to four addons.
+        let line = "ENGINE    (E): Addon loading failed \
+                    {5B383D4CB27E0D54,595F2BF2F44836FB,5AAF6D5352E5FCAB,DEADBEEFDEADBEEF}";
+        let enabled = vec![
+            crate::models::Mod::new_latest("5B383D4CB27E0D54", "BMP-3 IFV", false),
+            crate::models::Mod::new_latest("595F2BF2F44836FB", "RHS - Status Quo", false),
+            crate::models::Mod::new_latest("5AAF6D5352E5FCAB", "Project Redline - Core", false),
+        ];
+
+        let names = failed_addon_names(line, &enabled).unwrap();
+        assert_eq!(
+            names,
+            // The unknown GUID has no name to show, so it stays a GUID rather than vanishing.
+            "BMP-3 IFV, RHS - Status Quo, Project Redline - Core, DEADBEEFDEADBEEF"
+        );
+    }
+
+    #[test]
+    fn unrelated_lines_produce_no_addon_report() {
+        assert_eq!(failed_addon_names("ENGINE : Game destroyed.", &[]), None);
+        // Truncated/malformed lines must not panic or half-report.
+        assert_eq!(failed_addon_names("Addon loading failed {5B383D4C", &[]), None);
+    }
+
+    #[test]
     fn exit_code_hint_recognizes_known_windows_startup_failures() {
         use std::os::windows::process::ExitStatusExt;
 
@@ -1022,6 +1112,7 @@ mod tests {
             auto_restart_on_crash: false,
             auto_restart_delay_ms: 2000,
             server_target: ServerTarget::Windows,
+            enabled_mods: Vec::new(),
         }
     }
 

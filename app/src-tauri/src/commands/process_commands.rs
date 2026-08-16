@@ -71,6 +71,7 @@ async fn build_start_context(
         .filter(|s| s != crate::services::config_service::LATEST_SAVE_SENTINEL);
     let config_bind_port = config.config().root.bind_port;
     let log_level = config.log_level.clone();
+    let enabled_mods = config.enabled_mods().to_vec();
     drop(config);
 
     // The mandatory arguments the C# original always set in `Main.CreateLaunchArguments()`.
@@ -132,6 +133,7 @@ async fn build_start_context(
         auto_restart_on_crash,
         auto_restart_delay_ms,
         server_target,
+        enabled_mods,
     })
 }
 
