@@ -337,6 +337,27 @@ export async function killServer(): Promise<void> {
   return invoke<void>("kill_server");
 }
 
+export interface Diagnostic {
+  id: string;
+  title: string;
+  meaning: string;
+  fix: string;
+}
+
+export interface CommonIssue {
+  id: string;
+  symptom: string;
+  causes: string[];
+}
+
+export async function listDiagnostics(): Promise<Diagnostic[]> {
+  return invoke<Diagnostic[]>("list_diagnostics");
+}
+
+export async function listCommonIssues(): Promise<CommonIssue[]> {
+  return invoke<CommonIssue[]>("list_common_issues");
+}
+
 export interface ModTemplate {
   name: string;
   description: string;

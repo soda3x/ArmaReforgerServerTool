@@ -1,4 +1,5 @@
 pub mod config_commands;
+pub mod diagnostics_commands;
 pub mod file_commands;
 pub mod mods_commands;
 pub mod network_commands;
@@ -9,6 +10,7 @@ pub mod template_commands;
 pub mod workshop_commands;
 
 pub use config_commands::*;
+pub use diagnostics_commands::*;
 pub use file_commands::*;
 pub use mods_commands::*;
 pub use network_commands::*;

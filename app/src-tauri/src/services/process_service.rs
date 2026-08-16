@@ -254,6 +254,9 @@ struct Inner {
     /// the killing, and during process teardown that task may never be scheduled again.
     server_pid: Option<u32>,
     last_start_ctx: Option<StartServerContext>,
+    /// Diagnostics already explained during the current run, so a repeating error line doesn't
+    /// bury the log under the same explanation. Cleared at the start of every run.
+    emitted_diagnostics: std::collections::HashSet<&'static str>,
 }
 
 
@@ -375,6 +378,7 @@ impl ProcessService {
                 inner.is_server_started = true;
                 inner.last_start_ctx = Some(ctx.clone());
                 inner.run_cancel = Some(Arc::clone(&cancel));
+                inner.emitted_diagnostics.clear();
             }
 
             tracing::info!(
@@ -779,17 +783,21 @@ impl ProcessService {
                         }
                     }
 
-                    // A mod whose scripts don't compile takes the whole server down, and the
-                    // engine says so only via a `SCRIPT (E)` wall followed by a GUID list —
-                    // neither of which reads as "one of your mods is broken" to most people.
-                    if line.contains(r#"Can't compile "Game" script module!"#) {
-                        self.emit(log_line(
-                            "A mod's scripts failed to compile, so the server can't start. This \
-                             is a fault in the mod itself (or an incompatibility with the current \
-                             game version) rather than a problem with the server setup — the \
-                             'SCRIPT (E)' lines above name the script files that failed, and the \
-                             mod owning those scripts is the one to disable or update.",
-                        ));
+                    // Engine errors are terse and often several lines removed from their cause.
+                    // Where a line matches a known failure signature, follow it with a
+                    // plain-language explanation — once per run, so a repeating error doesn't
+                    // bury the log it's meant to clarify.
+                    if let Some(diagnostic) = crate::services::diagnostics::diagnose(&line) {
+                        let first_time = {
+                            let mut inner = self.inner.lock().await;
+                            inner.emitted_diagnostics.insert(diagnostic.id)
+                        };
+                        if first_time {
+                            self.emit(log_line(format!(
+                                "— {} — {} {}",
+                                diagnostic.title, diagnostic.meaning, diagnostic.fix
+                            )));
+                        }
                     }
 
                     if line.contains("Addon loading failed {") {

@@ -1,4 +1,5 @@
 pub mod config_service;
+pub mod diagnostics;
 pub mod error;
 pub mod file_io_service;
 pub mod network_service;

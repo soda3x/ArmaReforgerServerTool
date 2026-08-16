@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { open } from "@tauri-apps/plugin-dialog";
+  import TroubleshootingModal from "../modals/TroubleshootingModal.svelte";
   import {
     type AdvancedSetting,
     type AdvancedSettingValue,
@@ -171,6 +172,7 @@
 
   // --- Runtime prerequisites -----------------------------------------------------------------
 
+  let showTroubleshooting = $state(false);
   let prereqs = $state<Prerequisite[]>([]);
   let prereqBusy = $state(false);
   let prereqError = $state("");
@@ -716,6 +718,7 @@
           <span class="switch"></span>
           <span>Auto-scroll</span>
         </label>
+        <button class="small" onclick={() => (showTroubleshooting = true)}>Troubleshooting…</button>
         <button class="small" onclick={clearLogLines}>Clear</button>
       </div>
     </div>
@@ -732,3 +735,7 @@
     </div>
   </div>
 </div>
+
+{#if showTroubleshooting}
+  <TroubleshootingModal onClose={() => (showTroubleshooting = false)} />
+{/if}
