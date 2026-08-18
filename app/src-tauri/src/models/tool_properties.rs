@@ -11,8 +11,6 @@ pub struct ToolProperties {
     #[serde(default)]
     pub mod_database_file: String,
     #[serde(default)]
-    pub update_repository_url: String,
-    #[serde(default)]
     pub release_repository_url: String,
     #[serde(default)]
     pub bug_report_url: String,
@@ -141,11 +139,8 @@ impl Default for ToolProperties {
         Self {
             default_scenarios: Self::default_scenarios_list(),
             mod_database_file: "./mod_database.json".to_string(),
-            update_repository_url: "https://raw.githubusercontent.com/soda3x/ArmaReforgerServerTool"
-                .to_string(),
-            release_repository_url: "https://github.com/soda3x/ArmaReforgerServerTool/releases"
-                .to_string(),
-            bug_report_url: "https://github.com/soda3x/ArmaReforgerServerTool/issues".to_string(),
+            release_repository_url: "https://github.com/cullenwerks/longbow/releases".to_string(),
+            bug_report_url: "https://github.com/cullenwerks/longbow/issues".to_string(),
             check_for_updates_on_startup: true,
             steam_cmd_download_url: "https://steamcdn-a.akamaihd.net/client/installer".to_string(),
             arma_workshop_url: "https://reforger.armaplatform.com/workshop".to_string(),

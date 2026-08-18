@@ -27,7 +27,6 @@
     startStopServer,
     killServer,
     buildLaunchArgumentsPreview,
-    checkForUpdates,
     setServerConfiguration,
     isWslAvailable,
     listWslDistros,
@@ -349,8 +348,9 @@
   async function onCheckForUpdates() {
     updateCheckMsg = "Checking…";
     try {
-      const v = await checkForUpdates();
-      updateCheckMsg = v ? `Update available: ${v}` : "You're up to date.";
+      const { check } = await import("@tauri-apps/plugin-updater");
+      const update = await check();
+      updateCheckMsg = update ? `Update available: v${update.version}` : "You're up to date.";
     } catch (e) {
       updateCheckMsg = e instanceof Error ? e.message : String(e);
     }

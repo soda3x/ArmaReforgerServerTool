@@ -335,3 +335,7 @@ ASALocalRun/
 
 # Executables
 *.exe
+
+# Tauri updater signing key (private half) — belongs only in the
+# TAURI_SIGNING_PRIVATE_KEY GitHub Actions secret, never in the repo.
+updater-key.pem

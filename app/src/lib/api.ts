@@ -476,10 +476,6 @@ export async function renameSave(oldName: string, newName: string): Promise<stri
   return invoke<string>("rename_save", { oldName, newName });
 }
 
-export async function checkForUpdates(): Promise<string | null> {
-  return invoke<string | null>("check_for_updates");
-}
-
 export async function getDefaultScenarios(): Promise<Scenario[]> {
   return invoke<Scenario[]>("get_default_scenarios");
 }

@@ -222,52 +222,6 @@ impl FileIoService {
         Ok(())
     }
 
-    /// Fetches `{update_repository_url}/main/version.txt` as plain text, parses as a
-    /// `major.minor.patch` version, and compares against `current_version` (also
-    /// `major.minor.patch`). Returns `Ok(Some(remote_version_string))` if the remote is newer,
-    /// `Ok(None)` otherwise.
-    pub async fn check_for_updates(
-        update_repository_url: &str,
-        current_version: &str,
-    ) -> Result<Option<String>, ServiceError> {
-        let update_url = format!("{}/main/version.txt", update_repository_url);
-
-        let client = reqwest::Client::builder()
-            .user_agent(format!("Longbow-ServerTool/{}", current_version))
-            .build()?;
-
-        let response = client.get(&update_url).send().await?;
-        let remote_version_string = response.error_for_status()?.text().await?;
-        let remote_version_string = remote_version_string.trim();
-
-        let remote = Self::parse_version(remote_version_string).ok_or_else(|| {
-            ServiceError::Other(format!(
-                "Failed to parse remote version string: '{}'",
-                remote_version_string
-            ))
-        })?;
-        let current = Self::parse_version(current_version).ok_or_else(|| {
-            ServiceError::Other(format!(
-                "Failed to parse current version string: '{}'",
-                current_version
-            ))
-        })?;
-
-        if remote > current {
-            Ok(Some(remote_version_string.to_string()))
-        } else {
-            Ok(None)
-        }
-    }
-
-    fn parse_version(s: &str) -> Option<(u64, u64, u64)> {
-        let mut parts = s.trim().split('.');
-        let major = parts.next()?.parse().ok()?;
-        let minor = parts.next()?.parse().ok()?;
-        let patch = parts.next()?.parse().ok()?;
-        Some((major, minor, patch))
-    }
-
     /// Migrates the legacy pre-0.8.3 mod database format (plain text, lines of
     /// `modId,name[,version]`, `version` field `"latest"` treated as absent) into `Vec<Mod>`.
     /// Fails if any non-empty line has fewer than 2 comma-separated fields. This is a pure

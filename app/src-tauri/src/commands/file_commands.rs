@@ -168,15 +168,3 @@ pub async fn get_default_scenarios(
 pub fn ping_site_country_code(ping_site: String) -> Option<String> {
     crate::util::ping_site_to_country_code(&ping_site).map(|c| c.to_string())
 }
-
-#[tauri::command]
-pub async fn check_for_updates(state: tauri::State<'_, AppState>) -> Result<Option<String>, String> {
-    let tool_properties = state.tool_properties.lock().await;
-    let update_repository_url = tool_properties.properties().update_repository_url.clone();
-    drop(tool_properties);
-
-    let current_version = env!("CARGO_PKG_VERSION");
-    crate::services::FileIoService::check_for_updates(&update_repository_url, current_version)
-        .await
-        .map_err(|e| e.to_string())
-}
