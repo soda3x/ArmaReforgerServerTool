@@ -41,6 +41,23 @@ pub async fn add_mod(state: tauri::State<'_, AppState>, m: Mod) -> Result<ModLis
     Ok(mod_lists(&state).await)
 }
 
+/// Adds and enables `mods` as a single atomic operation — used for a Workshop mod plus its full
+/// (already flattened) dependency chain, so the whole set either lands together or the caller
+/// gets one clear error, rather than looping `add_mod`/`enable_mod` per mod and hoping every
+/// round trip in a dozen-plus-item chain happened to succeed.
+#[tauri::command]
+pub async fn add_mods_with_dependencies(
+    state: tauri::State<'_, AppState>,
+    mods: Vec<Mod>,
+) -> Result<ModLists, String> {
+    {
+        let mut config = state.config.lock().await;
+        config.add_and_enable_mods(mods);
+    }
+    persist_mods_database(&state).await?;
+    Ok(mod_lists(&state).await)
+}
+
 #[tauri::command]
 pub async fn remove_mod(state: tauri::State<'_, AppState>, m: Mod) -> Result<ModLists, String> {
     {

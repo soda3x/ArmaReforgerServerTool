@@ -205,6 +205,14 @@ export async function addMod(m: Mod): Promise<ModLists> {
   return invoke<ModLists>("add_mod", { m });
 }
 
+// Adds and enables every mod in `mods` as one atomic operation — a Workshop mod plus its full
+// dependency chain, so the whole set lands together instead of one addMod/enableMod round trip
+// per mod (which could partially fail, and doesn't return a single authoritative result to sync
+// the UI from).
+export async function addModsWithDependencies(mods: Mod[]): Promise<ModLists> {
+  return invoke<ModLists>("add_mods_with_dependencies", { mods });
+}
+
 export async function removeMod(m: Mod): Promise<ModLists> {
   return invoke<ModLists>("remove_mod", { m });
 }

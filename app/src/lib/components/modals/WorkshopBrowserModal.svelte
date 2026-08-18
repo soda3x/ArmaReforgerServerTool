@@ -5,17 +5,18 @@
     type WorkshopAssetDetail,
     type WorkshopDependency,
     type Mod,
+    type ModLists,
     searchWorkshopMods,
     getWorkshopModDetails,
-    addMod,
-    enableMod,
+    addModsWithDependencies,
   } from "../../api";
 
   interface Props {
+    onApplied: (lists: ModLists) => void;
     onClose: () => void;
   }
 
-  let { onClose }: Props = $props();
+  let { onApplied, onClose }: Props = $props();
 
   // The API returns 16 rows/page (confirmed against the live site); used only to render "Page N
   // of ~M" — actual Prev/Next enablement below doesn't depend on this being exactly right.
@@ -126,14 +127,13 @@
     detailError = "";
     try {
       const mods = [toMod(asset.id, asset.name), ...asset.dependencies.map((d) => toMod(d.id, d.name))];
-      // Mirrors what manually adding via the "+ Add Mod" dialog then clicking "→ Enable"
-      // already does: addMod persists it into the known-mods catalog, enableMod moves it into
-      // this server's enabled/load-order list. Dependencies go in the same way, so they show up
-      // as ordinary mods the user can still reorder/remove afterward.
-      for (const mod of mods) {
-        await addMod(mod);
-        await enableMod(mod);
-      }
+      // One atomic backend call for the mod + its whole dependency chain (can be a dozen-plus
+      // entries) rather than an addMod/enableMod round trip per mod — that would leave the set
+      // partially added on any single failure, and had no single authoritative result to sync
+      // the shared Available/Enabled stores from, so the lists wouldn't reliably reflect what
+      // was actually added until (if ever) something else happened to re-fetch them.
+      const lists = await addModsWithDependencies(mods);
+      onApplied(lists);
       const next = new Set(addedIds);
       for (const mod of mods) next.add(mod.modId);
       addedIds = next;

@@ -64,6 +64,7 @@ pub fn run() {
             commands::disable_all_mods,
             commands::move_enabled_mod,
             commands::update_mod,
+            commands::add_mods_with_dependencies,
             commands::export_mods_list_to_path,
             commands::import_mods_list_from_path,
             commands::list_mod_templates,

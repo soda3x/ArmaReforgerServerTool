@@ -100,13 +100,6 @@
   let showWorkshopModal = $state(false);
   let showTemplateModal = $state(false);
 
-  async function closeWorkshopModal() {
-    showWorkshopModal = false;
-    // The workshop modal adds mods directly via addMod/enableMod, bypassing this component's
-    // own state — refresh so anything added while it was open shows up immediately.
-    await refresh();
-  }
-
   async function onModSaved(m: Mod) {
     // Editing goes through updateMod so version/required-only edits actually stick (mod
     // identity is name+modId, so an add would be treated as a duplicate and dropped) and so an
@@ -171,7 +164,7 @@
         <button class="small" onclick={onEnableAll} disabled={busy}>Enable all →</button>
       </div>
       <input type="text" placeholder="Filter…" bind:value={availableFilter} style="margin-bottom:0.5rem;" />
-      <ul class="scrollbar-thin" style="list-style:none; margin:0; padding:0; height:300px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm);">
+      <ul class="scrollbar-thin" style="list-style:none; margin:0; padding:0; height:440px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm);">
         {#each filtered($availableMods, availableFilter) as m (m.modId + m.name)}
           <li style="display:flex; align-items:center; justify-content:space-between; gap:0.4rem; padding:0.4rem 0.6rem; border-bottom:1px solid var(--border);">
             <div style="min-width:0;">
@@ -196,7 +189,7 @@
         <button class="small" onclick={onDisableAll} disabled={busy}>← Disable all</button>
       </div>
       <input type="text" placeholder="Filter…" bind:value={enabledFilter} style="margin-bottom:0.5rem;" />
-      <ul class="scrollbar-thin" style="list-style:none; margin:0; padding:0; height:300px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm);">
+      <ul class="scrollbar-thin" style="list-style:none; margin:0; padding:0; height:440px; overflow-y:auto; border:1px solid var(--border); border-radius:var(--radius-sm);">
         {#each filtered($enabledMods, enabledFilter) as m (m.modId + m.name)}
           <li style="display:flex; align-items:center; justify-content:space-between; gap:0.4rem; padding:0.4rem 0.6rem; border-bottom:1px solid var(--border);">
             <div style="min-width:0;">
@@ -223,7 +216,7 @@
 {/if}
 
 {#if showWorkshopModal}
-  <WorkshopBrowserModal onClose={closeWorkshopModal} />
+  <WorkshopBrowserModal onApplied={applyLists} onClose={() => (showWorkshopModal = false)} />
 {/if}
 
 {#if showTemplateModal}

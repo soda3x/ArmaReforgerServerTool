@@ -198,6 +198,23 @@ impl ConfigService {
         self.enabled_mods.retain(|em| *em != m);
     }
 
+    /// Enables every mod in `mods`, in order, as a single operation — for a Workshop mod plus
+    /// its full dependency chain, which can be a dozen or more entries.
+    ///
+    /// This exists instead of the caller looping `move_mod_to_enabled` itself so the whole batch
+    /// is one state mutation: a caller driving N separate command invocations has no way to tell
+    /// "some of these failed/were skipped" from "all of these are now enabled", and a frontend
+    /// that doesn't apply every intermediate result is effectively guessing at the outcome.
+    ///
+    /// Each mod dedupes against what's already enabled exactly like a single `move_mod_to_enabled`
+    /// call would (`Mod` equality is name + mod_id) — an already-enabled mod, whether from this
+    /// same batch or a previous one, is left exactly as it was rather than being replaced.
+    pub fn add_and_enable_mods(&mut self, mods: Vec<Mod>) {
+        for m in mods {
+            self.move_mod_to_enabled(m);
+        }
+    }
+
     /// Removes `m` entirely from both `available_mods` and `enabled_mods` (e.g. the user
     /// deleted a mod entry outright, as opposed to just disabling it).
     pub fn remove_mod(&mut self, m: &Mod) {
@@ -399,6 +416,57 @@ mod tests {
         assert_eq!(svc.enabled_mods().len(), 1);
         assert_eq!(svc.enabled_mods()[0], mod_a);
         assert!(svc.available_mods().is_empty());
+    }
+
+    #[test]
+    fn add_and_enable_mods_enables_every_mod_in_order() {
+        let mut svc = ConfigService::new();
+        let main = Mod::new_latest("MAIN0001", "WCS_Arsenal", false);
+        let dep_a = Mod::new_latest("DEP00001", "WCS_Core", false);
+        let dep_b = Mod::new_latest("DEP00002", "WCS_Weapons", false);
+
+        svc.add_and_enable_mods(vec![main.clone(), dep_a.clone(), dep_b.clone()]);
+
+        assert_eq!(svc.enabled_mods(), &[main, dep_a, dep_b]);
+        assert!(svc.available_mods().is_empty());
+    }
+
+    #[test]
+    fn add_and_enable_mods_does_not_duplicate_a_dependency_shared_by_two_mods() {
+        // Mirrors the real scenario: WCS_NATO and WCS_RU both depend on WCS_Attachments. Adding
+        // both mods (each already carrying the flattened dependency in its own list) must not
+        // leave two "WCS_Attachments" entries in the enabled list.
+        let mut svc = ConfigService::new();
+        let shared_dep = Mod::new_latest("SHARED01", "WCS_Attachments", false);
+
+        svc.add_and_enable_mods(vec![
+            Mod::new_latest("NATO0001", "WCS_NATO", false),
+            shared_dep.clone(),
+        ]);
+        svc.add_and_enable_mods(vec![
+            Mod::new_latest("RU000001", "WCS_RU", false),
+            shared_dep.clone(),
+        ]);
+
+        let attachment_count = svc.enabled_mods().iter().filter(|m| *m == &shared_dep).count();
+        assert_eq!(attachment_count, 1, "shared dependency must appear exactly once");
+        assert_eq!(svc.enabled_mods().len(), 3);
+    }
+
+    #[test]
+    fn add_and_enable_mods_leaves_an_already_customized_entry_untouched() {
+        // A dependency the user already enabled with a pinned version/required flag must not be
+        // silently reset back to "latest"/not-required just because a later batch re-references
+        // it by the same identity (name + mod_id).
+        let mut svc = ConfigService::new();
+        let customized = Mod::new("SAME0001", "WCS_Core", "1.2.3", true);
+        svc.enabled_mods.push(customized.clone());
+
+        svc.add_and_enable_mods(vec![Mod::new_latest("SAME0001", "WCS_Core", false)]);
+
+        assert_eq!(svc.enabled_mods().len(), 1);
+        assert_eq!(svc.enabled_mods()[0].version, "1.2.3");
+        assert!(svc.enabled_mods()[0].required);
     }
 
     #[test]

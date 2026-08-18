@@ -195,6 +195,39 @@
     <div class="config-split">
       <div class="config-col">
         <ModTransferList />
+
+        <div class="card">
+          <div class="section-title">RCON</div>
+          <div style="margin-bottom:0.6rem;">
+            <label class="toggle">
+              <input type="checkbox" checked={rconEnabled} onchange={(e) => toggleRcon((e.target as HTMLInputElement).checked)} />
+              <span class="switch"></span>
+              <span>{rconEnabled ? "Enabled" : "Disabled"}</span>
+            </label>
+          </div>
+          {#if rconEnabled && $serverConfiguration.root.rcon}
+            <div class="grid-2">
+              <TextField label="Address" bind:value={$serverConfiguration.root.rcon.address} />
+              <NumberField label="Port" bind:value={$serverConfiguration.root.rcon.port} min={1} max={65535} />
+              <TextField label="Password" bind:value={$serverConfiguration.root.rcon.password} password />
+              <SelectField label="Permission" bind:value={$serverConfiguration.root.rcon.permission} options={permissionOptions} />
+              <NumberField label="Max Clients" bind:value={$serverConfiguration.root.rcon.maxClients} min={1} max={16} />
+            </div>
+            <div class="grid-2">
+              <ListField label="Whitelist" bind:value={$serverConfiguration.root.rcon.whitelist} placeholder="IP address" />
+              <ListField label="Blacklist" bind:value={$serverConfiguration.root.rcon.blacklist} placeholder="IP address" />
+            </div>
+          {/if}
+        </div>
+
+        <div class="card">
+          <div class="section-title">VON (Voice over Network)</div>
+          <div class="grid-3">
+            <BoolField label="Disable VON UI" bind:value={$serverConfiguration.root.game.gameProperties.VONDisableUI} />
+            <BoolField label="Disable Direct Speech UI" bind:value={$serverConfiguration.root.game.gameProperties.VONDisableDirectSpeechUI} />
+            <BoolField label="Cross-faction Transmit" bind:value={$serverConfiguration.root.game.gameProperties.VONCanTransmitCrossFaction} />
+          </div>
+        </div>
       </div>
 
       <div class="config-col">
@@ -240,30 +273,6 @@
     </div>
 
     <div class="card">
-      <div class="section-title">RCON</div>
-      <div style="margin-bottom:0.6rem;">
-        <label class="toggle">
-          <input type="checkbox" checked={rconEnabled} onchange={(e) => toggleRcon((e.target as HTMLInputElement).checked)} />
-          <span class="switch"></span>
-          <span>{rconEnabled ? "Enabled" : "Disabled"}</span>
-        </label>
-      </div>
-      {#if rconEnabled && $serverConfiguration.root.rcon}
-        <div class="grid-2">
-          <TextField label="Address" bind:value={$serverConfiguration.root.rcon.address} />
-          <NumberField label="Port" bind:value={$serverConfiguration.root.rcon.port} min={1} max={65535} />
-          <TextField label="Password" bind:value={$serverConfiguration.root.rcon.password} password />
-          <SelectField label="Permission" bind:value={$serverConfiguration.root.rcon.permission} options={permissionOptions} />
-          <NumberField label="Max Clients" bind:value={$serverConfiguration.root.rcon.maxClients} min={1} max={16} />
-        </div>
-        <div class="grid-2">
-          <ListField label="Whitelist" bind:value={$serverConfiguration.root.rcon.whitelist} placeholder="IP address" />
-          <ListField label="Blacklist" bind:value={$serverConfiguration.root.rcon.blacklist} placeholder="IP address" />
-        </div>
-      {/if}
-    </div>
-
-    <div class="card">
       <div class="section-title">Game Properties</div>
       <div class="grid-3">
         <NumberField label="Max View Distance" bind:value={$serverConfiguration.root.game.gameProperties.serverMaxViewDistance} min={500} max={12000} />
@@ -280,15 +289,6 @@
         value={$serverConfiguration.root.game.gameProperties.missionHeader}
         onChange={(v) => ($serverConfiguration.root.game.gameProperties.missionHeader = v)}
       />
-    </div>
-
-    <div class="card">
-      <div class="section-title">VON (Voice over Network)</div>
-      <div class="grid-3">
-        <BoolField label="Disable VON UI" bind:value={$serverConfiguration.root.game.gameProperties.VONDisableUI} />
-        <BoolField label="Disable Direct Speech UI" bind:value={$serverConfiguration.root.game.gameProperties.VONDisableDirectSpeechUI} />
-        <BoolField label="Cross-faction Transmit" bind:value={$serverConfiguration.root.game.gameProperties.VONCanTransmitCrossFaction} />
-      </div>
     </div>
 
     <div class="card">
