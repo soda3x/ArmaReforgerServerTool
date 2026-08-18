@@ -93,7 +93,7 @@ impl SessionHistoryService {
             let file = std::fs::File::open(&self.path)?;
             std::io::BufReader::new(file)
                 .lines()
-                .filter_map(|line| line.ok())
+                .map_while(Result::ok)
                 .filter(|line| !line.trim().is_empty())
                 .filter_map(|line| serde_json::from_str::<PlayerSession>(&line).ok())
                 .collect()

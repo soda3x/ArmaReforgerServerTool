@@ -36,7 +36,7 @@ use crate::models::{BanEntry, RconPlayer};
 
 use super::error::ServiceError;
 
-const HEADER_PREFIX: [u8; 2] = [b'B', b'E'];
+const HEADER_PREFIX: [u8; 2] = *b"BE";
 const PACKET_TYPE_LOGIN: u8 = 0x00;
 const PACKET_TYPE_COMMAND: u8 = 0x01;
 const PACKET_TYPE_MESSAGE: u8 = 0x02;
@@ -186,6 +186,7 @@ pub fn parse_ban_list(raw: &str) -> Vec<BanEntry> {
         .collect()
 }
 
+#[derive(Default)]
 struct Inner {
     socket: Option<Arc<UdpSocket>>,
     /// Raised to tear down the current connection's background tasks (listener/keepalive/poll).
@@ -201,21 +202,6 @@ struct Inner {
     /// Partially-received multi-packet responses, keyed by sequence number:
     /// `(total_packet_count, {index -> chunk})`.
     partial: HashMap<u8, (u8, HashMap<u8, Vec<u8>>)>,
-}
-
-impl Default for Inner {
-    fn default() -> Self {
-        Self {
-            socket: None,
-            cancel: None,
-            connected: false,
-            address: None,
-            port: None,
-            next_seq: 0,
-            pending: HashMap::new(),
-            partial: HashMap::new(),
-        }
-    }
 }
 
 /// Connection status, as reported to the frontend by `rcon_get_status`.
