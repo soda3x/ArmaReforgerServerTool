@@ -228,13 +228,29 @@
             <BoolField label="Cross-faction Transmit" bind:value={$serverConfiguration.root.game.gameProperties.VONCanTransmitCrossFaction} />
           </div>
         </div>
+
+        <div class="card">
+          <div class="section-title">Persistence</div>
+          <div class="grid-2">
+            <NumberField label="Auto-save Interval (min)" bind:value={$serverConfiguration.root.game.gameProperties.persistence.autoSaveInterval} min={0} max={60} />
+            <NumberField label="Hive ID" bind:value={$serverConfiguration.root.game.gameProperties.persistence.hiveId} min={0} max={16383} />
+          </div>
+          <div class="grid-2">
+            <TextBlockField
+              label="Databases (raw JSON)"
+              value={$serverConfiguration.root.game.gameProperties.persistence.databases}
+              onChange={(v) => ($serverConfiguration.root.game.gameProperties.persistence.databases = v)}
+            />
+            <TextBlockField
+              label="Storages (raw JSON)"
+              value={$serverConfiguration.root.game.gameProperties.persistence.storages}
+              onChange={(v) => ($serverConfiguration.root.game.gameProperties.persistence.storages = v)}
+            />
+          </div>
+        </div>
       </div>
 
       <div class="config-col">
-        <div class="card logo-card">
-          <img src="/longbow.png" alt="Longbow — dedicated server tool for Arma Reforger" />
-        </div>
-
     <div class="card">
       <div class="section-title">Basic</div>
       <div class="grid-2">
@@ -289,26 +305,6 @@
         value={$serverConfiguration.root.game.gameProperties.missionHeader}
         onChange={(v) => ($serverConfiguration.root.game.gameProperties.missionHeader = v)}
       />
-    </div>
-
-    <div class="card">
-      <div class="section-title">Persistence</div>
-      <div class="grid-2">
-        <NumberField label="Auto-save Interval (min)" bind:value={$serverConfiguration.root.game.gameProperties.persistence.autoSaveInterval} min={0} max={60} />
-        <NumberField label="Hive ID" bind:value={$serverConfiguration.root.game.gameProperties.persistence.hiveId} min={0} max={16383} />
-      </div>
-      <div class="grid-2">
-        <TextBlockField
-          label="Databases (raw JSON)"
-          value={$serverConfiguration.root.game.gameProperties.persistence.databases}
-          onChange={(v) => ($serverConfiguration.root.game.gameProperties.persistence.databases = v)}
-        />
-        <TextBlockField
-          label="Storages (raw JSON)"
-          value={$serverConfiguration.root.game.gameProperties.persistence.storages}
-          onChange={(v) => ($serverConfiguration.root.game.gameProperties.persistence.storages = v)}
-        />
-      </div>
     </div>
 
     <div class="card">
@@ -368,18 +364,6 @@
     .config-split {
       grid-template-columns: 1fr;
     }
-  }
-
-  .logo-card {
-    display: flex;
-    justify-content: center;
-    padding: 0.75rem;
-  }
-
-  .logo-card img {
-    max-width: 100%;
-    height: auto;
-    max-height: 120px;
   }
 </style>
 
