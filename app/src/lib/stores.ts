@@ -10,6 +10,7 @@ import {
   type ConfigFlags,
   type ServerStatus,
   type ServerButtonIcon,
+  type SteamCmdProgress,
 } from "./api";
 
 export const serverConfiguration = writable<ServerConfiguration>(defaultServerConfiguration());
@@ -44,6 +45,7 @@ export const serverBusy = writable<boolean>(false); // true while a start/stop c
 export const buttonIcon = writable<ServerButtonIcon>("play");
 export const serverRunningLabel = writable<string>("Server stopped");
 export const startServerBtnEnabled = writable<boolean>(true);
+export const steamCmdProgress = writable<SteamCmdProgress | null>(null);
 
 // --- Logs --------------------------------------------------------------------------------
 

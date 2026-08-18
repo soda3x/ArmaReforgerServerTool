@@ -61,6 +61,17 @@ pub enum ProcessEvent {
     GuiUpdate(GuiModel),
     /// Parsed server telemetry (FPS/memory/player count/addresses/online state).
     Status(crate::util::ServerStatus),
+    /// SteamCMD download/verify progress, parsed from its own log output. `progress: None` once
+    /// SteamCMD finishes, so the frontend can clear a stale bar rather than leave it stuck at its
+    /// last value after the transfer completes.
+    ///
+    /// A named field, not a bare `Option<T>` newtype variant: serde's internally-tagged
+    /// representation requires each variant's payload to serialize as a JSON object, and
+    /// `Option::None` serializes to `null` — a struct variant keeps the payload object-shaped
+    /// (`{"progress": null}`) no matter what the field itself holds.
+    SteamCmdProgress {
+        progress: Option<crate::util::SteamCmdProgress>,
+    },
 }
 
 /// Timestamp prefix matching the C# `Utilities.GetTimestamp()` (`yyyy-MM-dd HH:mm:ss`).
@@ -630,6 +641,9 @@ impl ProcessService {
             }
         };
         let _ = tokio::join!(out_task, err_task);
+        // Clear the bar whether this attempt succeeded, failed, or was cancelled — leaving it
+        // at its last value would misrepresent a finished (or abandoned) transfer as ongoing.
+        self.emit(ProcessEvent::SteamCmdProgress { progress: None });
 
         let Some(status) = status else {
             self.emit(log_line("Update cancelled, server will not start."));
@@ -773,6 +787,11 @@ impl ProcessService {
                     self.emit(log_line(&line));
 
                     if !is_server_output {
+                        // Only SteamCMD's own stream carries these lines, so gating on the same
+                        // flag that already distinguishes it avoids a second parameter.
+                        if let Some(progress) = crate::util::parse_progress(&line) {
+                            self.emit(ProcessEvent::SteamCmdProgress { progress: Some(progress) });
+                        }
                         continue;
                     }
 
@@ -976,6 +995,28 @@ fn shell_split(input: &str) -> Vec<String> {
 mod tests {
     use super::*;
     use crate::models::LaunchArgument;
+
+    #[test]
+    fn steam_cmd_progress_event_serializes_with_a_none_payload() {
+        // Regression: an internally-tagged newtype variant wrapping `Option<T>` fails to
+        // serialize when the value is `None` (serde requires the payload to be object-shaped,
+        // and `None` serializes to `null`) — this only surfaces at runtime, on the first
+        // completed SteamCMD run, not at compile time. The struct-variant shape sidesteps it.
+        let none_json = serde_json::to_string(&ProcessEvent::SteamCmdProgress { progress: None })
+            .expect("progress: None must serialize");
+        assert_eq!(none_json, r#"{"type":"steamCmdProgress","progress":null}"#);
+
+        let some_json = serde_json::to_string(&ProcessEvent::SteamCmdProgress {
+            progress: Some(crate::util::SteamCmdProgress {
+                stage: "downloading".to_string(),
+                percent: 46.18,
+                bytes_done: 100,
+                bytes_total: 200,
+            }),
+        })
+        .expect("progress: Some(..) must serialize");
+        assert!(some_json.starts_with(r#"{"type":"steamCmdProgress","progress":{"#));
+    }
 
     #[test]
     fn shell_split_handles_quoted_segments() {

@@ -620,7 +620,15 @@ export type ProcessEvent =
       serverRunningLabelText: string;
       startServerBtnEnabled: boolean;
     }
-  | ({ type: "status" } & ServerStatus);
+  | ({ type: "status" } & ServerStatus)
+  | { type: "steamCmdProgress"; progress: SteamCmdProgress | null };
+
+export interface SteamCmdProgress {
+  stage: string;
+  percent: number;
+  bytesDone: number;
+  bytesTotal: number;
+}
 
 export const SERVER_EVENT = "server-event";
 

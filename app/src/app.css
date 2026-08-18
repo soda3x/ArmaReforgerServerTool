@@ -270,6 +270,34 @@ textarea:focus {
   scrollbar-color: var(--border-strong) transparent;
 }
 
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.log-line.log-error {
+  color: var(--danger);
+}
+
+.log-line.log-warning {
+  color: var(--warning);
+}
+
+.log-line.log-hint {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 .scrollbar-thin::-webkit-scrollbar {
   width: 8px;
   height: 8px;

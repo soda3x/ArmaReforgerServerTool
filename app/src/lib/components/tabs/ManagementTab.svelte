@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { open } from "@tauri-apps/plugin-dialog";
   import TroubleshootingModal from "../modals/TroubleshootingModal.svelte";
+  import { classifyLogLine } from "../../logSeverity";
   import {
     type AdvancedSetting,
     type AdvancedSettingValue,
@@ -53,6 +54,7 @@
     startServerBtnEnabled,
     logLines,
     clearLogLines,
+    steamCmdProgress,
   } from "../../stores";
 
   let loading = $state(true);
@@ -63,6 +65,18 @@
   let launchPreview = $state("");
   let logContainer: HTMLDivElement | undefined = $state();
   let autoScroll = $state(true);
+  let logSearch = $state("");
+  let errorsOnly = $state(false);
+  const filteredLogLines = $derived(
+    $logLines.filter((line) => {
+      if (errorsOnly) {
+        const severity = classifyLogLine(line);
+        if (severity !== "error" && severity !== "warning") return false;
+      }
+      if (logSearch.trim() && !line.toLowerCase().includes(logSearch.trim().toLowerCase())) return false;
+      return true;
+    }),
+  );
 
   // WSL detection is lazy (only probed the first time the WSL target is selected) rather than
   // on every mount, since it shells out to `wsl.exe` and most users will never touch it.
@@ -373,6 +387,13 @@
     return args;
   }
 
+  function formatBytes(bytes: number): string {
+    if (bytes >= 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+    if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    if (bytes >= 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+    return `${bytes} B`;
+  }
+
   function currentServerTarget(): ServerTarget {
     if ($serverTargetKind === "wsl") {
       return { kind: "wsl", distro: $wslDistro && $wslDistro.trim().length > 0 ? $wslDistro : null };
@@ -389,6 +410,9 @@
       // whatever was last explicitly saved rather than what's on screen.
       if (!$serverRunning) {
         await setServerConfiguration($serverConfiguration);
+        // Clear a stale bar from a previous run — the backend clears it too on every SteamCMD
+        // exit, but that's a beat after this call returns, and a leftover 100% would flash.
+        steamCmdProgress.set(null);
       }
       await startStopServer(buildLaunchArguments(), currentServerTarget());
     } catch (e) {
@@ -440,6 +464,21 @@
       </button>
     </div>
   </div>
+
+  {#if $steamCmdProgress}
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.4rem;">
+        <strong style="text-transform:capitalize;">{$steamCmdProgress.stage}…</strong>
+        <span class="field-hint">
+          {formatBytes($steamCmdProgress.bytesDone)} / {formatBytes($steamCmdProgress.bytesTotal)}
+          ({$steamCmdProgress.percent.toFixed(1)}%)
+        </span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:{Math.min(100, $steamCmdProgress.percent)}%;"></div>
+      </div>
+    </div>
+  {/if}
 
   {#if launchPreview}
     <div class="card">
@@ -710,9 +749,20 @@
   </div>
 
   <div class="card">
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem; flex-wrap:wrap; gap:0.5rem;">
       <div class="section-title" style="margin:0; border:none; padding:0;">Server Log</div>
-      <div style="display:flex; align-items:center; gap:0.6rem;">
+      <div style="display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+        <input
+          type="text"
+          placeholder="Search log…"
+          bind:value={logSearch}
+          style="width:160px;"
+        />
+        <label class="toggle">
+          <input type="checkbox" bind:checked={errorsOnly} />
+          <span class="switch"></span>
+          <span>Errors &amp; warnings only</span>
+        </label>
         <label class="toggle">
           <input type="checkbox" bind:checked={autoScroll} />
           <span class="switch"></span>
@@ -727,10 +777,12 @@
       class="scrollbar-thin"
       style="height:280px; overflow-y:auto; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-sm); padding:0.6rem; font-family:var(--font-mono); font-size:0.8em; white-space:pre-wrap; word-break:break-all;"
     >
-      {#each $logLines as line, i (i)}
-        <div>{line}</div>
+      {#each filteredLogLines as line, i (i)}
+        <div class="log-line log-{classifyLogLine(line)}">{line}</div>
       {:else}
-        <span class="field-hint">No log output yet.</span>
+        <span class="field-hint">
+          {$logLines.length === 0 ? "No log output yet." : "No lines match the current filter."}
+        </span>
       {/each}
     </div>
   </div>

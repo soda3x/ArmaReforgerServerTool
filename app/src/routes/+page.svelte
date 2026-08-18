@@ -12,6 +12,7 @@
     serverRunningLabel,
     startServerBtnEnabled,
     serverRunning,
+    steamCmdProgress,
   } from "$lib/stores";
 
   type TabId = "configuration" | "management" | "status";
@@ -52,6 +53,9 @@
             serverOnline: payload.serverOnline,
             lastUpdate: payload.lastUpdate,
           });
+          break;
+        case "steamCmdProgress":
+          steamCmdProgress.set(payload.progress);
           break;
       }
     });
