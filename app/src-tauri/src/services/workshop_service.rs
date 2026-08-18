@@ -22,7 +22,9 @@ use scraper::{Html, Selector};
 use serde::Deserialize;
 use tokio::sync::Mutex;
 
-use crate::models::{WorkshopAssetDetail, WorkshopAssetSummary, WorkshopDependency, WorkshopSearchResult};
+use crate::models::{
+    WorkshopAssetDetail, WorkshopAssetSummary, WorkshopDependency, WorkshopScenario, WorkshopSearchResult,
+};
 
 use super::error::ServiceError;
 
@@ -308,6 +310,8 @@ struct RawAssetDetail {
     author: RawAuthor,
     #[serde(default)]
     dependencies: Vec<RawDependencyEntry>,
+    #[serde(default)]
+    scenarios: Vec<RawScenario>,
 }
 
 impl RawAssetDetail {
@@ -336,6 +340,38 @@ impl RawAssetDetail {
             author_username: self.author.username,
             tags: self.tags.into_iter().map(|t| t.name).collect(),
             dependencies,
+            scenarios: self
+                .scenarios
+                .into_iter()
+                .filter(|s| !s.game_id.is_empty())
+                .map(RawScenario::into_scenario)
+                .collect(),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Default, Clone)]
+#[serde(rename_all = "camelCase")]
+struct RawScenario {
+    #[serde(default)]
+    name: String,
+    /// The field upstream actually calls `gameId` — this is the value the game's own
+    /// `game.scenarioId` config field expects (`{GUID}Missions/Name.conf`), not an opaque ID.
+    #[serde(default)]
+    game_id: String,
+    #[serde(default)]
+    game_mode: String,
+    #[serde(default)]
+    player_count: u32,
+}
+
+impl RawScenario {
+    fn into_scenario(self) -> WorkshopScenario {
+        WorkshopScenario {
+            name: self.name,
+            path: self.game_id,
+            game_mode: self.game_mode,
+            player_count: self.player_count,
         }
     }
 }

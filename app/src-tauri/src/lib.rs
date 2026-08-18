@@ -96,6 +96,7 @@ pub fn run() {
             commands::get_default_scenarios,
             commands::search_workshop_mods,
             commands::get_workshop_mod_details,
+            commands::get_scenarios_for_enabled_mods,
             commands::ping_site_country_code,
             commands::get_advanced_settings,
             commands::set_advanced_setting,

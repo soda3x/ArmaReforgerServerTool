@@ -43,6 +43,23 @@ pub struct WorkshopAssetDetail {
     /// deduplicated from upstream's nested dependency tree), so the UI can offer to add them
     /// alongside the mod the user actually picked.
     pub dependencies: Vec<WorkshopDependency>,
+    /// Scenarios this mod bundles (e.g. the Conflict/AAS layouts a terrain mod ships with).
+    /// Empty for the great majority of mods, which don't bundle any.
+    pub scenarios: Vec<WorkshopScenario>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct WorkshopScenario {
+    pub name: String,
+    /// The `{GUID}Missions/Name.conf` value the game's own `game.scenarioId` field expects —
+    /// upstream calls this `gameId`, but "path" is what it means everywhere else in this app.
+    pub path: String,
+    /// Upstream's raw value is a localization key (e.g. `#AR-Scenario_GameMode_Campaign`), not a
+    /// display string — the game resolves it via its own string table, which this app has no
+    /// access to. Shown as-is rather than guessed at.
+    pub game_mode: String,
+    pub player_count: u32,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]

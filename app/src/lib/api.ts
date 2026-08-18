@@ -539,6 +539,26 @@ export interface WorkshopAssetDetail {
   authorUsername: string;
   tags: string[];
   dependencies: WorkshopDependency[];
+  scenarios: WorkshopScenario[];
+}
+
+export interface WorkshopScenario {
+  name: string;
+  path: string;
+  gameMode: string;
+  playerCount: number;
+}
+
+export interface ModScenario {
+  modName: string;
+  name: string;
+  path: string;
+  gameMode: string;
+  playerCount: number;
+}
+
+export async function getScenariosForEnabledMods(): Promise<ModScenario[]> {
+  return invoke<ModScenario[]>("get_scenarios_for_enabled_mods");
 }
 
 export interface WorkshopSearchResult {
