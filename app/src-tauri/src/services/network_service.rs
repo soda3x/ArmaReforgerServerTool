@@ -20,7 +20,7 @@
 use std::net::{IpAddr, SocketAddr, UdpSocket};
 
 use igd_next::aio::tokio::search_gateway;
-use igd_next::{PortMappingProtocol, SearchOptions};
+use igd_next::{GetGenericPortMappingEntryError, PortMappingProtocol, SearchOptions};
 
 use crate::models::ServerConfiguration;
 
@@ -29,6 +29,20 @@ use super::error::ServiceError;
 /// Lease duration of `0` means "infinite" per the `igd_next` API, matching
 /// the C# original's choice of an infinite/permanent lease.
 const INFINITE_LEASE: u32 = 0;
+
+/// Upper bound on how many of the gateway's port-mapping entries to read when checking whether
+/// ours are present. A home router realistically has a handful; this is generous headroom
+/// against a router with an unusually large table, not an expected ceiling.
+const MAX_MAPPING_ENTRIES_TO_SCAN: u32 = 128;
+
+/// Whether a configured port has a live UPnP mapping on the gateway.
+#[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PortCheckResult {
+    pub label: String,
+    pub port: u16,
+    pub mapped: bool,
+}
 
 /// A single port to map/unmap via UPnP.
 pub struct PortMapping {
@@ -110,6 +124,58 @@ impl NetworkService {
         }
 
         Ok(())
+    }
+
+    /// Checks whether each of `mappings` currently has a live UPnP mapping entry on the
+    /// gateway — i.e. whether the router itself reports forwarding that port, not merely whether
+    /// Longbow *asked* it to (a mapping can be removed by the router on reboot, by another
+    /// device requesting the same external port, or by the user's own router UI).
+    ///
+    /// This confirms the *local* side of reachability. It intentionally does not attempt to
+    /// verify the port is reachable from the public internet: that needs a second machine
+    /// outside the NAT to test from, which UPnP alone can't provide, and a wrong claim there
+    /// ("your port is open") would be worse than not claiming it at all.
+    ///
+    /// Returns one result per input mapping, in the same order, always reporting `mapped: false`
+    /// (not an error) when UPnP is disabled — a disabled setting is not a network failure.
+    pub async fn check_port_mappings(
+        &self,
+        mappings: &[PortMapping],
+    ) -> Result<Vec<PortCheckResult>, ServiceError> {
+        if !self.use_upnp || mappings.is_empty() {
+            return Ok(mappings
+                .iter()
+                .map(|m| PortCheckResult { label: m.address.clone(), port: m.port, mapped: false })
+                .collect());
+        }
+
+        let gateway = search_gateway(SearchOptions::default())
+            .await
+            .map_err(|e| ServiceError::Other(format!("Failed to discover UPnP gateway: {e}")))?;
+
+        let mut entries = Vec::new();
+        for index in 0..MAX_MAPPING_ENTRIES_TO_SCAN {
+            match gateway.get_generic_port_mapping_entry(index).await {
+                Ok(entry) => entries.push(entry),
+                // The documented "you've read past the end of the table" signal — a normal,
+                // expected way for this loop to end, not a failure.
+                Err(GetGenericPortMappingEntryError::SpecifiedArrayIndexInvalid) => break,
+                // Any other error (auth, transport) means the table can't be read further; the
+                // entries gathered so far are still valid, so check against those rather than
+                // failing the whole request over a partial read.
+                Err(_) => break,
+            }
+        }
+
+        Ok(mappings
+            .iter()
+            .map(|m| {
+                let mapped = entries.iter().any(|e| {
+                    e.external_port == m.port && e.protocol == PortMappingProtocol::UDP && e.enabled
+                });
+                PortCheckResult { label: m.address.clone(), port: m.port, mapped }
+            })
+            .collect())
     }
 }
 
@@ -215,6 +281,23 @@ mod tests {
 
         let result = service.configure_port_mappings(&mappings).await;
         assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn check_port_mappings_reports_unmapped_without_a_gateway_lookup_when_upnp_disabled() {
+        let service = NetworkService::new(false);
+        let mappings = vec![
+            PortMapping { address: "0.0.0.0".to_string(), port: 2001 },
+            PortMapping { address: "0.0.0.0".to_string(), port: 17777 },
+        ];
+
+        // Must resolve immediately (no real gateway on this machine to find) and report
+        // `mapped: false` for a disabled setting rather than erroring.
+        let results = service.check_port_mappings(&mappings).await.unwrap();
+        assert_eq!(results.len(), 2);
+        assert!(results.iter().all(|r| !r.mapped));
+        assert_eq!(results[0].port, 2001);
+        assert_eq!(results[1].port, 17777);
     }
 
     #[tokio::test]

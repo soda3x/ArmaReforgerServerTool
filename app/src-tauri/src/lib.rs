@@ -82,6 +82,7 @@ pub fn run() {
             commands::list_common_issues,
             commands::get_use_upnp,
             commands::set_use_upnp,
+            commands::check_port_reachability,
             commands::get_install_dir,
             commands::is_steamcmd_installed,
             commands::locate_server_files,
