@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { open } from "@tauri-apps/plugin-dialog";
   import TroubleshootingModal from "../modals/TroubleshootingModal.svelte";
+  import ConfirmModal from "../modals/ConfirmModal.svelte";
   import { classifyLogLine } from "../../logSeverity";
   import {
     type AdvancedSetting,
@@ -37,6 +38,11 @@
     type Prerequisite,
     LOG_LEVELS,
     type LogLevel,
+    createBackup,
+    listBackups,
+    restoreBackup,
+    deleteBackup,
+    type BackupInfo,
   } from "../../api";
   import {
     serverConfiguration,
@@ -182,7 +188,67 @@
   onMount(() => {
     loadAll();
     refreshPrereqs();
+    refreshBackups();
   });
+
+  // --- Backup / restore -----------------------------------------------------------------------
+
+  let backups = $state<BackupInfo[]>([]);
+  let backupsLoading = $state(false);
+  let backupBusy = $state(false);
+  let backupLabel = $state("");
+  let restoreTarget = $state<string | null>(null);
+  let deleteBackupTarget = $state<string | null>(null);
+
+  async function refreshBackups() {
+    backupsLoading = true;
+    try {
+      backups = await listBackups();
+    } catch (e) {
+      errorMsg = e instanceof Error ? e.message : String(e);
+    } finally {
+      backupsLoading = false;
+    }
+  }
+
+  async function doCreateBackup() {
+    backupBusy = true;
+    errorMsg = "";
+    try {
+      await createBackup(backupLabel.trim() || "manual");
+      backupLabel = "";
+      await refreshBackups();
+    } catch (e) {
+      errorMsg = e instanceof Error ? e.message : String(e);
+    } finally {
+      backupBusy = false;
+    }
+  }
+
+  async function confirmRestore() {
+    if (!restoreTarget) return;
+    backupBusy = true;
+    errorMsg = "";
+    try {
+      const restored = await restoreBackup(restoreTarget);
+      serverConfiguration.set(restored);
+      await refreshBackups();
+    } catch (e) {
+      errorMsg = e instanceof Error ? e.message : String(e);
+    } finally {
+      backupBusy = false;
+    }
+  }
+
+  async function confirmDeleteBackup() {
+    if (!deleteBackupTarget) return;
+    try {
+      await deleteBackup(deleteBackupTarget);
+      await refreshBackups();
+    } catch (e) {
+      errorMsg = e instanceof Error ? e.message : String(e);
+    }
+  }
 
   // --- Runtime prerequisites -----------------------------------------------------------------
 
@@ -704,6 +770,46 @@
   </div>
 
   <div class="card">
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div class="section-title" style="margin:0; border:none; padding:0;">Backup / Restore</div>
+      <button class="small" onclick={refreshBackups} disabled={backupsLoading}>Refresh</button>
+    </div>
+    <p class="field-hint" style="margin:0.4rem 0 0.8rem 0;">
+      Snapshots the saves folder and the current server config together. Restoring requires the
+      server to be stopped, and automatically takes a safety backup of the current state first.
+    </p>
+    <div style="display:flex; gap:0.4rem; margin-bottom:0.8rem;">
+      <input type="text" placeholder="Label (optional)" style="flex:1;" bind:value={backupLabel} />
+      <button class="small primary" disabled={backupBusy} onclick={doCreateBackup}>Create Backup</button>
+    </div>
+    {#if backups.length === 0}
+      <p class="field-hint">No backups yet.</p>
+    {:else}
+      <table style="width:100%; border-collapse:collapse;">
+        <tbody>
+          {#each backups as backup (backup.id)}
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:0.4rem 0;">{backup.label}</td>
+              <td style="padding:0.4rem 0; font-family:var(--font-mono); font-size:0.85em; color:var(--text-dim);">
+                {new Date(backup.createdAt).toLocaleString()}
+              </td>
+              <td style="padding:0.4rem 0; color:var(--text-dim);">{formatBytes(backup.sizeBytes)}</td>
+              <td style="padding:0.4rem 0; text-align:right; white-space:nowrap;">
+                <button class="small" disabled={backupBusy} onclick={() => (restoreTarget = backup.id)}>
+                  Restore
+                </button>
+                <button class="small danger" disabled={backupBusy} onclick={() => (deleteBackupTarget = backup.id)}>
+                  Delete
+                </button>
+              </td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    {/if}
+  </div>
+
+  <div class="card">
     <div class="section-title">Advanced Settings</div>
     {#if loading}
       <p class="field-hint">Loading…</p>
@@ -790,4 +896,26 @@
 
 {#if showTroubleshooting}
   <TroubleshootingModal onClose={() => (showTroubleshooting = false)} />
+{/if}
+
+{#if restoreTarget}
+  <ConfirmModal
+    title="Restore backup"
+    body="Restoring will replace the current saves folder and config with this backup's contents. The server must be stopped first, and a safety backup of the current state is taken automatically."
+    confirmLabel="Restore"
+    danger
+    onConfirm={confirmRestore}
+    onClose={() => (restoreTarget = null)}
+  />
+{/if}
+
+{#if deleteBackupTarget}
+  <ConfirmModal
+    title="Delete backup"
+    body="Permanently delete this backup? This can't be undone."
+    confirmLabel="Delete"
+    danger
+    onConfirm={confirmDeleteBackup}
+    onClose={() => (deleteBackupTarget = null)}
+  />
 {/if}

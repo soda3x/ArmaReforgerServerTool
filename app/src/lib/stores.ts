@@ -11,6 +11,9 @@ import {
   type ServerStatus,
   type ServerButtonIcon,
   type SteamCmdProgress,
+  type RconPlayer,
+  type BanEntry,
+  type PlayerSession,
 } from "./api";
 
 export const serverConfiguration = writable<ServerConfiguration>(defaultServerConfiguration());
@@ -96,3 +99,26 @@ export function pushStatus(status: ServerStatus): void {
 }
 
 export const memoryGb = derived(latestStatus, ($status) => ($status ? $status.lastMemKb / (1024 * 1024) : 0));
+
+// --- RCON ------------------------------------------------------------------------------------
+
+export const rconConnected = writable<boolean>(false);
+export const rconPlayers = writable<RconPlayer[]>([]);
+export const rconBans = writable<BanEntry[]>([]);
+export const playerSessions = writable<PlayerSession[]>([]);
+
+const MAX_RCON_LINES = 1000;
+export const rconConsoleLines = writable<string[]>([]);
+
+export function appendRconLine(line: string): void {
+  rconConsoleLines.update((lines) => {
+    const next =
+      lines.length >= MAX_RCON_LINES ? lines.slice(lines.length - MAX_RCON_LINES + 1) : lines.slice();
+    next.push(line);
+    return next;
+  });
+}
+
+export function clearRconConsole(): void {
+  rconConsoleLines.set([]);
+}

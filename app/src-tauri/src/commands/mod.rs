@@ -1,21 +1,27 @@
+pub mod backup_commands;
 pub mod config_commands;
 pub mod diagnostics_commands;
 pub mod file_commands;
+pub mod history_commands;
 pub mod mods_commands;
 pub mod network_commands;
 pub mod prereq_commands;
 pub mod process_commands;
+pub mod rcon_commands;
 pub mod saved_state_commands;
 pub mod template_commands;
 pub mod workshop_commands;
 
+pub use backup_commands::*;
 pub use config_commands::*;
 pub use diagnostics_commands::*;
 pub use file_commands::*;
+pub use history_commands::*;
 pub use mods_commands::*;
 pub use network_commands::*;
 pub use prereq_commands::*;
 pub use process_commands::*;
+pub use rcon_commands::*;
 pub use saved_state_commands::*;
 pub use template_commands::*;
 pub use workshop_commands::*;

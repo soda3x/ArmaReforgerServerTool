@@ -10,8 +10,9 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 
 use crate::services::{
-    ConfigService, FileIoService, NetworkService, ProcessService, SavedStateService,
-    ServiceError, TemplateService, ToolPropertiesService, WorkshopService,
+    BackupService, ConfigService, FileIoService, NetworkService, ProcessService, RconService,
+    SavedStateService, ServiceError, SessionHistoryService, TemplateService,
+    ToolPropertiesService, WorkshopService,
 };
 
 pub struct AppState {
@@ -23,6 +24,9 @@ pub struct AppState {
     pub process: Arc<ProcessService>,
     pub workshop: Mutex<WorkshopService>,
     pub templates: Mutex<TemplateService>,
+    pub rcon: Arc<RconService>,
+    pub history: Mutex<SessionHistoryService>,
+    pub backups: Mutex<BackupService>,
 }
 
 impl AppState {
@@ -118,6 +122,9 @@ impl AppState {
 
         let templates = TemplateService::load(config_dir.join("mod_templates.json"));
 
+        let history = SessionHistoryService::new(config_dir.join("session_history.jsonl"));
+        let backups = BackupService::new(config_dir.join("backups"));
+
         Ok(Self {
             saved_state: Mutex::new(saved_state),
             tool_properties: Mutex::new(tool_properties),
@@ -127,6 +134,9 @@ impl AppState {
             process: ProcessService::new(),
             workshop: Mutex::new(workshop),
             templates: Mutex::new(templates),
+            rcon: RconService::new(),
+            history: Mutex::new(history),
+            backups: Mutex::new(backups),
         })
     }
 }

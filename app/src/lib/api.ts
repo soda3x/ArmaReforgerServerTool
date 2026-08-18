@@ -660,6 +660,116 @@ export interface SteamCmdProgress {
 
 export const SERVER_EVENT = "server-event";
 
+// ---------------------------------------------------------------------------
+// RCON
+// ---------------------------------------------------------------------------
+
+export interface RconPlayer {
+  id: string;
+  name: string;
+}
+
+export interface BanEntry {
+  identityId: string;
+  reason: string;
+  expiresAt: string | null;
+}
+
+export interface RconStatus {
+  connected: boolean;
+  address: string | null;
+  port: number | null;
+}
+
+export type RconEvent =
+  | { type: "connectionChanged"; connected: boolean }
+  | { type: "consoleLine"; text: string }
+  | { type: "playersUpdated"; players: RconPlayer[] };
+
+export const RCON_EVENT = "rcon-event";
+
+export async function rconConnect(address: string, port: number, password: string): Promise<void> {
+  return invoke<void>("rcon_connect", { address, port, password });
+}
+
+export async function rconDisconnect(): Promise<void> {
+  return invoke<void>("rcon_disconnect");
+}
+
+export async function rconGetStatus(): Promise<RconStatus> {
+  return invoke<RconStatus>("rcon_get_status");
+}
+
+export async function rconSendRawCommand(command: string): Promise<string> {
+  return invoke<string>("rcon_send_raw_command", { command });
+}
+
+export async function rconListPlayers(): Promise<RconPlayer[]> {
+  return invoke<RconPlayer[]>("rcon_list_players");
+}
+
+export async function rconKick(playerId: string): Promise<string> {
+  return invoke<string>("rcon_kick", { playerId });
+}
+
+export async function rconBanCreate(identityId: string, durationSecs: number, reason: string): Promise<string> {
+  return invoke<string>("rcon_ban_create", { identityId, durationSecs, reason });
+}
+
+export async function rconBanRemove(identityId: string): Promise<string> {
+  return invoke<string>("rcon_ban_remove", { identityId });
+}
+
+export async function rconBanList(page: number | null): Promise<BanEntry[]> {
+  return invoke<BanEntry[]>("rcon_ban_list", { page });
+}
+
+// ---------------------------------------------------------------------------
+// Player / session history
+// ---------------------------------------------------------------------------
+
+export interface PlayerSession {
+  playerId: string;
+  playerName: string;
+  joinedAt: string;
+  leftAt: string | null;
+}
+
+export async function listPlayerSessions(): Promise<PlayerSession[]> {
+  return invoke<PlayerSession[]>("list_player_sessions");
+}
+
+export async function clearPlayerHistory(): Promise<void> {
+  return invoke<void>("clear_player_history");
+}
+
+// ---------------------------------------------------------------------------
+// Backup / restore
+// ---------------------------------------------------------------------------
+
+export interface BackupInfo {
+  id: string;
+  createdAt: string;
+  label: string;
+  sizeBytes: number;
+}
+
+export async function createBackup(label: string): Promise<BackupInfo> {
+  return invoke<BackupInfo>("create_backup", { label });
+}
+
+export async function listBackups(): Promise<BackupInfo[]> {
+  return invoke<BackupInfo[]>("list_backups");
+}
+
+export async function restoreBackup(backupId: string): Promise<ServerConfiguration> {
+  return invoke<ServerConfiguration>("restore_backup", { backupId });
+}
+
+export async function deleteBackup(backupId: string): Promise<void> {
+  return invoke<void>("delete_backup", { backupId });
+}
+
 /**
  * Maps an advanced-setting name (as stored in `SavedState.advancedSettings`, keyed exactly as
  * in the C# original) to the field name on `LaunchArguments`. The CLI flag text itself (the

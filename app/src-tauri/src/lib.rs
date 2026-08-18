@@ -39,6 +39,8 @@ pub fn run() {
             })?;
             app.manage(state);
             commands::process_commands::spawn_event_forwarder(app.handle().clone());
+            commands::rcon_commands::spawn_rcon_event_forwarder(app.handle().clone());
+            commands::rcon_commands::spawn_rcon_autoconnect(app.handle().clone());
             tracing::info!("Application state initialized");
             Ok(())
         })
@@ -102,6 +104,21 @@ pub fn run() {
             commands::set_advanced_setting,
             commands::get_config_flags,
             commands::set_config_flags,
+            commands::rcon_connect,
+            commands::rcon_disconnect,
+            commands::rcon_get_status,
+            commands::rcon_send_raw_command,
+            commands::rcon_list_players,
+            commands::rcon_kick,
+            commands::rcon_ban_create,
+            commands::rcon_ban_remove,
+            commands::rcon_ban_list,
+            commands::list_player_sessions,
+            commands::clear_player_history,
+            commands::create_backup,
+            commands::list_backups,
+            commands::restore_backup,
+            commands::delete_backup,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

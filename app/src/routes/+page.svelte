@@ -4,7 +4,8 @@
   import ConfigurationTab from "$lib/components/tabs/ConfigurationTab.svelte";
   import ManagementTab from "$lib/components/tabs/ManagementTab.svelte";
   import StatusTab from "$lib/components/tabs/StatusTab.svelte";
-  import { SERVER_EVENT, type ProcessEvent } from "$lib/api";
+  import RconTab from "$lib/components/tabs/RconTab.svelte";
+  import { SERVER_EVENT, RCON_EVENT, type ProcessEvent, type RconEvent } from "$lib/api";
   import {
     appendLogLine,
     pushStatus,
@@ -13,18 +14,23 @@
     startServerBtnEnabled,
     serverRunning,
     steamCmdProgress,
+    rconConnected,
+    rconPlayers,
+    appendRconLine,
   } from "$lib/stores";
 
-  type TabId = "configuration" | "management" | "status";
+  type TabId = "configuration" | "management" | "status" | "rcon";
   let activeTab = $state<TabId>("configuration");
 
   const tabs: { id: TabId; label: string }[] = [
     { id: "configuration", label: "Configuration" },
     { id: "management", label: "Management" },
     { id: "status", label: "Status" },
+    { id: "rcon", label: "RCON" },
   ];
 
   let unlisten: UnlistenFn | undefined;
+  let unlistenRcon: UnlistenFn | undefined;
 
   onMount(async () => {
     unlisten = await listen<ProcessEvent>(SERVER_EVENT, (event) => {
@@ -59,10 +65,27 @@
           break;
       }
     });
+
+    unlistenRcon = await listen<RconEvent>(RCON_EVENT, (event) => {
+      const payload = event.payload;
+      switch (payload.type) {
+        case "connectionChanged":
+          rconConnected.set(payload.connected);
+          if (!payload.connected) rconPlayers.set([]);
+          break;
+        case "consoleLine":
+          appendRconLine(payload.text);
+          break;
+        case "playersUpdated":
+          rconPlayers.set(payload.players);
+          break;
+      }
+    });
   });
 
   onDestroy(() => {
     unlisten?.();
+    unlistenRcon?.();
   });
 </script>
 
@@ -86,6 +109,8 @@
       <ConfigurationTab />
     {:else if activeTab === "management"}
       <ManagementTab />
+    {:else if activeTab === "rcon"}
+      <RconTab />
     {:else}
       <StatusTab />
     {/if}

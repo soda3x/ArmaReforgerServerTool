@@ -1,8 +1,12 @@
 pub mod advanced_setting;
+pub mod backup;
+pub mod ban_entry;
 pub mod launch_argument;
 pub mod mod_entry;
 pub mod mod_template;
+pub mod player_session;
 pub mod prerequisite;
+pub mod rcon_player;
 pub mod saved_state;
 pub mod scenario;
 pub mod server_configuration;
@@ -10,10 +14,14 @@ pub mod tool_properties;
 pub mod workshop;
 
 pub use advanced_setting::*;
+pub use backup::*;
+pub use ban_entry::*;
 pub use launch_argument::*;
 pub use mod_entry::*;
 pub use mod_template::*;
+pub use player_session::*;
 pub use prerequisite::*;
+pub use rcon_player::*;
 pub use saved_state::*;
 pub use scenario::*;
 pub use server_configuration::*;
