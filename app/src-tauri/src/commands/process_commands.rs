@@ -149,10 +149,6 @@ pub async fn start_stop_server(
     let already_started = state.process.is_server_started().await;
 
     if already_started {
-        let file_io = state.file_io.lock().await;
-        let _ = file_io.reset_server_file();
-        drop(file_io);
-
         let config = state.config.lock().await.build_configuration();
         let network = state.network.lock().await;
         let mappings = crate::services::network_service::port_mappings_from_config(&config);

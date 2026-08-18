@@ -55,13 +55,6 @@ impl FileIoService {
         self.steamcmd_exe_path().is_some_and(|p| p.exists())
     }
 
-    /// `{install_dir}/server.json`
-    fn server_json_path(&self) -> Option<PathBuf> {
-        self.install_dir
-            .as_ref()
-            .map(|dir| dir.join(crate::util::SERVER_JSON_FILENAME))
-    }
-
     /// Read the combined mod database (all mods, available+enabled) as a JSON array of `Mod`.
     /// Returns an empty `Vec` if the file doesn't exist.
     pub fn read_mods_database(&self) -> Result<Vec<Mod>, ServiceError> {
@@ -111,15 +104,6 @@ impl FileIoService {
         let contents = std::fs::read_to_string(path)?;
         let config = ServerConfiguration::from_json_str(&contents)?;
         Ok(config)
-    }
-
-    /// Deletes `{install_dir}/server.json` if present. No-op if `install_dir` is `None` or the
-    /// file is absent.
-    pub fn reset_server_file(&self) -> Result<(), ServiceError> {
-        match self.server_json_path() {
-            Some(path) => Self::delete_file_if_exists(&path),
-            None => Ok(()),
-        }
     }
 
     /// Deletes a file if it exists; no-op (`Ok`) if it doesn't.
