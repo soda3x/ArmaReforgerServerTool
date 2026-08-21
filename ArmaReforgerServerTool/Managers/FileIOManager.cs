@@ -7,15 +7,16 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using Serilog;
+using Longbow.Managers;
+using Microsoft.Win32;
 using ReforgerServerApp.Utils;
+using Serilog;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
-using Microsoft.Win32;
-using Longbow.Managers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ReforgerServerApp.Managers
 {
@@ -225,7 +226,26 @@ namespace ReforgerServerApp.Managers
         string filePath = ofd.FileName;
         using StreamReader sr = File.OpenText(filePath);
         ConfigurationManager.GetInstance().PopulateServerConfiguration(sr.ReadToEnd());
+        SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = filePath;
+        SavedStateManager.GetInstance().GetMainReference().Text = $"Longbow Arma Dedicated Server Tool - {filePath}";
       }
+    }
+
+    /// <summary>
+    /// Load Configuration from JSON file
+    /// </summary>
+    /// <param name="filePath">File path of the config file to load</param>
+    /// <returns>True if successful, otherwise false</returns>
+    public static bool LoadConfigurationFromFile(string filePath)
+    {
+      if (File.Exists(filePath))
+      {
+        using StreamReader sr = File.OpenText(filePath);
+        ConfigurationManager.GetInstance().PopulateServerConfiguration(sr.ReadToEnd());
+        SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = filePath;
+        return true;
+      }
+      return false;
     }
 
     /// <summary>

@@ -615,6 +615,7 @@ namespace ReforgerServerApp.Managers
                                                m_launchArgumentsModel.jobSysShortWorkerCount,
                                                m_launchArgumentsModel.jobSysLongWorkerCount,
                                                m_launchArgumentsModel.forceDisableNightGrain,
+                                               m_launchArgumentsModel.playerLimits,
                                                m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
 
       if (!ConfigurationManager.GetInstance().noBackend)

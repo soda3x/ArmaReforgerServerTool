@@ -8,7 +8,6 @@ namespace Longbow.Components.ui
   {
     public FluentTableView()
     {
-      // 1. Core visual setup
       this.BackgroundColor = SystemColors.Window; // Automatically dark grey/black in Dark Mode, white in Light Mode
       this.BorderStyle = BorderStyle.None;
       this.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
@@ -23,7 +22,6 @@ namespace Longbow.Components.ui
       headerStyle.Padding = new Padding(10, 8, 10, 8);
       this.ColumnHeadersDefaultCellStyle = headerStyle;
 
-      // 5. Row/Cell Styling
       DataGridViewCellStyle cellStyle = new DataGridViewCellStyle();
       cellStyle.BackColor = SystemColors.Window;
       cellStyle.ForeColor = SystemColors.WindowText;
@@ -34,12 +32,10 @@ namespace Longbow.Components.ui
       cellStyle.Padding = new Padding(10, 4, 10, 4);
       this.DefaultCellStyle = cellStyle;
 
-      // 2. Disable default 3D header styles
       this.EnableHeadersVisualStyles = false;
       this.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
       this.RowHeadersVisible = false; // Hides the ugly left-hand arrow column
 
-      // 3. Behavior setup
       this.AllowUserToAddRows = false;
       this.AllowUserToDeleteRows = false;
       this.AllowUserToResizeRows = false;
@@ -52,12 +48,8 @@ namespace Longbow.Components.ui
       this.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 
       this.RowTemplate.Height = 35;
-
-      // Optional: Alternate row colors for better readability
-      // this.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(250, 250, 250);
     }
 
-    // Optional: Custom paint to draw a slightly darker bottom border under the header
     protected override void OnPaint(PaintEventArgs e)
     {
       base.OnPaint(e);

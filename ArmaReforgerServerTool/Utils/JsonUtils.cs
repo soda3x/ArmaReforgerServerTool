@@ -538,6 +538,9 @@ namespace ReforgerServerApp.Utils
               case "serverLocation":
                 props.serverLocation = reader.GetString();
                 break;
+              case "lastLoadedConfig":
+                props.lastLoadedConfig = reader.GetString();
+                break;
               case "advancedSettings":
                 List<AdvancedSetting> advSettingsList = JsonSerializer.Deserialize<AdvancedSetting[]>(ref reader, options)!.ToList();
                 Dictionary<string, AdvancedSetting> advancedSettings = new();
@@ -561,6 +564,7 @@ namespace ReforgerServerApp.Utils
         writer.WriteStartObject();
 
         writer.WriteString("serverLocation", value.serverLocation);
+        writer.WriteString("lastLoadedConfig", value.lastLoadedConfig);
         writer.WritePropertyName("advancedSettings");
         List<AdvancedSetting> advSettingsList = value.advancedSettings.Values.ToList();
         JsonSerializer.Serialize(writer, advSettingsList, options);

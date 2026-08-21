@@ -45,6 +45,7 @@ namespace ReforgerServerApp
       ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
       ProcessManager.GetInstance().UpdateServerStatusEvent += HandleServerStatusEvent;
       ConfigurationManager.GetInstance().UpdateScenarioIdFromLoadedConfigEvent += HandleUpdateScenarioIdFromLoadedConfigEvent;
+      SavedStateManager.GetInstance().SetMainReference(this);
 
       useUpnp.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings().GetValueOrDefault("useUpnp", SavedState.DEFAULT_USE_UPNP).Enabled;
       NetworkManager.GetInstance().useUPnP = useUpnp.Checked;
@@ -120,6 +121,20 @@ namespace ReforgerServerApp
       connectedPlayersList.DataSource = m_rconPlayers;
       connectedPlayersList.DisplayMember = "PlayerName";
       connectedPlayersList.ValueMember = "PlayerId";
+
+      string lastConfigPath = SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig;
+
+      if (!string.IsNullOrWhiteSpace(lastConfigPath))
+      {
+        if (!FileIOManager.LoadConfigurationFromFile(lastConfigPath))
+        {
+          Utilities.DisplayErrorMessage("Failed to open last config", $"Attempted to load the last opened config at {lastConfigPath} but failed.");
+          SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = SavedState.Default.lastLoadedConfig;
+        } else
+        {
+          Text = $"Longbow Arma Dedicated Server Tool - {lastConfigPath}";
+        }
+      }
 
       ThemeManager.GetInstance().ConfigureTheme(this);
     }
@@ -1955,7 +1970,10 @@ namespace ReforgerServerApp
         }
         this.Invoke(new Action(() =>
         {
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {message}{Environment.NewLine}");
+          if (!message.Contains("Processed:"))
+          {
+            reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {message}{Environment.NewLine}");
+          }
         }));
       };
 
@@ -1976,10 +1994,7 @@ namespace ReforgerServerApp
           }));
 
           // Start sending the players command to populate the player list
-          m_reconClient.StartRecurringCommand("periodicPlayers", "players", TimeSpan.FromSeconds(30), (response) =>
-          {
-            Debug.WriteLine(response);
-          });
+          m_reconClient.StartRecurringCommand("periodicPlayers", "players", TimeSpan.FromSeconds(30), (response) => { });
         }
         else
         {
@@ -2014,7 +2029,6 @@ namespace ReforgerServerApp
         Task.Run(async () =>
         {
           string response = await m_reconClient.SendCommandAsync(command);
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {response}{Environment.NewLine}");
         });
         reconCmd.Text = string.Empty;
       }
@@ -2035,7 +2049,6 @@ namespace ReforgerServerApp
         {
           reconLog.AppendText($"{Utilities.GetTimestamp()} Kicking {connectedPlayersList.Text} from the server.{Environment.NewLine}");
           string response = await m_reconClient.SendCommandAsync($"kick {connectedPlayersList.SelectedValue}");
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {response}{Environment.NewLine}");
         });
       }
       else
@@ -2055,21 +2068,16 @@ namespace ReforgerServerApp
 
     private void OnRconBanButtonPressed(object sender, EventArgs e)
     {
-      // TODO: Add ability to choose ban duration
       if (m_reconClient != null && m_reconClient.IsConnected && connectedPlayersList.SelectedItem != null)
       {
-        Task.Run(async () =>
-        {
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Banning {connectedPlayersList.Text} from the server.{Environment.NewLine}");
-          string response = await m_reconClient.SendCommandAsync($"ban {connectedPlayersList.SelectedValue} 60");
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {response}{Environment.NewLine}");
-        });
+        CreateBanDialog banDialog = new CreateBanDialog(m_reconClient, reconLog, (RconPlayer) connectedPlayersList.SelectedItem);
+        banDialog.ShowDialog();
       }
       else
       {
         this.Invoke(new Action(() =>
         {
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to send command. Check your connection to the RCON server.{Environment.NewLine}");
+          reconLog.AppendText($"{Utilities.GetTimestamp()} You must select a player first.{Environment.NewLine}");
         }));
       }
     }

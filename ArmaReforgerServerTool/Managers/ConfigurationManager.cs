@@ -14,8 +14,8 @@ using ReforgerServerApp.Utils;
 using System.ComponentModel;
 using ReforgerServerApp.Components;
 using System.Text;
-using System.Collections;
 using System.Text.Json;
+using Longbow.Managers;
 
 namespace ReforgerServerApp
 {
@@ -140,7 +140,7 @@ namespace ReforgerServerApp
         m_serverParamsDictionary["rconBlacklist"].ParameterValue = m_serverConfig.root.rcon.blacklist;
 
         ((ServerParameterSelect)m_serverParamsDictionary["rconPermission"])
-            .ParameterValueSelection(Utilities.RconPermissionToString(m_serverConfig.root.rcon.permission));
+            .ParameterValueSelection(Utilities.RconPermissionToString(m_serverConfig.root.rcon.permission).ToUpper());
 
         m_serverParamsDictionary["passwordAdmin"].ParameterValue = m_serverConfig.root.game.passwordAdmin!;
         m_serverParamsDictionary["name"].ParameterValue = m_serverConfig.root.game.name!;

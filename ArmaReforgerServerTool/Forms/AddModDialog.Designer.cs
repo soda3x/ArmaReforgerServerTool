@@ -42,24 +42,34 @@ namespace ReforgerServerApp
       // modName
       // 
       modName.BackColor = Color.Transparent;
+      modName.FieldBackColor = SystemColors.Window;
       modName.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
       modName.Location = new Point(12, 12);
+      modName.Multiline = false;
       modName.Name = "modName";
       modName.Padding = new Padding(10, 7, 10, 7);
       modName.PlaceholderText = "Enter Mod Name...";
+      modName.ReadOnly = false;
+      modName.ScrollBars = ScrollBars.None;
       modName.Size = new Size(460, 32);
       modName.TabIndex = 0;
+      modName.UseSystemPasswordChar = false;
       // 
       // modId
       // 
       modId.BackColor = Color.Transparent;
+      modId.FieldBackColor = SystemColors.Window;
       modId.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
       modId.Location = new Point(12, 57);
+      modId.Multiline = false;
       modId.Name = "modId";
-      modId.PlaceholderText = "Enter Mod ID from Arma Workshop...";
       modId.Padding = new Padding(10, 7, 10, 7);
+      modId.PlaceholderText = "Enter Mod ID from Arma Workshop...";
+      modId.ReadOnly = false;
+      modId.ScrollBars = ScrollBars.None;
       modId.Size = new Size(460, 32);
       modId.TabIndex = 1;
+      modId.UseSystemPasswordChar = false;
       // 
       // addBtn
       // 
@@ -84,13 +94,18 @@ namespace ReforgerServerApp
       // modVers
       // 
       modVers.BackColor = Color.Transparent;
+      modVers.FieldBackColor = SystemColors.Window;
       modVers.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
       modVers.Location = new Point(12, 104);
+      modVers.Multiline = false;
       modVers.Name = "modVers";
-      modVers.PlaceholderText = "Enter Mod Version, or leave empty to get the latest...";
       modVers.Padding = new Padding(10, 7, 10, 7);
+      modVers.PlaceholderText = "Enter Mod Version, or leave empty to get the latest...";
+      modVers.ReadOnly = false;
+      modVers.ScrollBars = ScrollBars.None;
       modVers.Size = new Size(300, 32);
       modVers.TabIndex = 2;
+      modVers.UseSystemPasswordChar = false;
       // 
       // requiredLabel
       // 
@@ -105,6 +120,7 @@ namespace ReforgerServerApp
       // required
       // 
       required.BackColor = Color.Transparent;
+      required.Checked = false;
       required.Location = new Point(338, 108);
       required.Name = "required";
       required.Size = new Size(50, 24);

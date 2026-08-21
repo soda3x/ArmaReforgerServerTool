@@ -1,6 +1,6 @@
 namespace Longbow.Models
 {
-  internal class RconPlayer
+  public class RconPlayer
   {
     public int PlayerNumber { get; set; }
     public string PlayerId { get; set; }

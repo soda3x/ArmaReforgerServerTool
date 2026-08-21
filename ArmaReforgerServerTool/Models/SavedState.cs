@@ -55,13 +55,16 @@ namespace Longbow.Models
     public Dictionary<string, AdvancedSetting> advancedSettings { get; set; }
     public string serverLocation { get; set; }
 
-    public SavedState(Dictionary<string, AdvancedSetting> advancedSettings, string serverLocation)
+    public string lastLoadedConfig { get; set; }
+
+    public SavedState(Dictionary<string, AdvancedSetting> advancedSettings, string serverLocation, string lastLoadedConfig)
     {
       this.advancedSettings = advancedSettings;
       this.serverLocation = serverLocation;
+      this.lastLoadedConfig = lastLoadedConfig;
     }
 
-    public static SavedState Default => new(GetDefaultAdvancedSettings(), string.Empty);
+    public static SavedState Default => new(GetDefaultAdvancedSettings(), string.Empty, string.Empty);
 
     /// <summary>
     /// Display <c>SavedState</c> in readable Json format.
