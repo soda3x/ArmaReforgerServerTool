@@ -6,6 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Components;
 using Longbow.Components.ui;
 using Longbow.Forms;
 using Longbow.Managers;
@@ -29,13 +30,16 @@ namespace ReforgerServerApp
     private ServerStatusParser m_serverStatusParser;
     private ReconClient m_reconClient;
     private BindingList<RconPlayer> m_rconPlayers;
+    private ServerCard m_serverCard;
 
-    public Main()
+    public Main(string serverTitle)
     {
       InitializeComponent();
 
       CreateServerParameterControls();
       CreateAdvancedServerParameterControls();
+
+      ConfigurationManager.GetInstance().GetServerParametersDictionary()["name"].ParameterValue = serverTitle;
 
       serverRunningLabel.Text = string.Empty;
 
@@ -137,6 +141,11 @@ namespace ReforgerServerApp
       }
 
       ThemeManager.GetInstance().ConfigureTheme(this);
+    }
+
+    public void SetServerCard(ServerCard card)
+    {
+      m_serverCard = card;
     }
 
     /// <summary>
@@ -1835,7 +1844,20 @@ namespace ReforgerServerApp
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void OnFormClosing(object sender, FormClosingEventArgs e)
+    protected override void OnFormClosing(FormClosingEventArgs e)
+    {
+      if (e.CloseReason == CloseReason.UserClosing)
+      {
+        e.Cancel = true;
+        this.Hide();
+      }
+      else
+      {
+        base.OnFormClosing(e);
+      }
+    }
+
+    public void HandleClose()
     {
       if (ProcessManager.GetInstance().IsServerStarted())
       {

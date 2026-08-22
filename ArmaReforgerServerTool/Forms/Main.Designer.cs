@@ -1724,7 +1724,6 @@ namespace ReforgerServerApp
       MinimumSize = new Size(1440, 782);
       Name = "Main";
       Text = "Longbow - Arma Dedicated Server Tool";
-      FormClosing += OnFormClosing;
       tabControl1.ResumeLayout(false);
       tabPage1.ResumeLayout(false);
       tabPage1.PerformLayout();

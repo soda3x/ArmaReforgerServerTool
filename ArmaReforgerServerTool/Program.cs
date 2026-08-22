@@ -6,6 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
@@ -41,7 +42,7 @@ namespace ReforgerServerApp
         ApplicationConfiguration.Initialize();
         Application.SetHighDpiMode(HighDpiMode.SystemAware);
         Application.SetColorMode(SystemColorMode.System);
-        Application.Run(new Main());
+        Application.Run(new TrayManager());
       }
       catch (Exception ex)
       {
