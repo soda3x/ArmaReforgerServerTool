@@ -99,6 +99,14 @@ namespace ReforgerServerApp
       ToolTip loadsaveGameBtnTooltip = new();
       loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, "Disabled for the time being, for now please use the Load Session Save option in Advanced Parameters");
 
+      // FIXME: Disable some unfinished RCON features
+      kickButton.Enabled = false;
+      kickButton.Visible = false;
+      banManagerButton.Enabled = false;
+      banManagerButton.Visible = false;
+      banButton.Enabled = false;
+      banButton.Visible = false;
+
       copyAddressBtn.Enabled = false;
       copyRconAddressBtn.Enabled = false;
       copyJoinCodeBtn.Enabled = false;

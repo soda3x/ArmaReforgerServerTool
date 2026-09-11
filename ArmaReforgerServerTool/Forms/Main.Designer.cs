@@ -1456,11 +1456,11 @@ namespace ReforgerServerApp
       // 
       pictureBox2.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
       pictureBox2.Image = (Image) resources.GetObject("pictureBox2.Image");
-      pictureBox2.Location = new Point(5, 5);
-      pictureBox2.Margin = new Padding(5);
+      pictureBox2.Location = new Point(0, 0);
+      pictureBox2.Margin = new Padding(0);
       pictureBox2.Name = "pictureBox2";
-      pictureBox2.Size = new Size(323, 89);
-      pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+      pictureBox2.Size = new Size(333, 99);
+      pictureBox2.SizeMode = PictureBoxSizeMode.CenterImage;
       pictureBox2.TabIndex = 0;
       pictureBox2.TabStop = false;
       // 
