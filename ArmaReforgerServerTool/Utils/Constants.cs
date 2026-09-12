@@ -172,17 +172,23 @@ namespace ReforgerServerApp
 
     public const string SERVER_PARAM_MODS_REQUIRED_BY_DEFAULT_TOOLTIP_STR = "Overrides default value for 'required' for all mods.";
 
-    public static string SERVER_PARAM_AUTO_SAVE_INTERVAL_TOOLTIP_STR = "Interval (in minutes) at which automatic saves are created, if possible for the current mission. Disabled if set to 0.";
+    public const string SERVER_PARAM_ENABLE_PERSISTENCE_TOOLTIP_STR = "Enable the Persistence System on your server. Note that in most cases, the defaults work well enough and this doesn't need to be enabled.";
 
-    public static string SERVER_PARAM_HIVE_ID_TOOLTIP_STR = "Number identifying each hive (server) when they share the same persistence database. Used for separating UUIDs for save game data.";
+    public static string SERVER_PARAM_AUTO_SAVE_INTERVAL_TOOLTIP_STR = "Interval (in minutes) at which automatic saves are created, if possible for the current mission. Disabled if set to 0.\r\nRequires Persistence System enabled.";
+
+    public static string SERVER_PARAM_HIVE_ID_TOOLTIP_STR = "Number identifying each hive (server) when they share the same persistence database. Used for separating UUIDs for save game data.\r\nRequires Persistence System enabled.";
 
     public static string SERVER_PARAM_DATABASES_TOOLTIP_STR = "Case-insensitive named objects representing an override of the system configuration provided databases or the addition of a new one.\r\n" +
       "Optional child properties:\r\n" +
       "\t\"preset\" - refers to database config presets that are defined in game/mod data. Full resource name.\r\n" +
-      "\t\"options\" - a complex object which corresponds to the individual database type of the preset. Usually, a key-value collection";
+      "\t\"options\" - a complex object which corresponds to the individual database type of the preset. Usually, a key-value collection\r\nRequires Persistence System enabled.";
 
     public static string SERVER_PARAM_STORAGES_TOOLTIP_STR = "Case-insensitive named objects representing an override of the system configuration-provided storages. Optional child properties:\r\n"
-      +"\t\"database\" - changes the storage to use a different database than the default configured. Must match the name given in the databases object or \"main\".";
+      +"\t\"database\" - changes the storage to use a different database than the default configured. Must match the name given in the databases object or \"main\".\r\nRequires Persistence System enabled.";
+
+    public static string SERVER_PARAM_SAVE_RETENTION_TOOLTIP_STR = "Number of save points to keep for the current mission.\r\nRequires Persistence System enabled.";
+    public static string SERVER_PARAM_LOAD_SESSION_SAVE_TOOLTIP_STR = "Automatically load the latest available save point on first startup.\r\nRequires Persistence System enabled.";
+    public static string SERVER_PARAM_KEEP_SESSION_SAVE_TOOLTIP_STR = "Keep the playthrough save points after the mission is finished.\r\nRequires Persistence System enabled.";
 
     public static string MIGRATE_LEGACY_MOD_DB_PROMPT_STR = "A mod database from a previous version of Longbow was found.\r\n\r\n" +
         "This version of the tool is not compatible with this file type.\r\n\r\n" +

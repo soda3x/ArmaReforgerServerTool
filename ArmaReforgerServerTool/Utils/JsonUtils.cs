@@ -8,11 +8,12 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using ReforgerServerApp.Models;
 using Longbow.Models;
+using ReforgerServerApp.Models;
 using Serilog;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace ReforgerServerApp.Utils
 {
@@ -61,40 +62,40 @@ namespace ReforgerServerApp.Utils
             switch (propertyName)
             {
               case "enabled":
-                advSetting.Enabled = reader.GetBoolean();
-                break;
+              advSetting.Enabled = reader.GetBoolean();
+              break;
               case "name":
-                advSetting.Name = reader.GetString();
-                break;
+              advSetting.Name = reader.GetString();
+              break;
               case "value":
-                // We need to switch on the value type as this can be either bool, number or string
-                switch (reader.TokenType)
+              // We need to switch on the value type as this can be either bool, number or string
+              switch (reader.TokenType)
+              {
+                case JsonTokenType.Number:
+                // First try and get an int
+                if (reader.TryGetInt32(out int intValue))
                 {
-                  case JsonTokenType.Number:
-                    // First try and get an int
-                    if (reader.TryGetInt32(out int intValue))
-                    {
-                      advSetting.Value = intValue;
-                      break;
-                    }
-                    // If its not an int, try and get a long
-                    if (reader.TryGetInt64(out long longValue))
-                    {
-                      advSetting.Value = longValue;
-                      break;
-                    }
-                    // Else, must be floating point
-                    advSetting.Value = reader.GetDouble();
-                    break;
-                  case JsonTokenType.String:
-                    advSetting.Value = reader.GetString();
-                    break;
-                  case JsonTokenType.True:
-                  case JsonTokenType.False:
-                    advSetting.Value = reader.GetBoolean();
-                    break;
+                  advSetting.Value = intValue;
+                  break;
                 }
+                // If its not an int, try and get a long
+                if (reader.TryGetInt64(out long longValue))
+                {
+                  advSetting.Value = longValue;
+                  break;
+                }
+                // Else, must be floating point
+                advSetting.Value = reader.GetDouble();
                 break;
+                case JsonTokenType.String:
+                advSetting.Value = reader.GetString();
+                break;
+                case JsonTokenType.True:
+                case JsonTokenType.False:
+                advSetting.Value = reader.GetBoolean();
+                break;
+              }
+              break;
             }
           }
         }
@@ -113,7 +114,7 @@ namespace ReforgerServerApp.Utils
         else if (value.Value is double doubleValue)
         {
           writer.WriteNumber("value", (decimal) doubleValue);
-        }   
+        }
         else if (value.Value is string stringValue)
         {
           // Skip writing value if this parameter is a switch
@@ -122,7 +123,7 @@ namespace ReforgerServerApp.Utils
             writer.WriteString("value", stringValue);
           }
         }
-          
+
         writer.WriteBoolean("enabled", value.Enabled);
         writer.WriteEndObject();
       }
@@ -140,7 +141,7 @@ namespace ReforgerServerApp.Utils
         try
         {
           var enumString = reader.GetString();
-          return enumString == null ? throw new JsonException() : (T)Enum.Parse(typeof(T), enumString, true);
+          return enumString == null ? throw new JsonException() : (T) Enum.Parse(typeof(T), enumString, true);
         }
         catch (Exception ex)
         {
@@ -179,17 +180,17 @@ namespace ReforgerServerApp.Utils
             switch (propertyName)
             {
               case nameof(mod.modId):
-                mod.modId = reader.GetString();
-                break;
+              mod.modId = reader.GetString();
+              break;
               case nameof(mod.name):
-                mod.name = reader.GetString();
-                break;
+              mod.name = reader.GetString();
+              break;
               case nameof(mod.version):
-                mod.version = reader.GetString();
-                break;
+              mod.version = reader.GetString();
+              break;
               case nameof(mod.required):
-                mod.required = reader.GetBoolean();
-                break;
+              mod.required = reader.GetBoolean();
+              break;
             }
           }
         }
@@ -256,29 +257,29 @@ namespace ReforgerServerApp.Utils
           switch (propertyName)
           {
             case nameof(Rcon.address):
-              address = reader.GetString();
-              break;
+            address = reader.GetString();
+            break;
             case nameof(Rcon.port):
-              port = reader.GetInt16();
-              break;
+            port = reader.GetInt16();
+            break;
             case nameof(Rcon.password):
-              password = reader.GetString();
-              break;
+            password = reader.GetString();
+            break;
             case nameof(Rcon.permission):
-              permission = reader.GetString();
-              break;
+            permission = reader.GetString();
+            break;
             case nameof(Rcon.blacklist):
-              blacklist = JsonSerializer.Deserialize<string[]>(ref reader, options);
-              break;
+            blacklist = JsonSerializer.Deserialize<string[]>(ref reader, options);
+            break;
             case nameof(Rcon.whitelist):
-              whitelist = JsonSerializer.Deserialize<string[]>(ref reader, options);
-              break;
+            whitelist = JsonSerializer.Deserialize<string[]>(ref reader, options);
+            break;
             case nameof(Rcon.maxClients):
-              maxClients = reader.GetInt16();
-              break;
+            maxClients = reader.GetInt16();
+            break;
             default:
-              reader.Skip();
-              break;
+            reader.Skip();
+            break;
           }
         }
         return new Rcon(address, port, password, Utilities.StringToEnum<RconPermission>(permission),
@@ -346,35 +347,35 @@ namespace ReforgerServerApp.Utils
           switch (propertyName)
           {
             case nameof(Operating.lobbyPlayerSynchronise):
-              oper.lobbyPlayerSynchronise = reader.GetBoolean();
-              break;
+            oper.lobbyPlayerSynchronise = reader.GetBoolean();
+            break;
             case nameof(Operating.playerSaveTime):
-              oper.playerSaveTime = reader.GetInt32();
-              break;
+            oper.playerSaveTime = reader.GetInt32();
+            break;
             case nameof(Operating.aiLimit):
-              oper.aiLimit = reader.GetInt32();
-              break;
+            oper.aiLimit = reader.GetInt32();
+            break;
             case nameof(Operating.slotReservationTimeout):
-              oper.slotReservationTimeout = reader.GetInt32();
-              break;
+            oper.slotReservationTimeout = reader.GetInt32();
+            break;
             case nameof(Operating.disableNavmeshStreaming):
-              oper.disableNavmeshStreaming = JsonSerializer.Deserialize<string[]>(ref reader, options);
-              break;
+            oper.disableNavmeshStreaming = JsonSerializer.Deserialize<string[]>(ref reader, options);
+            break;
             case nameof(Operating.disableServerShutdown):
-              oper.disableServerShutdown = reader.GetBoolean();
-              break;
+            oper.disableServerShutdown = reader.GetBoolean();
+            break;
             case nameof(Operating.disableCrashReporter):
-              oper.disableCrashReporter = reader.GetBoolean();
-              break;
+            oper.disableCrashReporter = reader.GetBoolean();
+            break;
             case nameof(Operating.disableAI):
-              oper.disableAI = reader.GetBoolean();
-              break;
+            oper.disableAI = reader.GetBoolean();
+            break;
             case nameof(Operating.joinQueue):
-              oper.joinQueue = JsonSerializer.Deserialize<JoinQueue>(ref reader, options);
-              break;
+            oper.joinQueue = JsonSerializer.Deserialize<JoinQueue>(ref reader, options);
+            break;
             default:
-              reader.Skip();
-              break;
+            reader.Skip();
+            break;
           }
         }
         return oper;
@@ -414,6 +415,105 @@ namespace ReforgerServerApp.Utils
       }
     }
 
+    public class PersistenceConditionalConverter : JsonConverter<Persistence>
+    {
+      public override Persistence Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+      {
+        if (reader.TokenType != JsonTokenType.StartObject)
+        {
+          throw new JsonException("Expected StartObject token.");
+        }
+
+        int autoSaveInterval = Persistence.DEFAULT_AUTOSAVE_INTERVAL_MINS;
+        int saveRetention = Persistence.DEFAULT_SAVE_RETENTION_VALUE;
+        bool loadSessionSave = Persistence.DEFAULT_LOAD_SESSION_SAVE;
+        bool keepSessionSave = Persistence.DEFAULT_KEEP_SESSION_SAVE;
+        int hiveId = Persistence.DEFAULT_HIVE_ID;
+        JsonObject databases = Persistence.DEFAULT_DATABASES;
+        JsonObject storages = Persistence.DEFAULT_STORAGES;
+
+        while (reader.Read())
+        {
+          if (reader.TokenType == JsonTokenType.EndObject)
+          {
+            break;
+          }
+
+          if (reader.TokenType != JsonTokenType.PropertyName)
+          {
+            throw new JsonException($"Unexpected token type: {reader.TokenType}");
+          }
+
+          string propertyName = reader.GetString();
+          reader.Read();
+
+          switch (propertyName)
+          {
+            case nameof(Persistence.autoSaveInterval):
+            autoSaveInterval = reader.GetInt16();
+            break;
+            case nameof(Persistence.saveRetention):
+            saveRetention = reader.GetInt16();
+            break;
+            case nameof(Persistence.loadSessionSave):
+            loadSessionSave = reader.GetBoolean();
+            break;
+            case nameof(Persistence.keepSessionSave):
+            keepSessionSave = reader.GetBoolean();
+            break;
+            case nameof(Persistence.hiveId):
+            hiveId = reader.GetInt16();
+            break;
+            case nameof(Persistence.databases):
+            JsonNode parsedDatabases = JsonNode.Parse(ref reader);
+            databases = parsedDatabases?.AsObject() ?? [];
+            break;
+            case nameof(Persistence.storages):
+            JsonNode parsedStorages = JsonNode.Parse(ref reader);
+            storages = parsedStorages?.AsObject() ?? [];
+            break;
+            default:
+            reader.Skip();
+            break;
+          }
+        }
+        return new Persistence(autoSaveInterval, saveRetention, loadSessionSave, keepSessionSave, hiveId, databases, storages);
+      }
+
+      public override void Write(Utf8JsonWriter writer, Persistence value, JsonSerializerOptions options)
+      {
+        if (ConfigurationManager.GetInstance().GetServerConfiguration().persistenceEnabled)
+        {
+          writer.WriteStartObject();
+          writer.WriteNumber(nameof(Persistence.autoSaveInterval), value.autoSaveInterval);
+          writer.WriteNumber(nameof(Persistence.saveRetention), value.saveRetention);
+          writer.WriteBoolean(nameof(Persistence.loadSessionSave), value.loadSessionSave);
+          writer.WriteBoolean(nameof(Persistence.keepSessionSave), value.keepSessionSave);
+          writer.WriteNumber(nameof(Persistence.hiveId), value.hiveId);
+          writer.WritePropertyName(nameof(Persistence.databases));
+          if (value.databases != null)
+          {
+            value.databases.WriteTo(writer);
+          }
+          else
+          {
+            writer.WriteStartObject();
+            writer.WriteEndObject();
+          }
+          if (value.storages != null)
+          {
+            value.storages.WriteTo(writer);
+          }
+          else
+          {
+            writer.WriteStartObject();
+            writer.WriteEndObject();
+          }
+          writer.WriteEndObject();
+        }
+      }
+    }
+
     /// <summary>
     /// JSON converter for the ToolProperties model. This allows default values to be used for missing keys,
     /// providing safety when needing to add parameters and keeping old versions intact.
@@ -444,40 +544,40 @@ namespace ReforgerServerApp.Utils
             switch (propertyName)
             {
               case "defaultScenarios":
-                props.defaultScenarios = JsonSerializer.Deserialize<Scenario[]>(ref reader, options)!.ToList();
-                break;
+              props.defaultScenarios = JsonSerializer.Deserialize<Scenario[]>(ref reader, options)!.ToList();
+              break;
               case "modDatabaseFile":
-                props.modDatabaseFile = reader.GetString();
-                break;
+              props.modDatabaseFile = reader.GetString();
+              break;
               case "updateRepositoryUrl":
-                props.updateRepositoryUrl = reader.GetString();
-                break;
+              props.updateRepositoryUrl = reader.GetString();
+              break;
               case "releaseRepositoryUrl":
-                props.releaseRepositoryUrl = reader.GetString();
-                break;
+              props.releaseRepositoryUrl = reader.GetString();
+              break;
               case "bugReportUrl":
-                props.bugReportUrl = reader.GetString();
-                break;
+              props.bugReportUrl = reader.GetString();
+              break;
               case "checkForUpdatesOnStartup":
-                props.checkForUpdatesOnStartup = reader.GetBoolean();
-                break;
+              props.checkForUpdatesOnStartup = reader.GetBoolean();
+              break;
               case "steamCmdDownloadUrl":
-                props.steamCmdDownloadUrl = reader.GetString();
-                break;
+              props.steamCmdDownloadUrl = reader.GetString();
+              break;
               case "armaWorkshopUrl":
-                props.armaWorkshopUrl = reader.GetString();
-                break;
+              props.armaWorkshopUrl = reader.GetString();
+              break;
               case "logFile":
-                props.logFile = reader.GetString();
-                break;
+              props.logFile = reader.GetString();
+              break;
               case "minimumLogLevel":
-                props.minimumLogLevel = reader.GetString();
-                break;
+              props.minimumLogLevel = reader.GetString();
+              break;
               case "autoRestartTime_ms":
-                props.autoRestartTime_ms = reader.GetInt32();
-                break;
+              props.autoRestartTime_ms = reader.GetInt32();
+              break;
               default:
-                throw new JsonException($"Unexpected property: {propertyName}");
+              throw new JsonException($"Unexpected property: {propertyName}");
             }
           }
         }
@@ -536,19 +636,23 @@ namespace ReforgerServerApp.Utils
             switch (propertyName)
             {
               case "serverLocation":
-                props.serverLocation = reader.GetString();
-                break;
+              props.serverLocation = reader.GetString();
+              break;
+              case "lastLoadedConfig":
+              props.lastLoadedConfig = reader.GetString();
+              break;
               case "advancedSettings":
-                List<AdvancedSetting> advSettingsList = JsonSerializer.Deserialize<AdvancedSetting[]>(ref reader, options)!.ToList();
-                Dictionary<string, AdvancedSetting> advancedSettings = new();
-                foreach (AdvancedSetting advSetting in advSettingsList)
-                {
-                  advancedSettings.Add(advSetting.Name, advSetting);
-                }
-                props.advancedSettings = advancedSettings;
-                break;
+              List<AdvancedSetting> advSettingsList = JsonSerializer.Deserialize<AdvancedSetting[]>(ref reader, options)!.ToList();
+              Dictionary<string, AdvancedSetting> advancedSettings = new();
+              foreach (AdvancedSetting advSetting in advSettingsList)
+              {
+                advancedSettings.Add(advSetting.Name, advSetting);
+              }
+              props.advancedSettings = advancedSettings;
+              break;
               default:
-                throw new JsonException($"Unexpected property: {propertyName}");
+              reader.Skip();
+              break;
             }
           }
         }
@@ -560,6 +664,7 @@ namespace ReforgerServerApp.Utils
         writer.WriteStartObject();
 
         writer.WriteString("serverLocation", value.serverLocation);
+        writer.WriteString("lastLoadedConfig", value.lastLoadedConfig);
         writer.WritePropertyName("advancedSettings");
         List<AdvancedSetting> advSettingsList = value.advancedSettings.Values.ToList();
         JsonSerializer.Serialize(writer, advSettingsList, options);

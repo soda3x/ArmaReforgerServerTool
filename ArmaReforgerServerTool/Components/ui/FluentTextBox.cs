@@ -1,0 +1,250 @@
+using System.ComponentModel;
+using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
+
+namespace Longbow.Components.ui
+{
+  public class FluentTextBox : UserControl
+  {
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+    private const int EM_SETCUEBANNER = 0x1501;
+
+    private TextBox m_textBox;
+    private int m_borderRadius = 8;
+    private Color m_borderColor = Color.FromArgb(120, 120, 120);
+    private Color m_focusedBorderColor = Color.FromArgb(0, 120, 212); // Windows 11 Blue
+    private Color m_fieldBackColour = SystemColors.Window;
+    private string m_placeholderText = "";
+
+    private bool m_isHovered = false;
+    private bool m_isFocused = false;
+
+    public FluentTextBox()
+    {
+      this.SetStyle(ControlStyles.SupportsTransparentBackColor |
+                    ControlStyles.UserPaint |
+                    ControlStyles.AllPaintingInWmPaint |
+                    ControlStyles.OptimizedDoubleBuffer, true);
+      this.BackColor = Color.Transparent;
+      this.Padding = new Padding(10, 7, 10, 7);
+      this.Size = new Size(250, 32);
+      this.Cursor = Cursors.IBeam;
+
+      m_textBox = new TextBox();
+      m_textBox.BorderStyle = BorderStyle.None;
+      m_textBox.Dock = DockStyle.Fill;
+      m_textBox.BackColor = m_fieldBackColour;
+      m_textBox.ForeColor = this.ForeColor;
+
+      m_textBox.HandleCreated += (s, e) => ApplyPlaceholder();
+
+      this.ForeColorChanged += (s, e) => m_textBox.ForeColor = this.ForeColor;
+
+      m_textBox.MouseEnter += (s, e) => { m_isHovered = true; this.Invalidate(); };
+      m_textBox.MouseLeave += (s, e) => { m_isHovered = false; this.Invalidate(); };
+      this.MouseEnter += (s, e) => { m_isHovered = true; this.Invalidate(); };
+      this.MouseLeave += (s, e) => { m_isHovered = false; this.Invalidate(); };
+
+      m_textBox.Enter += (s, e) => { m_isFocused = true; this.Invalidate(); };
+      m_textBox.Leave += (s, e) => { m_isFocused = false; this.Invalidate(); };
+
+      this.Controls.Add(m_textBox);
+    }
+
+    [Category("Data")]
+    [Browsable(true)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+    public new string Text
+    {
+      get => m_textBox.Text;
+      set => m_textBox.Text = value;
+    }
+
+    [Category("Appearance")]
+
+    public Color FieldBackColor
+    {
+      get => m_fieldBackColour;
+      set
+      {
+        m_fieldBackColour = value;
+        m_textBox.BackColor = value;
+        this.Invalidate();
+      }
+    }
+
+    [Category("Behavior")]
+    public bool ReadOnly
+    {
+      get => m_textBox.ReadOnly;
+      set => m_textBox.ReadOnly = value;
+    }
+
+    [Category("Behavior")]
+
+    public bool UseSystemPasswordChar
+    {
+      get => m_textBox.UseSystemPasswordChar;
+      set => m_textBox.UseSystemPasswordChar = value;
+    }
+
+    [Category("Behavior")]
+    public bool Multiline
+    {
+      get => m_textBox.Multiline;
+      set => m_textBox.Multiline = value;
+    }
+
+    [Category("Appearance")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+    public string PlaceholderText
+    {
+      get => m_placeholderText;
+      set
+      {
+        m_placeholderText = value;
+        ApplyPlaceholder();
+      }
+    }
+
+    [Category("Appearance")]
+    public ScrollBars ScrollBars
+    {
+      get => m_textBox.ScrollBars;
+      set => m_textBox.ScrollBars = value;
+    }
+
+    public string[] Lines
+    {
+      get => m_textBox.Lines;
+    }
+
+    public int GetFirstCharIndexFromLine(int lines)
+    {
+      return m_textBox.GetFirstCharIndexFromLine(lines);
+    }
+
+    public void Select(int start, int length)
+    {
+      m_textBox.Select(start, length);
+    }
+
+    public string SelectedText
+    {
+      get => m_textBox.SelectedText;
+      set => m_textBox.SelectedText = value;
+    }
+
+    public int SelectionStart
+    {
+      get => m_textBox.SelectionStart;
+      set => m_textBox.SelectionStart = value;
+    }
+
+    public void ScrollToCaret()
+    {
+      m_textBox.ScrollToCaret();
+    }
+
+    [Category("Data")]
+    [Browsable(true)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
+    public new event EventHandler TextChanged
+    {
+      add => m_textBox.TextChanged += value;
+      remove => m_textBox.TextChanged -= value;
+    }
+
+    private void ApplyPlaceholder()
+    {
+      // Ensure the internal textbox actually exists before trying to send it a Windows message
+      if (m_textBox != null && m_textBox.IsHandleCreated)
+      {
+        // IntPtr(1) = Keep visible on focus until typing begins
+        SendMessage(m_textBox.Handle, EM_SETCUEBANNER, new IntPtr(1), m_placeholderText);
+      }
+    }
+
+    public void AppendText(string text)
+    {
+      m_textBox.AppendText(text);
+
+      // If the logs are > 2000 lines, clear the first 500
+      if (m_textBox.Lines.Length > 2000)
+      {
+        int linesToRemove = 500;
+        int startIndex = 0;
+        int endIndex = m_textBox.GetFirstCharIndexFromLine(linesToRemove);
+
+        m_textBox.Select(startIndex, endIndex);
+        m_textBox.SelectedText = "";
+      }
+    }
+
+    protected override void OnPaint(PaintEventArgs e)
+    {
+      base.OnPaint(e);
+      Graphics g = e.Graphics;
+      g.SmoothingMode = SmoothingMode.AntiAlias;
+
+      using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), m_borderRadius))
+      {
+        Color currentBackColor = m_fieldBackColour;
+        Color currentBorderColor = m_isFocused ? m_focusedBorderColor : m_borderColor;
+        Color currentTextColor = this.ForeColor;
+
+        if (!this.Enabled)
+        {
+          currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColour.R - 15),
+                                            Math.Max(0, m_fieldBackColour.G - 15),
+                                            Math.Max(0, m_fieldBackColour.B - 15));
+          currentBorderColor = Color.FromArgb(100, 150, 150, 150);
+          currentTextColor = Color.FromArgb(150, 150, 150);
+        }
+        else if (m_isHovered && !m_isFocused)
+        {
+          currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColour.R - 10),
+                                            Math.Max(0, m_fieldBackColour.G - 10),
+                                            Math.Max(0, m_fieldBackColour.B - 10));
+        }
+
+        m_textBox.BackColor = currentBackColor;
+
+        using (SolidBrush brush = new SolidBrush(currentBackColor))
+        {
+          g.FillPath(brush, path);
+        }
+
+        
+        float borderThickness = m_isFocused ? 2f : 1.5f;
+
+        using (Pen pen = new Pen(currentBorderColor, borderThickness))
+        {
+          g.DrawPath(pen, path);
+
+          if (m_isFocused)
+          {
+            using (Pen thickPen = new Pen(m_focusedBorderColor, 3f))
+            {
+              g.DrawLine(thickPen, m_borderRadius, this.Height - 2, this.Width - m_borderRadius, this.Height - 2);
+            }
+          }
+        }
+      }
+    }
+
+    // Helper for drawing rounded rectangles
+    private GraphicsPath GetRoundedRect(Rectangle bounds, int radius)
+    {
+      int d = radius * 2;
+      GraphicsPath path = new GraphicsPath();
+      path.AddArc(bounds.X, bounds.Y, d, d, 180, 90);
+      path.AddArc(bounds.Right - d, bounds.Y, d, d, 270, 90);
+      path.AddArc(bounds.Right - d, bounds.Bottom - d, d, d, 0, 90);
+      path.AddArc(bounds.X, bounds.Bottom - d, d, d, 90, 90);
+      path.CloseFigure();
+      return path;
+    }
+  }
+}

@@ -1,4 +1,6 @@
-﻿namespace ReforgerServerApp.Components
+using Longbow.Components.ui;
+
+namespace ReforgerServerApp.Components
 {
     partial class AdvancedServerParameterNumeric
     {
@@ -28,7 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            parameterValue = new NumericUpDown();
+            parameterValue = new FluentNumericUpDown();
             ((System.ComponentModel.ISupportInitialize) parameterValue).BeginInit();
             SuspendLayout();
             // 
@@ -36,7 +38,7 @@
             // 
             parameterValue.Location = new Point(4, 28);
             parameterValue.Name = "parameterValue";
-            parameterValue.Size = new Size(191, 23);
+            parameterValue.Size = new Size(191, 32);
             parameterValue.TabIndex = 2;
             parameterValue.ValueChanged += OnValueChanged;
             // 
@@ -54,6 +56,6 @@
 
         #endregion
 
-        private NumericUpDown parameterValue;
+        private FluentNumericUpDown parameterValue;
     }
 }

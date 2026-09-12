@@ -9,6 +9,7 @@
 
 using ReforgerServerApp.Utils;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace ReforgerServerApp
@@ -262,29 +263,44 @@ namespace ReforgerServerApp
     public static readonly int MIN_AUTOSAVE_INTERVAL_MINS = 0;
     public static readonly int MAX_AUTOSAVE_INTERVAL_MINS = 60;
     public static readonly int DEFAULT_AUTOSAVE_INTERVAL_MINS = 10;
+
+    public static readonly int MIN_SAVE_RETENTION_VALUE = 1;
+    public static readonly int MAX_SAVE_RETENTION_VALUE = 128;
+    public static readonly int DEFAULT_SAVE_RETENTION_VALUE = 10;
+    public static readonly bool DEFAULT_LOAD_SESSION_SAVE = true;
+    public static readonly bool DEFAULT_KEEP_SESSION_SAVE = false;
     public static readonly int MIN_HIVE_ID = 0;
     public static readonly int MAX_HIVE_ID = 16383;
     public static readonly int DEFAULT_HIVE_ID = 0;
-    public static readonly string DEFAULT_DATABASES = "{}";
-    public static readonly string DEFAULT_STORAGES = "{}";
+    public static readonly JsonObject DEFAULT_DATABASES = [];
+    public static readonly JsonObject DEFAULT_STORAGES = [];
 
     public int autoSaveInterval { get; set; }
+    public int saveRetention { get; set; }
+    public bool loadSessionSave { get; set; }
+    public bool keepSessionSave { get; set; }
     public int hiveId { get; set; }
-    public JsonDocument databases { get; set; }
-    public JsonDocument storages { get; set; }
+    public JsonObject databases { get; set; }
+    public JsonObject storages { get; set; }
 
-    public Persistence(int autoSaveInterval, int hiveId, JsonDocument databases, JsonDocument storages)
+    public Persistence(int autoSaveInterval, int saveRetention, bool loadSessionSave, bool keepSessionSave, int hiveId, JsonObject databases, JsonObject storages)
     {
       this.autoSaveInterval = autoSaveInterval;
+      this.saveRetention = saveRetention;
+      this.loadSessionSave = loadSessionSave;
+      this.keepSessionSave = keepSessionSave;
       this.hiveId = hiveId;
       this.databases = databases;
       this.storages = storages;
     }
     public static Persistence Default => new(
         DEFAULT_AUTOSAVE_INTERVAL_MINS,
+        DEFAULT_SAVE_RETENTION_VALUE,
+        DEFAULT_LOAD_SESSION_SAVE,
+        DEFAULT_KEEP_SESSION_SAVE,
         DEFAULT_HIVE_ID,
-        JsonDocument.Parse("{}"),
-        JsonDocument.Parse("{}")
+        [],
+        []
       );
   }
 
@@ -366,6 +382,7 @@ namespace ReforgerServerApp
     public Root root { get; set; }
 
     public bool rconEnabled { get; set; }
+    public bool persistenceEnabled { get; set; }
 
     public bool toggleDisableNavmeshStreaming { get; set; }
 

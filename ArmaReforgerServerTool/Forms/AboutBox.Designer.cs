@@ -46,9 +46,9 @@ namespace ReforgerServerApp
       // 
       // okBtn
       // 
-      okBtn.Location = new Point(347, 106);
+      okBtn.Location = new Point(347, 117);
       okBtn.Name = "okBtn";
-      okBtn.Size = new Size(75, 23);
+      okBtn.Size = new Size(75, 32);
       okBtn.TabIndex = 1;
       okBtn.Text = "OK";
       okBtn.UseVisualStyleBackColor = true;
@@ -56,9 +56,9 @@ namespace ReforgerServerApp
       // 
       // reportBtn
       // 
-      reportBtn.Location = new Point(12, 106);
+      reportBtn.Location = new Point(12, 117);
       reportBtn.Name = "reportBtn";
-      reportBtn.Size = new Size(113, 23);
+      reportBtn.Size = new Size(113, 32);
       reportBtn.TabIndex = 2;
       reportBtn.Text = "Report an Issue...";
       reportBtn.UseVisualStyleBackColor = true;
@@ -68,14 +68,14 @@ namespace ReforgerServerApp
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
       AutoScaleMode = AutoScaleMode.Font;
-      ClientSize = new Size(434, 141);
+      ClientSize = new Size(434, 161);
       Controls.Add(reportBtn);
       Controls.Add(okBtn);
       Controls.Add(aboutText);
       MaximizeBox = false;
-      MaximumSize = new Size(450, 180);
+      MaximumSize = new Size(450, 200);
       MinimizeBox = false;
-      MinimumSize = new Size(450, 180);
+      MinimumSize = new Size(450, 200);
       Name = "AboutBox";
       ShowIcon = false;
       StartPosition = FormStartPosition.CenterParent;

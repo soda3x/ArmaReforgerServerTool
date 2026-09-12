@@ -1,3 +1,5 @@
+using Longbow.Components.ui;
+
 namespace ReforgerServerApp
 {
     partial class TextInputForm
@@ -28,25 +30,26 @@ namespace ReforgerServerApp
     /// </summary>
     private void InitializeComponent()
     {
-      textInputField = new TextBox();
+      textInputField = new FluentTextBox();
       okBtn = new Button();
       SuspendLayout();
       // 
       // textInputField
       // 
       textInputField.Anchor =  AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+      textInputField.BackColor = Color.Transparent;
       textInputField.Location = new Point(12, 12);
-      textInputField.Multiline = true;
       textInputField.Name = "textInputField";
-      textInputField.Size = new Size(600, 390);
+      textInputField.Padding = new Padding(10, 7, 10, 7);
+      textInputField.Size = new Size(600, 378);
       textInputField.TabIndex = 0;
       // 
       // okBtn
       // 
       okBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
-      okBtn.Location = new Point(537, 408);
+      okBtn.Location = new Point(537, 397);
       okBtn.Name = "okBtn";
-      okBtn.Size = new Size(75, 23);
+      okBtn.Size = new Size(75, 32);
       okBtn.TabIndex = 1;
       okBtn.Text = "OK";
       okBtn.UseVisualStyleBackColor = true;
@@ -65,12 +68,11 @@ namespace ReforgerServerApp
       StartPosition = FormStartPosition.CenterParent;
       Text = "Longbow - Text Input Form";
       ResumeLayout(false);
-      PerformLayout();
     }
 
     #endregion
 
-    private TextBox textInputField;
+    private FluentTextBox textInputField;
         private Button okBtn;
     }
 }

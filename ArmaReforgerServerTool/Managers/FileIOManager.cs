@@ -7,15 +7,16 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-using Serilog;
+using Longbow.Managers;
+using Microsoft.Win32;
 using ReforgerServerApp.Utils;
+using Serilog;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
-using Microsoft.Win32;
-using Longbow.Managers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ReforgerServerApp.Managers
 {
@@ -186,7 +187,7 @@ namespace ReforgerServerApp.Managers
       if (sfd.ShowDialog() == DialogResult.OK)
       {
         ConfigurationManager.GetInstance().CreateConfiguration();
-        SaveConfigurationToFile(sfd.FileName);
+        SaveConfigurationToFile(sfd.FileName, true);
       }
     }
 
@@ -195,13 +196,18 @@ namespace ReforgerServerApp.Managers
     /// </summary>
     /// <param name="path">File path to save to</param>
     /// <returns>True if file was saved successfully, false otherwise</returns>
-    public static bool SaveConfigurationToFile(string path)
+    public static bool SaveConfigurationToFile(string path, bool userInvoked = false)
     {
       try
       {
         Log.Information("FileIOManager - Saving config to {path}", path);
         ConfigurationManager.GetInstance().CreateConfiguration();
         File.WriteAllText(path, ConfigurationManager.GetInstance().GetServerConfiguration().AsJsonString());
+        if (userInvoked)
+        {
+          SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = path;
+          SavedStateManager.GetInstance().GetMainReference().Text = $"Longbow Arma Dedicated Server Tool - {path}";
+        }
         return true;
       }
       catch (Exception ex)
@@ -225,7 +231,26 @@ namespace ReforgerServerApp.Managers
         string filePath = ofd.FileName;
         using StreamReader sr = File.OpenText(filePath);
         ConfigurationManager.GetInstance().PopulateServerConfiguration(sr.ReadToEnd());
+        SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = filePath;
+        SavedStateManager.GetInstance().GetMainReference().Text = $"Longbow Arma Dedicated Server Tool - {filePath}";
       }
+    }
+
+    /// <summary>
+    /// Load Configuration from JSON file
+    /// </summary>
+    /// <param name="filePath">File path of the config file to load</param>
+    /// <returns>True if successful, otherwise false</returns>
+    public static bool LoadConfigurationFromFile(string filePath)
+    {
+      if (File.Exists(filePath))
+      {
+        using StreamReader sr = File.OpenText(filePath);
+        ConfigurationManager.GetInstance().PopulateServerConfiguration(sr.ReadToEnd());
+        SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = filePath;
+        return true;
+      }
+      return false;
     }
 
     /// <summary>

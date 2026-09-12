@@ -6,6 +6,9 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
+using WinForms.Fluent;
+
 namespace ReforgerServerApp
 {
   public partial class ListForm : Form
@@ -14,6 +17,7 @@ namespace ReforgerServerApp
     public ListForm(string windowTitle, string[] items)
     {
       InitializeComponent();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       this.Text = $"Longbow - {windowTitle}";
       m_items = new List<string>(items);
       itemListView.DataSource = m_items;

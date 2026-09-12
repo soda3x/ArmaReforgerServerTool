@@ -6,6 +6,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Components.ui;
 using Longbow.Forms;
 using Longbow.Managers;
 using Longbow.Models;
@@ -17,6 +18,7 @@ using ReforgerServerApp.Utils;
 using Serilog;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net.Sockets;
 
 namespace ReforgerServerApp
 {
@@ -25,7 +27,6 @@ namespace ReforgerServerApp
     private BindingSource m_availableModsBindingSource;
     private BindingSource m_enabledModsBindingSource;
     private ServerStatusParser m_serverStatusParser;
-    private const int MAX_GRAPH_POINTS = 60;
 
     public Main()
     {
@@ -36,10 +37,13 @@ namespace ReforgerServerApp
 
       serverRunningLabel.Text = string.Empty;
 
+      modsSearchTB.PlaceholderText = "Search for a mod...";
+
       ProcessManager.GetInstance().UpdateGuiControlsEvent += HandleUpdateGuiControlsEvent;
       ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
       ProcessManager.GetInstance().UpdateServerStatusEvent += HandleServerStatusEvent;
       ConfigurationManager.GetInstance().UpdateScenarioIdFromLoadedConfigEvent += HandleUpdateScenarioIdFromLoadedConfigEvent;
+      SavedStateManager.GetInstance().SetMainReference(this);
 
       useUpnp.Checked = SavedStateManager.GetInstance().GetLoadedAdvancedSettings().GetValueOrDefault("useUpnp", SavedState.DEFAULT_USE_UPNP).Enabled;
       NetworkManager.GetInstance().useUPnP = useUpnp.Checked;
@@ -97,27 +101,31 @@ namespace ReforgerServerApp
       copyRconAddressBtn.Enabled = false;
       copyJoinCodeBtn.Enabled = false;
 
-      chartFps.ChartAreas[0].BackColor = Color.Transparent;
-      chartMem.ChartAreas[0].BackColor = Color.Transparent;
+      logLevelComboBox.SelectedIndex = 0;
 
-      chartFps.Legends[0].BackColor = Color.Transparent;
-      chartMem.Legends[0].BackColor = Color.Transparent;
+      chartFps.Units = "FPS";
+      chartMem.Units = "GB";
 
-      var fpsSeries = chartFps.Series["FPS"];
-      var memSeries = chartMem.Series["Memory (GB)"];
+      steamCmdLog.ScrollBars = ScrollBars.Vertical;
 
-      fpsSeries.ToolTip = "FPS: #VALY\nTime: #VALX{HH:mm:ss}";
-      fpsSeries.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-      chartFps.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm:ss";
+      steamCmdLog.ReadOnly = true;
 
-      memSeries.ToolTip = "Memory: #VALY GB\nTime: #VALX{HH:mm:ss}";
-      memSeries.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.DateTime;
-      chartMem.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm:ss";
-      memSeries.Color = Color.Orange;
-      GCMemoryInfo gcInfo = GC.GetGCMemoryInfo();
-      double totalSystemMemoryGb = gcInfo.TotalAvailableMemoryBytes / (1024.0 * 1024.0 * 1024.0);
-      chartMem.ChartAreas[0].AxisY.Maximum = Math.Ceiling(totalSystemMemoryGb);
-      chartMem.ChartAreas[0].AxisY.Minimum = 0; // Lock the bottom to 0 for proper scale
+      string lastConfigPath = SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig;
+
+      if (!string.IsNullOrWhiteSpace(lastConfigPath))
+      {
+        if (!FileIOManager.LoadConfigurationFromFile(lastConfigPath))
+        {
+          Utilities.DisplayErrorMessage("Failed to open last config", $"Attempted to load the last opened config at {lastConfigPath} but failed.");
+          SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = SavedState.Default.lastLoadedConfig;
+        }
+        else
+        {
+          Text = $"Longbow Arma Dedicated Server Tool - {lastConfigPath}";
+        }
+      }
+
+      ThemeManager.GetInstance().ConfigureTheme(this);
     }
 
     /// <summary>
@@ -189,7 +197,7 @@ namespace ReforgerServerApp
     /// Get the Enabled Mods ListBox
     /// </summary>
     /// <returns>enabledMods ListBox</returns>
-    public ListBox GetEnabledModsList()
+    public FluentListBox GetEnabledModsList()
     {
       return enabledMods;
     }
@@ -198,7 +206,7 @@ namespace ReforgerServerApp
     /// Get the Available Mods ListBox
     /// </summary>
     /// <returns>availableMods ListBox</returns>
-    public ListBox GetAvailableModsList()
+    public FluentListBox GetAvailableModsList()
     {
       return availableMods;
     }
@@ -256,7 +264,7 @@ namespace ReforgerServerApp
 
       var availableMods = ConfigurationManager.GetInstance().GetAvailableMods();
       bool hasDeletedAtLeastOne = false;
-
+      GetAvailableModsList().BeginUpdate();
       foreach (Mod mod in modsToDelete)
       {
         if (availableMods.Remove(mod))
@@ -267,6 +275,7 @@ namespace ReforgerServerApp
       {
         FileIOManager.GetInstance().WriteModsDatabase();
       }
+      GetAvailableModsList().EndUpdate();
     }
 
     /// <summary>
@@ -280,6 +289,8 @@ namespace ReforgerServerApp
     private void AddToEnabledModsBtnPressed(object sender, EventArgs e)
     {
       Mod[] modsToMove = new Mod[GetAvailableModsList().SelectedItems.Count];
+      GetAvailableModsList().BeginUpdate();
+      GetEnabledModsList().BeginUpdate();
       GetAvailableModsList().SelectedItems.CopyTo(modsToMove, 0);
       foreach (Mod mod in modsToMove)
       {
@@ -289,6 +300,8 @@ namespace ReforgerServerApp
       }
       ConfigurationManager.GetInstance().AlphabetiseModLists();
       ResetModFilters();
+      GetAvailableModsList().EndUpdate();
+      GetEnabledModsList().EndUpdate();
     }
 
     /// <summary>
@@ -302,6 +315,8 @@ namespace ReforgerServerApp
     private void RemovedFromEnabledModsBtnPressed(object sender, EventArgs e)
     {
       Mod[] modsToMove = new Mod[GetEnabledModsList().SelectedItems.Count];
+      GetAvailableModsList().BeginUpdate();
+      GetEnabledModsList().BeginUpdate();
       GetEnabledModsList().SelectedItems.CopyTo(modsToMove, 0);
       foreach (Mod mod in modsToMove)
       {
@@ -311,6 +326,8 @@ namespace ReforgerServerApp
       }
       ConfigurationManager.GetInstance().AlphabetiseModLists();
       ResetModFilters();
+      GetAvailableModsList().EndUpdate();
+      GetEnabledModsList().EndUpdate();
     }
 
     /// <summary>
@@ -322,6 +339,7 @@ namespace ReforgerServerApp
     {
       if ((Mod) GetEnabledModsList().SelectedItem != null)
       {
+        GetEnabledModsList().BeginUpdate();
         Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
         // Set move backward to true as moving position 'up' actually means moving the mod earlier in the list
@@ -330,6 +348,7 @@ namespace ReforgerServerApp
         // Re-select the mod so we can do multiple moves in a row if we like
         GetEnabledModsList().SelectedItems.Clear();
         GetEnabledModsList().SelectedItem = m;
+        GetEnabledModsList().EndUpdate();
       }
     }
 
@@ -342,6 +361,7 @@ namespace ReforgerServerApp
     {
       if ((Mod) GetEnabledModsList().SelectedItem != null)
       {
+        GetEnabledModsList().BeginUpdate();
         Mod m = (Mod)GetEnabledModsList().SelectedItem;
 
         // Move forward is the default, this will mean moving the mod later in the list
@@ -350,6 +370,7 @@ namespace ReforgerServerApp
         // Re-select the mod so we can do multiple moves in a row if we like
         GetEnabledModsList().SelectedItems.Clear();
         GetEnabledModsList().SelectedItem = m;
+        GetEnabledModsList().EndUpdate();
       }
     }
 
@@ -547,6 +568,8 @@ namespace ReforgerServerApp
       moveModPosDownBtn.Enabled = enabled;
       loadSaveGameBtn.Enabled = enabled;
       keepServerUpdated.Enabled = enabled;
+      importModsBtn.Enabled = enabled;
+      exportModsBtn.Enabled = enabled;
 
       // The clipboard buttons are the opposite
       copyAddressBtn.Enabled = !enabled;
@@ -779,7 +802,7 @@ namespace ReforgerServerApp
         ParameterName = "rconPermission",
         ParameterFriendlyName = "Rcon Permission",
         ParameterTooltip = Constants.SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR,
-        ParameterValue = Rcon.PERMISSIONS,
+        ParameterValue = Rcon.PERMISSIONS
       };
       rconPermission.ParameterValueSelection(Rcon.DEFAULT_PERMISSION);
       serverParameters.Controls.Add(rconPermission);
@@ -982,6 +1005,13 @@ namespace ReforgerServerApp
         ParameterTooltip = Constants.SERVER_PARAM_JOIN_QUEUE_MAX_SIZE_TOOLTIP_STR
       };
       serverParameters.Controls.Add(joinQueueMaxSize);
+      ServerParameterBool persistence = new()
+      {
+        ParameterName = "persistenceEnabled",
+        ParameterFriendlyName = "Persistence System",
+        ParameterTooltip = Constants.SERVER_PARAM_ENABLE_PERSISTENCE_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(persistence);
       ServerParameterNumeric autoSaveInterval = new()
       {
         ParameterName = "autoSaveInterval",
@@ -990,6 +1020,30 @@ namespace ReforgerServerApp
         ParameterTooltip = Constants.SERVER_PARAM_AUTO_SAVE_INTERVAL_TOOLTIP_STR
       };
       serverParameters.Controls.Add(autoSaveInterval);
+      ServerParameterNumeric saveRetention = new()
+      {
+        ParameterName = "saveRetention",
+        ParameterFriendlyName = "Save Retention",
+        ParameterValue = Persistence.DEFAULT_SAVE_RETENTION_VALUE,
+        ParameterTooltip = Constants.SERVER_PARAM_SAVE_RETENTION_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(saveRetention);
+      ServerParameterBool loadSessionSave = new()
+      {
+        ParameterName = "loadSessionSave",
+        ParameterFriendlyName = "Load Session Save",
+        ParameterValue = Persistence.DEFAULT_LOAD_SESSION_SAVE,
+        ParameterTooltip = Constants.SERVER_PARAM_LOAD_SESSION_SAVE_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(loadSessionSave);
+      ServerParameterBool keepSessionSave = new()
+      {
+        ParameterName = "keepSessionSave",
+        ParameterFriendlyName = "Keep Session Save",
+        ParameterValue = Persistence.DEFAULT_KEEP_SESSION_SAVE,
+        ParameterTooltip = Constants.SERVER_PARAM_KEEP_SESSION_SAVE_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(keepSessionSave);
       ServerParameterNumeric hiveId = new()
       {
         ParameterName = "hiveId",
@@ -1002,7 +1056,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "databases",
         ParameterFriendlyName = "Databases",
-        ParameterValue = Persistence.DEFAULT_DATABASES,
+        ParameterValue = Persistence.DEFAULT_DATABASES.ToString(),
         ParameterTooltip = Constants.SERVER_PARAM_DATABASES_TOOLTIP_STR
       };
       serverParameters.Controls.Add(databases);
@@ -1010,7 +1064,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "storages",
         ParameterFriendlyName = "Storages",
-        ParameterValue = Persistence.DEFAULT_STORAGES,
+        ParameterValue = Persistence.DEFAULT_STORAGES.ToString(),
         ParameterTooltip = Constants.SERVER_PARAM_STORAGES_TOOLTIP_STR
       };
       serverParameters.Controls.Add(storages);
@@ -1021,7 +1075,7 @@ namespace ReforgerServerApp
       }
     }
 
-    void CreateAdvancedServerParameterControls()
+    private void CreateAdvancedServerParameterControls()
     {
       Dictionary<string, AdvancedSetting> loadedSettings = SavedStateManager.GetInstance().GetSavedState().advancedSettings;
 
@@ -1032,10 +1086,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 1000,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["maxFPS"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "maxFPS").Value,
         Description = "Limits your server to the specified target FPS. Recommended."
       };
-      limitServerMaxFPS.CheckBox.Checked = loadedSettings["maxFPS"].Enabled;
+      limitServerMaxFPS.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "maxFPS").Enabled;
       advancedParametersPanel.Controls.Add(limitServerMaxFPS);
 
       AdvancedServerParameterTime autoRestartTime = new()
@@ -1053,9 +1107,9 @@ namespace ReforgerServerApp
       {
         ParameterName = "addonsRepair",
         ParameterFriendlyName = "Verify and Repair Addons",
-        Description ="Verifies the integrity of all installed addons. If any corrupted addons are found, they will be repaired automatically."
+        Description ="Verifies the integrity of all installed addons.\r\nIf any corrupted addons are found, they will be repaired automatically."
       };
-      addonsRepair.CheckBox.Checked = loadedSettings["addonsRepair"].Enabled;
+      addonsRepair.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "addonsRepair").Enabled;
       advancedParametersPanel.Controls.Add(addonsRepair);
 
       AdvancedServerParameterBool autoRestartOnCrash = new()
@@ -1065,7 +1119,7 @@ namespace ReforgerServerApp
         Description = "The tool will monitor the server for crashes and attempt to restart it automatically."
       };
       autoRestartOnCrash.CheckBox.CheckedChanged += AutoRestartOnCrashCheckChanged;
-      autoRestartOnCrash.CheckBox.Checked = loadedSettings.ContainsKey("autoRestartOnCrash") ? loadedSettings["autoRestartOnCrash"].Enabled : false;
+      autoRestartOnCrash.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoRestartOnCrash").Enabled;
       advancedParametersPanel.Controls.Add(autoRestartOnCrash);
 
       AdvancedServerParameterNumeric autoReload = new()
@@ -1076,23 +1130,23 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["autoreload"].Value
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "autoreload").Value
       };
-      autoReload.CheckBox.Checked = loadedSettings["autoreload"].Enabled;
+      autoReload.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoreload").Enabled;
       advancedParametersPanel.Controls.Add(autoReload);
 
       AdvancedServerParameterString loadSessionSave = new()
       {
         ParameterName = "loadSessionSave",
         ParameterFriendlyName = "Load Session Save",
-        Description = "Name of save excluding the path and file extension.\nLeave blank to use the latest save.",
+        Description = "Name of save excluding the path and file extension.\r\n\r\nLeave blank to use the latest save.",
         ParameterPlaceholder = "Using latest save..."
       };
-      bool loadSessionSavedEnabled = loadedSettings["loadSessionSave"].Enabled;
+      bool loadSessionSavedEnabled = SavedStateManager.GetSetting(loadedSettings, "loadSessionSave").Enabled;
       loadSessionSave.CheckBox.Checked = loadSessionSavedEnabled;
       if (loadSessionSavedEnabled)
       {
-        loadSessionSave.ParameterValue = loadedSettings["loadSessionSave"].Value;
+        loadSessionSave.ParameterValue = SavedStateManager.GetSetting(loadedSettings, "loadSessionSave").Value;
       }
       advancedParametersPanel.Controls.Add(loadSessionSave);
 
@@ -1103,7 +1157,7 @@ namespace ReforgerServerApp
         Description = "Enable this to host the server without using the Arma Reforger backend."
       };
       noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
-      noBackend.CheckBox.Checked = loadedSettings["noBackend"].Enabled;
+      noBackend.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "noBackend").Enabled;
       advancedParametersPanel.Controls.Add(noBackend);
 
       AdvancedServerParameterBool autoShutdown = new()
@@ -1112,16 +1166,16 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "Auto Shutdown",
         Description = "Ensures the correct server shutdown process, use with \"Auto Reload\"."
       };
-      autoShutdown.CheckBox.Checked = loadedSettings["autoShutdown"].Enabled;
+      autoShutdown.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoShutdown").Enabled;
       advancedParametersPanel.Controls.Add(autoShutdown);
 
       AdvancedServerParameterBool logVoting = new()
       {
         ParameterName = "logVoting",
         ParameterFriendlyName = "Log Voting",
-        Description = "Adds logging info to the voting system with information about who created, voted, and against whom the vote was created."
+        Description = "Adds logging info to the voting system with information about who created,\r\nvoted, and against whom the vote was created."
       };
-      logVoting.CheckBox.Checked = loadedSettings["logVoting"].Enabled;
+      logVoting.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "logVoting").Enabled;
       advancedParametersPanel.Controls.Add(logVoting);
 
       AdvancedServerParameterNumeric overridePort = new()
@@ -1131,10 +1185,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 65535,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["bindPort"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "bindPort").Value,
         Description = "Override the ports specified in server configuration."
       };
-      overridePort.CheckBox.Checked = loadedSettings["bindPort"].Enabled;
+      overridePort.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "bindPort").Enabled;
       advancedParametersPanel.Controls.Add(overridePort);
 
       AdvancedServerParameterNumeric networkDynamicSim = new()
@@ -1144,10 +1198,10 @@ namespace ReforgerServerApp
         ParameterMin = 0,
         ParameterMax = 2,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["nds"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "nds").Value,
         Description = "This is set to '2' by default if unchecked."
       };
-      networkDynamicSim.CheckBox.Checked = loadedSettings["nds"].Enabled;
+      networkDynamicSim.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "nds").Enabled;
       advancedParametersPanel.Controls.Add(networkDynamicSim);
 
       AdvancedServerParameterNumeric spatialMapRes = new()
@@ -1157,10 +1211,10 @@ namespace ReforgerServerApp
         ParameterMin = 100,
         ParameterMax = 1000,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["nwkResolution"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "nwkResolution").Value,
         Description = "Defines what resolution Spatial Map cells should be set at in a 100 - 1000m range."
       };
-      spatialMapRes.CheckBox.Checked = loadedSettings["nwkResolution"].Enabled;
+      spatialMapRes.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "nwkResolution").Enabled;
       advancedParametersPanel.Controls.Add(spatialMapRes);
 
       AdvancedServerParameterNumeric staggeringBudget = new()
@@ -1170,10 +1224,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 10201,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["staggeringBudget"].Value,
-        Description = "Defines how many stationary spatial map cells are allowed to be processed in one tick. If not set it uses \"-nds\" diameter."
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "staggeringBudget").Value,
+        Description = "Defines how many stationary spatial map cells are allowed to be processed in one tick.\r\n\r\nIf not set it uses \"-nds\" diameter."
       };
-      staggeringBudget.CheckBox.Checked = loadedSettings["staggeringBudget"].Enabled;
+      staggeringBudget.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "staggeringBudget").Enabled;
       advancedParametersPanel.Controls.Add(staggeringBudget);
 
       AdvancedServerParameterNumeric streamingBudget = new()
@@ -1183,10 +1237,10 @@ namespace ReforgerServerApp
         ParameterMin = 100,
         ParameterMax = 10201,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["streamingBudget"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "streamingBudget").Value,
         Description = "Streaming budget is the global streaming budget that is equally distributed between all connections."
       };
-      streamingBudget.CheckBox.Checked = loadedSettings["streamingBudget"].Enabled;
+      streamingBudget.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "streamingBudget").Enabled;
       advancedParametersPanel.Controls.Add(streamingBudget);
 
       AdvancedServerParameterNumeric streamsDelta = new()
@@ -1196,10 +1250,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 1000,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["streamsDelta"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "streamsDelta").Value,
         Description = "Streams delta is a tool to limit the amount of streams being opened for a client."
       };
-      streamsDelta.CheckBox.Checked = loadedSettings["streamsDelta"].Enabled;
+      streamsDelta.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "streamsDelta").Enabled;
       advancedParametersPanel.Controls.Add(streamsDelta);
 
       AdvancedServerParameterNumeric rplTimeoutMs = new()
@@ -1209,10 +1263,10 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
-        ParameterValue = loadedSettings["rpl-timeout-ms"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "rpl-timeout-ms").Value,
         Description = "Sets the server's timeout value, in milliseconds."
       };
-      rplTimeoutMs.CheckBox.Checked = loadedSettings["rpl-timeout-ms"].Enabled;
+      rplTimeoutMs.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "rpl-timeout-ms").Enabled;
       advancedParametersPanel.Controls.Add(rplTimeoutMs);
 
       AdvancedServerParameterBool aiPartialSim = new()
@@ -1221,16 +1275,16 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "AI Partial Sim",
         Description = "Sets in how many batches all simulable AIs will divided and processed."
       };
-      aiPartialSim.CheckBox.Checked = loadedSettings["aiPartialSim"].Enabled;
+      aiPartialSim.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "aiPartialSim").Enabled;
       advancedParametersPanel.Controls.Add(aiPartialSim);
 
       AdvancedServerParameterBool createDB = new()
       {
         ParameterName = "createDB",
         ParameterFriendlyName = "Force Recreate Database",
-        Description = "Forces database file's regeneration. Useful after file directories changes, when some resources were moved elsewhere."
+        Description = "Forces database file's regeneration.\r\n\r\nUseful after file directories changes, when some resources were moved elsewhere."
       };
-      createDB.CheckBox.Checked = loadedSettings["createDB"].Enabled;
+      createDB.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "createDB").Enabled;
       advancedParametersPanel.Controls.Add(createDB);
 
       AdvancedServerParameterString debugger = new()
@@ -1240,11 +1294,11 @@ namespace ReforgerServerApp
         ParameterPlaceholder = "127.0.0.1",
         Description = "Sets the script debugger to a specific address."
       };
-      bool debuggerEnabled = loadedSettings["debugger"].Enabled;
+      bool debuggerEnabled = SavedStateManager.GetSetting(loadedSettings, "debugger").Enabled;
       debugger.CheckBox.Checked = debuggerEnabled;
       if (debuggerEnabled)
       {
-        debugger.ParameterValue = loadedSettings["debugger"].Value;
+        debugger.ParameterValue = SavedStateManager.GetSetting(loadedSettings, "debugger").Value;
       }
       advancedParametersPanel.Controls.Add(debugger);
 
@@ -1255,10 +1309,10 @@ namespace ReforgerServerApp
         ParameterIncrement = 1,
         ParameterMin = 1,
         ParameterMax = 65535,
-        ParameterValue = loadedSettings["debuggerPort"].Value,
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "debuggerPort").Value,
         Description = "Sets the script debugger to a specific port. "
       };
-      debuggerPort.CheckBox.Checked = loadedSettings["debuggerPort"].Enabled;
+      debuggerPort.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "debuggerPort").Enabled;
       advancedParametersPanel.Controls.Add(debuggerPort);
 
       AdvancedServerParameterBool disableShadersBuild = new()
@@ -1267,7 +1321,7 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "Disable Shaders Generation",
         Description = "Disables shaders generation."
       };
-      disableShadersBuild.CheckBox.Checked = loadedSettings["disableShadersBuild"].Enabled;
+      disableShadersBuild.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "disableShadersBuild").Enabled;
       advancedParametersPanel.Controls.Add(disableShadersBuild);
 
       AdvancedServerParameterBool generateShaders = new()
@@ -1276,7 +1330,7 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "Force Generate Shaders",
         Description = "Forces shaders generation."
       };
-      generateShaders.CheckBox.Checked = loadedSettings["generateShaders"].Enabled;
+      generateShaders.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "generateShaders").Enabled;
       advancedParametersPanel.Controls.Add(generateShaders);
 
       AdvancedServerParameterBool rplEncodeAsLongJobs = new()
@@ -1285,7 +1339,7 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "RPL Encode as Long Jobs",
         Description = "Makes replication use long encoding jobs instead of short ones."
       };
-      rplEncodeAsLongJobs.CheckBox.Checked = loadedSettings["rplEncodeAsLongJobs"].Enabled;
+      rplEncodeAsLongJobs.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "rplEncodeAsLongJobs").Enabled;
       advancedParametersPanel.Controls.Add(rplEncodeAsLongJobs);
 
       AdvancedServerParameterNumeric jobsysShortWorkerCount = new()
@@ -1295,9 +1349,9 @@ namespace ReforgerServerApp
         Description = "Sets the number of threads working on short jobs (jobs that must finish in one update loop).",
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
-        ParameterValue = loadedSettings["jobsysShortWorkerCount"].Value
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "jobsysShortWorkerCount").Value
       };
-      jobsysShortWorkerCount.CheckBox.Checked = loadedSettings["jobsysShortWorkerCount"].Enabled;
+      jobsysShortWorkerCount.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "jobsysShortWorkerCount").Enabled;
       advancedParametersPanel.Controls.Add(jobsysShortWorkerCount);
 
       AdvancedServerParameterNumeric jobsysLongWorkerCount = new()
@@ -1307,9 +1361,9 @@ namespace ReforgerServerApp
         Description = "Sets the number of threads working on long jobs (jobs that can span multiple iterations of update loop).",
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
-        ParameterValue = loadedSettings["jobsysLongWorkerCount"].Value
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "jobsysLongWorkerCount").Value
       };
-      jobsysLongWorkerCount.CheckBox.Checked = loadedSettings["jobsysLongWorkerCount"].Enabled;
+      jobsysLongWorkerCount.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "jobsysLongWorkerCount").Enabled;
       advancedParametersPanel.Controls.Add(jobsysLongWorkerCount);
 
       AdvancedServerParameterNumeric freezeCheck = new()
@@ -1320,9 +1374,9 @@ namespace ReforgerServerApp
         ParameterIncrement = 1,
         ParameterMin = 0,
         ParameterMax = 600,
-        ParameterValue = loadedSettings["freezeCheck"].Value
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings, "freezeCheck").Value
       };
-      freezeCheck.CheckBox.Checked = loadedSettings["freezeCheck"].Enabled;
+      freezeCheck.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "freezeCheck").Enabled;
       advancedParametersPanel.Controls.Add(freezeCheck);
 
       AdvancedServerParameterEnumerated freezeCheckMode = new()
@@ -1332,11 +1386,11 @@ namespace ReforgerServerApp
         Description = "Overrides behavior which should happen when freeze is detected.",
         ParameterAvailableValues = new List<string>() {"crash", "minidump", "kill"}
       };
-      bool freezeCheckModeEnabled = loadedSettings["freezeCheckMode"].Enabled;
+      bool freezeCheckModeEnabled = SavedStateManager.GetSetting(loadedSettings, "freezeCheckMode").Enabled;
       freezeCheckMode.CheckBox.Checked = freezeCheckModeEnabled;
       if (freezeCheckModeEnabled)
       {
-        freezeCheckMode.ParameterValue = loadedSettings["freezeCheckMode"].Value;
+        freezeCheckMode.ParameterValue = SavedStateManager.GetSetting(loadedSettings, "freezeCheckMode").Value;
       }
       advancedParametersPanel.Controls.Add(freezeCheckMode);
 
@@ -1346,8 +1400,28 @@ namespace ReforgerServerApp
         ParameterFriendlyName = "Force Disable Night Grain",
         Description = "Disables night grain in multiplayer.",
       };
-      forceDisableNightGrain.CheckBox.Checked = loadedSettings["forceDisableNightGrain"].Enabled;
+      forceDisableNightGrain.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "forceDisableNightGrain").Enabled;
       advancedParametersPanel.Controls.Add(forceDisableNightGrain);
+
+      AdvancedServerParameterBool keepSessionSave = new()
+      {
+        ParameterName = "keepSessionSave",
+        ParameterFriendlyName = "Keep Session Save",
+        Description = "Keep any data for completed playthroughs on the game's end screen."
+      };
+      keepSessionSave.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "keepSessionSave").Enabled;
+      advancedParametersPanel.Controls.Add(keepSessionSave);
+
+      AdvancedServerParameterString playerLimits = new()
+      {
+        ParameterName = "playerLimits",
+        ParameterFriendlyName = "Player Faction Limits",
+        Description = "Maximum number of players per faction.\r\n\r\nFormat is FactionKey:Number, comma separated. E.g. \"FIA:3,US:1,USSR:2\".",
+        ParameterPlaceholder = "e.g. FIA:3,US:1,USSR:2",
+        ParameterValue = SavedStateManager.GetSetting(loadedSettings,"playerLimits").Value
+      };
+      playerLimits.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "playerLimits").Enabled;
+      advancedParametersPanel.Controls.Add(playerLimits);
 
       foreach (AdvancedServerParameter param in advancedParametersPanel.Controls)
       {
@@ -1397,6 +1471,37 @@ namespace ReforgerServerApp
       {
         steamCmdLog.AppendText(e.line);
 
+        if (steamCmdLog.Lines.Length > 500)
+        {
+          steamCmdLog.SuspendLayout();
+
+          bool wasReadOnly = steamCmdLog.ReadOnly;
+          if (wasReadOnly)
+          {
+            steamCmdLog.ReadOnly = false;
+          }
+
+          int linesToRemove = steamCmdLog.Lines.Length - 500;
+
+          // Get the exact character index where the cutoff happens
+          int cutoffIndex = steamCmdLog.GetFirstCharIndexFromLine(linesToRemove);
+
+          // Highlight the oldest text at the top and delete it
+          steamCmdLog.Select(0, cutoffIndex);
+          steamCmdLog.SelectedText = string.Empty;
+
+          if (wasReadOnly)
+          {
+            steamCmdLog.ReadOnly = true;
+          }
+
+          // Move the caret back to the bottom
+          steamCmdLog.SelectionStart = steamCmdLog.Text.Length;
+          steamCmdLog.ScrollToCaret();
+
+          steamCmdLog.ResumeLayout();
+        }
+
         // Update the Server Status
         m_serverStatusParser.ParseServerStatus(e.line);
       }
@@ -1412,6 +1517,10 @@ namespace ReforgerServerApp
         pingSiteStatusLabel.Text = serverOfflineString;
         joinCodeStatusLabel.Text = serverOfflineString;
         playerCountStatusLabel.Text = serverOfflineString;
+        fpsLabel.Text = "-- FPS";
+        memLabel.Text = "-- GB";
+        chartFps.Clear();
+        chartMem.Clear();
         flagStatusPB.Image = null;
         return;
       }
@@ -1434,7 +1543,8 @@ namespace ReforgerServerApp
       if (e.LastPlayerCount == 1)
       {
         playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected player";
-      } else
+      }
+      else
       {
         playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected players";
       }
@@ -1450,28 +1560,11 @@ namespace ReforgerServerApp
         return;
       }
 
-      // --- Update FPS Graph ---
-      chartFps.Series["FPS"].Points.AddXY(time, fps);
+      chartFps.AddDataPoint((float) fps);
+      chartMem.AddDataPoint((float) memoryGb);
 
-      if (chartFps.Series["FPS"].Points.Count > MAX_GRAPH_POINTS)
-      {
-        chartFps.Series["FPS"].Points.RemoveAt(0);
-      }
-
-      // Auto-scale Y Axis
-      double minFps = chartFps.Series["FPS"].Points.FindMinByValue().YValues[0];
-      double maxFps = chartFps.Series["FPS"].Points.FindMaxByValue().YValues[0];
-      chartFps.ChartAreas[0].AxisY.Minimum = Math.Max(0, minFps - 5);
-      chartFps.ChartAreas[0].AxisY.Maximum = maxFps + 5;
-
-
-      // --- Update Memory Graph ---
-      chartMem.Series["Memory (GB)"].Points.AddXY(time, memoryGb);
-
-      if (chartMem.Series["Memory (GB)"].Points.Count > MAX_GRAPH_POINTS)
-      {
-        chartMem.Series["Memory (GB)"].Points.RemoveAt(0);
-      }
+      fpsLabel.Text = $"{fps} FPS";
+      memLabel.Text = $"{memoryGb} GB";
     }
 
     /// <summary>
@@ -1554,7 +1647,8 @@ namespace ReforgerServerApp
         }
         else
         {
-          args.loadSessionSave = new("loadSessionSave", loadSessionSaveVal);
+          // Need to wrap the save in quotes as it allows spaces
+          args.loadSessionSave = new("loadSessionSave", $"\"{loadSessionSaveVal}\"");
         }
       }
 
@@ -1676,6 +1770,16 @@ namespace ReforgerServerApp
       if (advParams["forceDisableNightGrain"].Checked())
       {
         args.forceDisableNightGrain = new("forceDisableNightGrain");
+      }
+
+      if (advParams["playerLimits"].Checked())
+      {
+        args.playerLimits = new("playerLimits", Convert.ToString(advParams["playerLimits"].ParameterValue));
+      }
+
+      if (advParams["keepSessionSave"].Checked())
+      {
+        args.keepSessionSave = new("keepSessionSave");
       }
 
       ProcessManager.GetInstance().SetLaunchArgumentsModel(args);

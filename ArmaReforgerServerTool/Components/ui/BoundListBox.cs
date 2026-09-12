@@ -12,9 +12,9 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
-namespace ReforgerServerApp.Components
+namespace Longbow.Components.ui
 {
-  internal class BoundListBox : ListBox
+  public class BoundListBox : ListBox
   {
     public new void RefreshItems()
     {
