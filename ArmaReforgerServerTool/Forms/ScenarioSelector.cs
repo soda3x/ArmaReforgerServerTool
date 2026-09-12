@@ -6,9 +6,11 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
 using Longbow.Models;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
+using WinForms.Fluent;
 
 namespace ReforgerServerApp
 {
@@ -22,6 +24,7 @@ namespace ReforgerServerApp
     public ScenarioSelector(Main parent)
     {
       InitializeComponent();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       PrintSelectedScenario();
       m_parentForm = parent;
       m_getScenariosRequested = true;

@@ -190,9 +190,6 @@ namespace ReforgerServerApp.Managers
 
         OnUpdateSteamCmdLogEvent(steamCmd);
 
-        SteamCmdLogEventArgs dling = new($"{Utilities.GetTimestamp()}: Downloading / updating Arma Reforger dedicated server files. Please be patient...{Environment.NewLine}");
-        OnUpdateSteamCmdLogEvent(dling);
-
         if (NetworkManager.GetInstance().useUPnP)
         {
           steamCmd = new($"{Utilities.GetTimestamp()}: Server is using UPnP, adding UPnP port mappings...{Environment.NewLine}");
@@ -290,9 +287,6 @@ namespace ReforgerServerApp.Managers
       Log.Information("ProcessManager - Automatically (re)started server.");
       OnUpdateSteamCmdLogEvent(steamCmd);
 
-      SteamCmdLogEventArgs dling = new($"{Utilities.GetTimestamp()}: Downloading / updating Arma Reforger dedicated server files. Please be patient...{Environment.NewLine}");
-      OnUpdateSteamCmdLogEvent(dling);
-
       if (NetworkManager.GetInstance().useUPnP)
       {
         steamCmd = new($"{Utilities.GetTimestamp()}: Server is using UPnP, adding UPnP port mappings...{Environment.NewLine}");
@@ -318,6 +312,17 @@ namespace ReforgerServerApp.Managers
       SteamCmdLogEventArgs updateNotif = new($"{Utilities.GetTimestamp()}: {updateNotifMsg} {Environment.NewLine}");
       OnUpdateSteamCmdLogEvent(updateNotif);
 
+      // Clear the cache to prevent "Missing configuration" errors before starting
+      try
+      {
+        string appInfoPath = Path.Combine(System.IO.Path.GetDirectoryName(FileIOManager.GetInstance().GetSteamCmdFile()), "appcache", "appinfo.vdf");
+        if (File.Exists(appInfoPath))
+        {
+          File.Delete(appInfoPath);
+        }
+      }
+      catch { /* Ignore if locked or missing */ }
+
       string steamCommand = $"+force_install_dir ..\\Arma_Reforger +login anonymous anonymous {updateSwitch} 1874900 +quit";
       if (ConfigurationManager.GetInstance().useExperimentalServer)
       {
@@ -338,17 +343,73 @@ namespace ReforgerServerApp.Managers
       {
         EnableRaisingEvents = true,
         StartInfo = steamCmdStartInfo
-
       };
 
       m_steamCmdUpdateProcess.Start();
 
       Task steamStdout = Task.Run(() => ReadStreamAsync(m_steamCmdUpdateProcess.StandardOutput));
       Task steamStderr = Task.Run(() => ReadStreamAsync(m_steamCmdUpdateProcess.StandardError));
-      m_steamCmdUpdateProcess.WaitForExit();
-      // Wait a split second to ensure the stream readers finish emptying the pipe
-      Task.WaitAll(steamStdout, steamStderr);
 
+      DateTime startTime = DateTime.Now;
+      DateTime lastLogTime = DateTime.Now;
+
+      while (!m_steamCmdUpdateProcess.WaitForExit(1000))
+      {
+        if ((DateTime.Now - lastLogTime).TotalSeconds >= 5)
+        {
+          TimeSpan elapsed = DateTime.Now - startTime;
+          SteamCmdLogEventArgs heartbeat = new($"{Utilities.GetTimestamp()}: SteamCMD is downloading/verifying files, please be patient... ({elapsed.Minutes:D2}:{elapsed.Seconds:D2} elapsed){Environment.NewLine}");
+          OnUpdateSteamCmdLogEvent(heartbeat);
+          lastLogTime = DateTime.Now;
+        }
+      }
+      Task.WaitAll(new[] { steamStdout, steamStderr }, 500);
+
+      bool steamCmdRestarted = false;
+      Process[] lingeringSteamCmds = Process.GetProcessesByName("steamcmd");
+
+      DateTime backgroundWaitStart = DateTime.Now;
+      TimeSpan maxWaitTime = TimeSpan.FromMinutes(15);
+
+      while (lingeringSteamCmds.Length > 0 && (DateTime.Now - backgroundWaitStart) < maxWaitTime)
+      {
+        if (!steamCmdRestarted)
+        {
+          SteamCmdLogEventArgs waiting = new($"{Utilities.GetTimestamp()}: SteamCMD self-update detected. Waiting for background process to finish...{Environment.NewLine}");
+          OnUpdateSteamCmdLogEvent(waiting);
+          steamCmdRestarted = true;
+        }
+
+        if ((DateTime.Now - lastLogTime).TotalSeconds >= 5)
+        {
+          TimeSpan elapsed = DateTime.Now - backgroundWaitStart;
+          SteamCmdLogEventArgs heartbeat = new($"{Utilities.GetTimestamp()}: SteamCMD self-update running... ({elapsed.Minutes:D2}:{elapsed.Seconds:D2} elapsed){Environment.NewLine}");
+          OnUpdateSteamCmdLogEvent(heartbeat);
+          lastLogTime = DateTime.Now;
+        }
+
+        foreach (Process proc in lingeringSteamCmds)
+        {
+          try
+          {
+            if (!proc.HasExited)
+              proc.WaitForExit(1000);
+          }
+          catch (Exception) { /* Process may have exited */ }
+          finally { proc.Dispose(); } // Free memory
+        }
+
+        lingeringSteamCmds = Process.GetProcessesByName("steamcmd");
+      }
+
+      foreach (Process proc in lingeringSteamCmds)
+      { proc.Dispose(); }
+
+      if (steamCmdRestarted)
+      {
+        SteamCmdLogEventArgs finished = new($"{Utilities.GetTimestamp()}: SteamCMD background update complete.{Environment.NewLine}");
+        OnUpdateSteamCmdLogEvent(finished);
+      }
 
       if (m_steamCmdUpdateProcess.HasExited)
       {
@@ -407,18 +468,28 @@ namespace ReforgerServerApp.Managers
     {
       while (!cancellationToken.IsCancellationRequested)
       {
-        if (ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"] is AdvancedServerParameterTime
-            autoRestartDaily && autoRestartDaily.Checked())
+        if (ConfigurationManager.GetInstance().GetAdvancedServerParametersDictionary()["autoRestartDaily"] is AdvancedServerParameterTime autoRestartDaily
+            && autoRestartDaily.Checked())
         {
-          // Calculate time until the next run
           TimeSpan scheduledTime = ((DateTime)autoRestartDaily.ParameterValue).TimeOfDay;
+
+          // Calculate how long to wait from this moment
           DateTime now = DateTime.Now;
           DateTime todayScheduled = now.Date + scheduledTime;
           DateTime nextRun = todayScheduled > now ? todayScheduled : todayScheduled.AddDays(1);
-          TimeSpan delay = nextRun - now;
-          // Wait until the next scheduled time
-          await Task.Delay(delay, cancellationToken);
-          action();
+
+          await Task.Delay(nextRun - now, cancellationToken);
+
+          // Only execute if we haven't been cancelled during the delay
+          if (!cancellationToken.IsCancellationRequested)
+          {
+            action();
+          }
+        }
+        else
+        {
+          // If the setting is disabled, don't spin the CPU; wait a bit before checking the setting again
+          await Task.Delay(5000, cancellationToken);
         }
       }
     }
@@ -429,75 +500,76 @@ namespace ReforgerServerApp.Managers
     /// <param name="reader"></param>
     private async Task ReadStreamAsync(StreamReader reader)
     {
-      char[] buffer = new char[256]; // Read in small, fast 256-byte chunks
+      byte[] buffer = new byte[256];
       StringBuilder lineBuilder = new StringBuilder();
 
-      while (!reader.EndOfStream)
+      while (true)
       {
-        // Pull data immediately as it hits the pipe
-        int bytesRead = await reader.ReadAsync(buffer, 0, buffer.Length);
+        // Bypass StreamReader and read directly from the raw OS pipe
+        int bytesRead = await reader.BaseStream.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false);
 
-        if (bytesRead > 0)
+        if (bytesRead == 0)
         {
-          string chunk = new string(buffer, 0, bytesRead);
+          break; // Stream closed, server probably exited
+        }
 
-          foreach (char c in chunk)
+        string chunk = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+        for (int i = 0; i < chunk.Length; i++)
+        {
+          char c = chunk[i];
+
+          if (c == '\n' || c == '\r')
           {
-            // Trigger on both \n and \r
-            if (c == '\n' || c == '\r')
+            if (lineBuilder.Length > 0)
             {
-              if (lineBuilder.Length > 0)
+              string fullLine = lineBuilder.ToString() + Environment.NewLine;
+              lineBuilder.Clear();
+
+              SteamCmdLogEventArgs logEvent = new($"{Utilities.GetTimestamp()}: {fullLine}");
+              OnUpdateSteamCmdLogEvent(logEvent);
+
+              if (fullLine.Contains("Error while initializing game") || fullLine.Contains("Unable to initialize the game"))
               {
-                string fullLine = lineBuilder.ToString() + Environment.NewLine;
-                lineBuilder.Clear();
+                logEvent = new($"{Utilities.GetTimestamp()}: System stopped server due to an error.{Environment.NewLine}");
+                Log.Information("ProcessManager - System stopped server due to an error.");
+                OnUpdateSteamCmdLogEvent(logEvent);
+                m_serverProcess.Kill();
 
-                SteamCmdLogEventArgs steamCmd = new SteamCmdLogEventArgs($"{Utilities.GetTimestamp()}: {fullLine}");
-                OnUpdateSteamCmdLogEvent(steamCmd);
+                m_isServerStarted = false;
 
-                if (fullLine.Contains("Error while initializing game") || fullLine.Contains("Unable to initialize the game"))
+                GuiModelEventArgs guiModel = new()
                 {
-                  steamCmd = new($"{Utilities.GetTimestamp()}: System stopped server due to an error.{Environment.NewLine}");
-                  Log.Information("ProcessManager - System stopped server due to an error.");
-                  OnUpdateSteamCmdLogEvent(steamCmd);
-                  m_serverProcess.Kill();
+                  buttonIconChar = IconChar.Play,
+                  enableServerFields = true,
+                  serverRunningLabelText = string.Empty,
+                  startServerBtnEnabled = true
+                };
+                OnUpdateGuiControlsEvent(guiModel);
+              }
 
-                  m_isServerStarted = false;
-
-                  GuiModelEventArgs guiModel = new()
-                  {
-                    buttonIconChar = IconChar.Play,
-                    enableServerFields = true,
-                    serverRunningLabelText = string.Empty,
-                    startServerBtnEnabled = true
-                  };
-                  OnUpdateGuiControlsEvent(guiModel);
-                }
-
-                // If server crashes, if the user has enabled auto restart on crash then attempt to restart it
-                if (fullLine.Contains("Game destroyed"))
+              if (fullLine.Contains("Game destroyed"))
+              {
+                if (ConfigurationManager.GetInstance().autoRestartOnCrash)
                 {
-                  if (ConfigurationManager.GetInstance().autoRestartOnCrash)
-                  {
-                    steamCmd = new($"{Utilities.GetTimestamp()}: Game destroyed detected. System attempting to restart server...{Environment.NewLine}");
-                    OnUpdateSteamCmdLogEvent(steamCmd);
-                    Log.Information("ProcessManager - Game destroyed detected. Attempting to restart server...");
+                  logEvent = new($"{Utilities.GetTimestamp()}: Game destroyed detected. System attempting to restart server...{Environment.NewLine}");
+                  OnUpdateSteamCmdLogEvent(logEvent);
+                  Log.Information("ProcessManager - Game destroyed detected. Attempting to restart server...");
 
-                    // Stop the server (1st toggle)
+                  StartStopServer(true);
+
+                  _ = Task.Delay(ToolPropertiesManager.GetInstance().GetToolProperties().autoRestartTime_ms).ContinueWith(_ =>
+                  {
+                    Log.Information("ProcessManager - Restarting server now...");
                     StartStopServer(true);
-
-                    _ = Task.Delay(ToolPropertiesManager.GetInstance().GetToolProperties().autoRestartTime_ms).ContinueWith(_ =>
-                    {
-                      Log.Information("ProcessManager - Restarting server now...");
-                      StartStopServer(true); // Start the server (2nd toggle)
-                    });
-                  }
+                  });
                 }
               }
             }
-            else
-            {
-              lineBuilder.Append(c);
-            }
+          }
+          else
+          {
+            lineBuilder.Append(c);
           }
         }
       }
@@ -563,19 +635,6 @@ namespace ReforgerServerApp.Managers
     /// <returns>String representation of Launch Arguments</returns>
     public string GetLaunchArguments()
     {
-      // Check if we should be loading a save game and if so, add -loadSessionSave
-      if (ConfigurationManager.GetInstance().usingSave)
-      {
-        // Default to switch style launch argument to load latest
-        m_launchArgumentsModel.loadSessionSave = new("loadSessionSave");
-        // Now check if we're using a specific save instead
-        if (!ConfigurationManager.GetInstance().save.Equals(".LatestSave"))
-        {
-          // Need to wrap the save name in quotes as the tool allows for spaces
-          m_launchArgumentsModel.loadSessionSave = new("loadSessionSave", $"\"{ConfigurationManager.GetInstance().save}\"");
-        }
-      }
-
       string args = string.Join(" ", new[] {
                                                m_launchArgumentsModel.profile,
                                                m_launchArgumentsModel.addonsDir,
@@ -590,6 +649,7 @@ namespace ReforgerServerApp.Managers
                                                m_launchArgumentsModel.streamingBudget,
                                                m_launchArgumentsModel.streamsDelta,
                                                m_launchArgumentsModel.loadSessionSave,
+                                               m_launchArgumentsModel.keepSessionSave,
                                                m_launchArgumentsModel.freezeCheck,
                                                m_launchArgumentsModel.freezeCheckMode,
                                                m_launchArgumentsModel.addonsRepair,
@@ -605,6 +665,7 @@ namespace ReforgerServerApp.Managers
                                                m_launchArgumentsModel.jobSysShortWorkerCount,
                                                m_launchArgumentsModel.jobSysLongWorkerCount,
                                                m_launchArgumentsModel.forceDisableNightGrain,
+                                               m_launchArgumentsModel.playerLimits,
                                                m_launchArgumentsModel.logLevel}.Where(arg => arg != null));
 
       if (!ConfigurationManager.GetInstance().noBackend)

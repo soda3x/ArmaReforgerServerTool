@@ -7,6 +7,8 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
+
 namespace ReforgerServerApp
 {
   public partial class TextInputForm : Form
@@ -15,8 +17,10 @@ namespace ReforgerServerApp
     public TextInputForm(string windowTitle, String prefilledText)
     {
       InitializeComponent();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       this.Text = $"Longbow - {windowTitle}";
       textInputField.Text = prefilledText;
+      textInputField.Multiline = true;
     }
 
     private void OkBtnClicked(object sender, EventArgs e)

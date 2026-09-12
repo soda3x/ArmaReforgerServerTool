@@ -1,4 +1,6 @@
-﻿namespace ReforgerServerApp.Components
+using Longbow.Components.ui;
+
+namespace ReforgerServerApp.Components
 {
     partial class AdvancedServerParameterTime
     {
@@ -28,18 +30,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            parameterValue = new DateTimePicker();
+            parameterValue = new FluentTimePicker();
             SuspendLayout();
             // 
             // parameterValue
             // 
             parameterValue.Location = new Point(4, 28);
             parameterValue.Name = "parameterValue";
-            parameterValue.Size = new Size(191, 23);
+            parameterValue.Size = new Size(191, 32);
             parameterValue.TabIndex = 2;
-            parameterValue.Format = DateTimePickerFormat.Custom;
             parameterValue.CustomFormat = "HH:mm";
-            parameterValue.ShowUpDown = true;
             // 
             // AdvancedServerParameterTime
             // 
@@ -54,6 +54,6 @@
 
         #endregion
 
-        private DateTimePicker parameterValue;
+        private FluentTimePicker parameterValue;
     }
 }

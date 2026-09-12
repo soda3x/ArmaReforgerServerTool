@@ -28,14 +28,14 @@ namespace ReforgerServerApp.Components
         /// </summary>
         private void InitializeComponent()
         {
-            parameterValue = new ComboBox();
+            parameterValue = new FluentComboBox();
             SuspendLayout();
             // 
             // parameterValue
             // 
             parameterValue.Location = new Point(4, 28);
             parameterValue.Name = "parameterValue";
-            parameterValue.Size = new Size(191, 23);
+            parameterValue.Size = new Size(191, 32);
             parameterValue.TabIndex = 2;
             // 
             // AdvancedServerParameterString
@@ -51,6 +51,6 @@ namespace ReforgerServerApp.Components
 
         #endregion
 
-        private ComboBox parameterValue;
+        private FluentComboBox parameterValue;
     }
 }

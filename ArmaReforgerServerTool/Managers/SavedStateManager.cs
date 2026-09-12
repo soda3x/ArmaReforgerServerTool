@@ -9,8 +9,10 @@
  ******************************************************************************/
 
 using Longbow.Models;
+using ReforgerServerApp;
 using ReforgerServerApp.Utils;
 using Serilog;
+using System.Diagnostics;
 using System.Text.Json;
 
 namespace Longbow.Managers
@@ -20,6 +22,8 @@ namespace Longbow.Managers
     private static SavedStateManager? m_instance;
     private readonly SavedState m_savedState;
     private readonly string m_savedStateFile = "./state.json";
+
+    private Main m_mainRef;
 
     /// <summary>
     /// Constructs a SavedStateManager object. Intended to only be used within the singleton <c>GetInstance()</c> method.
@@ -64,8 +68,22 @@ namespace Longbow.Managers
       return m_instance;
     }
 
+    public static AdvancedSetting GetSetting(Dictionary<string, AdvancedSetting> settings, string key)
+    {
+      if (settings.TryGetValue(key, out var setting))
+      {
+        return setting;
+      }
+      // Return a "safe" default so the app doesn't crash
+      return SavedState.GetDefaultAdvancedSettings()[key];
+    }
+
     public Dictionary<string, AdvancedSetting> GetLoadedAdvancedSettings() { return m_savedState.advancedSettings; }
     public string GetSavedStateFile() { return m_savedStateFile; }
     public SavedState GetSavedState() { return m_savedState; }
+
+    public void SetMainReference(Main m) { m_mainRef = m; }
+
+    public Main GetMainReference() { return m_mainRef; }
   }
 }

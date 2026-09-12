@@ -1,4 +1,6 @@
-﻿namespace ReforgerServerApp
+using Longbow.Components.ui;
+
+namespace ReforgerServerApp
 {
     partial class ServerParameterBool
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             parameterName = new Label();
-            parameterValue = new CheckBox();
+            parameterValue = new FluentToggleSwitch();
             SuspendLayout();
             // 
             // parameterName
@@ -39,7 +41,7 @@
             parameterName.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point);
             parameterName.Location = new Point(15, 4);
             parameterName.Name = "parameterName";
-            parameterName.Size = new Size(132, 21);
+            parameterName.Size = new Size(132, 30);
             parameterName.TabIndex = 0;
             parameterName.Text = "";
             parameterName.TextAlign = ContentAlignment.MiddleLeft;
@@ -48,11 +50,10 @@
             // 
             parameterValue.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             parameterValue.AutoSize = true;
-            parameterValue.Location = new Point(364, 10);
+            parameterValue.Location = new Point(325, 10);
             parameterValue.Name = "parameterValue";
-            parameterValue.Size = new Size(15, 14);
+            parameterValue.Size = new Size(50, 24);
             parameterValue.TabIndex = 1;
-            parameterValue.UseVisualStyleBackColor = true;
             parameterValue.CheckedChanged += OnCheckChanged;
             // 
             // ServerParameterBool
@@ -62,7 +63,7 @@
             Controls.Add(parameterValue);
             Controls.Add(parameterName);
             Name = "ServerParameterBool";
-            Size = new Size(400, 30);
+            Size = new Size(400, 34);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -70,6 +71,6 @@
         #endregion
 
         private Label parameterName;
-        private CheckBox parameterValue;
+        private FluentToggleSwitch parameterValue;
     }
 }

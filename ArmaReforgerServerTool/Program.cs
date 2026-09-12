@@ -39,6 +39,8 @@ namespace ReforgerServerApp
       {
         Log.Information("Longbow starting...");
         ApplicationConfiguration.Initialize();
+        Application.SetHighDpiMode(HighDpiMode.SystemAware);
+        Application.SetColorMode(SystemColorMode.System);
         Application.Run(new Main());
       }
       catch (Exception ex)

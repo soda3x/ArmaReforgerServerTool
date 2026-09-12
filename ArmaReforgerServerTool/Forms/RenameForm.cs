@@ -7,6 +7,9 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
+using WinForms.Fluent;
+
 namespace Longbow.Forms
 {
   public partial class RenameForm : Form
@@ -15,6 +18,7 @@ namespace Longbow.Forms
     public RenameForm(string text)
     {
       InitializeComponent();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       renameTB.Text = text;
     }
 

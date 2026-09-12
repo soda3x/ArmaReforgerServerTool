@@ -6,9 +6,11 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Managers;
 using ReforgerServerApp;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
+using WinForms.Fluent;
 
 namespace Longbow.Forms
 {
@@ -18,6 +20,7 @@ namespace Longbow.Forms
     public SaveSelector()
     {
       InitializeComponent();
+      ThemeManager.GetInstance().ConfigureTheme(this);
       m_savedGames = new();
       RefreshSavedGamesList();
       UpdateSaveLabel();
