@@ -27,8 +27,6 @@ namespace ReforgerServerApp
     private BindingSource m_availableModsBindingSource;
     private BindingSource m_enabledModsBindingSource;
     private ServerStatusParser m_serverStatusParser;
-    private ReconClient m_reconClient;
-    private BindingList<RconPlayer> m_rconPlayers;
 
     public Main()
     {
@@ -99,14 +97,6 @@ namespace ReforgerServerApp
       ToolTip loadsaveGameBtnTooltip = new();
       loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, "Disabled for the time being, for now please use the Load Session Save option in Advanced Parameters");
 
-      // FIXME: Disable some unfinished RCON features
-      kickButton.Enabled = false;
-      kickButton.Visible = false;
-      banManagerButton.Enabled = false;
-      banManagerButton.Visible = false;
-      banButton.Enabled = false;
-      banButton.Visible = false;
-
       copyAddressBtn.Enabled = false;
       copyRconAddressBtn.Enabled = false;
       copyJoinCodeBtn.Enabled = false;
@@ -120,16 +110,6 @@ namespace ReforgerServerApp
 
       steamCmdLog.ReadOnly = true;
 
-      reconLog.ReadOnly = true;
-      reconSpinner.Visible = false;
-      reconConnectButton.Text = "Connect";
-
-      m_rconPlayers = [];
-
-      connectedPlayersList.DataSource = m_rconPlayers;
-      connectedPlayersList.DisplayMember = "PlayerName";
-      connectedPlayersList.ValueMember = "PlayerId";
-
       string lastConfigPath = SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig;
 
       if (!string.IsNullOrWhiteSpace(lastConfigPath))
@@ -138,7 +118,8 @@ namespace ReforgerServerApp
         {
           Utilities.DisplayErrorMessage("Failed to open last config", $"Attempted to load the last opened config at {lastConfigPath} but failed.");
           SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = SavedState.Default.lastLoadedConfig;
-        } else
+        }
+        else
         {
           Text = $"Longbow Arma Dedicated Server Tool - {lastConfigPath}";
         }
@@ -1024,6 +1005,13 @@ namespace ReforgerServerApp
         ParameterTooltip = Constants.SERVER_PARAM_JOIN_QUEUE_MAX_SIZE_TOOLTIP_STR
       };
       serverParameters.Controls.Add(joinQueueMaxSize);
+      ServerParameterBool persistence = new()
+      {
+        ParameterName = "persistenceEnabled",
+        ParameterFriendlyName = "Persistence System",
+        ParameterTooltip = Constants.SERVER_PARAM_ENABLE_PERSISTENCE_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(persistence);
       ServerParameterNumeric autoSaveInterval = new()
       {
         ParameterName = "autoSaveInterval",
@@ -1032,6 +1020,30 @@ namespace ReforgerServerApp
         ParameterTooltip = Constants.SERVER_PARAM_AUTO_SAVE_INTERVAL_TOOLTIP_STR
       };
       serverParameters.Controls.Add(autoSaveInterval);
+      ServerParameterNumeric saveRetention = new()
+      {
+        ParameterName = "saveRetention",
+        ParameterFriendlyName = "Save Retention",
+        ParameterValue = Persistence.DEFAULT_SAVE_RETENTION_VALUE,
+        ParameterTooltip = Constants.SERVER_PARAM_SAVE_RETENTION_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(saveRetention);
+      ServerParameterBool loadSessionSave = new()
+      {
+        ParameterName = "loadSessionSave",
+        ParameterFriendlyName = "Load Session Save",
+        ParameterValue = Persistence.DEFAULT_LOAD_SESSION_SAVE,
+        ParameterTooltip = Constants.SERVER_PARAM_LOAD_SESSION_SAVE_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(loadSessionSave);
+      ServerParameterBool keepSessionSave = new()
+      {
+        ParameterName = "keepSessionSave",
+        ParameterFriendlyName = "Keep Session Save",
+        ParameterValue = Persistence.DEFAULT_KEEP_SESSION_SAVE,
+        ParameterTooltip = Constants.SERVER_PARAM_KEEP_SESSION_SAVE_TOOLTIP_STR
+      };
+      serverParameters.Controls.Add(keepSessionSave);
       ServerParameterNumeric hiveId = new()
       {
         ParameterName = "hiveId",
@@ -1044,7 +1056,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "databases",
         ParameterFriendlyName = "Databases",
-        ParameterValue = Persistence.DEFAULT_DATABASES,
+        ParameterValue = Persistence.DEFAULT_DATABASES.ToString(),
         ParameterTooltip = Constants.SERVER_PARAM_DATABASES_TOOLTIP_STR
       };
       serverParameters.Controls.Add(databases);
@@ -1052,7 +1064,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "storages",
         ParameterFriendlyName = "Storages",
-        ParameterValue = Persistence.DEFAULT_STORAGES,
+        ParameterValue = Persistence.DEFAULT_STORAGES.ToString(),
         ParameterTooltip = Constants.SERVER_PARAM_STORAGES_TOOLTIP_STR
       };
       serverParameters.Controls.Add(storages);
@@ -1459,6 +1471,37 @@ namespace ReforgerServerApp
       {
         steamCmdLog.AppendText(e.line);
 
+        if (steamCmdLog.Lines.Length > 500)
+        {
+          steamCmdLog.SuspendLayout();
+
+          bool wasReadOnly = steamCmdLog.ReadOnly;
+          if (wasReadOnly)
+          {
+            steamCmdLog.ReadOnly = false;
+          }
+
+          int linesToRemove = steamCmdLog.Lines.Length - 500;
+
+          // Get the exact character index where the cutoff happens
+          int cutoffIndex = steamCmdLog.GetFirstCharIndexFromLine(linesToRemove);
+
+          // Highlight the oldest text at the top and delete it
+          steamCmdLog.Select(0, cutoffIndex);
+          steamCmdLog.SelectedText = string.Empty;
+
+          if (wasReadOnly)
+          {
+            steamCmdLog.ReadOnly = true;
+          }
+
+          // Move the caret back to the bottom
+          steamCmdLog.SelectionStart = steamCmdLog.Text.Length;
+          steamCmdLog.ScrollToCaret();
+
+          steamCmdLog.ResumeLayout();
+        }
+
         // Update the Server Status
         m_serverStatusParser.ParseServerStatus(e.line);
       }
@@ -1604,7 +1647,8 @@ namespace ReforgerServerApp
         }
         else
         {
-          args.loadSessionSave = new("loadSessionSave", loadSessionSaveVal);
+          // Need to wrap the save in quotes as it allows spaces
+          args.loadSessionSave = new("loadSessionSave", $"\"{loadSessionSaveVal}\"");
         }
       }
 
@@ -1884,210 +1928,6 @@ namespace ReforgerServerApp
     private void OnJoinCodeToClipboard(object sender, EventArgs e)
     {
       Clipboard.SetText(joinCodeStatusLabel.Text);
-    }
-
-    private void OnReconDisconnect()
-    {
-      this.Invoke(new Action(() =>
-      {
-        reconSpinner.Visible = false;
-        reconConnectButton.Enabled = true;
-        reconConnectButton.Text = "Connect";
-        reconAddress.Enabled = true;
-        reconPort.Enabled = true;
-        reconPassword.Enabled = true;
-        reconPassword.UseSystemPasswordChar = false;
-        reconLog.AppendText($"{Utilities.GetTimestamp()} Disconnected from RCON server.{Environment.NewLine}");
-      }));
-
-      m_reconClient.StopRecurringCommand("periodicPlayers");
-    }
-
-    private void OnReconConnectPressed(object sender, EventArgs e)
-    {
-      if (m_reconClient != null && m_reconClient.IsConnected)
-      {
-        m_reconClient.Disconnect();
-        return;
-      }
-      reconSpinner.Visible = true;
-      reconConnectButton.Enabled = false;
-      reconConnectButton.Text = "Connecting...";
-      reconAddress.Enabled = false;
-      reconPort.Enabled = false;
-      reconPassword.Enabled = false;
-      reconPassword.UseSystemPasswordChar = true;
-      try
-      {
-        m_reconClient = new(reconAddress.Text, Convert.ToUInt16(reconPort.Value), reconPassword.Text);
-      }
-      catch (Exception)
-      {
-        this.Invoke(new Action(() =>
-        {
-          reconSpinner.Visible = false;
-          reconConnectButton.Enabled = true;
-          reconConnectButton.Text = "Connect";
-          reconAddress.Enabled = true;
-          reconPort.Enabled = true;
-          reconPassword.Enabled = true;
-          reconPassword.UseSystemPasswordChar = false;
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to connect to RCON server.{Environment.NewLine}");
-        }));
-        return;
-      }
-
-      m_reconClient.OnServerMessage += (message) =>
-      {
-        if (message.Contains("Players on server"))
-        {
-          string[] lines = message.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-          List<RconPlayer> parsedPlayers = new List<RconPlayer>();
-
-          for (int i = 1; i < lines.Length; i++)
-          {
-            string line = lines[i].Trim();
-
-            if (string.IsNullOrEmpty(line) || line.StartsWith('-'))
-            {
-              continue;
-            }
-
-            try
-            {
-              parsedPlayers.Add(new RconPlayer(line));
-            }
-            catch (Exception ex)
-            {
-              Debug.WriteLine($"ReCON Client - Failed to parse line '{line}': {ex.Message}");
-            }
-          }
-          this.Invoke(new Action(() =>
-          {
-            connectedPlayersList.BeginUpdate();
-
-            m_rconPlayers.Clear();
-            foreach (var player in parsedPlayers)
-            {
-              m_rconPlayers.Add(player);
-            }
-
-            connectedPlayersList.EndUpdate();
-          }));
-          return;
-        }
-        this.Invoke(new Action(() =>
-        {
-          if (!message.Contains("Processed:"))
-          {
-            reconLog.AppendText($"{Utilities.GetTimestamp()} Received: {message}{Environment.NewLine}");
-          }
-        }));
-      };
-
-      m_reconClient.OnDisconnected += () =>
-      {
-        OnReconDisconnect();
-      };
-
-      Task.Run(async () =>
-      {
-        bool connected = await m_reconClient.ConnectAsync();
-        if (connected)
-        {
-          this.Invoke(new Action(() =>
-          {
-            reconConnectButton.Text = "Disconnect";
-            reconLog.AppendText($"{Utilities.GetTimestamp()} Connected to RCON server.{Environment.NewLine}");
-          }));
-
-          // Start sending the players command to populate the player list
-          m_reconClient.StartRecurringCommand("periodicPlayers", "players", TimeSpan.FromSeconds(30), (response) => { });
-        }
-        else
-        {
-          this.Invoke(new Action(() =>
-          {
-            reconConnectButton.Text = "Connect";
-            reconAddress.Enabled = true;
-            reconPort.Enabled = true;
-            reconPassword.Enabled = true;
-            reconPassword.UseSystemPasswordChar = false;
-            reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to connect to the RCON server.{Environment.NewLine}");
-          }));
-        }
-        this.Invoke(new Action(() =>
-        {
-          reconConnectButton.Enabled = true;
-          reconSpinner.Visible = false;
-        }));
-      });
-    }
-
-    private void ReconSendCmdPressed(object sender, EventArgs e)
-    {
-      string command = reconCmd.Text.Trim();
-      if (string.IsNullOrEmpty(command))
-      {
-        return;
-      }
-      reconLog.AppendText($"{Utilities.GetTimestamp()} Sent: {command}{Environment.NewLine}");
-      if (m_reconClient != null && m_reconClient.IsConnected)
-      {
-        Task.Run(async () =>
-        {
-          string response = await m_reconClient.SendCommandAsync(command);
-        });
-        reconCmd.Text = string.Empty;
-      }
-      else
-      {
-        this.Invoke(new Action(() =>
-        {
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to send command. Check your connection to the RCON server.{Environment.NewLine}");
-        }));
-      }
-    }
-
-    private void OnReconKickButtonPressed(object sender, EventArgs e)
-    {
-      if (m_reconClient != null && m_reconClient.IsConnected && connectedPlayersList.SelectedItem != null)
-      {
-        Task.Run(async () =>
-        {
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Kicking {connectedPlayersList.Text} from the server.{Environment.NewLine}");
-          string response = await m_reconClient.SendCommandAsync($"kick {connectedPlayersList.SelectedValue}");
-        });
-      }
-      else
-      {
-        this.Invoke(new Action(() =>
-        {
-          reconLog.AppendText($"{Utilities.GetTimestamp()} Failed to send command. Check your connection to the RCON server.{Environment.NewLine}");
-        }));
-      }
-    }
-
-    private void OnBanManagerButtonPressed(object sender, EventArgs e)
-    {
-      BanManager mgr = new(m_reconClient);
-      mgr.Show();
-    }
-
-    private void OnRconBanButtonPressed(object sender, EventArgs e)
-    {
-      if (m_reconClient != null && m_reconClient.IsConnected && connectedPlayersList.SelectedItem != null)
-      {
-        CreateBanDialog banDialog = new CreateBanDialog(m_reconClient, reconLog, (RconPlayer) connectedPlayersList.SelectedItem);
-        banDialog.ShowDialog();
-      }
-      else
-      {
-        this.Invoke(new Action(() =>
-        {
-          reconLog.AppendText($"{Utilities.GetTimestamp()} You must select a player first.{Environment.NewLine}");
-        }));
-      }
     }
   }
 }

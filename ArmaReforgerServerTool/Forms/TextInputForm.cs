@@ -20,6 +20,7 @@ namespace ReforgerServerApp
       ThemeManager.GetInstance().ConfigureTheme(this);
       this.Text = $"Longbow - {windowTitle}";
       textInputField.Text = prefilledText;
+      textInputField.Multiline = true;
     }
 
     private void OkBtnClicked(object sender, EventArgs e)

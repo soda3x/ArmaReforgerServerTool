@@ -69,6 +69,11 @@ namespace Longbow.Components.ui
         Color currentOffColor = (this.ForeColor.R < 128) ? Color.FromArgb(200, 200, 200) : m_offBackColor;
         Color trackColor = m_checked ? m_onBackColor : currentOffColor;
 
+        if (!Enabled)
+        {
+          trackColor = currentOffColor;
+        }
+
         using (SolidBrush trackBrush = new SolidBrush(trackColor))
         {
           g.FillPath(trackBrush, trackPath);

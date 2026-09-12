@@ -187,7 +187,7 @@ namespace ReforgerServerApp.Managers
       if (sfd.ShowDialog() == DialogResult.OK)
       {
         ConfigurationManager.GetInstance().CreateConfiguration();
-        SaveConfigurationToFile(sfd.FileName);
+        SaveConfigurationToFile(sfd.FileName, true);
       }
     }
 
@@ -196,13 +196,18 @@ namespace ReforgerServerApp.Managers
     /// </summary>
     /// <param name="path">File path to save to</param>
     /// <returns>True if file was saved successfully, false otherwise</returns>
-    public static bool SaveConfigurationToFile(string path)
+    public static bool SaveConfigurationToFile(string path, bool userInvoked = false)
     {
       try
       {
         Log.Information("FileIOManager - Saving config to {path}", path);
         ConfigurationManager.GetInstance().CreateConfiguration();
         File.WriteAllText(path, ConfigurationManager.GetInstance().GetServerConfiguration().AsJsonString());
+        if (userInvoked)
+        {
+          SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = path;
+          SavedStateManager.GetInstance().GetMainReference().Text = $"Longbow Arma Dedicated Server Tool - {path}";
+        }
         return true;
       }
       catch (Exception ex)

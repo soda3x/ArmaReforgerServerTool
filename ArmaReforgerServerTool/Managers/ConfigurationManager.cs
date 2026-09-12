@@ -16,6 +16,7 @@ using ReforgerServerApp.Components;
 using System.Text;
 using System.Text.Json;
 using Longbow.Managers;
+using System.Text.Json.Nodes;
 
 namespace ReforgerServerApp
 {
@@ -170,10 +171,18 @@ namespace ReforgerServerApp
         // Before parsing persistence, if it is absent then set it to the default values
         if (m_serverConfig.root.game.gameProperties.persistence == null)
         {
+          Log.Debug("ConfigurationManager - Persistence fields were absent from config, using defaults");
           m_serverConfig.root.game.gameProperties.persistence = Persistence.Default;
+          m_serverParamsDictionary["persistenceEnabled"].ParameterValue = false;
+        } else
+        {
+          m_serverParamsDictionary["persistenceEnabled"].ParameterValue = true;
         }
 
         m_serverParamsDictionary["autoSaveInterval"].ParameterValue = m_serverConfig.root.game.gameProperties.persistence.autoSaveInterval;
+        m_serverParamsDictionary["loadSessionSave"].ParameterValue = m_serverConfig.root.game.gameProperties.persistence.loadSessionSave;
+        m_serverParamsDictionary["keepSessionSave"].ParameterValue = m_serverConfig.root.game.gameProperties.persistence.keepSessionSave;
+        m_serverParamsDictionary["saveRetention"].ParameterValue = m_serverConfig.root.game.gameProperties.persistence.saveRetention;
         m_serverParamsDictionary["hiveId"].ParameterValue = m_serverConfig.root.game.gameProperties.persistence.hiveId;
         m_serverParamsDictionary["databases"].ParameterValue = m_serverConfig.DatabasesAsJsonString();
         m_serverParamsDictionary["storages"].ParameterValue = m_serverConfig.StoragesAsJsonString();
@@ -303,10 +312,22 @@ namespace ReforgerServerApp
       m_serverConfig.root.game.gameProperties.vonCanTransmitCrossFaction = (bool)m_serverParamsDictionary["VONCanTransmitCrossFaction"].ParameterValue;
       // m_serverConfig.root.game.gameProperties.missionHeader - Don't need to set missionHeader as its set directly from the Edit Mission Header Form
 
+      GetServerConfiguration().persistenceEnabled = (bool) m_serverParamsDictionary["persistenceEnabled"].ParameterValue;
+      m_serverConfig.root.game.gameProperties.persistence = Persistence.Default;
       m_serverConfig.root.game.gameProperties.persistence.autoSaveInterval = Convert.ToInt32(m_serverParamsDictionary["autoSaveInterval"].ParameterValue);
+      m_serverConfig.root.game.gameProperties.persistence.saveRetention = Convert.ToInt32(m_serverParamsDictionary["saveRetention"].ParameterValue);
+      m_serverConfig.root.game.gameProperties.persistence.loadSessionSave = (bool)(m_serverParamsDictionary["loadSessionSave"].ParameterValue);
+      m_serverConfig.root.game.gameProperties.persistence.loadSessionSave = (bool) (m_serverParamsDictionary["keepSessionSave"].ParameterValue);
       m_serverConfig.root.game.gameProperties.persistence.hiveId = Convert.ToInt32(m_serverParamsDictionary["hiveId"].ParameterValue);
-      m_serverConfig.root.game.gameProperties.persistence.databases = JsonSerializer.Deserialize<JsonDocument>((string) m_serverParamsDictionary["databases"].ParameterValue);
-      m_serverConfig.root.game.gameProperties.persistence.storages = JsonSerializer.Deserialize<JsonDocument>((string) m_serverParamsDictionary["storages"].ParameterValue);
+      m_serverConfig.root.game.gameProperties.persistence.databases = JsonSerializer.Deserialize<JsonObject>((string) m_serverParamsDictionary["databases"].ParameterValue);
+      m_serverConfig.root.game.gameProperties.persistence.storages = JsonSerializer.Deserialize<JsonObject>((string) m_serverParamsDictionary["storages"].ParameterValue);
+
+      if (!GetServerConfiguration().persistenceEnabled)
+      {
+        Log.Debug("ConfigurationManager - Persistence is not enabled, it will not be included in the resultant config file");
+        // Setting persistence to null will stop it from being added as persistence: null in the Json output
+        m_serverConfig.root.game.gameProperties.persistence = null;
+      }
 
       m_serverConfig.root.operating.lobbyPlayerSynchronise = (bool)m_serverParamsDictionary["lobbyPlayerSynchronise"].ParameterValue;
       m_serverConfig.root.operating.playerSaveTime = Convert.ToInt32(m_serverParamsDictionary["playerSaveTime"].ParameterValue);

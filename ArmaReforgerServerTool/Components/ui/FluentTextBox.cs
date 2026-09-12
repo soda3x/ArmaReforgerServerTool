@@ -14,7 +14,7 @@ namespace Longbow.Components.ui
     private int m_borderRadius = 8;
     private Color m_borderColor = Color.FromArgb(120, 120, 120);
     private Color m_focusedBorderColor = Color.FromArgb(0, 120, 212); // Windows 11 Blue
-    private Color m_fieldBackColor = SystemColors.Window;
+    private Color m_fieldBackColour = SystemColors.Window;
     private string m_placeholderText = "";
 
     private bool m_isHovered = false;
@@ -34,7 +34,7 @@ namespace Longbow.Components.ui
       m_textBox = new TextBox();
       m_textBox.BorderStyle = BorderStyle.None;
       m_textBox.Dock = DockStyle.Fill;
-      m_textBox.BackColor = m_fieldBackColor;
+      m_textBox.BackColor = m_fieldBackColour;
       m_textBox.ForeColor = this.ForeColor;
 
       m_textBox.HandleCreated += (s, e) => ApplyPlaceholder();
@@ -65,10 +65,10 @@ namespace Longbow.Components.ui
 
     public Color FieldBackColor
     {
-      get => m_fieldBackColor;
+      get => m_fieldBackColour;
       set
       {
-        m_fieldBackColor = value;
+        m_fieldBackColour = value;
         m_textBox.BackColor = value;
         this.Invalidate();
       }
@@ -115,6 +115,38 @@ namespace Longbow.Components.ui
       set => m_textBox.ScrollBars = value;
     }
 
+    public string[] Lines
+    {
+      get => m_textBox.Lines;
+    }
+
+    public int GetFirstCharIndexFromLine(int lines)
+    {
+      return m_textBox.GetFirstCharIndexFromLine(lines);
+    }
+
+    public void Select(int start, int length)
+    {
+      m_textBox.Select(start, length);
+    }
+
+    public string SelectedText
+    {
+      get => m_textBox.SelectedText;
+      set => m_textBox.SelectedText = value;
+    }
+
+    public int SelectionStart
+    {
+      get => m_textBox.SelectionStart;
+      set => m_textBox.SelectionStart = value;
+    }
+
+    public void ScrollToCaret()
+    {
+      m_textBox.ScrollToCaret();
+    }
+
     [Category("Data")]
     [Browsable(true)]
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
@@ -158,12 +190,23 @@ namespace Longbow.Components.ui
 
       using (GraphicsPath path = GetRoundedRect(new Rectangle(0, 0, this.Width - 1, this.Height - 1), m_borderRadius))
       {
-        Color currentBackColor = m_fieldBackColor;
-        if (m_isHovered && !m_isFocused)
+        Color currentBackColor = m_fieldBackColour;
+        Color currentBorderColor = m_isFocused ? m_focusedBorderColor : m_borderColor;
+        Color currentTextColor = this.ForeColor;
+
+        if (!this.Enabled)
         {
-          currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColor.R - 10),
-                                            Math.Max(0, m_fieldBackColor.G - 10),
-                                            Math.Max(0, m_fieldBackColor.B - 10));
+          currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColour.R - 15),
+                                            Math.Max(0, m_fieldBackColour.G - 15),
+                                            Math.Max(0, m_fieldBackColour.B - 15));
+          currentBorderColor = Color.FromArgb(100, 150, 150, 150);
+          currentTextColor = Color.FromArgb(150, 150, 150);
+        }
+        else if (m_isHovered && !m_isFocused)
+        {
+          currentBackColor = Color.FromArgb(Math.Max(0, m_fieldBackColour.R - 10),
+                                            Math.Max(0, m_fieldBackColour.G - 10),
+                                            Math.Max(0, m_fieldBackColour.B - 10));
         }
 
         m_textBox.BackColor = currentBackColor;
@@ -173,7 +216,7 @@ namespace Longbow.Components.ui
           g.FillPath(brush, path);
         }
 
-        Color currentBorderColor = m_isFocused ? m_focusedBorderColor : m_borderColor;
+        
         float borderThickness = m_isFocused ? 2f : 1.5f;
 
         using (Pen pen = new Pen(currentBorderColor, borderThickness))
