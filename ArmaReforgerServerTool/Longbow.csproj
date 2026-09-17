@@ -77,6 +77,10 @@
     <None Update="Resources\NoBackendScenarioLoader_6324F7124A9768FB.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <!-- A new language pack needs the same entry to reach the Release build output, and
+         therefore the NSIS installer (scripts/ArmaReforgerServerTool_NSIS_Install_Build_Script.nsi
+         packages whatever is in that folder as-is). Never add strings_qps.json here - it's a
+         QA-only pseudo-locale and must not ship. -->
     <None Update="Resources\Strings\strings_en.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

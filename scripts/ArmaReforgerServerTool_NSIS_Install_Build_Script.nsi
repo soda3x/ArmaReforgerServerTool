@@ -25,6 +25,10 @@ InstallDir $LOCALAPPDATA\Longbow
 # Install Section
 Section
 SetOutPath $INSTDIR
+# Language files (Resources\Strings\strings_*.json) are not excluded here, so whatever
+# ships in the Release build output ships in the installer. Only strings_en.json is wired
+# to copy there automatically (Longbow.csproj); adding a new language pack to the installer
+# needs a matching <None Update> entry added for it, same as strings_en.json has.
 File /r /x *.txt /x *.pdb /x "mod_database.json" /x "state.json" /x "properties.json" /x "logs\*" "${__FILEDIR__}\..\ArmaReforgerServerTool\bin\Release\net10.0-windows\*.*"
 WriteUninstaller $INSTDIR\uninstall.exe
 CreateShortCut "$SMPROGRAMS\Longbow.lnk" "$INSTDIR\Longbow.exe"
