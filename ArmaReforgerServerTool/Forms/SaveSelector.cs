@@ -7,6 +7,7 @@
  ******************************************************************************/
 
 using Longbow.Managers;
+using Longbow.Utils;
 using ReforgerServerApp;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
@@ -21,6 +22,7 @@ namespace Longbow.Forms
     {
       InitializeComponent();
       ThemeManager.GetInstance().ConfigureTheme(this);
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
       m_savedGames = new();
       RefreshSavedGamesList();
       UpdateSaveLabel();
@@ -66,13 +68,13 @@ namespace Longbow.Forms
       {
         if (ConfigurationManager.GetInstance().save.Equals(".LatestSave"))
         {
-          loadedSaveLabel.Text = $"Using latest save.";
+          loadedSaveLabel.Text = Strings.Get(Constants.SAVE_SELECTOR_USING_LATEST_MESSAGE_STR);
           return;
         }
-        loadedSaveLabel.Text = $"Loaded save: {ConfigurationManager.GetInstance().save}";
+        loadedSaveLabel.Text = Strings.Get(Constants.SAVE_SELECTOR_LOADED_SAVE_MESSAGE_STR, ("save", ConfigurationManager.GetInstance().save));
         return;
       }
-      loadedSaveLabel.Text = "No save loaded. Your server will not use a save.";
+      loadedSaveLabel.Text = Strings.Get(Constants.SAVE_SELECTOR_NO_SAVE_LOADED_MESSAGE_STR);
     }
 
     private void SavedGamesListSelectedIndexChanged(object sender, EventArgs e)
@@ -93,7 +95,7 @@ namespace Longbow.Forms
     private void DeleteBtnPressed(object sender, EventArgs e)
     {
       string selectedSave = (string) savedGamesList.SelectedItem!;
-      bool confirm = Utilities.DisplayConfirmationMessage($"You are about to delete your saved game '{selectedSave}', are you sure you would like to do this?", true);
+      bool confirm = Utilities.DisplayConfirmationMessage(Strings.Get(Constants.SAVE_SELECTOR_DELETE_CONFIRM_STR, ("save", selectedSave)), true);
       if (confirm)
       {
         FileIOManager.DeleteFile(m_savedGames[selectedSave]);

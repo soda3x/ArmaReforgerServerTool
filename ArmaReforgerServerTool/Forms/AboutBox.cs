@@ -19,6 +19,7 @@ namespace ReforgerServerApp
     {
       InitializeComponent();
       ThemeManager.GetInstance().ConfigureTheme(this);
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
       StringBuilder sb = new();
       sb.AppendLine("Longbow - Arma Reforger Dedicated Server Tool by soda3x");
       sb.AppendLine($"Version {Assembly.GetExecutingAssembly().GetName().Version}");

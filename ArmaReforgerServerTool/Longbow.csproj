@@ -67,10 +67,17 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <!-- Embedded as the permanent fallback pack (see LocalisationManager); also copied to
+         the output directory below so it exists on disk, where a translator can edit or
+         add sibling strings_<code>.json files without rebuilding. -->
+    <EmbeddedResource Include="Resources\Strings\strings_en.json" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Resources\NoBackendScenarioLoader_6324F7124A9768FB.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Strings\strings_en.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

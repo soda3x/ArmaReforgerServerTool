@@ -1,3 +1,5 @@
+using ReforgerServerApp;
+
 namespace Longbow.Forms
 {
   partial class CreateBanDialog
@@ -36,6 +38,7 @@ namespace Longbow.Forms
       banDurationSecondsTB = new Longbow.Components.ui.FluentTextBox();
       quickBanForever = new FontAwesome.Sharp.IconButton();
       banReasonTB = new Longbow.Components.ui.FluentTextBox();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       SuspendLayout();
       // 
       // quickBan1HrBtn
@@ -54,6 +57,7 @@ namespace Longbow.Forms
       quickBan1HrBtn.TextAlign = ContentAlignment.MiddleLeft;
       quickBan1HrBtn.UseVisualStyleBackColor = true;
       quickBan1HrBtn.Click += OnBan1HrBtnPressed;
+      translationKeyProvider1.SetTranslationKey(quickBan1HrBtn, Constants.CREATE_BAN_1HOUR_BUTTON_STR);
       // 
       // creatingBanForLabel
       // 
@@ -82,6 +86,7 @@ namespace Longbow.Forms
       quickBan24HoursBtn.TextAlign = ContentAlignment.MiddleLeft;
       quickBan24HoursBtn.UseVisualStyleBackColor = true;
       quickBan24HoursBtn.Click += OnBan24HrBtnPressed;
+      translationKeyProvider1.SetTranslationKey(quickBan24HoursBtn, Constants.CREATE_BAN_24HOURS_BUTTON_STR);
       // 
       // banBtn
       // 
@@ -99,6 +104,7 @@ namespace Longbow.Forms
       banBtn.TextAlign = ContentAlignment.MiddleLeft;
       banBtn.UseVisualStyleBackColor = true;
       banBtn.Click += OnBanBtnPressed;
+      translationKeyProvider1.SetTranslationKey(banBtn, Constants.CREATE_BAN_BAN_BUTTON_STR);
       // 
       // label1
       // 
@@ -110,6 +116,7 @@ namespace Longbow.Forms
       label1.TabIndex = 16;
       label1.Text = "Quick Bans";
       label1.TextAlign = ContentAlignment.MiddleCenter;
+      translationKeyProvider1.SetTranslationKey(label1, Constants.CREATE_BAN_QUICK_BANS_TITLE_STR);
       // 
       // banDurationSecondsTB
       // 
@@ -142,6 +149,7 @@ namespace Longbow.Forms
       quickBanForever.TextAlign = ContentAlignment.MiddleLeft;
       quickBanForever.UseVisualStyleBackColor = true;
       quickBanForever.Click += OnBanForeverBtnPressed;
+      translationKeyProvider1.SetTranslationKey(quickBanForever, Constants.CREATE_BAN_FOREVER_BUTTON_STR);
       // 
       // banReasonTB
       // 
@@ -190,5 +198,6 @@ namespace Longbow.Forms
     private Components.ui.FluentTextBox banDurationSecondsTB;
     private FontAwesome.Sharp.IconButton quickBanForever;
     private Components.ui.FluentTextBox banReasonTB;
+    private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
   }
 }

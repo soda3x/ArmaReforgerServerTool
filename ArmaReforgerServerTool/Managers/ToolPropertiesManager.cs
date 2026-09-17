@@ -13,6 +13,7 @@ using Serilog;
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
 using Longbow.Models;
+using Longbow.Utils;
 
 namespace ReforgerServerApp.Managers;
 
@@ -47,9 +48,8 @@ internal class ToolPropertiesManager
         string path = Path.GetFullPath(m_toolPropertiesFile);
 
         Utilities.DisplayErrorMessage(
-                "Properties is malformed. Please check your formatting is valid JSON and try again.",
-                "Unable to parse properties. Temporarily loading default settings. " +
-                $"Delete the properties file at {path} and restart the application to permanently revert to default settings."
+                Strings.Get(Constants.TOOL_PROPERTIES_MANAGER_MALFORMED_STR),
+                Strings.Get(Constants.TOOL_PROPERTIES_MANAGER_MALFORMED_DETAIL_STR, ("path", path))
         );
         m_toolProperties = ToolProperties.Default;
       }
@@ -70,4 +70,22 @@ internal class ToolPropertiesManager
 
   public List<Scenario> GetDefaultScenarios() { return m_toolProperties.defaultScenarios; }
   public ToolProperties GetToolProperties() { return m_toolProperties; }
+
+  /// <summary>
+  /// Writes the current <c>ToolProperties</c> (as returned by <c>GetToolProperties()</c>, which
+  /// callers mutate directly) back to <c>properties.json</c>. There was previously no write path
+  /// for this file outside of first-run default creation - this is the first caller of it.
+  /// </summary>
+  public void SaveToolProperties()
+  {
+    try
+    {
+      File.WriteAllText(m_toolPropertiesFile, m_toolProperties.AsJsonString());
+      Log.Information("ToolPropertiesManager - successfully saved properties file.");
+    }
+    catch (Exception ex)
+    {
+      Utilities.DisplayErrorMessage(Strings.Get(Constants.TOOL_PROPERTIES_MANAGER_SAVE_FAILED_STR), ex.Message);
+    }
+  }
 }

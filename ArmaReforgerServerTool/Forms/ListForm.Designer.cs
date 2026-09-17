@@ -35,6 +35,7 @@ namespace ReforgerServerApp
       closeBtn = new Button();
       itemTB = new FluentTextBox();
       itemListView = new FluentListBox();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       SuspendLayout();
       // 
       // addBtn
@@ -47,6 +48,7 @@ namespace ReforgerServerApp
       addBtn.Text = "Add";
       addBtn.UseVisualStyleBackColor = true;
       addBtn.Click += AddBtnClicked;
+      translationKeyProvider1.SetTranslationKey(addBtn, Constants.LIST_FORM_ADD_BUTTON_STR);
       // 
       // removeBtn
       // 
@@ -58,6 +60,7 @@ namespace ReforgerServerApp
       removeBtn.Text = "Remove";
       removeBtn.UseVisualStyleBackColor = true;
       removeBtn.Click += RemoveBtnClicked;
+      translationKeyProvider1.SetTranslationKey(removeBtn, Constants.LIST_FORM_REMOVE_BUTTON_STR);
       // 
       // closeBtn
       // 
@@ -69,6 +72,7 @@ namespace ReforgerServerApp
       closeBtn.Text = "Close";
       closeBtn.UseVisualStyleBackColor = true;
       closeBtn.Click += CloseBtnClicked;
+      translationKeyProvider1.SetTranslationKey(closeBtn, Constants.LIST_FORM_CLOSE_BUTTON_STR);
       // 
       // itemTB
       // 
@@ -114,5 +118,6 @@ namespace ReforgerServerApp
         private Button closeBtn;
         private FluentTextBox itemTB;
         private FluentListBox itemListView;
+        private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
     }
 }

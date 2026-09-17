@@ -78,6 +78,8 @@ namespace ReforgerServerApp
       useExperimentalCheckBox = new CheckBox();
       label30 = new Label();
       logLevelComboBox = new FluentComboBox();
+      languageLabel = new Label();
+      languageComboBox = new FluentComboBox();
       clearLogBtn = new FontAwesome.Sharp.IconButton();
       aboutBtn = new FontAwesome.Sharp.IconButton();
       groupBox4 = new FluentGroupBox();
@@ -113,6 +115,7 @@ namespace ReforgerServerApp
       tableLayoutPanel9 = new TableLayoutPanel();
       serverAddressStatusLabel = new Label();
       copyAddressBtn = new FontAwesome.Sharp.IconButton();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
@@ -171,6 +174,7 @@ namespace ReforgerServerApp
       tabPage1.Size = new Size(1518, 750);
       tabPage1.TabIndex = 0;
       tabPage1.Text = "Configuration";
+      translationKeyProvider1.SetTranslationKey(tabPage1, Constants.MAIN_CONFIGURATION_TAB_STR);
       // 
       // tableLayoutPanel6
       // 
@@ -201,6 +205,7 @@ namespace ReforgerServerApp
       loadSettingsBtn.Size = new Size(100, 32);
       loadSettingsBtn.TabIndex = 1;
       loadSettingsBtn.Text = "Load Config";
+      translationKeyProvider1.SetTranslationKey(loadSettingsBtn, Constants.MAIN_LOAD_CONFIG_BUTTON_STR);
       loadSettingsBtn.TextAlign = ContentAlignment.MiddleRight;
       loadSettingsBtn.UseVisualStyleBackColor = true;
       loadSettingsBtn.Click += LoadSettingsFromFileBtnPressed;
@@ -219,6 +224,7 @@ namespace ReforgerServerApp
       saveSettingsBtn.Size = new Size(100, 32);
       saveSettingsBtn.TabIndex = 2;
       saveSettingsBtn.Text = "Save Config";
+      translationKeyProvider1.SetTranslationKey(saveSettingsBtn, Constants.MAIN_SAVE_CONFIG_BUTTON_STR);
       saveSettingsBtn.TextAlign = ContentAlignment.MiddleRight;
       saveSettingsBtn.UseVisualStyleBackColor = true;
       saveSettingsBtn.Click += SaveSettingsToFileBtnPressed;
@@ -255,6 +261,7 @@ namespace ReforgerServerApp
       groupBox2.TabIndex = 47;
       groupBox2.TabStop = false;
       groupBox2.Text = "Mods";
+      translationKeyProvider1.SetTranslationKey(groupBox2, Constants.MAIN_MODS_TITLE_STR);
       // 
       // tableLayoutPanel3
       // 
@@ -510,6 +517,7 @@ namespace ReforgerServerApp
       label16.Size = new Size(82, 15);
       label16.TabIndex = 5;
       label16.Text = "Enabled Mods";
+      translationKeyProvider1.SetTranslationKey(label16, Constants.MAIN_ENABLED_MODS_LABEL_STR);
       // 
       // label15
       // 
@@ -519,6 +527,7 @@ namespace ReforgerServerApp
       label15.Size = new Size(88, 15);
       label15.TabIndex = 4;
       label15.Text = "Available Mods";
+      translationKeyProvider1.SetTranslationKey(label15, Constants.MAIN_AVAILABLE_MODS_LABEL_STR);
       // 
       // enabledMods
       // 
@@ -578,6 +587,7 @@ namespace ReforgerServerApp
       groupBox1.TabIndex = 46;
       groupBox1.TabStop = false;
       groupBox1.Text = "Server Configuration";
+      translationKeyProvider1.SetTranslationKey(groupBox1, Constants.MAIN_SERVER_CONFIGURATION_TITLE_STR);
       // 
       // tableLayoutPanel5
       // 
@@ -611,6 +621,7 @@ namespace ReforgerServerApp
       scenarioSelectBtn.Size = new Size(129, 32);
       scenarioSelectBtn.TabIndex = 82;
       scenarioSelectBtn.Text = "Select Scenario";
+      translationKeyProvider1.SetTranslationKey(scenarioSelectBtn, Constants.MAIN_SELECT_SCENARIO_BUTTON_STR);
       scenarioSelectBtn.TextAlign = ContentAlignment.MiddleRight;
       scenarioSelectBtn.UseVisualStyleBackColor = true;
       scenarioSelectBtn.Click += ScenarioSelectBtnClicked;
@@ -630,6 +641,7 @@ namespace ReforgerServerApp
       loadSaveGameBtn.Size = new Size(129, 32);
       loadSaveGameBtn.TabIndex = 91;
       loadSaveGameBtn.Text = "Save Manager";
+      translationKeyProvider1.SetTranslationKey(loadSaveGameBtn, Constants.MAIN_SAVE_MANAGER_BUTTON_STR);
       loadSaveGameBtn.TextAlign = ContentAlignment.MiddleRight;
       loadSaveGameBtn.UseVisualStyleBackColor = true;
       loadSaveGameBtn.Click += LoadSaveGameBtnPressed;
@@ -648,6 +660,7 @@ namespace ReforgerServerApp
       editMissionHeaderBtn.Size = new Size(129, 32);
       editMissionHeaderBtn.TabIndex = 85;
       editMissionHeaderBtn.Text = "Mission Header";
+      translationKeyProvider1.SetTranslationKey(editMissionHeaderBtn, Constants.MAIN_MISSION_HEADER_BUTTON_STR);
       editMissionHeaderBtn.TextAlign = ContentAlignment.MiddleRight;
       editMissionHeaderBtn.UseVisualStyleBackColor = true;
       editMissionHeaderBtn.Click += EditMissionHeaderBtnClicked;
@@ -697,6 +710,8 @@ namespace ReforgerServerApp
       tabPage2.Controls.Add(useExperimentalCheckBox);
       tabPage2.Controls.Add(label30);
       tabPage2.Controls.Add(logLevelComboBox);
+      tabPage2.Controls.Add(languageLabel);
+      tabPage2.Controls.Add(languageComboBox);
       tabPage2.Controls.Add(clearLogBtn);
       tabPage2.Controls.Add(aboutBtn);
       tabPage2.Controls.Add(groupBox4);
@@ -707,6 +722,7 @@ namespace ReforgerServerApp
       tabPage2.Size = new Size(1518, 750);
       tabPage2.TabIndex = 1;
       tabPage2.Text = "Management";
+      translationKeyProvider1.SetTranslationKey(tabPage2, Constants.MAIN_MANAGEMENT_TAB_STR);
       // 
       // steamCmdLog
       // 
@@ -735,6 +751,7 @@ namespace ReforgerServerApp
       keepServerUpdated.Size = new Size(147, 19);
       keepServerUpdated.TabIndex = 34;
       keepServerUpdated.Text = "Keep server up-to-date";
+      translationKeyProvider1.SetTranslationKey(keepServerUpdated, Constants.MAIN_KEEP_SERVER_UPDATED_LABEL_STR);
       keepServerUpdated.UseVisualStyleBackColor = true;
       keepServerUpdated.CheckedChanged += KeepServerUpdatedCheckedChanged;
       // 
@@ -828,6 +845,7 @@ namespace ReforgerServerApp
       useUpnp.Size = new Size(77, 19);
       useUpnp.TabIndex = 32;
       useUpnp.Text = "Use UPnP";
+      translationKeyProvider1.SetTranslationKey(useUpnp, Constants.MAIN_USE_UPNP_LABEL_STR);
       useUpnp.UseVisualStyleBackColor = true;
       useUpnp.CheckedChanged += OnUseUPnPCheckChanged;
       // 
@@ -839,6 +857,7 @@ namespace ReforgerServerApp
       useExperimentalCheckBox.Size = new Size(151, 19);
       useExperimentalCheckBox.TabIndex = 31;
       useExperimentalCheckBox.Text = "Use Experimental Server";
+      translationKeyProvider1.SetTranslationKey(useExperimentalCheckBox, Constants.MAIN_USE_EXPERIMENTAL_LABEL_STR);
       useExperimentalCheckBox.UseVisualStyleBackColor = true;
       useExperimentalCheckBox.CheckedChanged += UseExperimentalServerCheckboxChanged;
       // 
@@ -852,6 +871,7 @@ namespace ReforgerServerApp
       label30.Size = new Size(57, 15);
       label30.TabIndex = 30;
       label30.Text = "Log Level";
+      translationKeyProvider1.SetTranslationKey(label30, Constants.MAIN_LOG_LEVEL_LABEL_STR);
       // 
       // logLevelComboBox
       // 
@@ -870,7 +890,37 @@ namespace ReforgerServerApp
       logLevelComboBox.Size = new Size(116, 32);
       logLevelComboBox.TabIndex = 30;
       logLevelComboBox.ValueMember = "";
-      // 
+      //
+      // languageLabel
+      //
+      languageLabel.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      languageLabel.AutoSize = true;
+      languageLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+      languageLabel.Location = new Point(460, 721);
+      languageLabel.Name = "languageLabel";
+      languageLabel.Size = new Size(63, 15);
+      languageLabel.TabIndex = 33;
+      languageLabel.Text = "Language";
+      translationKeyProvider1.SetTranslationKey(languageLabel, Constants.MAIN_LANGUAGE_LABEL_STR);
+      //
+      // languageComboBox
+      //
+      languageComboBox.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      languageComboBox.BackColor = Color.Transparent;
+      languageComboBox.DataSource = null;
+      languageComboBox.DisplayMember = "";
+      languageComboBox.FieldBackColor = SystemColors.Window;
+      languageComboBox.ForeColor = SystemColors.ControlText;
+      languageComboBox.Location = new Point(529, 712);
+      languageComboBox.Name = "languageComboBox";
+      languageComboBox.SelectedIndex = -1;
+      languageComboBox.SelectedItem = null;
+      languageComboBox.SelectedValue = null;
+      languageComboBox.Size = new Size(160, 32);
+      languageComboBox.TabIndex = 34;
+      languageComboBox.ValueMember = "";
+      languageComboBox.SelectedIndexChanged += LanguageComboBoxSelectedIndexChanged;
+      //
       // clearLogBtn
       // 
       clearLogBtn.Anchor =  AnchorStyles.Bottom | AnchorStyles.Right;
@@ -882,6 +932,7 @@ namespace ReforgerServerApp
       clearLogBtn.Size = new Size(66, 32);
       clearLogBtn.TabIndex = 6;
       clearLogBtn.Text = "Clear Log";
+      translationKeyProvider1.SetTranslationKey(clearLogBtn, Constants.MAIN_CLEAR_LOG_BUTTON_STR);
       clearLogBtn.UseVisualStyleBackColor = true;
       clearLogBtn.Click += ClearLogBtnPressed;
       // 
@@ -912,6 +963,7 @@ namespace ReforgerServerApp
       groupBox4.TabIndex = 4;
       groupBox4.TabStop = false;
       groupBox4.Text = "Advanced";
+      translationKeyProvider1.SetTranslationKey(groupBox4, Constants.MAIN_ADVANCED_TITLE_STR);
       // 
       // advancedParametersPanel
       // 
@@ -946,6 +998,7 @@ namespace ReforgerServerApp
       tabPage3.Size = new Size(1518, 750);
       tabPage3.TabIndex = 2;
       tabPage3.Text = "Status";
+      translationKeyProvider1.SetTranslationKey(tabPage3, Constants.MAIN_STATUS_TAB_STR);
       // 
       // serverStatusTableLayout
       // 
@@ -978,6 +1031,7 @@ namespace ReforgerServerApp
       groupBox6.TabIndex = 3;
       groupBox6.TabStop = false;
       groupBox6.Text = "Server FPS";
+      translationKeyProvider1.SetTranslationKey(groupBox6, Constants.MAIN_SERVER_FPS_TITLE_STR);
       // 
       // fpsLabel
       // 
@@ -998,6 +1052,7 @@ namespace ReforgerServerApp
       chartFps.Size = new Size(1500, 294);
       chartFps.TabIndex = 0;
       chartFps.Text = "Server FPS";
+      translationKeyProvider1.SetTranslationKey(chartFps, Constants.MAIN_SERVER_FPS_CHART_STR);
       chartFps.Units = "%";
       // 
       // groupBox7
@@ -1014,6 +1069,7 @@ namespace ReforgerServerApp
       groupBox7.TabIndex = 4;
       groupBox7.TabStop = false;
       groupBox7.Text = "Server Memory Usage";
+      translationKeyProvider1.SetTranslationKey(groupBox7, Constants.MAIN_SERVER_MEMORY_TITLE_STR);
       // 
       // memLabel
       // 
@@ -1034,6 +1090,7 @@ namespace ReforgerServerApp
       chartMem.Size = new Size(1500, 294);
       chartMem.TabIndex = 0;
       chartMem.Text = "Server Memory";
+      translationKeyProvider1.SetTranslationKey(chartMem, Constants.MAIN_SERVER_MEMORY_CHART_STR);
       chartMem.Units = "%";
       // 
       // serverInfoGroupBox
@@ -1083,6 +1140,7 @@ namespace ReforgerServerApp
       groupBox5.TabIndex = 4;
       groupBox5.TabStop = false;
       groupBox5.Text = "Player Count";
+      translationKeyProvider1.SetTranslationKey(groupBox5, Constants.MAIN_PLAYER_COUNT_TITLE_STR);
       // 
       // tableLayoutPanel12
       // 
@@ -1123,6 +1181,7 @@ namespace ReforgerServerApp
       groupBox11.TabIndex = 3;
       groupBox11.TabStop = false;
       groupBox11.Text = "Ping Site";
+      translationKeyProvider1.SetTranslationKey(groupBox11, Constants.MAIN_PING_SITE_TITLE_STR);
       // 
       // tableLayoutPanel11
       // 
@@ -1190,6 +1249,7 @@ namespace ReforgerServerApp
       groupBox10.TabIndex = 2;
       groupBox10.TabStop = false;
       groupBox10.Text = "Join Code";
+      translationKeyProvider1.SetTranslationKey(groupBox10, Constants.MAIN_JOIN_CODE_TITLE_STR);
       // 
       // tableLayoutPanel10
       // 
@@ -1250,6 +1310,7 @@ namespace ReforgerServerApp
       groupBox9.TabIndex = 1;
       groupBox9.TabStop = false;
       groupBox9.Text = "RCON Address";
+      translationKeyProvider1.SetTranslationKey(groupBox9, Constants.MAIN_RCON_ADDRESS_TITLE_STR);
       // 
       // tableLayoutPanel8
       // 
@@ -1310,6 +1371,7 @@ namespace ReforgerServerApp
       groupBox8.TabIndex = 0;
       groupBox8.TabStop = false;
       groupBox8.Text = "Server Address";
+      translationKeyProvider1.SetTranslationKey(groupBox8, Constants.MAIN_SERVER_ADDRESS_TITLE_STR);
       // 
       // tableLayoutPanel9
       // 
@@ -1442,6 +1504,8 @@ namespace ReforgerServerApp
     private FontAwesome.Sharp.IconButton locateServerFilesBtn;
     private Label label30;
     private FluentComboBox logLevelComboBox;
+    private Label languageLabel;
+    private FluentComboBox languageComboBox;
     private FontAwesome.Sharp.IconButton scenarioSelectBtn;
     private Label loadedScenarioLabel;
     private FontAwesome.Sharp.IconButton editMissionHeaderBtn;
@@ -1495,5 +1559,6 @@ namespace ReforgerServerApp
     private FluentChart chartMem;
     private Label fpsLabel;
     private Label memLabel;
+    private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
   }
 }

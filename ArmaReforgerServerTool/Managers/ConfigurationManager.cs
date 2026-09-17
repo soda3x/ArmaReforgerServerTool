@@ -16,6 +16,7 @@ using ReforgerServerApp.Components;
 using System.Text;
 using System.Text.Json;
 using Longbow.Managers;
+using Longbow.Utils;
 using System.Text.Json.Nodes;
 
 namespace ReforgerServerApp
@@ -237,9 +238,7 @@ namespace ReforgerServerApp
       catch (Exception e)
       {
         Log.Debug(e, "ConfigurationManager - Failed to read config file");
-        Utilities.DisplayErrorMessage($"An error occurred while attempting to load the configuration file.\r\n" +
-        $"It may have been created for an earlier version.\r\n" +
-        $"The configuration has not been loaded.", e.Message);
+        Utilities.DisplayErrorMessage(Strings.Get(Constants.CONFIG_MANAGER_LOAD_FAILED_STR), e.Message);
       }
     }
 

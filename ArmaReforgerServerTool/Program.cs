@@ -9,6 +9,8 @@
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
+using Longbow.Managers;
+using Longbow.Utils;
 using Serilog;
 
 namespace ReforgerServerApp
@@ -30,7 +32,8 @@ namespace ReforgerServerApp
       }
       catch (Exception ex)
       {
-        Utilities.DisplayErrorMessage("Failed to configure logger.", $"Logger configuration failed which prevented the program from launching.\n{ex.Message}");
+        Utilities.DisplayErrorMessage(Strings.Get(Constants.PROGRAM_LOGGER_CONFIG_FAILED_STR),
+            Strings.Get(Constants.PROGRAM_LOGGER_CONFIG_FAILED_DETAIL_STR, ("error", ex.Message)));
         Application.Exit(); // We cannot continue, exit gracefully
         return;
       }
@@ -38,6 +41,11 @@ namespace ReforgerServerApp
       try
       {
         Log.Information("Longbow starting...");
+
+        // Language is applied once here, at boot, and not reapplied afterwards - changing it
+        // requires a restart. See i18n-system.md section 5 for why.
+        LocalisationManager.GetInstance().LoadLanguage(ToolPropertiesManager.GetInstance().GetToolProperties().language);
+
         ApplicationConfiguration.Initialize();
         Application.SetHighDpiMode(HighDpiMode.SystemAware);
         Application.SetColorMode(SystemColorMode.System);
@@ -45,8 +53,8 @@ namespace ReforgerServerApp
       }
       catch (Exception ex)
       {
-        Utilities.DisplayErrorMessage("Application failed.", $"An uncaught exception occurred.\n\n" +
-            $"\"{ex.Message}\"");
+        Utilities.DisplayErrorMessage(Strings.Get(Constants.PROGRAM_APPLICATION_FAILED_STR),
+            Strings.Get(Constants.PROGRAM_APPLICATION_FAILED_DETAIL_STR, ("error", ex.Message)));
         Log.Fatal(ex, "Application failed.");
       }
       finally

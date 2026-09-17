@@ -36,6 +36,7 @@ namespace ReforgerServerApp
       currentlySelectedLbl = new Label();
       manualScenarioIdTextBox = new FluentTextBox();
       loadingAnim = new AnimOfDots.Circular();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       SuspendLayout();
       // 
       // scenarioList
@@ -59,6 +60,7 @@ namespace ReforgerServerApp
       selectScenarioBtn.Text = "Select Scenario";
       selectScenarioBtn.UseVisualStyleBackColor = true;
       selectScenarioBtn.Click += SelectScenarioButtonClicked;
+      translationKeyProvider1.SetTranslationKey(selectScenarioBtn, Constants.SCENARIO_SELECTOR_SELECT_BUTTON_STR);
       // 
       // reloadScenariosBtn
       // 
@@ -70,6 +72,7 @@ namespace ReforgerServerApp
       reloadScenariosBtn.Text = "Reload Scenarios";
       reloadScenariosBtn.UseVisualStyleBackColor = true;
       reloadScenariosBtn.Click += ReloadScenariosButtonClicked;
+      translationKeyProvider1.SetTranslationKey(reloadScenariosBtn, Constants.SCENARIO_SELECTOR_RELOAD_BUTTON_STR);
       // 
       // currentlySelectedLbl
       // 
@@ -135,5 +138,6 @@ namespace ReforgerServerApp
         private Label currentlySelectedLbl;
         private FluentTextBox manualScenarioIdTextBox;
     private AnimOfDots.Circular loadingAnim;
+    private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
   }
 }

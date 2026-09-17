@@ -1,5 +1,7 @@
 using Longbow.Managers;
 using Longbow.Models;
+using Longbow.Utils;
+using ReforgerServerApp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,21 +29,22 @@ namespace Longbow.Forms
 
       DataGridViewTextBoxColumn uidCol = new();
       uidCol.DataPropertyName = "PlayerUid";
-      uidCol.HeaderText = "ID";
+      uidCol.HeaderText = Strings.Get(Constants.BAN_MANAGER_ID_COLUMN_STR);
       uidCol.Name = "colUid";
       uidCol.FillWeight = 150;
       banList.Columns.Add(uidCol);
 
       DataGridViewTextBoxColumn nameCol = new();
       nameCol.DataPropertyName = "PlayerName";
-      nameCol.HeaderText = "Player Name";
+      nameCol.HeaderText = Strings.Get(Constants.BAN_MANAGER_PLAYER_NAME_COLUMN_STR);
       nameCol.Name = "colName";
       nameCol.FillWeight = 100;
       banList.Columns.Add(nameCol);
 
       banList.DataSource = m_bans;
-      
+
       ThemeManager.GetInstance().ConfigureTheme(this);
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
     }
 
     private async Task FetchAllBansAsync()
