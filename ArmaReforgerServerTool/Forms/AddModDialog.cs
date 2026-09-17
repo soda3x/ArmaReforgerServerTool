@@ -24,6 +24,7 @@ namespace ReforgerServerApp
       ThemeManager.GetInstance().ConfigureTheme(this);
       LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
       this.Text = Strings.Get(Constants.ADD_MOD_ADD_TITLE_STR);
+      ApplyPlaceholders();
       m_reforgerApp = reforgerApp;
       CreateTooltips();
     }
@@ -34,6 +35,7 @@ namespace ReforgerServerApp
       this.Mica();
       LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
       this.Text = Strings.Get(Constants.ADD_MOD_EDIT_TITLE_STR);
+      ApplyPlaceholders();
       m_reforgerApp = reforgerApp;
       modId.Text = m.GetModID();
       modName.Text = m.GetModName();
@@ -43,6 +45,13 @@ namespace ReforgerServerApp
       m_isEditMode = true;
       m_idx = idx;
       CreateTooltips();
+    }
+
+    private void ApplyPlaceholders()
+    {
+      modName.PlaceholderText = Strings.Get(Constants.ADD_MOD_NAME_PLACEHOLDER_STR);
+      modId.PlaceholderText = Strings.Get(Constants.ADD_MOD_ID_PLACEHOLDER_STR);
+      modVers.PlaceholderText = Strings.Get(Constants.ADD_MOD_VERSION_PLACEHOLDER_STR);
     }
     private void CreateTooltips()
     {

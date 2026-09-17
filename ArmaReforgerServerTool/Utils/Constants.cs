@@ -254,6 +254,47 @@ namespace ReforgerServerApp
     public const string ADVANCED_PARAM_KEEP_SESSION_SAVE_LABEL_STR = "advancedParam.keepSessionSave.label";
     public const string ADVANCED_PARAM_PLAYER_LIMITS_LABEL_STR = "advancedParam.playerLimits.label";
 
+    // Advanced parameter descriptions (Fase 4)
+    public const string ADVANCED_PARAM_MAX_FPS_DESCRIPTION_STR = "advancedParam.maxFPS.description";
+    public const string ADVANCED_PARAM_AUTO_RESTART_DAILY_DESCRIPTION_STR = "advancedParam.autoRestartDaily.description";
+    public const string ADVANCED_PARAM_ADDONS_REPAIR_DESCRIPTION_STR = "advancedParam.addonsRepair.description";
+    public const string ADVANCED_PARAM_AUTO_RESTART_ON_CRASH_DESCRIPTION_STR = "advancedParam.autoRestartOnCrash.description";
+    public const string ADVANCED_PARAM_AUTORELOAD_DESCRIPTION_STR = "advancedParam.autoreload.description";
+    public const string ADVANCED_PARAM_LOAD_SESSION_SAVE_DESCRIPTION_STR = "advancedParam.loadSessionSave.description";
+    public const string ADVANCED_PARAM_NO_BACKEND_DESCRIPTION_STR = "advancedParam.noBackend.description";
+    public const string ADVANCED_PARAM_AUTO_SHUTDOWN_DESCRIPTION_STR = "advancedParam.autoShutdown.description";
+    public const string ADVANCED_PARAM_LOG_VOTING_DESCRIPTION_STR = "advancedParam.logVoting.description";
+    public const string ADVANCED_PARAM_BIND_PORT_DESCRIPTION_STR = "advancedParam.bindPort.description";
+    public const string ADVANCED_PARAM_NDS_DESCRIPTION_STR = "advancedParam.nds.description";
+    public const string ADVANCED_PARAM_NWK_RESOLUTION_DESCRIPTION_STR = "advancedParam.nwkResolution.description";
+    public const string ADVANCED_PARAM_STAGGERING_BUDGET_DESCRIPTION_STR = "advancedParam.staggeringBudget.description";
+    public const string ADVANCED_PARAM_STREAMING_BUDGET_DESCRIPTION_STR = "advancedParam.streamingBudget.description";
+    public const string ADVANCED_PARAM_STREAMS_DELTA_DESCRIPTION_STR = "advancedParam.streamsDelta.description";
+    public const string ADVANCED_PARAM_RPL_TIMEOUT_MS_DESCRIPTION_STR = "advancedParam.rplTimeoutMs.description";
+    public const string ADVANCED_PARAM_AI_PARTIAL_SIM_DESCRIPTION_STR = "advancedParam.aiPartialSim.description";
+    public const string ADVANCED_PARAM_CREATE_DB_DESCRIPTION_STR = "advancedParam.createDB.description";
+    public const string ADVANCED_PARAM_DEBUGGER_DESCRIPTION_STR = "advancedParam.debugger.description";
+    public const string ADVANCED_PARAM_DEBUGGER_PORT_DESCRIPTION_STR = "advancedParam.debuggerPort.description";
+    public const string ADVANCED_PARAM_DISABLE_SHADERS_BUILD_DESCRIPTION_STR = "advancedParam.disableShadersBuild.description";
+    public const string ADVANCED_PARAM_GENERATE_SHADERS_DESCRIPTION_STR = "advancedParam.generateShaders.description";
+    public const string ADVANCED_PARAM_RPL_ENCODE_AS_LONG_JOBS_DESCRIPTION_STR = "advancedParam.rplEncodeAsLongJobs.description";
+    public const string ADVANCED_PARAM_JOBSYS_SHORT_WORKER_COUNT_DESCRIPTION_STR = "advancedParam.jobsysShortWorkerCount.description";
+    public const string ADVANCED_PARAM_JOBSYS_LONG_WORKER_COUNT_DESCRIPTION_STR = "advancedParam.jobsysLongWorkerCount.description";
+    public const string ADVANCED_PARAM_FREEZE_CHECK_DESCRIPTION_STR = "advancedParam.freezeCheck.description";
+    public const string ADVANCED_PARAM_FREEZE_CHECK_MODE_DESCRIPTION_STR = "advancedParam.freezeCheckMode.description";
+    public const string ADVANCED_PARAM_FORCE_DISABLE_NIGHT_GRAIN_DESCRIPTION_STR = "advancedParam.forceDisableNightGrain.description";
+    public const string ADVANCED_PARAM_KEEP_SESSION_SAVE_DESCRIPTION_STR = "advancedParam.keepSessionSave.description";
+    public const string ADVANCED_PARAM_PLAYER_LIMITS_DESCRIPTION_STR = "advancedParam.playerLimits.description";
+
+    // Placeholders and tooltips set outside the Designer (Fase 4)
+    public const string ADVANCED_PARAM_LOAD_SESSION_SAVE_PLACEHOLDER_STR = "advancedParam.loadSessionSave.placeholder";
+    public const string ADVANCED_PARAM_PLAYER_LIMITS_PLACEHOLDER_STR = "advancedParam.playerLimits.placeholder";
+    public const string ADD_MOD_NAME_PLACEHOLDER_STR = "addMod.name.placeholder";
+    public const string ADD_MOD_ID_PLACEHOLDER_STR = "addMod.id.placeholder";
+    public const string ADD_MOD_VERSION_PLACEHOLDER_STR = "addMod.version.placeholder";
+    public const string MAIN_MODS_SEARCH_PLACEHOLDER_STR = "main.modsSearch.placeholder";
+    public const string MAIN_LOAD_SAVE_GAME_TOOLTIP_STR = "main.loadSaveGame.tooltip";
+
     // Designer control text (Fase 4)
     public const string ABOUT_OK_BUTTON_STR = "about.ok.button";
     public const string ABOUT_REPORT_ISSUE_BUTTON_STR = "about.reportIssue.button";

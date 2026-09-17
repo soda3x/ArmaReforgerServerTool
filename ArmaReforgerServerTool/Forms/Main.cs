@@ -38,7 +38,7 @@ namespace ReforgerServerApp
 
       serverRunningLabel.Text = string.Empty;
 
-      modsSearchTB.PlaceholderText = "Search for a mod...";
+      modsSearchTB.PlaceholderText = Strings.Get(Constants.MAIN_MODS_SEARCH_PLACEHOLDER_STR);
 
       ProcessManager.GetInstance().UpdateGuiControlsEvent += HandleUpdateGuiControlsEvent;
       ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
@@ -96,7 +96,7 @@ namespace ReforgerServerApp
       loadSaveGameBtn.Visible = false;
       loadSaveGameBtn.Enabled = false;
       ToolTip loadsaveGameBtnTooltip = new();
-      loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, "Disabled for the time being, for now please use the Load Session Save option in Advanced Parameters");
+      loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, Strings.Get(Constants.MAIN_LOAD_SAVE_GAME_TOOLTIP_STR));
 
       copyAddressBtn.Enabled = false;
       copyRconAddressBtn.Enabled = false;
@@ -1134,7 +1134,7 @@ namespace ReforgerServerApp
         ParameterMax = 1000,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "maxFPS").Value,
-        Description = "Limits your server to the specified target FPS. Recommended."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_MAX_FPS_DESCRIPTION_STR)
       };
       limitServerMaxFPS.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "maxFPS").Enabled;
       advancedParametersPanel.Controls.Add(limitServerMaxFPS);
@@ -1143,7 +1143,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "autoRestartDaily",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AUTO_RESTART_DAILY_LABEL_STR),
-        Description = "Specify, in 24 hour time, at what time the server will restart every day.",
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AUTO_RESTART_DAILY_DESCRIPTION_STR),
         ParameterMin = DateTime.Today,
         ParameterMax = DateTime.Today.AddDays(1).AddMinutes(-1),
         ParameterValue = DateTime.Today
@@ -1154,7 +1154,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "addonsRepair",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_ADDONS_REPAIR_LABEL_STR),
-        Description ="Verifies the integrity of all installed addons.\r\nIf any corrupted addons are found, they will be repaired automatically."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_ADDONS_REPAIR_DESCRIPTION_STR)
       };
       addonsRepair.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "addonsRepair").Enabled;
       advancedParametersPanel.Controls.Add(addonsRepair);
@@ -1163,7 +1163,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "autoRestartOnCrash",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AUTO_RESTART_ON_CRASH_LABEL_STR),
-        Description = "The tool will monitor the server for crashes and attempt to restart it automatically."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AUTO_RESTART_ON_CRASH_DESCRIPTION_STR)
       };
       autoRestartOnCrash.CheckBox.CheckedChanged += AutoRestartOnCrashCheckChanged;
       autoRestartOnCrash.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoRestartOnCrash").Enabled;
@@ -1173,7 +1173,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "autoreload",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AUTORELOAD_LABEL_STR),
-        Description = "Automatically reload the scenario when finished after the specified time (in seconds) has elapsed.",
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AUTORELOAD_DESCRIPTION_STR),
         ParameterMin = 1,
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
@@ -1186,8 +1186,8 @@ namespace ReforgerServerApp
       {
         ParameterName = "loadSessionSave",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_LOAD_SESSION_SAVE_LABEL_STR),
-        Description = "Name of save excluding the path and file extension.\r\n\r\nLeave blank to use the latest save.",
-        ParameterPlaceholder = "Using latest save..."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_LOAD_SESSION_SAVE_DESCRIPTION_STR),
+        ParameterPlaceholder = Strings.Get(Constants.ADVANCED_PARAM_LOAD_SESSION_SAVE_PLACEHOLDER_STR)
       };
       bool loadSessionSavedEnabled = SavedStateManager.GetSetting(loadedSettings, "loadSessionSave").Enabled;
       loadSessionSave.CheckBox.Checked = loadSessionSavedEnabled;
@@ -1201,7 +1201,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "noBackend",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_NO_BACKEND_LABEL_STR),
-        Description = "Enable this to host the server without using the Arma Reforger backend."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_NO_BACKEND_DESCRIPTION_STR)
       };
       noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
       noBackend.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "noBackend").Enabled;
@@ -1211,7 +1211,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "autoShutdown",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AUTO_SHUTDOWN_LABEL_STR),
-        Description = "Ensures the correct server shutdown process, use with \"Auto Reload\"."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AUTO_SHUTDOWN_DESCRIPTION_STR)
       };
       autoShutdown.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoShutdown").Enabled;
       advancedParametersPanel.Controls.Add(autoShutdown);
@@ -1220,7 +1220,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "logVoting",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_LOG_VOTING_LABEL_STR),
-        Description = "Adds logging info to the voting system with information about who created,\r\nvoted, and against whom the vote was created."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_LOG_VOTING_DESCRIPTION_STR)
       };
       logVoting.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "logVoting").Enabled;
       advancedParametersPanel.Controls.Add(logVoting);
@@ -1233,7 +1233,7 @@ namespace ReforgerServerApp
         ParameterMax = 65535,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "bindPort").Value,
-        Description = "Override the ports specified in server configuration."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_BIND_PORT_DESCRIPTION_STR)
       };
       overridePort.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "bindPort").Enabled;
       advancedParametersPanel.Controls.Add(overridePort);
@@ -1246,7 +1246,7 @@ namespace ReforgerServerApp
         ParameterMax = 2,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "nds").Value,
-        Description = "This is set to '2' by default if unchecked."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_NDS_DESCRIPTION_STR)
       };
       networkDynamicSim.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "nds").Enabled;
       advancedParametersPanel.Controls.Add(networkDynamicSim);
@@ -1259,7 +1259,7 @@ namespace ReforgerServerApp
         ParameterMax = 1000,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "nwkResolution").Value,
-        Description = "Defines what resolution Spatial Map cells should be set at in a 100 - 1000m range."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_NWK_RESOLUTION_DESCRIPTION_STR)
       };
       spatialMapRes.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "nwkResolution").Enabled;
       advancedParametersPanel.Controls.Add(spatialMapRes);
@@ -1272,7 +1272,7 @@ namespace ReforgerServerApp
         ParameterMax = 10201,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "staggeringBudget").Value,
-        Description = "Defines how many stationary spatial map cells are allowed to be processed in one tick.\r\n\r\nIf not set it uses \"-nds\" diameter."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_STAGGERING_BUDGET_DESCRIPTION_STR)
       };
       staggeringBudget.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "staggeringBudget").Enabled;
       advancedParametersPanel.Controls.Add(staggeringBudget);
@@ -1285,7 +1285,7 @@ namespace ReforgerServerApp
         ParameterMax = 10201,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "streamingBudget").Value,
-        Description = "Streaming budget is the global streaming budget that is equally distributed between all connections."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_STREAMING_BUDGET_DESCRIPTION_STR)
       };
       streamingBudget.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "streamingBudget").Enabled;
       advancedParametersPanel.Controls.Add(streamingBudget);
@@ -1298,7 +1298,7 @@ namespace ReforgerServerApp
         ParameterMax = 1000,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "streamsDelta").Value,
-        Description = "Streams delta is a tool to limit the amount of streams being opened for a client."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_STREAMS_DELTA_DESCRIPTION_STR)
       };
       streamsDelta.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "streamsDelta").Enabled;
       advancedParametersPanel.Controls.Add(streamsDelta);
@@ -1311,7 +1311,7 @@ namespace ReforgerServerApp
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "rpl-timeout-ms").Value,
-        Description = "Sets the server's timeout value, in milliseconds."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_RPL_TIMEOUT_MS_DESCRIPTION_STR)
       };
       rplTimeoutMs.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "rpl-timeout-ms").Enabled;
       advancedParametersPanel.Controls.Add(rplTimeoutMs);
@@ -1320,7 +1320,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "aiPartialSim",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AI_PARTIAL_SIM_LABEL_STR),
-        Description = "Sets in how many batches all simulable AIs will divided and processed."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AI_PARTIAL_SIM_DESCRIPTION_STR)
       };
       aiPartialSim.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "aiPartialSim").Enabled;
       advancedParametersPanel.Controls.Add(aiPartialSim);
@@ -1329,7 +1329,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "createDB",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_CREATE_DB_LABEL_STR),
-        Description = "Forces database file's regeneration.\r\n\r\nUseful after file directories changes, when some resources were moved elsewhere."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_CREATE_DB_DESCRIPTION_STR)
       };
       createDB.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "createDB").Enabled;
       advancedParametersPanel.Controls.Add(createDB);
@@ -1339,7 +1339,7 @@ namespace ReforgerServerApp
         ParameterName = "debugger",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_DEBUGGER_LABEL_STR),
         ParameterPlaceholder = "127.0.0.1",
-        Description = "Sets the script debugger to a specific address."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_DEBUGGER_DESCRIPTION_STR)
       };
       bool debuggerEnabled = SavedStateManager.GetSetting(loadedSettings, "debugger").Enabled;
       debugger.CheckBox.Checked = debuggerEnabled;
@@ -1357,7 +1357,7 @@ namespace ReforgerServerApp
         ParameterMin = 1,
         ParameterMax = 65535,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "debuggerPort").Value,
-        Description = "Sets the script debugger to a specific port. "
+        Description = Strings.Get(Constants.ADVANCED_PARAM_DEBUGGER_PORT_DESCRIPTION_STR)
       };
       debuggerPort.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "debuggerPort").Enabled;
       advancedParametersPanel.Controls.Add(debuggerPort);
@@ -1366,7 +1366,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "disableShadersBuild",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_DISABLE_SHADERS_BUILD_LABEL_STR),
-        Description = "Disables shaders generation."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_DISABLE_SHADERS_BUILD_DESCRIPTION_STR)
       };
       disableShadersBuild.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "disableShadersBuild").Enabled;
       advancedParametersPanel.Controls.Add(disableShadersBuild);
@@ -1375,7 +1375,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "generateShaders",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_GENERATE_SHADERS_LABEL_STR),
-        Description = "Forces shaders generation."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_GENERATE_SHADERS_DESCRIPTION_STR)
       };
       generateShaders.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "generateShaders").Enabled;
       advancedParametersPanel.Controls.Add(generateShaders);
@@ -1384,7 +1384,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "rplEncodeAsLongJobs",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_RPL_ENCODE_AS_LONG_JOBS_LABEL_STR),
-        Description = "Makes replication use long encoding jobs instead of short ones."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_RPL_ENCODE_AS_LONG_JOBS_DESCRIPTION_STR)
       };
       rplEncodeAsLongJobs.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "rplEncodeAsLongJobs").Enabled;
       advancedParametersPanel.Controls.Add(rplEncodeAsLongJobs);
@@ -1393,7 +1393,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "jobsysShortWorkerCount",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_JOBSYS_SHORT_WORKER_COUNT_LABEL_STR),
-        Description = "Sets the number of threads working on short jobs (jobs that must finish in one update loop).",
+        Description = Strings.Get(Constants.ADVANCED_PARAM_JOBSYS_SHORT_WORKER_COUNT_DESCRIPTION_STR),
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "jobsysShortWorkerCount").Value
@@ -1405,7 +1405,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "jobsysLongWorkerCount",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_JOBSYS_LONG_WORKER_COUNT_LABEL_STR),
-        Description = "Sets the number of threads working on long jobs (jobs that can span multiple iterations of update loop).",
+        Description = Strings.Get(Constants.ADVANCED_PARAM_JOBSYS_LONG_WORKER_COUNT_DESCRIPTION_STR),
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "jobsysLongWorkerCount").Value
@@ -1417,7 +1417,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "freezeCheck",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_FREEZE_CHECK_LABEL_STR),
-        Description = "Overrides time in seconds to forcefully crash on application freeze or completely disable detection.",
+        Description = Strings.Get(Constants.ADVANCED_PARAM_FREEZE_CHECK_DESCRIPTION_STR),
         ParameterIncrement = 1,
         ParameterMin = 0,
         ParameterMax = 600,
@@ -1430,7 +1430,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "freezeCheckMode",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_FREEZE_CHECK_MODE_LABEL_STR),
-        Description = "Overrides behavior which should happen when freeze is detected.",
+        Description = Strings.Get(Constants.ADVANCED_PARAM_FREEZE_CHECK_MODE_DESCRIPTION_STR),
         ParameterAvailableValues = new List<string>() {"crash", "minidump", "kill"}
       };
       bool freezeCheckModeEnabled = SavedStateManager.GetSetting(loadedSettings, "freezeCheckMode").Enabled;
@@ -1445,7 +1445,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "forceDisableNightGrain",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_FORCE_DISABLE_NIGHT_GRAIN_LABEL_STR),
-        Description = "Disables night grain in multiplayer.",
+        Description = Strings.Get(Constants.ADVANCED_PARAM_FORCE_DISABLE_NIGHT_GRAIN_DESCRIPTION_STR),
       };
       forceDisableNightGrain.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "forceDisableNightGrain").Enabled;
       advancedParametersPanel.Controls.Add(forceDisableNightGrain);
@@ -1454,7 +1454,7 @@ namespace ReforgerServerApp
       {
         ParameterName = "keepSessionSave",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_KEEP_SESSION_SAVE_LABEL_STR),
-        Description = "Keep any data for completed playthroughs on the game's end screen."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_KEEP_SESSION_SAVE_DESCRIPTION_STR)
       };
       keepSessionSave.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "keepSessionSave").Enabled;
       advancedParametersPanel.Controls.Add(keepSessionSave);
@@ -1463,8 +1463,8 @@ namespace ReforgerServerApp
       {
         ParameterName = "playerLimits",
         ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_PLAYER_LIMITS_LABEL_STR),
-        Description = "Maximum number of players per faction.\r\n\r\nFormat is FactionKey:Number, comma separated. E.g. \"FIA:3,US:1,USSR:2\".",
-        ParameterPlaceholder = "e.g. FIA:3,US:1,USSR:2",
+        Description = Strings.Get(Constants.ADVANCED_PARAM_PLAYER_LIMITS_DESCRIPTION_STR),
+        ParameterPlaceholder = Strings.Get(Constants.ADVANCED_PARAM_PLAYER_LIMITS_PLACEHOLDER_STR),
         ParameterValue = SavedStateManager.GetSetting(loadedSettings,"playerLimits").Value
       };
       playerLimits.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "playerLimits").Enabled;
