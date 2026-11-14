@@ -50,7 +50,7 @@ Currently available: English.
 
 ## Building
 
-- Build using Visual Studio 2022 (be sure to make `Release`)
+- Build using Visual Studio 2022+ (be sure to make `Release`)
 
 - Run `MakeNSISW` and compile the installer script in `scripts/` to make the installer
 
