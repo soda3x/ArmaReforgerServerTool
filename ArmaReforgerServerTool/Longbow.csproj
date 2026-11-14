@@ -7,8 +7,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
     <Company>soda3x</Company>
-    <AssemblyVersion>1.3.1</AssemblyVersion>
-    <FileVersion>1.3.1</FileVersion>
+    <AssemblyVersion>1.4.0</AssemblyVersion>
+    <FileVersion>1.4.0</FileVersion>
     <ApplicationIcon>Resources\arma_icon_white.ico</ApplicationIcon>
     <PublishSingleFile>true</PublishSingleFile>
 	<OutputType>winexe</OutputType>

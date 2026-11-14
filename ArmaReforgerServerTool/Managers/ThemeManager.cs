@@ -26,14 +26,7 @@ namespace Longbow.Managers
     {
       if (Application.SystemColorMode == SystemColorMode.Dark)
       {
-        if (f is Main)
-        {
-          f.Acrylic();
-        }
-        else
-        {
-          f.Mica();
-        }
+        f.Mica();
       }
       SyncThemeColours(f);
     }
