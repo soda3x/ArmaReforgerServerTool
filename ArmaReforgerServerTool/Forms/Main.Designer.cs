@@ -883,7 +883,7 @@ namespace ReforgerServerApp
       // 
       // languageLabel
       // 
-      languageLabel.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      languageLabel.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
       languageLabel.AutoSize = true;
       languageLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
       languageLabel.Location = new Point(1221, 40);
@@ -891,10 +891,11 @@ namespace ReforgerServerApp
       languageLabel.Size = new Size(59, 15);
       languageLabel.TabIndex = 33;
       languageLabel.Text = "Language";
+      languageLabel.TextAlign = ContentAlignment.MiddleRight;
       // 
       // languageComboBox
       // 
-      languageComboBox.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
+      languageComboBox.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
       languageComboBox.BackColor = Color.Transparent;
       languageComboBox.DataSource = null;
       languageComboBox.DisplayMember = "";
