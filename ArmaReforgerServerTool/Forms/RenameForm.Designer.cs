@@ -1,3 +1,5 @@
+using ReforgerServerApp;
+
 namespace Longbow.Forms
 {
   partial class RenameForm
@@ -32,6 +34,7 @@ namespace Longbow.Forms
       renameBtn = new FontAwesome.Sharp.IconButton();
       cancelBtn = new FontAwesome.Sharp.IconButton();
       tableLayoutPanel1 = new TableLayoutPanel();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       tableLayoutPanel1.SuspendLayout();
       SuspendLayout();
       // 
@@ -56,6 +59,7 @@ namespace Longbow.Forms
       renameBtn.Text = "Rename";
       renameBtn.UseVisualStyleBackColor = true;
       renameBtn.Click += RenameBtnPressed;
+      translationKeyProvider1.SetTranslationKey(renameBtn, Constants.RENAME_FORM_RENAME_BUTTON_STR);
       // 
       // cancelBtn
       // 
@@ -71,6 +75,7 @@ namespace Longbow.Forms
       cancelBtn.Text = "Cancel";
       cancelBtn.UseVisualStyleBackColor = true;
       cancelBtn.Click += CancelBtnPressed;
+      translationKeyProvider1.SetTranslationKey(cancelBtn, Constants.RENAME_FORM_CANCEL_BUTTON_STR);
       // 
       // tableLayoutPanel1
       // 
@@ -110,5 +115,6 @@ namespace Longbow.Forms
     private FontAwesome.Sharp.IconButton renameBtn;
     private FontAwesome.Sharp.IconButton cancelBtn;
     private TableLayoutPanel tableLayoutPanel1;
+    private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
   }
 }

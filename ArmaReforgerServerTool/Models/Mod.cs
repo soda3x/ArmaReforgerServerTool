@@ -8,6 +8,7 @@
  ******************************************************************************/
 
 using HtmlAgilityPack;
+using Longbow.Utils;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
 using Serilog;
@@ -135,7 +136,7 @@ namespace ReforgerServerApp
         }
         catch (Exception ex)
         {
-          Utilities.DisplayErrorMessage("Unable to fetch Scenario IDs from Arma Reforger Workshop, please check your internet connection.", ex.Message);
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.MOD_FETCH_SCENARIO_IDS_FAILED_STR), ex.Message);
         }
       }
       return scenarios;

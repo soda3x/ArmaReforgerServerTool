@@ -7,6 +7,7 @@
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Utils;
 using ReforgerServerApp.Utils;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -457,8 +458,8 @@ namespace ReforgerServerApp
       }
       catch
       {
-        Utilities.DisplayErrorMessage("The mission header is malformed. Please check your formatting is valid JSON and try again.",
-            "Unable to parse Mission Header.");
+        Utilities.DisplayErrorMessage(Strings.Get(Constants.SERVER_CONFIG_MISSION_HEADER_MALFORMED_STR),
+            Strings.Get(Constants.SERVER_CONFIG_MISSION_HEADER_MALFORMED_DETAIL_STR));
       }
     }
   }

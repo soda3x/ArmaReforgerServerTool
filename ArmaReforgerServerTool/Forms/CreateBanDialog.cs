@@ -1,6 +1,8 @@
 using Longbow.Components.ui;
 using Longbow.Managers;
 using Longbow.Models;
+using Longbow.Utils;
+using ReforgerServerApp;
 using ReforgerServerApp.Utils;
 
 namespace Longbow.Forms
@@ -15,10 +17,13 @@ namespace Longbow.Forms
     {
       InitializeComponent();
       ThemeManager.GetInstance().ConfigureTheme(this);
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
       m_recon = recon;
       m_reconLog = reconLog;
       m_playerToBan = playerToBan;
-      creatingBanForLabel.Text = $"Creating ban for {playerToBan.PlayerName}...";
+      creatingBanForLabel.Text = Strings.Get(Constants.CREATE_BAN_CREATING_FOR_MESSAGE_STR, ("playerName", playerToBan.PlayerName));
+      banDurationSecondsTB.PlaceholderText = Strings.Get(Constants.CREATE_BAN_DURATION_PLACEHOLDER_STR);
+      banReasonTB.PlaceholderText = Strings.Get(Constants.CREATE_BAN_REASON_PLACEHOLDER_STR);
     }
 
     private void OnBanBtnPressed(object sender, EventArgs e)

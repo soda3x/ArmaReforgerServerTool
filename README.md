@@ -9,15 +9,15 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 - Load and Save server configuration files
 - Automatically schedule your server to restart at a specified time of day
 - Powerful mod management with the ability to import mods from saved configurations
-- Manage server saves with ease with a powerful _Save Manager_ tool
 - Import and Export mod lists to share with your mates!
 - Easily select the desired scenario you want to play
 - Automatically fetches Scenario IDs for your mods from the Arma Workshop
 - Monitors your server and automatically restarts it if it crashes
+- Graphically monitor the memory and CPU usage of your server
 
 ## Requirements
 
-- [dotNET 8 Runtime](https://dotnet.microsoft.com/en-us/download)
+- [.NET 10 Runtime](https://dotnet.microsoft.com/en-us/download)
 - Any dependencies for the Arma Reforger Dedicated Server (namely Microsoft Visual C++ Runtime)
 
 ### Developer Dependencies
@@ -25,7 +25,7 @@ Create Arma Reforger Dedicated Servers on Windows with this easy to use GUI tool
 If you are contributing to the project, you will also need the following:
 
 - NSIS (to build the installer)
-- Visual Studio 2022
+- Visual Studio 2022+
 
 ## Screenshots
 
@@ -39,9 +39,18 @@ If you are contributing to the project, you will also need the following:
 
 See [here](docs/PARAMETERS.md) for more information on the parameters in the app.
 
+## Translations
+
+Longbow's UI can be translated without touching any code. See
+[here](ArmaReforgerServerTool/Resources/Strings/README.md) for how to add or update a language.
+
+Currently available: English.
+
+**We are looking for translators!** Please come and chat to us on Discord or open a Pull Request! It is greatly appreciated
+
 ## Building
 
-- Build using Visual Studio 2022 (be sure to make `Release`)
+- Build using Visual Studio 2022+ (be sure to make `Release`)
 
 - Run `MakeNSISW` and compile the installer script in `scripts/` to make the installer
 

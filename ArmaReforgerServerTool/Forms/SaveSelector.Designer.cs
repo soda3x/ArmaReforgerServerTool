@@ -1,3 +1,5 @@
+using ReforgerServerApp;
+
 namespace Longbow.Forms
 {
   partial class SaveSelector
@@ -39,6 +41,7 @@ namespace Longbow.Forms
       clearSaveBtn = new FontAwesome.Sharp.IconButton();
       loadedSaveLabel = new Label();
       groupBox1 = new GroupBox();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       tableLayoutPanel1.SuspendLayout();
       groupBox1.SuspendLayout();
       SuspendLayout();
@@ -72,6 +75,7 @@ namespace Longbow.Forms
       loadSelectedSaveBtn.TextAlign = ContentAlignment.MiddleRight;
       loadSelectedSaveBtn.UseVisualStyleBackColor = true;
       loadSelectedSaveBtn.Click += LoadBtnPressed;
+      translationKeyProvider1.SetTranslationKey(loadSelectedSaveBtn, Constants.SAVE_SELECTOR_SELECT_BUTTON_STR);
       // 
       // keepPermanentlyBtn
       // 
@@ -91,6 +95,7 @@ namespace Longbow.Forms
       keepPermanentlyBtn.TextAlign = ContentAlignment.MiddleRight;
       keepPermanentlyBtn.UseVisualStyleBackColor = true;
       keepPermanentlyBtn.Click += KeepBtnPressed;
+      translationKeyProvider1.SetTranslationKey(keepPermanentlyBtn, Constants.SAVE_SELECTOR_KEEP_BUTTON_STR);
       // 
       // deleteSaveBtn
       // 
@@ -110,6 +115,7 @@ namespace Longbow.Forms
       deleteSaveBtn.TextAlign = ContentAlignment.MiddleRight;
       deleteSaveBtn.UseVisualStyleBackColor = true;
       deleteSaveBtn.Click += DeleteBtnPressed;
+      translationKeyProvider1.SetTranslationKey(deleteSaveBtn, Constants.SAVE_SELECTOR_DELETE_BUTTON_STR);
       // 
       // tableLayoutPanel1
       // 
@@ -152,6 +158,7 @@ namespace Longbow.Forms
       renameSaveBtn.TextAlign = ContentAlignment.MiddleRight;
       renameSaveBtn.UseVisualStyleBackColor = true;
       renameSaveBtn.Click += RenameBtnPressed;
+      translationKeyProvider1.SetTranslationKey(renameSaveBtn, Constants.SAVE_SELECTOR_RENAME_BUTTON_STR);
       // 
       // useLatestSaveBtn
       // 
@@ -170,6 +177,7 @@ namespace Longbow.Forms
       useLatestSaveBtn.TextAlign = ContentAlignment.MiddleRight;
       useLatestSaveBtn.UseVisualStyleBackColor = true;
       useLatestSaveBtn.Click += LatestBtnPressed;
+      translationKeyProvider1.SetTranslationKey(useLatestSaveBtn, Constants.SAVE_SELECTOR_LATEST_BUTTON_STR);
       // 
       // clearSaveBtn
       // 
@@ -188,6 +196,7 @@ namespace Longbow.Forms
       clearSaveBtn.TextAlign = ContentAlignment.MiddleRight;
       clearSaveBtn.UseVisualStyleBackColor = true;
       clearSaveBtn.Click += ClearSaveBtnPressed;
+      translationKeyProvider1.SetTranslationKey(clearSaveBtn, Constants.SAVE_SELECTOR_EJECT_BUTTON_STR);
       // 
       // loadedSaveLabel
       // 
@@ -240,5 +249,6 @@ namespace Longbow.Forms
     private FontAwesome.Sharp.IconButton useLatestSaveBtn;
     private FontAwesome.Sharp.IconButton clearSaveBtn;
     private GroupBox groupBox1;
+    private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
   }
 }

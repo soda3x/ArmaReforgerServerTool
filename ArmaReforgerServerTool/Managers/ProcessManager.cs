@@ -176,7 +176,7 @@ namespace ReforgerServerApp.Managers
         {
           buttonIconChar = IconChar.Stop,
           enableServerFields = false,
-          serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
+          serverRunningLabelText = Strings.Get(Constants.SERVER_CURRENTLY_RUNNING_STR),
           startServerBtnEnabled = false
         };
         OnUpdateGuiControlsEvent(guiModel);
@@ -262,7 +262,7 @@ namespace ReforgerServerApp.Managers
         }
         catch (Exception ex)
         {
-          Utilities.DisplayErrorMessage("Error", ex.Message);
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.PROCESS_MANAGER_GENERIC_ERROR_STR), ex.Message);
         }
       }
 
@@ -278,7 +278,7 @@ namespace ReforgerServerApp.Managers
       {
         buttonIconChar = IconChar.Stop,
         enableServerFields = false,
-        serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
+        serverRunningLabelText = Strings.Get(Constants.SERVER_CURRENTLY_RUNNING_STR),
         startServerBtnEnabled = false
       };
       OnUpdateGuiControlsEvent(guiModel);
@@ -307,21 +307,10 @@ namespace ReforgerServerApp.Managers
     /// <param name="e"></param>
     private void SteamCmdUpdateWorkerDoWork(object sender, DoWorkEventArgs e)
     {
-      string updateSwitch =  KeepServerUpdated ? "+app_update" : "";
+      string updateSwitch = KeepServerUpdated ? "+app_update" : "";
       string updateNotifMsg = KeepServerUpdated ? "Longbow will ensure the server is up-to-date." : "Longbow will not update the dedicated server.";
       SteamCmdLogEventArgs updateNotif = new($"{Utilities.GetTimestamp()}: {updateNotifMsg} {Environment.NewLine}");
       OnUpdateSteamCmdLogEvent(updateNotif);
-
-      // Clear the cache to prevent "Missing configuration" errors before starting
-      try
-      {
-        string appInfoPath = Path.Combine(System.IO.Path.GetDirectoryName(FileIOManager.GetInstance().GetSteamCmdFile()), "appcache", "appinfo.vdf");
-        if (File.Exists(appInfoPath))
-        {
-          File.Delete(appInfoPath);
-        }
-      }
-      catch { /* Ignore if locked or missing */ }
 
       string steamCommand = $"+force_install_dir ..\\Arma_Reforger +login anonymous anonymous {updateSwitch} 1874900 +quit";
       if (ConfigurationManager.GetInstance().useExperimentalServer)
@@ -329,47 +318,119 @@ namespace ReforgerServerApp.Managers
         steamCommand = $"+force_install_dir ..\\Arma_Reforger\\experimental +login anonymous anonymous {updateSwitch} 1890870 +quit";
       }
 
-      ProcessStartInfo steamCmdStartInfo = new()
+      int maxRetries = 2;
+      int currentAttempt = 0;
+      bool updateSuccessful = false;
+
+      while (currentAttempt < maxRetries && !updateSuccessful)
       {
-        WindowStyle = ProcessWindowStyle.Hidden,
-        FileName = FileIOManager.GetInstance().GetSteamCmdFile(),
-        Arguments = steamCommand,
-        RedirectStandardOutput = true,
-        RedirectStandardError = true,
-        CreateNoWindow = true
-      };
+        currentAttempt++;
+        bool missingConfigDetected = false;
 
-      m_steamCmdUpdateProcess = new()
-      {
-        EnableRaisingEvents = true,
-        StartInfo = steamCmdStartInfo
-      };
-
-      m_steamCmdUpdateProcess.Start();
-
-      Task steamStdout = Task.Run(() => ReadStreamAsync(m_steamCmdUpdateProcess.StandardOutput));
-      Task steamStderr = Task.Run(() => ReadStreamAsync(m_steamCmdUpdateProcess.StandardError));
-
-      DateTime startTime = DateTime.Now;
-      DateTime lastLogTime = DateTime.Now;
-
-      while (!m_steamCmdUpdateProcess.WaitForExit(1000))
-      {
-        if ((DateTime.Now - lastLogTime).TotalSeconds >= 5)
+        ProcessStartInfo steamCmdStartInfo = new()
         {
-          TimeSpan elapsed = DateTime.Now - startTime;
-          SteamCmdLogEventArgs heartbeat = new($"{Utilities.GetTimestamp()}: SteamCMD is downloading/verifying files, please be patient... ({elapsed.Minutes:D2}:{elapsed.Seconds:D2} elapsed){Environment.NewLine}");
-          OnUpdateSteamCmdLogEvent(heartbeat);
-          lastLogTime = DateTime.Now;
+          WindowStyle = ProcessWindowStyle.Hidden,
+          FileName = FileIOManager.GetInstance().GetSteamCmdFile(),
+          Arguments = steamCommand,
+          RedirectStandardOutput = true,
+          RedirectStandardError = true,
+          CreateNoWindow = true
+        };
+
+        m_steamCmdUpdateProcess = new()
+        {
+          EnableRaisingEvents = true,
+          StartInfo = steamCmdStartInfo
+        };
+
+        m_steamCmdUpdateProcess.Start();
+
+        Task steamStdout = Task.Run(async () =>
+        {
+          using StreamReader reader = m_steamCmdUpdateProcess.StandardOutput;
+          while (!reader.EndOfStream)
+          {
+            string line = await reader.ReadLineAsync();
+            if (line != null)
+            {
+              if (line.Contains("Missing configuration", StringComparison.OrdinalIgnoreCase))
+              {
+                missingConfigDetected = true;
+                try
+                {
+                  if (!m_steamCmdUpdateProcess.HasExited)
+                    m_steamCmdUpdateProcess.Kill();
+                }
+                catch { /* Ignore */ }
+              }
+              OnUpdateSteamCmdLogEvent(new SteamCmdLogEventArgs($"{line}{Environment.NewLine}"));
+            }
+          }
+        });
+
+        Task steamStderr = Task.Run(async () =>
+        {
+          using StreamReader reader = m_steamCmdUpdateProcess.StandardError;
+          while (!reader.EndOfStream)
+          {
+            string line = await reader.ReadLineAsync();
+            if (line != null)
+            {
+              OnUpdateSteamCmdLogEvent(new SteamCmdLogEventArgs($"{line}{Environment.NewLine}"));
+            }
+          }
+        });
+
+        DateTime startTime = DateTime.Now;
+        DateTime lastLogTime = DateTime.Now;
+
+        while (!m_steamCmdUpdateProcess.WaitForExit(1000))
+        {
+          if ((DateTime.Now - lastLogTime).TotalSeconds >= 5)
+          {
+            TimeSpan elapsed = DateTime.Now - startTime;
+            SteamCmdLogEventArgs heartbeat = new($"{Utilities.GetTimestamp()}: SteamCMD is downloading/verifying files, please be patient... ({elapsed.Minutes:D2}:{elapsed.Seconds:D2} elapsed){Environment.NewLine}");
+            OnUpdateSteamCmdLogEvent(heartbeat);
+            lastLogTime = DateTime.Now;
+          }
+        }
+
+        Task.WaitAll(new[] { steamStdout, steamStderr }, 500);
+
+        if (missingConfigDetected)
+        {
+          OnUpdateSteamCmdLogEvent(new SteamCmdLogEventArgs($"{Utilities.GetTimestamp()}: SteamCMD error detected, clearing appcache and trying again... (Attempt {currentAttempt}/{maxRetries})...{Environment.NewLine}"));
+
+          // Wait for process to fully release OS file handles on appinfo.vdf
+          m_steamCmdUpdateProcess.WaitForExit(2000);
+
+          try
+          {
+            // Deleting the entire directory is safer than targeting just appinfo.vdf
+            string appCachePath = Path.Combine(System.IO.Path.GetDirectoryName(FileIOManager.GetInstance().GetSteamCmdFile()), "appcache");
+            if (Directory.Exists(appCachePath))
+            {
+              Directory.Delete(appCachePath, true);
+            }
+          }
+          catch (Exception ex)
+          {
+            OnUpdateSteamCmdLogEvent(new SteamCmdLogEventArgs($"Failed to clear appcache: {ex.Message}{Environment.NewLine}"));
+          }
+
+          continue;
+        }
+        else
+        {
+          updateSuccessful = true;
         }
       }
-      Task.WaitAll(new[] { steamStdout, steamStderr }, 500);
 
       bool steamCmdRestarted = false;
       Process[] lingeringSteamCmds = Process.GetProcessesByName("steamcmd");
-
       DateTime backgroundWaitStart = DateTime.Now;
       TimeSpan maxWaitTime = TimeSpan.FromMinutes(15);
+      DateTime lastBackgroundLogTime = DateTime.Now;
 
       while (lingeringSteamCmds.Length > 0 && (DateTime.Now - backgroundWaitStart) < maxWaitTime)
       {
@@ -380,12 +441,12 @@ namespace ReforgerServerApp.Managers
           steamCmdRestarted = true;
         }
 
-        if ((DateTime.Now - lastLogTime).TotalSeconds >= 5)
+        if ((DateTime.Now - lastBackgroundLogTime).TotalSeconds >= 5)
         {
           TimeSpan elapsed = DateTime.Now - backgroundWaitStart;
           SteamCmdLogEventArgs heartbeat = new($"{Utilities.GetTimestamp()}: SteamCMD self-update running... ({elapsed.Minutes:D2}:{elapsed.Seconds:D2} elapsed){Environment.NewLine}");
           OnUpdateSteamCmdLogEvent(heartbeat);
-          lastLogTime = DateTime.Now;
+          lastBackgroundLogTime = DateTime.Now;
         }
 
         foreach (Process proc in lingeringSteamCmds)
@@ -396,7 +457,7 @@ namespace ReforgerServerApp.Managers
               proc.WaitForExit(1000);
           }
           catch (Exception) { /* Process may have exited */ }
-          finally { proc.Dispose(); } // Free memory
+          finally { proc.Dispose(); }
         }
 
         lingeringSteamCmds = Process.GetProcessesByName("steamcmd");
@@ -411,13 +472,31 @@ namespace ReforgerServerApp.Managers
         OnUpdateSteamCmdLogEvent(finished);
       }
 
-      if (m_steamCmdUpdateProcess.HasExited)
+      if (!updateSuccessful)
+      {
+        SteamCmdLogEventArgs failed = new($"{Utilities.GetTimestamp()}: SteamCMD failed to resolve configuration errors after {maxRetries} attempts. Aborting.{Environment.NewLine}");
+        OnUpdateSteamCmdLogEvent(failed);
+
+        GuiModelEventArgs guiModel = new()
+        {
+          buttonIconChar = IconChar.Play,
+          enableServerFields = true,
+          serverRunningLabelText = "Update Failed",
+          startServerBtnEnabled = true
+        };
+        OnUpdateGuiControlsEvent(guiModel);
+
+        return; // Exit method so it doesn't hang
+      }
+
+      // Start the Arma Reforger Server
+      if (updateSuccessful)
       {
         GuiModelEventArgs guiModel = new()
         {
           buttonIconChar = IconChar.Stop,
           enableServerFields = false,
-          serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
+          serverRunningLabelText = Strings.Get(Constants.SERVER_CURRENTLY_RUNNING_STR),
           startServerBtnEnabled = true
         };
         OnUpdateGuiControlsEvent(guiModel);

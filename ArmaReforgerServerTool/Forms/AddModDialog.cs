@@ -7,6 +7,7 @@
  ******************************************************************************/
 
 using Longbow.Managers;
+using Longbow.Utils;
 using ReforgerServerApp.Managers;
 using WinForms.Fluent;
 
@@ -21,7 +22,9 @@ namespace ReforgerServerApp
     {
       InitializeComponent();
       ThemeManager.GetInstance().ConfigureTheme(this);
-      this.Text = "Longbow - Add Mod";
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
+      this.Text = Strings.Get(Constants.ADD_MOD_ADD_TITLE_STR);
+      ApplyPlaceholders();
       m_reforgerApp = reforgerApp;
       CreateTooltips();
     }
@@ -30,22 +33,30 @@ namespace ReforgerServerApp
     {
       InitializeComponent();
       this.Mica();
-      this.Text = "Longbow - Edit Mod";
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
+      this.Text = Strings.Get(Constants.ADD_MOD_EDIT_TITLE_STR);
+      ApplyPlaceholders();
       m_reforgerApp = reforgerApp;
       modId.Text = m.GetModID();
       modName.Text = m.GetModName();
       modVers.Text = m.GetModVersion().Equals("latest") ? "" : m.GetModVersion();
       required.Checked = m.IsModRequired();
-      addBtn.Text = "Edit";
+      addBtn.Text = Strings.Get(Constants.ADD_MOD_EDIT_BUTTON_STR);
       m_isEditMode = true;
       m_idx = idx;
       CreateTooltips();
     }
 
+    private void ApplyPlaceholders()
+    {
+      modName.PlaceholderText = Strings.Get(Constants.ADD_MOD_NAME_PLACEHOLDER_STR);
+      modId.PlaceholderText = Strings.Get(Constants.ADD_MOD_ID_PLACEHOLDER_STR);
+      modVers.PlaceholderText = Strings.Get(Constants.ADD_MOD_VERSION_PLACEHOLDER_STR);
+    }
     private void CreateTooltips()
     {
       ToolTip requiredTooltip = new();
-      requiredTooltip.SetToolTip(requiredLabel, "Setting this will make it so that when this mod cannot be downloaded from the Workshop, the server will not start.");
+      requiredTooltip.SetToolTip(requiredLabel, Strings.Get(Constants.ADD_MOD_REQUIRED_TOOLTIP_STR));
     }
 
     /// <summary>

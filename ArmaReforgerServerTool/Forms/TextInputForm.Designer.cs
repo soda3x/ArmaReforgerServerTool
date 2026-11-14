@@ -32,6 +32,7 @@ namespace ReforgerServerApp
     {
       textInputField = new FluentTextBox();
       okBtn = new Button();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       SuspendLayout();
       // 
       // textInputField
@@ -54,6 +55,7 @@ namespace ReforgerServerApp
       okBtn.Text = "OK";
       okBtn.UseVisualStyleBackColor = true;
       okBtn.Click += OkBtnClicked;
+      translationKeyProvider1.SetTranslationKey(okBtn, Constants.TEXT_INPUT_OK_BUTTON_STR);
       // 
       // TextInputForm
       // 
@@ -74,5 +76,6 @@ namespace ReforgerServerApp
 
     private FluentTextBox textInputField;
         private Button okBtn;
+        private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
     }
 }

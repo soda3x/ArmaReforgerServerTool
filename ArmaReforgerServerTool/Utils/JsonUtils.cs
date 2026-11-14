@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 using Longbow.Models;
+using Longbow.Utils;
 using ReforgerServerApp.Models;
 using Serilog;
 using System.Text.Json;
@@ -145,7 +146,7 @@ namespace ReforgerServerApp.Utils
         }
         catch (Exception ex)
         {
-          Utilities.DisplayErrorMessage("Unable to load value from configuration file.", ex.Message);
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.JSON_UTILS_LOAD_VALUE_FAILED_STR), ex.Message);
           return default;
         }
       }
@@ -231,12 +232,12 @@ namespace ReforgerServerApp.Utils
           throw new JsonException("Expected StartObject token.");
         }
 
-        string address = null;
+        string address = string.Empty;
         int port = 0;
-        string password = null;
-        string permission = null;
-        string[] blacklist = null;
-        string[] whitelist = null;
+        string password = string.Empty;
+        string permission = string.Empty;
+        string[] blacklist = [];
+        string[] whitelist = [];
         int maxClients = 0;
 
         while (reader.Read())
@@ -576,6 +577,9 @@ namespace ReforgerServerApp.Utils
               case "autoRestartTime_ms":
               props.autoRestartTime_ms = reader.GetInt32();
               break;
+              case "language":
+              props.language = reader.GetString();
+              break;
               default:
               throw new JsonException($"Unexpected property: {propertyName}");
             }
@@ -598,6 +602,7 @@ namespace ReforgerServerApp.Utils
         writer.WriteString("logFile", value.logFile);
         writer.WriteString("minimumLogLevel", value.minimumLogLevel);
         writer.WriteNumber("autoRestartTime_ms", value.autoRestartTime_ms);
+        writer.WriteString("language", value.language);
 
         writer.WritePropertyName("defaultScenarios");
         JsonSerializer.Serialize(writer, value.defaultScenarios, options);

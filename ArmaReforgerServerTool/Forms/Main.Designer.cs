@@ -78,6 +78,8 @@ namespace ReforgerServerApp
       useExperimentalCheckBox = new CheckBox();
       label30 = new Label();
       logLevelComboBox = new FluentComboBox();
+      languageLabel = new Label();
+      languageComboBox = new FluentComboBox();
       clearLogBtn = new FontAwesome.Sharp.IconButton();
       aboutBtn = new FontAwesome.Sharp.IconButton();
       groupBox4 = new FluentGroupBox();
@@ -113,6 +115,7 @@ namespace ReforgerServerApp
       tableLayoutPanel9 = new TableLayoutPanel();
       serverAddressStatusLabel = new Label();
       copyAddressBtn = new FontAwesome.Sharp.IconButton();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
       tableLayoutPanel6.SuspendLayout();
@@ -171,6 +174,7 @@ namespace ReforgerServerApp
       tabPage1.Size = new Size(1518, 750);
       tabPage1.TabIndex = 0;
       tabPage1.Text = "Configuration";
+      translationKeyProvider1.SetTranslationKey(tabPage1, Constants.MAIN_CONFIGURATION_TAB_STR);
       // 
       // tableLayoutPanel6
       // 
@@ -497,6 +501,8 @@ namespace ReforgerServerApp
       modsSearchTB.PlaceholderText = "Search for a mod...";
       modsSearchTB.ReadOnly = false;
       modsSearchTB.ScrollBars = ScrollBars.None;
+      modsSearchTB.SelectedText = "";
+      modsSearchTB.SelectionStart = 0;
       modsSearchTB.Size = new Size(623, 30);
       modsSearchTB.TabIndex = 8;
       modsSearchTB.UseSystemPasswordChar = false;
@@ -535,7 +541,7 @@ namespace ReforgerServerApp
       enabledMods.SelectedIndex = -1;
       enabledMods.SelectedItem = null;
       enabledMods.SelectedValue = null;
-      enabledMods.SelectionMode = SelectionMode.One;
+      enabledMods.SelectionMode = SelectionMode.MultiExtended;
       enabledMods.Size = new Size(291, 625);
       enabledMods.TabIndex = 1;
       enabledMods.ValueMember = "";
@@ -555,7 +561,7 @@ namespace ReforgerServerApp
       availableMods.SelectedIndex = -1;
       availableMods.SelectedItem = null;
       availableMods.SelectedValue = null;
-      availableMods.SelectionMode = SelectionMode.One;
+      availableMods.SelectionMode = SelectionMode.MultiExtended;
       availableMods.Size = new Size(291, 625);
       availableMods.TabIndex = 0;
       availableMods.ValueMember = "";
@@ -697,6 +703,8 @@ namespace ReforgerServerApp
       tabPage2.Controls.Add(useExperimentalCheckBox);
       tabPage2.Controls.Add(label30);
       tabPage2.Controls.Add(logLevelComboBox);
+      tabPage2.Controls.Add(languageLabel);
+      tabPage2.Controls.Add(languageComboBox);
       tabPage2.Controls.Add(clearLogBtn);
       tabPage2.Controls.Add(aboutBtn);
       tabPage2.Controls.Add(groupBox4);
@@ -720,6 +728,8 @@ namespace ReforgerServerApp
       steamCmdLog.PlaceholderText = "";
       steamCmdLog.ReadOnly = false;
       steamCmdLog.ScrollBars = ScrollBars.None;
+      steamCmdLog.SelectedText = "";
+      steamCmdLog.SelectionStart = 0;
       steamCmdLog.Size = new Size(1253, 637);
       steamCmdLog.TabIndex = 1;
       steamCmdLog.UseSystemPasswordChar = false;
@@ -870,6 +880,36 @@ namespace ReforgerServerApp
       logLevelComboBox.Size = new Size(116, 32);
       logLevelComboBox.TabIndex = 30;
       logLevelComboBox.ValueMember = "";
+      // 
+      // languageLabel
+      // 
+      languageLabel.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
+      languageLabel.AutoSize = true;
+      languageLabel.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+      languageLabel.Location = new Point(1221, 40);
+      languageLabel.Name = "languageLabel";
+      languageLabel.Size = new Size(59, 15);
+      languageLabel.TabIndex = 33;
+      languageLabel.Text = "Language";
+      languageLabel.TextAlign = ContentAlignment.MiddleRight;
+      // 
+      // languageComboBox
+      // 
+      languageComboBox.Anchor =  AnchorStyles.Top | AnchorStyles.Right;
+      languageComboBox.BackColor = Color.Transparent;
+      languageComboBox.DataSource = null;
+      languageComboBox.DisplayMember = "";
+      languageComboBox.FieldBackColor = SystemColors.Window;
+      languageComboBox.ForeColor = SystemColors.ControlText;
+      languageComboBox.Location = new Point(1290, 31);
+      languageComboBox.Name = "languageComboBox";
+      languageComboBox.SelectedIndex = -1;
+      languageComboBox.SelectedItem = null;
+      languageComboBox.SelectedValue = null;
+      languageComboBox.Size = new Size(160, 32);
+      languageComboBox.TabIndex = 34;
+      languageComboBox.ValueMember = "";
+      languageComboBox.SelectedIndexChanged += LanguageComboBoxSelectedIndexChanged;
       // 
       // clearLogBtn
       // 
@@ -1442,6 +1482,8 @@ namespace ReforgerServerApp
     private FontAwesome.Sharp.IconButton locateServerFilesBtn;
     private Label label30;
     private FluentComboBox logLevelComboBox;
+    private Label languageLabel;
+    private FluentComboBox languageComboBox;
     private FontAwesome.Sharp.IconButton scenarioSelectBtn;
     private Label loadedScenarioLabel;
     private FontAwesome.Sharp.IconButton editMissionHeaderBtn;
@@ -1495,5 +1537,6 @@ namespace ReforgerServerApp
     private FluentChart chartMem;
     private Label fpsLabel;
     private Label memLabel;
+    private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
   }
 }

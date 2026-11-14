@@ -103,7 +103,7 @@ namespace Longbow.Components.ui
 
     [Category("Data")]
     [AttributeProvider(typeof(IListSource))]
-     
+
     public object DataSource
     {
       get => m_listBox.DataSource;
@@ -111,7 +111,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Data")]
-     
+
     public string DisplayMember
     {
       get => m_listBox.DisplayMember;
@@ -119,7 +119,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Data")]
-     
+
     public string ValueMember
     {
       get => m_listBox.ValueMember;
@@ -128,7 +128,7 @@ namespace Longbow.Components.ui
 
     [Category("Data")]
     [Browsable(false)]
-     
+
     public object SelectedValue
     {
       get => m_listBox.SelectedValue;
@@ -140,7 +140,7 @@ namespace Longbow.Components.ui
     public ListBox.ObjectCollection Items => m_listBox.Items;
 
     [Category("Behavior")]
-     
+
     public int SelectedIndex
     {
       get => m_listBox.SelectedIndex;
@@ -148,7 +148,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Behavior")]
-     
+
     public object SelectedItem
     {
       get => m_listBox.SelectedItem;
@@ -161,7 +161,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Behavior")]
-     
+
     public SelectionMode SelectionMode
     {
       get => m_listBox.SelectionMode;
@@ -169,7 +169,7 @@ namespace Longbow.Components.ui
     }
 
     [Category("Appearance")]
-     
+
     public Color FieldBackColor
     {
       get => m_fieldBackColor;
@@ -181,14 +181,14 @@ namespace Longbow.Components.ui
       }
     }
 
-     
+
     public Boolean FormattingEnabled
     {
       get => m_listBox.FormattingEnabled;
       set => m_listBox.FormattingEnabled = value;
     }
 
-     
+
     public int ItemHeight
     {
       get => m_listBox.ItemHeight;
