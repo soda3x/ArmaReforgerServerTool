@@ -497,6 +497,8 @@ namespace ReforgerServerApp
       modsSearchTB.PlaceholderText = "Search for a mod...";
       modsSearchTB.ReadOnly = false;
       modsSearchTB.ScrollBars = ScrollBars.None;
+      modsSearchTB.SelectedText = "";
+      modsSearchTB.SelectionStart = 0;
       modsSearchTB.Size = new Size(623, 30);
       modsSearchTB.TabIndex = 8;
       modsSearchTB.UseSystemPasswordChar = false;
@@ -535,7 +537,7 @@ namespace ReforgerServerApp
       enabledMods.SelectedIndex = -1;
       enabledMods.SelectedItem = null;
       enabledMods.SelectedValue = null;
-      enabledMods.SelectionMode = SelectionMode.One;
+      enabledMods.SelectionMode = SelectionMode.MultiExtended;
       enabledMods.Size = new Size(291, 625);
       enabledMods.TabIndex = 1;
       enabledMods.ValueMember = "";
@@ -555,7 +557,7 @@ namespace ReforgerServerApp
       availableMods.SelectedIndex = -1;
       availableMods.SelectedItem = null;
       availableMods.SelectedValue = null;
-      availableMods.SelectionMode = SelectionMode.One;
+      availableMods.SelectionMode = SelectionMode.MultiExtended;
       availableMods.Size = new Size(291, 625);
       availableMods.TabIndex = 0;
       availableMods.ValueMember = "";
@@ -720,6 +722,8 @@ namespace ReforgerServerApp
       steamCmdLog.PlaceholderText = "";
       steamCmdLog.ReadOnly = false;
       steamCmdLog.ScrollBars = ScrollBars.None;
+      steamCmdLog.SelectedText = "";
+      steamCmdLog.SelectionStart = 0;
       steamCmdLog.Size = new Size(1253, 637);
       steamCmdLog.TabIndex = 1;
       steamCmdLog.UseSystemPasswordChar = false;

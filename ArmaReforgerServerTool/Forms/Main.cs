@@ -17,8 +17,6 @@ using ReforgerServerApp.Models;
 using ReforgerServerApp.Utils;
 using Serilog;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Net.Sockets;
 
 namespace ReforgerServerApp
 {
