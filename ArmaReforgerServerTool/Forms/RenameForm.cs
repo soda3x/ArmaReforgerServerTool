@@ -19,6 +19,7 @@ namespace Longbow.Forms
     {
       InitializeComponent();
       ThemeManager.GetInstance().ConfigureTheme(this);
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
       renameTB.Text = text;
     }
 

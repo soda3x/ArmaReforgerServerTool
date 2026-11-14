@@ -25,6 +25,7 @@ namespace ReforgerServerApp
     private BindingSource m_availableModsBindingSource;
     private BindingSource m_enabledModsBindingSource;
     private ServerStatusParser m_serverStatusParser;
+    private List<LanguagePackMeta> m_availableLanguages = [];
 
     public Main()
     {
@@ -35,7 +36,7 @@ namespace ReforgerServerApp
 
       serverRunningLabel.Text = string.Empty;
 
-      modsSearchTB.PlaceholderText = "Search for a mod...";
+      modsSearchTB.PlaceholderText = Strings.Get(Constants.MAIN_MODS_SEARCH_PLACEHOLDER_STR);
 
       ProcessManager.GetInstance().UpdateGuiControlsEvent += HandleUpdateGuiControlsEvent;
       ProcessManager.GetInstance().UpdateSteamCmdLogEvent += HandleUpdateSteamCmdLogEvent;
@@ -54,7 +55,7 @@ namespace ReforgerServerApp
       // Create tooltips
       CreateTooltips();
 
-      loadedScenarioLabel.Text = "No scenario chosen.";
+      loadedScenarioLabel.Text = Strings.Get(Constants.MAIN_NO_SCENARIO_CHOSEN_MESSAGE_STR);
 
       UpdateSteamCmdInstallStatus();
 
@@ -93,13 +94,15 @@ namespace ReforgerServerApp
       loadSaveGameBtn.Visible = false;
       loadSaveGameBtn.Enabled = false;
       ToolTip loadsaveGameBtnTooltip = new();
-      loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, "Disabled for the time being, for now please use the Load Session Save option in Advanced Parameters");
+      loadsaveGameBtnTooltip.SetToolTip(loadSaveGameBtn, Strings.Get(Constants.MAIN_LOAD_SAVE_GAME_TOOLTIP_STR));
 
       copyAddressBtn.Enabled = false;
       copyRconAddressBtn.Enabled = false;
       copyJoinCodeBtn.Enabled = false;
 
       logLevelComboBox.SelectedIndex = 0;
+
+      InitialiseLanguageComboBox();
 
       chartFps.Units = "FPS";
       chartMem.Units = "GB";
@@ -114,7 +117,8 @@ namespace ReforgerServerApp
       {
         if (!FileIOManager.LoadConfigurationFromFile(lastConfigPath))
         {
-          Utilities.DisplayErrorMessage("Failed to open last config", $"Attempted to load the last opened config at {lastConfigPath} but failed.");
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.MAIN_FAILED_TO_OPEN_LAST_CONFIG_STR),
+              Strings.Get(Constants.MAIN_FAILED_TO_OPEN_LAST_CONFIG_DETAIL_STR, ("path", lastConfigPath)));
           SavedStateManager.GetInstance().GetSavedState().lastLoadedConfig = SavedState.Default.lastLoadedConfig;
         }
         else
@@ -124,6 +128,7 @@ namespace ReforgerServerApp
       }
 
       ThemeManager.GetInstance().ConfigureTheme(this);
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
     }
 
     /// <summary>
@@ -132,31 +137,73 @@ namespace ReforgerServerApp
     private void CreateTooltips()
     {
       ToolTip enableAllModsToolTip = new();
-      enableAllModsToolTip.SetToolTip(enableAllModsBtn, Constants.ENABLE_ALL_MODS_STR);
+      enableAllModsToolTip.SetToolTip(enableAllModsBtn, Strings.Get(Constants.ENABLE_ALL_MODS_STR));
       ToolTip disableAllModsToolTip = new();
-      disableAllModsToolTip.SetToolTip(disableAllModsBtn, Constants.DISABLE_ALL_MODS_STR);
+      disableAllModsToolTip.SetToolTip(disableAllModsBtn, Strings.Get(Constants.DISABLE_ALL_MODS_STR));
       ToolTip enableModToolTip = new();
-      enableModToolTip.SetToolTip(addToEnabledBtn, Constants.ENABLE_MOD_STR);
+      enableModToolTip.SetToolTip(addToEnabledBtn, Strings.Get(Constants.ENABLE_MOD_STR));
       ToolTip disableModToolTip = new();
-      disableModToolTip.SetToolTip(removeFromEnabledBtn, Constants.DISABLE_MOD_STR);
+      disableModToolTip.SetToolTip(removeFromEnabledBtn, Strings.Get(Constants.DISABLE_MOD_STR));
       ToolTip useUpnpToolTip = new();
-      useUpnpToolTip.SetToolTip(useUpnp, Constants.USE_UPNP_STR);
+      useUpnpToolTip.SetToolTip(useUpnp, Strings.Get(Constants.USE_UPNP_STR));
       ToolTip exportModsToolTip = new();
-      exportModsToolTip.SetToolTip(exportModsBtn, Constants.EXPORT_MODS_STR);
+      exportModsToolTip.SetToolTip(exportModsBtn, Strings.Get(Constants.EXPORT_MODS_STR));
       ToolTip importModsToolTip = new();
-      exportModsToolTip.SetToolTip(importModsBtn, Constants.IMPORT_MODS_STR);
+      exportModsToolTip.SetToolTip(importModsBtn, Strings.Get(Constants.IMPORT_MODS_STR));
       ToolTip startServerToolTip = new();
-      startServerToolTip.SetToolTip(startServerBtn, Constants.START_SERVER_STR);
+      startServerToolTip.SetToolTip(startServerBtn, Strings.Get(Constants.START_SERVER_STR));
       ToolTip downloadToolTip = new();
-      downloadToolTip.SetToolTip(downloadSteamCmdBtn, Constants.DOWNLOAD_SERVER_FILES_STR);
+      downloadToolTip.SetToolTip(downloadSteamCmdBtn, Strings.Get(Constants.DOWNLOAD_SERVER_FILES_STR));
       ToolTip locateServerToolTip = new();
-      locateServerToolTip.SetToolTip(locateServerFilesBtn, Constants.LOCATE_SERVER_FILES_STR);
+      locateServerToolTip.SetToolTip(locateServerFilesBtn, Strings.Get(Constants.LOCATE_SERVER_FILES_STR));
       ToolTip deleteServerToolTip = new();
-      deleteServerToolTip.SetToolTip(deleteServerFilesBtn, Constants.DELETE_SERVER_FILES_STR);
+      deleteServerToolTip.SetToolTip(deleteServerFilesBtn, Strings.Get(Constants.DELETE_SERVER_FILES_STR));
       ToolTip useExperimentalToolTip = new();
-      useExperimentalToolTip.SetToolTip(useExperimentalCheckBox, Constants.USE_EXPERIMENTAL_STR);
+      useExperimentalToolTip.SetToolTip(useExperimentalCheckBox, Strings.Get(Constants.USE_EXPERIMENTAL_STR));
       ToolTip keepServerUpdatedToolTip = new();
-      keepServerUpdatedToolTip.SetToolTip(keepServerUpdated, Constants.KEEP_SERVER_UPDATED_STR);
+      keepServerUpdatedToolTip.SetToolTip(keepServerUpdated, Strings.Get(Constants.KEEP_SERVER_UPDATED_STR));
+    }
+
+    /// <summary>
+    /// Populates the language combo box from every language pack LocalisationManager can find
+    /// (embedded + on-disk), and selects whichever one is currently active in properties.json.
+    /// </summary>
+    private void InitialiseLanguageComboBox()
+    {
+      m_availableLanguages = LocalisationManager.GetInstance().AvailableLanguages();
+
+      languageComboBox.Items.Clear();
+      languageComboBox.Items.AddRange([.. m_availableLanguages.Select(l => (object) $"{l.NativeName} ({l.Code})")]);
+
+      string currentCode = ToolPropertiesManager.GetInstance().GetToolProperties().language;
+      int currentIndex = m_availableLanguages.FindIndex(l => l.Code == currentCode);
+      languageComboBox.SelectedIndex = currentIndex >= 0 ? currentIndex : 0;
+    }
+
+    /// <summary>
+    /// Persists the chosen language to properties.json. Doesn't apply it live - the language
+    /// is only loaded at startup (see i18n-system.md section 5), so this just tells the user
+    /// a restart is needed.
+    /// </summary>
+    private void LanguageComboBoxSelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (languageComboBox.SelectedIndex < 0 || languageComboBox.SelectedIndex >= m_availableLanguages.Count)
+      {
+        return;
+      }
+
+      string selectedCode = m_availableLanguages[languageComboBox.SelectedIndex].Code;
+      if (selectedCode == ToolPropertiesManager.GetInstance().GetToolProperties().language)
+      {
+        return;
+      }
+
+      ToolPropertiesManager.GetInstance().GetToolProperties().language = selectedCode;
+      ToolPropertiesManager.GetInstance().SaveToolProperties();
+
+      MessageBox.Show(
+          Strings.Get(Constants.LANGUAGE_CHANGE_RESTART_REQUIRED_STR),
+          Strings.Get(Constants.INFO_MESSAGEBOX_TITLE_STR));
     }
 
     /// <summary>
@@ -174,7 +221,7 @@ namespace ReforgerServerApp
       {
         if (FileIOManager.GetInstance().IsSteamCMDInstalled())
         {
-          steamCmdAlert.Text = $"Using Arma Reforger Server found at: \"{FileIOManager.GetInstance().GetInstallDirectory()}\"";
+          steamCmdAlert.Text = Strings.Get(Constants.MAIN_STEAMCMD_FOUND_MESSAGE_STR, ("installDir", FileIOManager.GetInstance().GetInstallDirectory()));
           downloadSteamCmdBtn.Enabled = false;
           startServerBtn.Enabled = true;
           deleteServerFilesBtn.Enabled = true;
@@ -182,7 +229,7 @@ namespace ReforgerServerApp
         }
         else
         {
-          steamCmdAlert.Text = "SteamCMD and the server files were not detected, please Download before continuing.";
+          steamCmdAlert.Text = Strings.Get(Constants.MAIN_STEAMCMD_NOT_FOUND_MESSAGE_STR);
           startServerBtn.Enabled = false;
           downloadSteamCmdBtn.Enabled = true;
           deleteServerFilesBtn.Enabled = false;
@@ -642,29 +689,29 @@ namespace ReforgerServerApp
       ServerParameterString serverName = new()
       {
         ParameterName = "name",
-        ParameterFriendlyName = "Server Name",
-        ParameterTooltip = Constants.SERVER_PARAM_NAME_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_NAME_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_NAME_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(serverName);
       ServerParameterString serverPassword = new()
       {
         ParameterName = "password",
-        ParameterFriendlyName = "Server Password",
-        ParameterTooltip = Constants.SERVER_PARAM_PASSWORD_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_PASSWORD_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_PASSWORD_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(serverPassword);
       ServerParameterString adminPassword = new()
       {
         ParameterName = "passwordAdmin",
-        ParameterFriendlyName = "Admin Password",
-        ParameterTooltip = Constants.SERVER_PARAM_ADMIN_PASSWORD_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_PASSWORD_ADMIN_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_ADMIN_PASSWORD_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(adminPassword);
       ServerParameterList admins = new()
       {
         ParameterName = "admins",
-        ParameterFriendlyName = "Admins",
-        ParameterTooltip = Constants.SERVER_PARAM_ADMINS_TOOLTIP_STR,
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_ADMINS_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_ADMINS_TOOLTIP_STR),
         ParameterList = ConfigurationManager.GetInstance()
                                               .GetServerConfiguration()
                                               .root.game.admins
@@ -673,122 +720,122 @@ namespace ReforgerServerApp
       ServerParameterBool modsRequiredByDefault = new()
       {
         ParameterName = "modsRequiredByDefault",
-        ParameterFriendlyName = "Mods Required by Default",
-        ParameterTooltip = Constants.SERVER_PARAM_MODS_REQUIRED_BY_DEFAULT_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_MODS_REQUIRED_BY_DEFAULT_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_MODS_REQUIRED_BY_DEFAULT_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(modsRequiredByDefault);
       ServerParameterNumeric maxPlayers = new()
       {
         ParameterName = "maxPlayers",
-        ParameterFriendlyName = "Max Players",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_MAX_PLAYERS_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = Game.MIN_PLAYERS,
         ParameterMax = Game.MAX_PLAYERS,
         ParameterValue = Game.DEFAULT_PLAYERS,
-        ParameterTooltip = Constants.SERVER_PARAM_MAX_PLAYERS_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_MAX_PLAYERS_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(maxPlayers);
       ServerParameterBool visible = new()
       {
         ParameterName = "visible",
-        ParameterFriendlyName = "Server Visible",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_VISIBLE_LABEL_STR),
         ParameterValue = Game.DEFAULT_VISIBLE,
-        ParameterTooltip = Constants.SERVER_PARAM_VISIBLE_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_VISIBLE_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(visible);
       ServerParameterString bindAddress = new()
       {
         ParameterName = "bindAddress",
-        ParameterFriendlyName = "Bind Address",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_BIND_ADDRESS_LABEL_STR),
         ParameterValue = Root.DEFAULT_BIND_ADDRESS,
-        ParameterTooltip = Constants.SERVER_PARAM_BIND_ADDRESS_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_BIND_ADDRESS_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(bindAddress);
       ServerParameterNumeric bindPort = new()
       {
         ParameterName = "bindPort",
-        ParameterFriendlyName = "Bind Port",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_BIND_PORT_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = Constants.SERVER_PARAM_MIN_PORT,
         ParameterMax = Constants.SERVER_PARAM_MAX_PORT,
         ParameterValue = Root.DEFAULT_PORT,
-        ParameterTooltip = Constants.SERVER_PARAM_BIND_PORT_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_BIND_PORT_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(bindPort);
       ServerParameterString publicAddress = new()
       {
         ParameterName = "publicAddress",
-        ParameterFriendlyName = "Public Address",
-        ParameterTooltip = Constants.SERVER_PARAM_PUBLIC_ADDRESS_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_PUBLIC_ADDRESS_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_PUBLIC_ADDRESS_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(publicAddress);
       ServerParameterNumeric publicPort = new()
       {
         ParameterName = "publicPort",
-        ParameterFriendlyName = "Public Port",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_PUBLIC_PORT_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = Constants.SERVER_PARAM_MIN_PORT,
         ParameterMax = Constants.SERVER_PARAM_MAX_PORT,
         ParameterValue = Root.DEFAULT_PORT,
-        ParameterTooltip = Constants.SERVER_PARAM_PUBLIC_PORT_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_PUBLIC_PORT_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(publicPort);
       ServerParameterString a2sAddress = new()
       {
         ParameterName = "address",
-        ParameterFriendlyName = "A2S Address",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_ADDRESS_LABEL_STR),
         ParameterValue = A2S.DEFAULT_ADDRESS,
-        ParameterTooltip = Constants.SERVER_PARAM_A2S_ADDRESS_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_A2S_ADDRESS_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(a2sAddress);
       ServerParameterNumeric a2sPort = new()
       {
         ParameterName = "port",
-        ParameterFriendlyName = "A2S Port",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_PORT_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = Constants.SERVER_PARAM_MIN_PORT,
         ParameterMax = Constants.SERVER_PARAM_MAX_PORT,
         ParameterValue = A2S.DEFAULT_PORT,
-        ParameterTooltip = Constants.SERVER_PARAM_A2S_PORT_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_A2S_PORT_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(a2sPort);
       ServerParameterBool rconEnabled = new()
       {
         ParameterName = "rconEnabled",
-        ParameterFriendlyName = "Enable Rcon",
-        ParameterTooltip = Constants.SERVER_PARAM_ENABLE_RCON_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_RCON_ENABLED_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_ENABLE_RCON_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(rconEnabled);
       ServerParameterString rconAddress = new()
       {
         ParameterName = "rconAddress",
-        ParameterFriendlyName = "Rcon Address",
-        ParameterTooltip = Constants.SERVER_PARAM_RCON_ADDRESS_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_RCON_ADDRESS_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_RCON_ADDRESS_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(rconAddress);
       ServerParameterNumeric rconPort = new()
       {
         ParameterName = "rconPort",
-        ParameterFriendlyName = "Rcon Port",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_RCON_PORT_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = Constants.SERVER_PARAM_MIN_PORT,
         ParameterMax = Constants.SERVER_PARAM_MAX_PORT,
         ParameterValue = Rcon.DEFAULT_PORT,
-        ParameterTooltip = Constants.SERVER_PARAM_RCON_PORT_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_RCON_PORT_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(rconPort);
       ServerParameterString rconPassword = new()
       {
         ParameterName = "rconPassword",
-        ParameterFriendlyName = "Rcon Password",
-        ParameterTooltip = Constants.SERVER_PARAM_RCON_PASSWORD_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_RCON_PASSWORD_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_RCON_PASSWORD_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(rconPassword);
       ServerParameterNumeric rconMaxClients = new()
       {
         ParameterName = "rconMaxClients",
-        ParameterFriendlyName = "Rcon Max Clients",
-        ParameterTooltip = Constants.SERVER_PARAM_RCON_MAX_CLIENTS_TOOLTIP_STR,
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_RCON_MAX_CLIENTS_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_RCON_MAX_CLIENTS_TOOLTIP_STR),
         ParameterIncrement = 1,
         ParameterMin = Rcon.MIN_CLIENTS,
         ParameterMax = Rcon.MAX_CLIENTS,
@@ -798,8 +845,8 @@ namespace ReforgerServerApp
       ServerParameterSelect rconPermission = new()
       {
         ParameterName = "rconPermission",
-        ParameterFriendlyName = "Rcon Permission",
-        ParameterTooltip = Constants.SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR,
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_RCON_PERMISSION_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_RCON_PERMISSION_TOOLTIP_STR),
         ParameterValue = Rcon.PERMISSIONS
       };
       rconPermission.ParameterValueSelection(Rcon.DEFAULT_PERMISSION);
@@ -807,8 +854,8 @@ namespace ReforgerServerApp
       ServerParameterList rconWhitelist = new()
       {
         ParameterName = "rconWhitelist",
-        ParameterFriendlyName = "Rcon Whitelist",
-        ParameterTooltip = Constants.SERVER_PARAM_RCON_WHITELIST_TOOLTIP_STR,
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_RCON_WHITELIST_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_RCON_WHITELIST_TOOLTIP_STR),
         ParameterList = ConfigurationManager.GetInstance()
                                               .GetServerConfiguration()
                                               .root.rcon.whitelist
@@ -817,8 +864,8 @@ namespace ReforgerServerApp
       ServerParameterList rconBlacklist = new()
       {
         ParameterName = "rconBlacklist",
-        ParameterFriendlyName = "Rcon Blacklist",
-        ParameterTooltip = Constants.SERVER_PARAM_RCON_BLACKLIST_TOOLTIP_STR,
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_RCON_BLACKLIST_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_RCON_BLACKLIST_TOOLTIP_STR),
         ParameterList = ConfigurationManager.GetInstance()
                                               .GetServerConfiguration()
                                               .root.rcon.blacklist
@@ -827,145 +874,145 @@ namespace ReforgerServerApp
       ServerParameterNumeric playerSaveTime = new()
       {
         ParameterName = "playerSaveTime",
-        ParameterFriendlyName = "Player Save Time (secs)",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_PLAYER_SAVE_TIME_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = Operating.MIN_PLAYER_SAVE_TIME,
         ParameterMax = Operating.MAX_PLAYER_SAVE_TIME,
         ParameterValue = Operating.DEFAULT_PLAYER_SAVE_TIME,
-        ParameterTooltip = Constants.SERVER_PARAM_PLAYER_SAVE_TIME_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_PLAYER_SAVE_TIME_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(playerSaveTime);
       ServerParameterNumeric serverMaxViewDistance = new()
       {
         ParameterName = "serverMaxViewDistance",
-        ParameterFriendlyName = "Server Max View Distance",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = GameProperties.MIN_SERVER_VIEW_DISTANCE,
         ParameterMax = GameProperties.MAX_SERVER_VIEW_DISTANCE,
         ParameterValue = GameProperties.DEFAULT_SERVER_VIEW_DISTANCE,
-        ParameterTooltip = Constants.SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_SERVER_MAX_VIEW_DISTANCE_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(serverMaxViewDistance);
       ServerParameterNumeric serverMinGrassDistance = new()
       {
         ParameterName = "serverMinGrassDistance",
-        ParameterFriendlyName = "Server Min Grass Distance",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_SERVER_MIN_GRASS_DISTANCE_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = GameProperties.MIN_SERVER_GRASS_DISTANCE,
         ParameterMax = GameProperties.MAX_SERVER_GRASS_DISTANCE,
         ParameterValue = GameProperties.DEFAULT_SERVER_GRASS_DISTANCE,
-        ParameterTooltip = Constants.SERVER_PARAM_SERVER_MIN_GRASS_DISTANCE_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_SERVER_MIN_GRASS_DISTANCE_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(serverMinGrassDistance);
       ServerParameterNumeric networkViewDistance = new()
       {
         ParameterName = "networkViewDistance",
-        ParameterFriendlyName = "Network View Distance",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_NETWORK_VIEW_DISTANCE_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = GameProperties.MIN_NETWORK_VIEW_DISTANCE,
         ParameterMax = GameProperties.MAX_NETWORK_VIEW_DISTANCE,
         ParameterValue = GameProperties.DEFAULT_NETWORK_VIEW_DISTANCE,
-        ParameterTooltip = Constants.SERVER_PARAM_NETWORK_VIEW_DISTANCE_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_NETWORK_VIEW_DISTANCE_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(networkViewDistance);
       ServerParameterBool disableThirdPerson = new()
       {
         ParameterName = "disableThirdPerson",
-        ParameterFriendlyName = "Disable Third Person",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_DISABLE_THIRD_PERSON_LABEL_STR),
         ParameterValue = GameProperties.DEFAULT_DISABLE_THIRD_PERSON,
-        ParameterTooltip = Constants.SERVER_PARAM_DISABLE_THIRD_PERSON_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_DISABLE_THIRD_PERSON_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(disableThirdPerson);
       ServerParameterBool fastValidation = new()
       {
         ParameterName = "fastValidation",
-        ParameterFriendlyName = "Fast Validation",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_FAST_VALIDATION_LABEL_STR),
         ParameterValue = GameProperties.DEFAULT_FAST_VALIDATION,
-        ParameterTooltip = Constants.SERVER_PARAM_FAST_VALIDATION_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_FAST_VALIDATION_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(fastValidation);
       ServerParameterBool battlEye = new()
       {
         ParameterName = "battlEye",
-        ParameterFriendlyName = "BattlEye",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_BATTL_EYE_LABEL_STR),
         ParameterValue = GameProperties.DEFAULT_BATTLE_EYE,
-        ParameterTooltip = Constants.SERVER_PARAM_BATTLEYE_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_BATTLEYE_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(battlEye);
       ServerParameterBool lobbyPlayerSynchronise = new()
       {
         ParameterName = "lobbyPlayerSynchronise",
-        ParameterFriendlyName = "Lobby Player Synchronise",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_LOBBY_PLAYER_SYNCHRONISE_LABEL_STR),
         ParameterValue = Operating.DEFAULT_LOBBY_PLAYER_SYNCHRONISE,
-        ParameterTooltip = Constants.SERVER_PARAM_LOBBY_PLAYER_SYNC_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_LOBBY_PLAYER_SYNC_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(lobbyPlayerSynchronise);
       ServerParameterBool vonDisableUI = new()
       {
         ParameterName = "VONDisableUI",
-        ParameterFriendlyName = "VON Disable UI",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_VON_DISABLE_UI_LABEL_STR),
         ParameterValue = GameProperties.DEFAULT_VON_DISABLE_UI,
-        ParameterTooltip = Constants.SERVER_PARAM_VON_DISABLE_UI_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_VON_DISABLE_UI_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(vonDisableUI);
       ServerParameterBool vonDisableDirectSpeechUI = new()
       {
         ParameterName = "VONDisableDirectSpeechUI",
-        ParameterFriendlyName = "VON Disable Direct Speech UI",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_VON_DISABLE_DIRECT_SPEECH_UI_LABEL_STR),
         ParameterValue = GameProperties.DEFAULT_VON_DISABLE_DIRECT_SPEECH_UI,
-        ParameterTooltip = Constants.SERVER_PARAM_VON_DISABLE_DIRECT_SPEECH_UI_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_VON_DISABLE_DIRECT_SPEECH_UI_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(vonDisableDirectSpeechUI);
       ServerParameterBool vonCanTransmitCrossFaction = new()
       {
         ParameterName = "VONCanTransmitCrossFaction",
-        ParameterFriendlyName = "VON Can Transmit Cross Faction",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_VON_CAN_TRANSMIT_CROSS_FACTION_LABEL_STR),
         ParameterValue = GameProperties.DEFAULT_VON_CAN_TRANSMIT_CROSS_FACTION,
-        ParameterTooltip = Constants.SERVER_PARAM_VON_CAN_TRANSMIT_ACROSS_FACTION_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_VON_CAN_TRANSMIT_ACROSS_FACTION_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(vonCanTransmitCrossFaction);
       ServerParameterBool crossPlatform = new()
       {
         ParameterName = "crossPlatform",
-        ParameterFriendlyName = "Cross Platform",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_CROSS_PLATFORM_LABEL_STR),
         ParameterValue = Game.DEFAULT_CROSS_PLATFORM,
-        ParameterTooltip = Constants.SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_CROSS_PLATFORM_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(crossPlatform);
       ServerParameterNumeric aiLimit = new()
       {
         ParameterName = "aiLimit",
-        ParameterFriendlyName = "AI Limit",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_AI_LIMIT_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = Operating.MIN_AI_LIMIT,
         ParameterMax = Operating.MAX_AI_LIMIT,
         ParameterValue = Operating.DEFAULT_AI_LIMIT,
-        ParameterTooltip = Constants.SERVER_PARAM_AI_LIMIT_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_AI_LIMIT_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(aiLimit);
       ServerParameterNumeric slotReservationTimeout = new()
       {
         ParameterName = "slotReservationTimeout",
-        ParameterFriendlyName = "Slot Reservation Timeout (secs)",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_SLOT_RESERVATION_TIMEOUT_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = Operating.MIN_SLOT_RESERVATION_TIMEOUT,
         ParameterMax = Operating.MAX_SLOT_RESERVATION_TIMEOUT,
         ParameterValue = Operating.DEFAULT_SLOT_RESERVATION_TIMEOUT,
-        ParameterTooltip = Constants.SERVER_PARAM_SLOT_RESERVATION_TIMEOUT_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_SLOT_RESERVATION_TIMEOUT_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(slotReservationTimeout);
       ServerParameterBool toggleDisableNavmeshStreaming = new()
       {
         ParameterName = "toggleDisableNavmeshStreaming",
-        ParameterFriendlyName = "Disable Navmesh Streaming",
-        ParameterTooltip = Constants.SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_TOGGLE_DISABLE_NAVMESH_STREAMING_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_DISABLE_NAVMESH_STREAMING_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(toggleDisableNavmeshStreaming);
       ServerParameterList disableNavmeshStreaming = new()
       {
         ParameterName = "disableNavmeshStreaming",
-        ParameterFriendlyName = "Disable Specific Navmesh Streaming",
-        ParameterTooltip = Constants.SERVER_PARAM_DISABLE_SPECIFIC_NAVMESH_STREAMING_TOOLTIP_STR,
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_DISABLE_NAVMESH_STREAMING_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_DISABLE_SPECIFIC_NAVMESH_STREAMING_TOOLTIP_STR),
         ParameterList = ConfigurationManager.GetInstance()
                                               .GetServerConfiguration()
                                               .root.operating.disableNavmeshStreaming
@@ -974,96 +1021,96 @@ namespace ReforgerServerApp
       ServerParameterBool disableServerShutdown = new()
       {
         ParameterName = "disableServerShutdown",
-        ParameterFriendlyName = "Disable Server Shutdown",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_DISABLE_SERVER_SHUTDOWN_LABEL_STR),
         ParameterValue = Operating.DEFAULT_DISABLE_SERVER_SHUTDOWN,
-        ParameterTooltip = Constants.SERVER_PARAM_DISABLE_SERVER_SHUTDOWN_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_DISABLE_SERVER_SHUTDOWN_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(disableServerShutdown);
       ServerParameterBool disableCrashReporter = new()
       {
         ParameterName = "disableCrashReporter",
-        ParameterFriendlyName = "Disable Crash Reporter",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_DISABLE_CRASH_REPORTER_LABEL_STR),
         ParameterValue = Operating.DEFAULT_DISABLE_CRASH_REPORTER,
-        ParameterTooltip = Constants.SERVER_PARAM_DISABLE_CRASH_REPORT_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_DISABLE_CRASH_REPORT_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(disableCrashReporter);
       ServerParameterBool disableAI = new()
       {
         ParameterName = "disableAI",
-        ParameterFriendlyName = "Disable AI",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_DISABLE_AI_LABEL_STR),
         ParameterValue = Operating.DEFAULT_DISABLE_AI,
-        ParameterTooltip = Constants.SERVER_PARAM_DISABLE_AI_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_DISABLE_AI_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(disableAI);
       ServerParameterNumeric joinQueueMaxSize = new()
       {
         ParameterName = "maxSize",
-        ParameterFriendlyName = "Join Queue Max Size",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_MAX_SIZE_LABEL_STR),
         ParameterValue = JoinQueue.DEFAULT_MAX_SIZE,
-        ParameterTooltip = Constants.SERVER_PARAM_JOIN_QUEUE_MAX_SIZE_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_JOIN_QUEUE_MAX_SIZE_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(joinQueueMaxSize);
       ServerParameterBool persistence = new()
       {
         ParameterName = "persistenceEnabled",
-        ParameterFriendlyName = "Persistence System",
-        ParameterTooltip = Constants.SERVER_PARAM_ENABLE_PERSISTENCE_TOOLTIP_STR
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_PERSISTENCE_ENABLED_LABEL_STR),
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_ENABLE_PERSISTENCE_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(persistence);
       ServerParameterNumeric autoSaveInterval = new()
       {
         ParameterName = "autoSaveInterval",
-        ParameterFriendlyName = "Auto Save Interval (mins)",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_AUTO_SAVE_INTERVAL_LABEL_STR),
         ParameterValue = Persistence.DEFAULT_AUTOSAVE_INTERVAL_MINS,
-        ParameterTooltip = Constants.SERVER_PARAM_AUTO_SAVE_INTERVAL_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_AUTO_SAVE_INTERVAL_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(autoSaveInterval);
       ServerParameterNumeric saveRetention = new()
       {
         ParameterName = "saveRetention",
-        ParameterFriendlyName = "Save Retention",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_SAVE_RETENTION_LABEL_STR),
         ParameterValue = Persistence.DEFAULT_SAVE_RETENTION_VALUE,
-        ParameterTooltip = Constants.SERVER_PARAM_SAVE_RETENTION_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_SAVE_RETENTION_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(saveRetention);
       ServerParameterBool loadSessionSave = new()
       {
         ParameterName = "loadSessionSave",
-        ParameterFriendlyName = "Load Session Save",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_LOAD_SESSION_SAVE_LABEL_STR),
         ParameterValue = Persistence.DEFAULT_LOAD_SESSION_SAVE,
-        ParameterTooltip = Constants.SERVER_PARAM_LOAD_SESSION_SAVE_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_LOAD_SESSION_SAVE_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(loadSessionSave);
       ServerParameterBool keepSessionSave = new()
       {
         ParameterName = "keepSessionSave",
-        ParameterFriendlyName = "Keep Session Save",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_KEEP_SESSION_SAVE_LABEL_STR),
         ParameterValue = Persistence.DEFAULT_KEEP_SESSION_SAVE,
-        ParameterTooltip = Constants.SERVER_PARAM_KEEP_SESSION_SAVE_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_KEEP_SESSION_SAVE_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(keepSessionSave);
       ServerParameterNumeric hiveId = new()
       {
         ParameterName = "hiveId",
-        ParameterFriendlyName = "Hive ID",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_HIVE_ID_LABEL_STR),
         ParameterValue = Persistence.DEFAULT_HIVE_ID,
-        ParameterTooltip = Constants.SERVER_PARAM_HIVE_ID_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_HIVE_ID_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(hiveId);
       ServerParameterText databases = new()
       {
         ParameterName = "databases",
-        ParameterFriendlyName = "Databases",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_DATABASES_LABEL_STR),
         ParameterValue = Persistence.DEFAULT_DATABASES.ToString(),
-        ParameterTooltip = Constants.SERVER_PARAM_DATABASES_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_DATABASES_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(databases);
       ServerParameterText storages = new()
       {
         ParameterName = "storages",
-        ParameterFriendlyName = "Storages",
+        ParameterFriendlyName = Strings.Get(Constants.SERVER_PARAM_STORAGES_LABEL_STR),
         ParameterValue = Persistence.DEFAULT_STORAGES.ToString(),
-        ParameterTooltip = Constants.SERVER_PARAM_STORAGES_TOOLTIP_STR
+        ParameterTooltip = Strings.Get(Constants.SERVER_PARAM_STORAGES_TOOLTIP_STR)
       };
       serverParameters.Controls.Add(storages);
 
@@ -1080,12 +1127,12 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric limitServerMaxFPS = new()
       {
         ParameterName = "maxFPS",
-        ParameterFriendlyName = "Limit Server Max FPS",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_MAX_FPS_LABEL_STR),
         ParameterMin = 1,
         ParameterMax = 1000,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "maxFPS").Value,
-        Description = "Limits your server to the specified target FPS. Recommended."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_MAX_FPS_DESCRIPTION_STR)
       };
       limitServerMaxFPS.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "maxFPS").Enabled;
       advancedParametersPanel.Controls.Add(limitServerMaxFPS);
@@ -1093,8 +1140,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterTime autoRestartTime = new()
       {
         ParameterName = "autoRestartDaily",
-        ParameterFriendlyName = "Auto Restart",
-        Description = "Specify, in 24 hour time, at what time the server will restart every day.",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AUTO_RESTART_DAILY_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AUTO_RESTART_DAILY_DESCRIPTION_STR),
         ParameterMin = DateTime.Today,
         ParameterMax = DateTime.Today.AddDays(1).AddMinutes(-1),
         ParameterValue = DateTime.Today
@@ -1104,8 +1151,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool addonsRepair = new()
       {
         ParameterName = "addonsRepair",
-        ParameterFriendlyName = "Verify and Repair Addons",
-        Description ="Verifies the integrity of all installed addons.\r\nIf any corrupted addons are found, they will be repaired automatically."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_ADDONS_REPAIR_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_ADDONS_REPAIR_DESCRIPTION_STR)
       };
       addonsRepair.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "addonsRepair").Enabled;
       advancedParametersPanel.Controls.Add(addonsRepair);
@@ -1113,8 +1160,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool autoRestartOnCrash = new()
       {
         ParameterName = "autoRestartOnCrash",
-        ParameterFriendlyName = "Restart on Game Destroyed",
-        Description = "The tool will monitor the server for crashes and attempt to restart it automatically."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AUTO_RESTART_ON_CRASH_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AUTO_RESTART_ON_CRASH_DESCRIPTION_STR)
       };
       autoRestartOnCrash.CheckBox.CheckedChanged += AutoRestartOnCrashCheckChanged;
       autoRestartOnCrash.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoRestartOnCrash").Enabled;
@@ -1123,8 +1170,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric autoReload = new()
       {
         ParameterName = "autoreload",
-        ParameterFriendlyName = "Auto Reload Scenario",
-        Description = "Automatically reload the scenario when finished after the specified time (in seconds) has elapsed.",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AUTORELOAD_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AUTORELOAD_DESCRIPTION_STR),
         ParameterMin = 1,
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
@@ -1136,9 +1183,9 @@ namespace ReforgerServerApp
       AdvancedServerParameterString loadSessionSave = new()
       {
         ParameterName = "loadSessionSave",
-        ParameterFriendlyName = "Load Session Save",
-        Description = "Name of save excluding the path and file extension.\r\n\r\nLeave blank to use the latest save.",
-        ParameterPlaceholder = "Using latest save..."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_LOAD_SESSION_SAVE_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_LOAD_SESSION_SAVE_DESCRIPTION_STR),
+        ParameterPlaceholder = Strings.Get(Constants.ADVANCED_PARAM_LOAD_SESSION_SAVE_PLACEHOLDER_STR)
       };
       bool loadSessionSavedEnabled = SavedStateManager.GetSetting(loadedSettings, "loadSessionSave").Enabled;
       loadSessionSave.CheckBox.Checked = loadSessionSavedEnabled;
@@ -1151,8 +1198,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool noBackend = new()
       {
         ParameterName = "noBackend",
-        ParameterFriendlyName = "No Backend",
-        Description = "Enable this to host the server without using the Arma Reforger backend."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_NO_BACKEND_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_NO_BACKEND_DESCRIPTION_STR)
       };
       noBackend.CheckBox.CheckedChanged += NoBackendCheckChanged;
       noBackend.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "noBackend").Enabled;
@@ -1161,8 +1208,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool autoShutdown = new()
       {
         ParameterName = "autoShutdown",
-        ParameterFriendlyName = "Auto Shutdown",
-        Description = "Ensures the correct server shutdown process, use with \"Auto Reload\"."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AUTO_SHUTDOWN_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AUTO_SHUTDOWN_DESCRIPTION_STR)
       };
       autoShutdown.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "autoShutdown").Enabled;
       advancedParametersPanel.Controls.Add(autoShutdown);
@@ -1170,8 +1217,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool logVoting = new()
       {
         ParameterName = "logVoting",
-        ParameterFriendlyName = "Log Voting",
-        Description = "Adds logging info to the voting system with information about who created,\r\nvoted, and against whom the vote was created."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_LOG_VOTING_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_LOG_VOTING_DESCRIPTION_STR)
       };
       logVoting.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "logVoting").Enabled;
       advancedParametersPanel.Controls.Add(logVoting);
@@ -1179,12 +1226,12 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric overridePort = new()
       {
         ParameterName = "bindPort",
-        ParameterFriendlyName = "Override Port",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_BIND_PORT_LABEL_STR),
         ParameterMin = 1,
         ParameterMax = 65535,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "bindPort").Value,
-        Description = "Override the ports specified in server configuration."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_BIND_PORT_DESCRIPTION_STR)
       };
       overridePort.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "bindPort").Enabled;
       advancedParametersPanel.Controls.Add(overridePort);
@@ -1192,12 +1239,12 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric networkDynamicSim = new()
       {
         ParameterName = "nds",
-        ParameterFriendlyName = "Network Dynamic Simulation",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_NDS_LABEL_STR),
         ParameterMin = 0,
         ParameterMax = 2,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "nds").Value,
-        Description = "This is set to '2' by default if unchecked."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_NDS_DESCRIPTION_STR)
       };
       networkDynamicSim.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "nds").Enabled;
       advancedParametersPanel.Controls.Add(networkDynamicSim);
@@ -1205,12 +1252,12 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric spatialMapRes = new()
       {
         ParameterName = "nwkResolution",
-        ParameterFriendlyName = "Spatial Map Resolution",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_NWK_RESOLUTION_LABEL_STR),
         ParameterMin = 100,
         ParameterMax = 1000,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "nwkResolution").Value,
-        Description = "Defines what resolution Spatial Map cells should be set at in a 100 - 1000m range."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_NWK_RESOLUTION_DESCRIPTION_STR)
       };
       spatialMapRes.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "nwkResolution").Enabled;
       advancedParametersPanel.Controls.Add(spatialMapRes);
@@ -1218,12 +1265,12 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric staggeringBudget = new()
       {
         ParameterName = "staggeringBudget",
-        ParameterFriendlyName = "Staggering Budget",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_STAGGERING_BUDGET_LABEL_STR),
         ParameterMin = 1,
         ParameterMax = 10201,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "staggeringBudget").Value,
-        Description = "Defines how many stationary spatial map cells are allowed to be processed in one tick.\r\n\r\nIf not set it uses \"-nds\" diameter."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_STAGGERING_BUDGET_DESCRIPTION_STR)
       };
       staggeringBudget.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "staggeringBudget").Enabled;
       advancedParametersPanel.Controls.Add(staggeringBudget);
@@ -1231,12 +1278,12 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric streamingBudget = new()
       {
         ParameterName = "streamingBudget",
-        ParameterFriendlyName = "Streaming Budget",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_STREAMING_BUDGET_LABEL_STR),
         ParameterMin = 100,
         ParameterMax = 10201,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "streamingBudget").Value,
-        Description = "Streaming budget is the global streaming budget that is equally distributed between all connections."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_STREAMING_BUDGET_DESCRIPTION_STR)
       };
       streamingBudget.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "streamingBudget").Enabled;
       advancedParametersPanel.Controls.Add(streamingBudget);
@@ -1244,12 +1291,12 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric streamsDelta = new()
       {
         ParameterName = "streamsDelta",
-        ParameterFriendlyName = "Streams Delta",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_STREAMS_DELTA_LABEL_STR),
         ParameterMin = 1,
         ParameterMax = 1000,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "streamsDelta").Value,
-        Description = "Streams delta is a tool to limit the amount of streams being opened for a client."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_STREAMS_DELTA_DESCRIPTION_STR)
       };
       streamsDelta.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "streamsDelta").Enabled;
       advancedParametersPanel.Controls.Add(streamsDelta);
@@ -1257,12 +1304,12 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric rplTimeoutMs = new()
       {
         ParameterName = "rpl-timeout-ms",
-        ParameterFriendlyName = "RPL Timeout",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_RPL_TIMEOUT_MS_LABEL_STR),
         ParameterMin = 1,
         ParameterMax = int.MaxValue,
         ParameterIncrement = 1,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "rpl-timeout-ms").Value,
-        Description = "Sets the server's timeout value, in milliseconds."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_RPL_TIMEOUT_MS_DESCRIPTION_STR)
       };
       rplTimeoutMs.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "rpl-timeout-ms").Enabled;
       advancedParametersPanel.Controls.Add(rplTimeoutMs);
@@ -1270,8 +1317,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool aiPartialSim = new()
       {
         ParameterName = "aiPartialSim",
-        ParameterFriendlyName = "AI Partial Sim",
-        Description = "Sets in how many batches all simulable AIs will divided and processed."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_AI_PARTIAL_SIM_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_AI_PARTIAL_SIM_DESCRIPTION_STR)
       };
       aiPartialSim.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "aiPartialSim").Enabled;
       advancedParametersPanel.Controls.Add(aiPartialSim);
@@ -1279,8 +1326,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool createDB = new()
       {
         ParameterName = "createDB",
-        ParameterFriendlyName = "Force Recreate Database",
-        Description = "Forces database file's regeneration.\r\n\r\nUseful after file directories changes, when some resources were moved elsewhere."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_CREATE_DB_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_CREATE_DB_DESCRIPTION_STR)
       };
       createDB.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "createDB").Enabled;
       advancedParametersPanel.Controls.Add(createDB);
@@ -1288,9 +1335,9 @@ namespace ReforgerServerApp
       AdvancedServerParameterString debugger = new()
       {
         ParameterName = "debugger",
-        ParameterFriendlyName = "Debugger Address",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_DEBUGGER_LABEL_STR),
         ParameterPlaceholder = "127.0.0.1",
-        Description = "Sets the script debugger to a specific address."
+        Description = Strings.Get(Constants.ADVANCED_PARAM_DEBUGGER_DESCRIPTION_STR)
       };
       bool debuggerEnabled = SavedStateManager.GetSetting(loadedSettings, "debugger").Enabled;
       debugger.CheckBox.Checked = debuggerEnabled;
@@ -1303,12 +1350,12 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric debuggerPort = new()
       {
         ParameterName = "debuggerPort",
-        ParameterFriendlyName = "Debugger Port",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_DEBUGGER_PORT_LABEL_STR),
         ParameterIncrement = 1,
         ParameterMin = 1,
         ParameterMax = 65535,
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "debuggerPort").Value,
-        Description = "Sets the script debugger to a specific port. "
+        Description = Strings.Get(Constants.ADVANCED_PARAM_DEBUGGER_PORT_DESCRIPTION_STR)
       };
       debuggerPort.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "debuggerPort").Enabled;
       advancedParametersPanel.Controls.Add(debuggerPort);
@@ -1316,8 +1363,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool disableShadersBuild = new()
       {
         ParameterName = "disableShadersBuild",
-        ParameterFriendlyName = "Disable Shaders Generation",
-        Description = "Disables shaders generation."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_DISABLE_SHADERS_BUILD_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_DISABLE_SHADERS_BUILD_DESCRIPTION_STR)
       };
       disableShadersBuild.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "disableShadersBuild").Enabled;
       advancedParametersPanel.Controls.Add(disableShadersBuild);
@@ -1325,8 +1372,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool generateShaders = new()
       {
         ParameterName = "generateShaders",
-        ParameterFriendlyName = "Force Generate Shaders",
-        Description = "Forces shaders generation."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_GENERATE_SHADERS_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_GENERATE_SHADERS_DESCRIPTION_STR)
       };
       generateShaders.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "generateShaders").Enabled;
       advancedParametersPanel.Controls.Add(generateShaders);
@@ -1334,8 +1381,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool rplEncodeAsLongJobs = new()
       {
         ParameterName = "rplEncodeAsLongJobs",
-        ParameterFriendlyName = "RPL Encode as Long Jobs",
-        Description = "Makes replication use long encoding jobs instead of short ones."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_RPL_ENCODE_AS_LONG_JOBS_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_RPL_ENCODE_AS_LONG_JOBS_DESCRIPTION_STR)
       };
       rplEncodeAsLongJobs.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "rplEncodeAsLongJobs").Enabled;
       advancedParametersPanel.Controls.Add(rplEncodeAsLongJobs);
@@ -1343,8 +1390,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric jobsysShortWorkerCount = new()
       {
         ParameterName = "jobsysShortWorkerCount",
-        ParameterFriendlyName = "Short Worker Count",
-        Description = "Sets the number of threads working on short jobs (jobs that must finish in one update loop).",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_JOBSYS_SHORT_WORKER_COUNT_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_JOBSYS_SHORT_WORKER_COUNT_DESCRIPTION_STR),
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "jobsysShortWorkerCount").Value
@@ -1355,8 +1402,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric jobsysLongWorkerCount = new()
       {
         ParameterName = "jobsysLongWorkerCount",
-        ParameterFriendlyName = "Long Worker Count",
-        Description = "Sets the number of threads working on long jobs (jobs that can span multiple iterations of update loop).",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_JOBSYS_LONG_WORKER_COUNT_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_JOBSYS_LONG_WORKER_COUNT_DESCRIPTION_STR),
         ParameterMin = 1,
         ParameterMax = Utilities.GetNumberAvailableThreads(),
         ParameterValue = SavedStateManager.GetSetting(loadedSettings, "jobsysLongWorkerCount").Value
@@ -1367,8 +1414,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterNumeric freezeCheck = new()
       {
         ParameterName = "freezeCheck",
-        ParameterFriendlyName = "Freeze Check",
-        Description = "Overrides time in seconds to forcefully crash on application freeze or completely disable detection.",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_FREEZE_CHECK_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_FREEZE_CHECK_DESCRIPTION_STR),
         ParameterIncrement = 1,
         ParameterMin = 0,
         ParameterMax = 600,
@@ -1380,8 +1427,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterEnumerated freezeCheckMode = new()
       {
         ParameterName = "freezeCheckMode",
-        ParameterFriendlyName = "Freeze Check Mode",
-        Description = "Overrides behavior which should happen when freeze is detected.",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_FREEZE_CHECK_MODE_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_FREEZE_CHECK_MODE_DESCRIPTION_STR),
         ParameterAvailableValues = new List<string>() {"crash", "minidump", "kill"}
       };
       bool freezeCheckModeEnabled = SavedStateManager.GetSetting(loadedSettings, "freezeCheckMode").Enabled;
@@ -1395,8 +1442,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool forceDisableNightGrain = new()
       {
         ParameterName = "forceDisableNightGrain",
-        ParameterFriendlyName = "Force Disable Night Grain",
-        Description = "Disables night grain in multiplayer.",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_FORCE_DISABLE_NIGHT_GRAIN_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_FORCE_DISABLE_NIGHT_GRAIN_DESCRIPTION_STR),
       };
       forceDisableNightGrain.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "forceDisableNightGrain").Enabled;
       advancedParametersPanel.Controls.Add(forceDisableNightGrain);
@@ -1404,8 +1451,8 @@ namespace ReforgerServerApp
       AdvancedServerParameterBool keepSessionSave = new()
       {
         ParameterName = "keepSessionSave",
-        ParameterFriendlyName = "Keep Session Save",
-        Description = "Keep any data for completed playthroughs on the game's end screen."
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_KEEP_SESSION_SAVE_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_KEEP_SESSION_SAVE_DESCRIPTION_STR)
       };
       keepSessionSave.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "keepSessionSave").Enabled;
       advancedParametersPanel.Controls.Add(keepSessionSave);
@@ -1413,9 +1460,9 @@ namespace ReforgerServerApp
       AdvancedServerParameterString playerLimits = new()
       {
         ParameterName = "playerLimits",
-        ParameterFriendlyName = "Player Faction Limits",
-        Description = "Maximum number of players per faction.\r\n\r\nFormat is FactionKey:Number, comma separated. E.g. \"FIA:3,US:1,USSR:2\".",
-        ParameterPlaceholder = "e.g. FIA:3,US:1,USSR:2",
+        ParameterFriendlyName = Strings.Get(Constants.ADVANCED_PARAM_PLAYER_LIMITS_LABEL_STR),
+        Description = Strings.Get(Constants.ADVANCED_PARAM_PLAYER_LIMITS_DESCRIPTION_STR),
+        ParameterPlaceholder = Strings.Get(Constants.ADVANCED_PARAM_PLAYER_LIMITS_PLACEHOLDER_STR),
         ParameterValue = SavedStateManager.GetSetting(loadedSettings,"playerLimits").Value
       };
       playerLimits.CheckBox.Checked = SavedStateManager.GetSetting(loadedSettings, "playerLimits").Enabled;
@@ -1434,11 +1481,7 @@ namespace ReforgerServerApp
 
       if (ConfigurationManager.GetInstance().noBackend)
       {
-        bool enableNoBackend = Utilities.DisplayConfirmationMessage("Setting your server to use No Backend means it will not be visible in the server browser.\r\n" +
-            "Mods not already downloaded will not work as they will not be fetched from the Workshop.\r\n" +
-            "You must provide a valid Public Address in the Server Configuration section. It cannot be empty.\r\n" +
-            "Clients will only be able to connect via the '-client' launch argument, and it is their responsibility to acquire required mods.\r\n\r\n" +
-            "Continue?", true);
+        bool enableNoBackend = Utilities.DisplayConfirmationMessage(Strings.Get(Constants.MAIN_ENABLE_NO_BACKEND_CONFIRM_STR), true);
 
         if (!enableNoBackend)
         {
@@ -1507,7 +1550,7 @@ namespace ReforgerServerApp
 
     private void HandleServerStatusEvent(object sender, ServerStatusEventArgs e)
     {
-      const string serverOfflineString = "Server is offline.";
+      string serverOfflineString = Strings.Get(Constants.MAIN_SERVER_OFFLINE_STR);
       if (!e.ServerOnline)
       {
         serverAddressStatusLabel.Text = serverOfflineString;
@@ -1515,8 +1558,8 @@ namespace ReforgerServerApp
         pingSiteStatusLabel.Text = serverOfflineString;
         joinCodeStatusLabel.Text = serverOfflineString;
         playerCountStatusLabel.Text = serverOfflineString;
-        fpsLabel.Text = "-- FPS";
-        memLabel.Text = "-- GB";
+        fpsLabel.Text = Strings.Get(Constants.MAIN_FPS_OFFLINE_STR);
+        memLabel.Text = Strings.Get(Constants.MAIN_MEMORY_OFFLINE_STR);
         chartFps.Clear();
         chartMem.Clear();
         flagStatusPB.Image = null;
@@ -1538,14 +1581,7 @@ namespace ReforgerServerApp
       pingSiteStatusLabel.Text = string.Concat(e.LastPingSite.Substring(0, 1).ToUpper(), e.LastPingSite.AsSpan(1));
       joinCodeStatusLabel.Text = e.LastJoinCode;
 
-      if (e.LastPlayerCount == 1)
-      {
-        playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected player";
-      }
-      else
-      {
-        playerCountStatusLabel.Text = $"{e.LastPlayerCount} connected players";
-      }
+      playerCountStatusLabel.Text = Strings.Get(Constants.MAIN_PLAYER_COUNT_STATUS_STR, ("count", e.LastPlayerCount));
     }
 
     private void UpdatePerformanceGraphs(double fps, long memoryKb, DateTime time)
@@ -1561,8 +1597,8 @@ namespace ReforgerServerApp
       chartFps.AddDataPoint((float) fps);
       chartMem.AddDataPoint((float) memoryGb);
 
-      fpsLabel.Text = $"{fps} FPS";
-      memLabel.Text = $"{memoryGb} GB";
+      fpsLabel.Text = Strings.Get(Constants.MAIN_FPS_STATUS_STR, ("fps", fps));
+      memLabel.Text = Strings.Get(Constants.MAIN_MEMORY_STATUS_STR, ("memoryGb", memoryGb));
     }
 
     /// <summary>
@@ -1604,7 +1640,7 @@ namespace ReforgerServerApp
       {
         if (string.IsNullOrWhiteSpace(e.scenarioId))
         {
-          loadedScenarioLabel.Text = "No scenario ID chosen.";
+          loadedScenarioLabel.Text = Strings.Get(Constants.MAIN_NO_SCENARIO_ID_CHOSEN_MESSAGE_STR);
         }
         else
         {

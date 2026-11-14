@@ -1,12 +1,13 @@
 /******************************************************************************
  * File Name:    Utilities.cs
  * Project:      Longbow
- * Description:  Static class containing utility methods for 
+ * Description:  Static class containing utility methods for
  *               performing various simple tasks
- * 
+ *
  * Author:       Bradley Newman
  ******************************************************************************/
 
+using Longbow.Utils;
 using Serilog;
 using System;
 using System.ComponentModel;
@@ -165,10 +166,8 @@ namespace ReforgerServerApp.Utils
     {
       Log.Error("An error prompt was displayed: {genMsg} - {errMsg}", genMsg, errMsg);
       MessageBox.Show(
-          $"{genMsg}\r\n\r\n" +
-          $"Detail: {errMsg}\r\n\r\n" +
-          $"Include the detail above in your bug reports.",
-          Constants.ERROR_MESSAGEBOX_TITLE_STR);
+          Strings.Get(Constants.ERROR_DIALOG_FORMAT_STR, ("genMsg", genMsg), ("errMsg", errMsg)),
+          Strings.Get(Constants.ERROR_MESSAGEBOX_TITLE_STR));
     }
 
     /// <summary>
@@ -182,7 +181,7 @@ namespace ReforgerServerApp.Utils
     {
       DialogResult result =
           MessageBox.Show($"{msg}",
-          Constants.WARN_MESSAGEBOX_TITLE_STR,
+          Strings.Get(Constants.WARN_MESSAGEBOX_TITLE_STR),
           useYesOrNo ? MessageBoxButtons.YesNo : MessageBoxButtons.OKCancel);
 
       return result == DialogResult.OK || result == DialogResult.Yes;

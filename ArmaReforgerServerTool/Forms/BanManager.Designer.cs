@@ -1,4 +1,5 @@
 using Longbow.Components.ui;
+using ReforgerServerApp;
 
 namespace Longbow.Forms
 {
@@ -36,6 +37,7 @@ namespace Longbow.Forms
       banList = new FluentTableView();
       unbanButton = new FontAwesome.Sharp.IconButton();
       cancelButton = new FontAwesome.Sharp.IconButton();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       ((System.ComponentModel.ISupportInitialize) banList).BeginInit();
       SuspendLayout();
       // 
@@ -93,7 +95,8 @@ namespace Longbow.Forms
       unbanButton.TabIndex = 1;
       unbanButton.Text = "Unban";
       unbanButton.UseVisualStyleBackColor = true;
-      // 
+      translationKeyProvider1.SetTranslationKey(unbanButton, Constants.BAN_MANAGER_UNBAN_BUTTON_STR);
+      //
       // cancelButton
       // 
       cancelButton.Anchor =  AnchorStyles.Bottom | AnchorStyles.Left;
@@ -106,7 +109,8 @@ namespace Longbow.Forms
       cancelButton.TabIndex = 2;
       cancelButton.Text = "Cancel";
       cancelButton.UseVisualStyleBackColor = true;
-      // 
+      translationKeyProvider1.SetTranslationKey(cancelButton, Constants.BAN_MANAGER_CANCEL_BUTTON_STR);
+      //
       // BanManager
       // 
       AutoScaleDimensions = new SizeF(7F, 15F);
@@ -129,5 +133,6 @@ namespace Longbow.Forms
     private FluentTableView banList;
     private FontAwesome.Sharp.IconButton unbanButton;
     private FontAwesome.Sharp.IconButton cancelButton;
+    private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
   }
 }

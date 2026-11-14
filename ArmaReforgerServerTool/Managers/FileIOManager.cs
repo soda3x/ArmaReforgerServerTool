@@ -3,11 +3,12 @@
  * Project:      Longbow
  * Description:  This file contains the singleton FileIOManager class
  *               responsible for all I/O operations on files
- * 
+ *
  * Author:       Bradley Newman
  ******************************************************************************/
 
 using Longbow.Managers;
+using Longbow.Utils;
 using Microsoft.Win32;
 using ReforgerServerApp.Utils;
 using Serilog;
@@ -35,7 +36,7 @@ namespace ReforgerServerApp.Managers
       bool modDatabaseExists = File.Exists(ToolPropertiesManager.GetInstance().GetToolProperties().modDatabaseFile);
 
       if (!modDatabaseExists && File.Exists(m_legacyModDatabaseFile) &&
-          Utilities.DisplayConfirmationMessage(Constants.MIGRATE_LEGACY_MOD_DB_PROMPT_STR, true))
+          Utilities.DisplayConfirmationMessage(Strings.Get(Constants.MIGRATE_LEGACY_MOD_DB_PROMPT_STR), true))
       {
         MigrateLegacyModDatabase(m_legacyModDatabaseFile);
       }
@@ -161,7 +162,8 @@ namespace ReforgerServerApp.Managers
         }
         catch (JsonException je)
         {
-          Utilities.DisplayErrorMessage("Failed to import mods list", $"Failed to import mods list, the mods list may be malformed.\r\n\r\n{je.Message}");
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.FILE_IO_IMPORT_MODS_FAILED_STR),
+              Strings.Get(Constants.FILE_IO_IMPORT_MODS_FAILED_DETAIL_STR, ("error", je.Message)));
         }
       }
     }
@@ -213,7 +215,7 @@ namespace ReforgerServerApp.Managers
       catch (Exception ex)
       {
         Log.Error(ex, "Failed to save config to {path}", path);
-        Utilities.DisplayErrorMessage($"An error occurred while trying to write server configuration.", ex.Message);
+        Utilities.DisplayErrorMessage(Strings.Get(Constants.FILE_IO_WRITE_CONFIG_FAILED_STR), ex.Message);
         return false;
       }
     }
@@ -271,7 +273,8 @@ namespace ReforgerServerApp.Managers
 
         if (splitMod.Length < 2)
         {
-          Utilities.DisplayErrorMessage("Importing legacy mods failed.", "At least one legacy mod was in an invalid format.");
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.FILE_IO_IMPORT_LEGACY_MODS_FAILED_STR),
+              Strings.Get(Constants.FILE_IO_IMPORT_LEGACY_MODS_FAILED_DETAIL_STR));
           return false;
         }
 
@@ -295,7 +298,7 @@ namespace ReforgerServerApp.Managers
       GetInstance().WriteModsDatabase();
       if (DeleteFile(path))
       {
-        MessageBox.Show("Legacy Mod Database successfully migrated");
+        MessageBox.Show(Strings.Get(Constants.FILE_IO_LEGACY_DB_MIGRATED_STR));
       }
       return true;
     }
@@ -382,10 +385,8 @@ namespace ReforgerServerApp.Managers
         {
           Log.Information("FileIOManager - There is a new version of the tool available (current: {currentVer}, new: {newVer}", currentVersion, checkedVersion);
           DialogResult dr = MessageBox.Show(
-          $"There is an update available for the Longbow.\r\n" +
-          $"Would you like to get the latest version now?\r\n\r\n" +
-          $"Our version: {currentVersion}\r\nLatest version: {checkedVersion}",
-          "Longbow - Update available",
+          Strings.Get(Constants.FILE_IO_UPDATE_AVAILABLE_STR, ("currentVersion", currentVersion?.ToString() ?? string.Empty), ("newVersion", checkedVersion)),
+          Strings.Get(Constants.FILE_IO_UPDATE_AVAILABLE_TITLE_STR),
           MessageBoxButtons.YesNo);
 
           if (dr == DialogResult.Yes)
@@ -402,10 +403,7 @@ namespace ReforgerServerApp.Managers
       catch (HttpRequestException e)
       {
         Log.Error(e, "FileIOManager - Failed to check for updates");
-        Utilities.DisplayErrorMessage(
-            "Unable to check for updates, you may not be using the latest version of the Longbow.\r\n" +
-            "Please consider checking your internet connection.",
-            e.Message);
+        Utilities.DisplayErrorMessage(Strings.Get(Constants.FILE_IO_UPDATE_CHECK_FAILED_STR), e.Message);
       }
     }
 
@@ -430,10 +428,8 @@ namespace ReforgerServerApp.Managers
       if (!installed)
       {
         Log.Information("FileIOManager - Visual C++ Runtime was not found on your system. Arma Reforger Dedicated Server requires it to function");
-        DialogResult dr = MessageBox.Show("Visual C++ Runtime was not found and is required for the server to start." +
-                "\r\nWould you like to install it?" +
-                "\r\n\r\nSelecting Yes will close the application and open your browser. Selecting No will simply close the application.",
-                    "Longbow - Visual C++ Runtime not found", MessageBoxButtons.YesNo);
+        DialogResult dr = MessageBox.Show(Strings.Get(Constants.FILE_IO_VCREDIST_MISSING_STR),
+                    Strings.Get(Constants.FILE_IO_VCREDIST_MISSING_TITLE_STR), MessageBoxButtons.YesNo);
         if (dr == DialogResult.Yes)
         {
           Process.Start("explorer", "https://aka.ms/vs/17/release/vc_redist.x64.exe");
@@ -448,20 +444,16 @@ namespace ReforgerServerApp.Managers
     /// <returns>True if deleted successfully, false otherwise</returns>
     public bool DeleteServerFiles()
     {
-      string msg =
-          "You are about to delete SteamCMD and all Arma Reforger server files" + Environment.NewLine +
-          "ALL files will be deleted in the path:" + Environment.NewLine +
-          m_installDir + Environment.NewLine +
-          "Do you want to continue?";
+      string msg = Strings.Get(Constants.FILE_IO_DELETE_SERVER_FILES_CONFIRM_STR, ("path", m_installDir));
 
-      DialogResult result = MessageBox.Show(msg, "Delete Server Files", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+      DialogResult result = MessageBox.Show(msg, Strings.Get(Constants.FILE_IO_DELETE_SERVER_FILES_TITLE_STR), MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
       if (result == DialogResult.Yes)
       {
         Directory.Delete(m_installDir, true);
         m_installDir = string.Empty;
         DeleteFile(SavedStateManager.GetInstance().GetSavedState().serverLocation);
-        MessageBox.Show("Server files deleted.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show(Strings.Get(Constants.FILE_IO_FILES_DELETED_STR), Strings.Get(Constants.FILE_IO_SUCCESS_TITLE_STR), MessageBoxButtons.OK, MessageBoxIcon.Information);
         return !Directory.Exists(m_installDir);
       }
 
@@ -490,8 +482,7 @@ namespace ReforgerServerApp.Managers
         }
         else
         {
-          MessageBox.Show("Arma Reforger Server Files could not be located." +
-              "\r\nPlease confirm the chosen path or download the files to start.", "Warning", MessageBoxButtons.OK);
+          MessageBox.Show(Strings.Get(Constants.FILE_IO_SERVER_FILES_NOT_FOUND_STR), Strings.Get(Constants.FILE_IO_SERVER_FILES_NOT_FOUND_TITLE_STR), MessageBoxButtons.OK);
           return false;
         }
       }
@@ -525,7 +516,7 @@ namespace ReforgerServerApp.Managers
       }
       catch (Exception ex)
       {
-        Utilities.DisplayErrorMessage($"An error occurred while attempting to delete file '{path}'.", ex.Message);
+        Utilities.DisplayErrorMessage(Strings.Get(Constants.FILE_IO_DELETE_FILE_FAILED_STR, ("path", path)), ex.Message);
         return false;
       }
     }
@@ -586,7 +577,7 @@ namespace ReforgerServerApp.Managers
       catch (IOException ex)
       {
         Log.Error($"FileIOManager - An error occurred when attempting to rename file {origName} - {ex.Message}");
-        Utilities.DisplayErrorMessage($"Failed to rename {origName}", ex.Message);
+        Utilities.DisplayErrorMessage(Strings.Get(Constants.FILE_IO_RENAME_FAILED_STR, ("name", origName)), ex.Message);
         return origName;
       }
     }

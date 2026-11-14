@@ -37,6 +37,7 @@ namespace ReforgerServerApp
       modVers = new FluentTextBox();
       requiredLabel = new Label();
       required = new FluentToggleSwitch();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       SuspendLayout();
       // 
       // modName
@@ -80,9 +81,10 @@ namespace ReforgerServerApp
       addBtn.Text = "Add";
       addBtn.UseVisualStyleBackColor = true;
       addBtn.Click += AddBtnPressed;
-      // 
+      translationKeyProvider1.SetTranslationKey(addBtn, Constants.ADD_MOD_ADD_BUTTON_STR);
+      //
       // cancelBtn
-      // 
+      //
       cancelBtn.Location = new Point(12, 157);
       cancelBtn.Name = "cancelBtn";
       cancelBtn.Size = new Size(75, 32);
@@ -90,6 +92,7 @@ namespace ReforgerServerApp
       cancelBtn.Text = "Cancel";
       cancelBtn.UseVisualStyleBackColor = true;
       cancelBtn.Click += CancelBtnPressed;
+      translationKeyProvider1.SetTranslationKey(cancelBtn, Constants.ADD_MOD_CANCEL_BUTTON_STR);
       // 
       // modVers
       // 
@@ -116,6 +119,7 @@ namespace ReforgerServerApp
       requiredLabel.Size = new Size(77, 21);
       requiredLabel.TabIndex = 11;
       requiredLabel.Text = "Required";
+      translationKeyProvider1.SetTranslationKey(requiredLabel, Constants.ADD_MOD_REQUIRED_LABEL_STR);
       // 
       // required
       // 
@@ -158,5 +162,6 @@ namespace ReforgerServerApp
         private FluentTextBox modVers;
         private Label requiredLabel;
         private FluentToggleSwitch required;
+        private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
     }
 }

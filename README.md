@@ -39,6 +39,13 @@ If you are contributing to the project, you will also need the following:
 
 See [here](docs/PARAMETERS.md) for more information on the parameters in the app.
 
+## Translations
+
+Longbow's UI can be translated without touching any code. See
+[here](ArmaReforgerServerTool/Resources/Strings/README.md) for how to add or update a language.
+
+Currently available: English.
+
 ## Building
 
 - Build using Visual Studio 2022 (be sure to make `Release`)

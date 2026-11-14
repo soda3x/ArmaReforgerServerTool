@@ -2,12 +2,13 @@
  * File Name:    ScenarioSelector.cs
  * Project:      Longbow
  * Description:  This is the Scenario Selector Form
- * 
+ *
  * Author:       Bradley Newman
  ******************************************************************************/
 
 using Longbow.Managers;
 using Longbow.Models;
+using Longbow.Utils;
 using ReforgerServerApp.Managers;
 using ReforgerServerApp.Utils;
 using WinForms.Fluent;
@@ -25,6 +26,8 @@ namespace ReforgerServerApp
     {
       InitializeComponent();
       ThemeManager.GetInstance().ConfigureTheme(this);
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
+      manualScenarioIdTextBox.PlaceholderText = Strings.Get(Constants.SCENARIO_SELECTOR_MANUAL_ID_PLACEHOLDER_STR);
       PrintSelectedScenario();
       m_parentForm = parent;
       m_getScenariosRequested = true;
@@ -57,7 +60,7 @@ namespace ReforgerServerApp
 
       catch (Exception ex)
       {
-        Utilities.DisplayErrorMessage("An error occurred while loading scenarios.", ex.Message);
+        Utilities.DisplayErrorMessage(Strings.Get(Constants.SCENARIO_SELECTOR_LOAD_ERROR_STR), ex.Message);
       }
     }
 
@@ -72,7 +75,7 @@ namespace ReforgerServerApp
             if (reloadScenariosBtn.IsHandleCreated)
             {
               loadingAnim.Invoke((MethodInvoker) (() => loadingAnim.Visible = true));
-              currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = "Fetching scenarios from the workshop, please wait..."));
+              currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = Strings.Get(Constants.SCENARIO_SELECTOR_FETCHING_MESSAGE_STR)));
               reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = false));
               selectScenarioBtn.Invoke((MethodInvoker) (() => selectScenarioBtn.Enabled = false));
 
@@ -90,14 +93,14 @@ namespace ReforgerServerApp
                 loadingAnim.Invoke((MethodInvoker) (() => loadingAnim.Visible = false));
                 reloadScenariosBtn.Invoke((MethodInvoker)(() => reloadScenariosBtn.Enabled = true));
                 selectScenarioBtn.Invoke((MethodInvoker) (() => selectScenarioBtn.Enabled = true));
-                currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR));
+                currentlySelectedLbl.Invoke((MethodInvoker)(() => currentlySelectedLbl.Text = Strings.Get(Constants.SELECT_SCENARIO_STR)));
               }
             }
           }
         }
         catch (Exception ex)
         {
-          Utilities.DisplayErrorMessage("Scenario Fetch thread encountered an error.", ex.Message);
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.SCENARIO_SELECTOR_FETCH_THREAD_ERROR_STR), ex.Message);
         }
       }
     }
@@ -163,11 +166,11 @@ namespace ReforgerServerApp
       string scenId = ConfigurationManager.GetInstance().GetServerConfiguration().root.game.scenarioId;
       if (scenId != null && scenId != string.Empty)
       {
-        currentlySelectedLbl.Text = $"{Constants.CURRENTLY_SELECTED_STR} {scenId}";
+        currentlySelectedLbl.Text = $"{Strings.Get(Constants.CURRENTLY_SELECTED_STR)} {scenId}";
       }
       else
       {
-        currentlySelectedLbl.Text = Constants.SELECT_SCENARIO_STR;
+        currentlySelectedLbl.Text = Strings.Get(Constants.SELECT_SCENARIO_STR);
       }
     }
 

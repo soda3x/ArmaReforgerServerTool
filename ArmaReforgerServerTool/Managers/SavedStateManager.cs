@@ -9,6 +9,7 @@
  ******************************************************************************/
 
 using Longbow.Models;
+using Longbow.Utils;
 using ReforgerServerApp;
 using ReforgerServerApp.Utils;
 using Serilog;
@@ -47,9 +48,8 @@ namespace Longbow.Managers
           string path = Path.GetFullPath(m_savedStateFile);
 
           Utilities.DisplayErrorMessage(
-                  "State file is malformed. Please check your formatting is valid JSON and try again.",
-                  "Unable to parse state file. Temporarily using default state. " +
-                  $"Delete the state file at {path} and restart the application to permanently revert to default settings."
+                  Strings.Get(Constants.SAVED_STATE_MANAGER_MALFORMED_STR),
+                  Strings.Get(Constants.SAVED_STATE_MANAGER_MALFORMED_DETAIL_STR, ("path", path))
           );
           m_savedState = SavedState.Default;
         }

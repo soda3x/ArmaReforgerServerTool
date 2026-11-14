@@ -18,6 +18,7 @@ namespace ReforgerServerApp
     {
       InitializeComponent();
       ThemeManager.GetInstance().ConfigureTheme(this);
+      LocalisationManager.GetInstance().ApplyStrings(this, translationKeyProvider1);
       this.Text = $"Longbow - {windowTitle}";
       m_items = new List<string>(items);
       itemListView.DataSource = m_items;

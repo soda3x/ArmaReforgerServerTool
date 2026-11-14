@@ -176,7 +176,7 @@ namespace ReforgerServerApp.Managers
         {
           buttonIconChar = IconChar.Stop,
           enableServerFields = false,
-          serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
+          serverRunningLabelText = Strings.Get(Constants.SERVER_CURRENTLY_RUNNING_STR),
           startServerBtnEnabled = false
         };
         OnUpdateGuiControlsEvent(guiModel);
@@ -262,7 +262,7 @@ namespace ReforgerServerApp.Managers
         }
         catch (Exception ex)
         {
-          Utilities.DisplayErrorMessage("Error", ex.Message);
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.PROCESS_MANAGER_GENERIC_ERROR_STR), ex.Message);
         }
       }
 
@@ -278,7 +278,7 @@ namespace ReforgerServerApp.Managers
       {
         buttonIconChar = IconChar.Stop,
         enableServerFields = false,
-        serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
+        serverRunningLabelText = Strings.Get(Constants.SERVER_CURRENTLY_RUNNING_STR),
         startServerBtnEnabled = false
       };
       OnUpdateGuiControlsEvent(guiModel);
@@ -496,7 +496,7 @@ namespace ReforgerServerApp.Managers
         {
           buttonIconChar = IconChar.Stop,
           enableServerFields = false,
-          serverRunningLabelText = Constants.SERVER_CURRENTLY_RUNNING_STR,
+          serverRunningLabelText = Strings.Get(Constants.SERVER_CURRENTLY_RUNNING_STR),
           startServerBtnEnabled = true
         };
         OnUpdateGuiControlsEvent(guiModel);

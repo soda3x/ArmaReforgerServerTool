@@ -31,6 +31,7 @@ namespace ReforgerServerApp
       aboutText = new Label();
       okBtn = new Button();
       reportBtn = new Button();
+      translationKeyProvider1 = new Longbow.Components.TranslationKeyExtenderProvider(components);
       SuspendLayout();
       // 
       // aboutText
@@ -53,9 +54,10 @@ namespace ReforgerServerApp
       okBtn.Text = "OK";
       okBtn.UseVisualStyleBackColor = true;
       okBtn.Click += OKBtnPressed;
-      // 
+      translationKeyProvider1.SetTranslationKey(okBtn, Constants.ABOUT_OK_BUTTON_STR);
+      //
       // reportBtn
-      // 
+      //
       reportBtn.Location = new Point(12, 117);
       reportBtn.Name = "reportBtn";
       reportBtn.Size = new Size(113, 32);
@@ -63,6 +65,7 @@ namespace ReforgerServerApp
       reportBtn.Text = "Report an Issue...";
       reportBtn.UseVisualStyleBackColor = true;
       reportBtn.Click += ReportBtnPressed;
+      translationKeyProvider1.SetTranslationKey(reportBtn, Constants.ABOUT_REPORT_ISSUE_BUTTON_STR);
       // 
       // AboutBox
       // 
@@ -89,5 +92,6 @@ namespace ReforgerServerApp
     private Label aboutText;
         private Button okBtn;
         private Button reportBtn;
+        private Longbow.Components.TranslationKeyExtenderProvider translationKeyProvider1;
     }
 }

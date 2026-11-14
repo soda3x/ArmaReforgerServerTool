@@ -7,6 +7,7 @@
  * Authors:      Kye Seyhun
  ******************************************************************************/
 
+using Longbow.Utils;
 using Open.Nat;
 using ReforgerServerApp.Utils;
 using Serilog;
@@ -84,12 +85,12 @@ namespace ReforgerServerApp.Managers
         Log.Error("NetworkManager - Failed to configure UPnP: {msg}", ex.Message);
         if (ex.GetType() == typeof(NatDeviceNotFoundException))
         {
-          Utilities.DisplayErrorMessage("Failed to start server with UPnP", "No UPnP NAT device was found. UPnP is not supported on your system.");
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.NETWORK_MANAGER_UPNP_FAILED_STR), Strings.Get(Constants.NETWORK_MANAGER_UPNP_NAT_NOT_FOUND_STR));
         }
 
         if (ex.GetType() == typeof(SocketException))
         {
-          Utilities.DisplayErrorMessage("Failed to start server with UPnP", "Failed to start the server with UPnP. You may need to turn it off.");
+          Utilities.DisplayErrorMessage(Strings.Get(Constants.NETWORK_MANAGER_UPNP_FAILED_STR), Strings.Get(Constants.NETWORK_MANAGER_UPNP_GENERIC_FAILED_STR));
         }
       }
     }
