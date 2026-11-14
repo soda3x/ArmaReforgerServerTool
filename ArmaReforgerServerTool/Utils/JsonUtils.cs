@@ -231,12 +231,12 @@ namespace ReforgerServerApp.Utils
           throw new JsonException("Expected StartObject token.");
         }
 
-        string address = null;
+        string address = string.Empty;
         int port = 0;
-        string password = null;
-        string permission = null;
-        string[] blacklist = null;
-        string[] whitelist = null;
+        string password = string.Empty;
+        string permission = string.Empty;
+        string[] blacklist = [];
+        string[] whitelist = [];
         int maxClients = 0;
 
         while (reader.Read())
